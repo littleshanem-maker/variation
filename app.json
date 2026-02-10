@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "name": "Variation Capture",
+    "slug": "variation-capture",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "scheme": "variationcapture",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F5F2ED"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.pipelineconsulting.variationcapture",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Variation Capture needs camera access to photograph scope changes on site.",
+        "NSMicrophoneUsageDescription": "Variation Capture needs microphone access to record voice notes describing scope changes.",
+        "NSLocationWhenInUseUsageDescription": "Variation Capture records your location to tag variation evidence with GPS coordinates.",
+        "NSPhotoLibraryUsageDescription": "Variation Capture needs photo library access to attach existing photos to variations."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F5F2ED"
+      },
+      "package": "com.pipelineconsulting.variationcapture",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      ["expo-camera", { "cameraPermission": "Variation Capture needs camera access to photograph scope changes." }],
+      ["expo-location", { "locationWhenInUsePermission": "Variation Capture records GPS coordinates for evidence tagging." }]
+    ]
+  }
+}
