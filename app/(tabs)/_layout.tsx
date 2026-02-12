@@ -35,6 +35,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          headerShown: false,
           title: 'Projects',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="folder-outline" size={size} color={color} />

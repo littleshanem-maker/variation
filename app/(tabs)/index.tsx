@@ -115,6 +115,9 @@ export default function ProjectsScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.screenHeader}>
+        <Text style={styles.screenTitle}>Variation Capture</Text>
+      </View>
       <FlatList
         data={projects}
         renderItem={renderProject}
@@ -149,6 +152,8 @@ export default function ProjectsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
+  screenHeader: { paddingTop: 60, paddingHorizontal: spacing.lg, paddingBottom: spacing.md, backgroundColor: colors.bg },
+  screenTitle: { fontSize: 28, fontWeight: '900', color: colors.text, letterSpacing: -0.5 },
   list: { padding: spacing.lg, paddingBottom: 100 },
   listHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md },
   connectivityBadge: { flexDirection: 'row', alignItems: 'center', gap: 4 },

@@ -159,13 +159,16 @@ export default function ProjectDetailScreen() {
         }
       />
 
-      {/* FAB */}
-      <Pressable
-        style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
-        onPress={() => router.push(`/capture/${id}`)}
-      >
-        <Ionicons name="camera" size={28} color={colors.textInverse} />
-      </Pressable>
+      {/* New Variation Button */}
+      <View style={styles.bottomAction}>
+        <Pressable
+          style={({ pressed }) => [styles.newVarButton, pressed && styles.newVarButtonPressed]}
+          onPress={() => router.push(`/capture/${id}`)}
+        >
+          <Ionicons name="add-circle-outline" size={22} color={colors.textInverse} />
+          <Text style={styles.newVarButtonText}>New Variation</Text>
+        </Pressable>
+      </View>
 
       {/* Menu Modal */}
       <Modal visible={showMenu} transparent animationType="fade">
@@ -212,8 +215,10 @@ const styles = StyleSheet.create({
   variationTime: { ...typography.caption, color: colors.textMuted },
   empty: { alignItems: 'center' as const, paddingTop: 80 },
   emptyText: { ...typography.bodyMedium, color: colors.textMuted, marginTop: spacing.md },
-  fab: { position: 'absolute' as const, bottom: 24, right: 24, width: touchTargets.fab, height: touchTargets.fab, borderRadius: touchTargets.fab / 2, backgroundColor: colors.accent, alignItems: 'center' as const, justifyContent: 'center' as const, elevation: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
-  fabPressed: { backgroundColor: colors.accentHover },
+  bottomAction: { position: 'absolute' as const, bottom: 0, left: 0, right: 0, padding: spacing.lg, paddingBottom: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.bg },
+  newVarButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 14, minHeight: touchTargets.button },
+  newVarButtonPressed: { backgroundColor: colors.accentHover },
+  newVarButtonText: { ...typography.labelLarge, color: colors.textInverse },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
   menuCard: { backgroundColor: colors.surface, borderRadius: borderRadius.lg, width: 280, overflow: 'hidden' as const },
   menuItem: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.lg },
