@@ -52,6 +52,7 @@ export default function RootLayout() {
           },
           headerShadowVisible: false,
           contentStyle: { backgroundColor: colors.bg },
+          headerBackTitle: 'Back',
         }}
       >
         <Stack.Screen
@@ -67,11 +68,17 @@ export default function RootLayout() {
         />
         <Stack.Screen
           name="project/[id]"
-          options={{ title: 'Variations' }}
+          options={{
+            title: 'Variations',
+            headerBackTitle: 'Projects',
+          }}
         />
         <Stack.Screen
           name="variation/[id]"
-          options={{ title: 'Variation Detail' }}
+          options={{
+            title: 'Variation',
+            headerBackTitle: 'Back',
+          }}
         />
         <Stack.Screen
           name="capture/[projectId]"
