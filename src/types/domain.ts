@@ -1,13 +1,8 @@
 /**
- * Variation Capture — Core Domain Types
+ * Domain Types
  *
- * These types model the core business domain: projects, variations,
- * evidence artifacts, and the immutable evidence chain.
- *
- * Design principles:
- * - Offline-first: all IDs are UUIDs generated client-side
- * - Immutable evidence: captured artifacts get SHA-256 hashes at creation
- * - Append-only: status changes are tracked, originals never modified
+ * Core data model for Variation Capture.
+ * All monetary values stored in cents to avoid floating-point issues.
  */
 
 // ============================================================
@@ -15,35 +10,33 @@
 // ============================================================
 
 export enum VariationStatus {
-  /** Just captured on site — raw evidence, AI description pending or generated */
   CAPTURED = 'captured',
-  /** Formally submitted to client/head contractor */
   SUBMITTED = 'submitted',
-  /** Approved by client — awaiting payment */
   APPROVED = 'approved',
-  /** Client disputes the claim */
   DISPUTED = 'disputed',
-  /** Payment received */
   PAID = 'paid',
 }
 
-export enum InstructionSource {
-  SITE_INSTRUCTION = 'site_instruction',
-  RFI_RESPONSE = 'rfi_response',
-  VERBAL_DIRECTION = 'verbal_direction',
-  DRAWING_REVISION = 'drawing_revision',
-  LATENT_CONDITION = 'latent_condition',
-  EMAIL = 'email',
-  OTHER = 'other',
+export enum SyncStatus {
+  PENDING = 'pending',
+  SYNCED = 'synced',
+  FAILED = 'failed',
 }
 
-export enum SyncStatus {
-  /** Created or modified locally, not yet synced */
-  PENDING = 'pending',
-  /** Successfully synced to server */
-  SYNCED = 'synced',
-  /** Sync attempted but failed — will retry */
-  FAILED = 'failed',
+export enum InstructionSource {
+  VERBAL = 'verbal_direction',
+  SITE_INSTRUCTION = 'site_instruction',
+  RFI = 'rfi_response',
+  DRAWING = 'drawing_revision',
+  LATENT = 'latent_condition',
+  DELAY = 'delay_claim',
+}
+
+export enum ContractType {
+  LUMP_SUM = 'lump_sum',
+  SCHEDULE_OF_RATES = 'schedule_of_rates',
+  COST_PLUS = 'cost_plus',
+  DESIGN_AND_CONSTRUCT = 'design_and_construct',
 }
 
 // ============================================================
@@ -51,155 +44,115 @@ export enum SyncStatus {
 // ============================================================
 
 export interface Project {
-  id: string; // UUID, generated client-side
+  id: string;
   name: string;
   client: string;
-  reference: string; // e.g. "WT-2026-4B"
+  reference: string;
   address?: string;
   latitude?: number;
   longitude?: number;
-  contractType?: 'lump_sum' | 'schedule_of_rates' | 'cost_plus' | 'design_construct';
+  contractType?: ContractType;
   isActive: boolean;
-  createdAt: string; // ISO 8601
-  updatedAt: string;
-  syncStatus: SyncStatus;
-}
-
-export interface Variation {
-  id: string; // UUID
-  projectId: string;
-  sequenceNumber: number; // Auto-incremented per project (VAR-001, VAR-002...)
-  title: string;
-  status: VariationStatus;
-  estimatedValue: number; // cents, to avoid floating point
-  approvedValue?: number; // cents
-  instructionSource: InstructionSource;
-  instructionReference?: string; // e.g. "SI-2026-052"
-  instructedBy?: string; // Name of person who gave instruction
-  description?: string; // AI-generated or manually entered
-  aiDescription?: string; // The raw AI-generated description
-  notes?: string; // User's additional notes
-  capturedAt: string; // ISO 8601 — when evidence was captured on site
-  capturedBy: string; // User ID
-  submittedAt?: string;
-  approvedAt?: string;
-  latitude?: number;
-  longitude?: number;
-  locationAccuracy?: number; // metres
-  evidenceHash: string; // SHA-256 of combined evidence artifacts
   createdAt: string;
   updatedAt: string;
   syncStatus: SyncStatus;
+  remoteId?: string;
+}
+
+export interface Variation {
+  id: string;
+  projectId: string;
+  sequenceNumber: number;
+  title: string;
+  description: string;
+  instructionSource: InstructionSource;
+  instructedBy?: string;
+  referenceDoc?: string;
+  estimatedValue: number; // cents
+  status: VariationStatus;
+  capturedAt: string;
+  latitude?: number;
+  longitude?: number;
+  locationAccuracy?: number;
+  evidenceHash?: string;
+  notes?: string;
+  syncStatus: SyncStatus;
+  remoteId?: string;
+  // AI-generated fields
+  aiDescription?: string;
+  aiTranscription?: string;
 }
 
 export interface PhotoEvidence {
-  id: string; // UUID
+  id: string;
   variationId: string;
-  localUri: string; // file:// path on device
-  remoteUri?: string; // Cloud storage URL after sync
-  thumbnailUri?: string;
-  mimeType: string;
-  fileSizeBytes: number;
-  width: number;
-  height: number;
+  localUri: string;
+  remoteUri?: string;
+  sha256Hash: string;
   latitude?: number;
   longitude?: number;
+  width?: number;
+  height?: number;
   capturedAt: string;
-  sha256Hash: string; // Integrity hash of the original file
-  sortOrder: number;
   syncStatus: SyncStatus;
 }
 
 export interface VoiceNote {
-  id: string; // UUID
+  id: string;
   variationId: string;
   localUri: string;
   remoteUri?: string;
-  mimeType: string;
   durationSeconds: number;
-  fileSizeBytes: number;
-  transcription?: string; // Whisper transcription result
-  transcriptionConfidence?: number; // 0-1
+  transcription?: string;
+  transcriptionStatus: 'none' | 'pending' | 'complete' | 'failed';
+  sha256Hash?: string;
   capturedAt: string;
-  sha256Hash: string;
   syncStatus: SyncStatus;
 }
 
-/**
- * Immutable log of all status changes.
- * Append-only — records are never modified or deleted.
- */
 export interface StatusChange {
   id: string;
   variationId: string;
-  fromStatus: VariationStatus | null; // null for initial capture
+  fromStatus: VariationStatus | null;
   toStatus: VariationStatus;
-  changedBy: string;
   changedAt: string;
+  changedBy?: string;
   notes?: string;
 }
 
 // ============================================================
-// USER & AUTH
-// ============================================================
-
-export interface User {
-  id: string;
-  email: string;
-  displayName: string;
-  role: 'owner' | 'foreman' | 'admin' | 'viewer';
-  organisationId: string;
-}
-
-export interface Organisation {
-  id: string;
-  name: string;
-  abn?: string; // Australian Business Number
-  plan: 'starter' | 'pro' | 'enterprise';
-}
-
-// ============================================================
-// VIEW MODELS (derived for UI)
+// VIEW MODELS
 // ============================================================
 
 export interface ProjectSummary extends Project {
   variationCount: number;
-  totalValue: number; // cents
-  atRiskValue: number; // cents — captured + submitted + disputed
+  totalValue: number;
+  atRiskValue: number;
   lastCaptureAt?: string;
 }
 
-export interface VariationWithEvidence extends Variation {
+export interface VariationDetail extends Variation {
   photos: PhotoEvidence[];
-  voiceNote?: VoiceNote;
+  voiceNotes: VoiceNote[];
   statusHistory: StatusChange[];
+  projectName?: string;
 }
 
 // ============================================================
-// CAPTURE FLOW (in-progress state)
+// AUTH
 // ============================================================
 
-export interface CaptureInProgress {
-  projectId: string;
-  photos: {
-    uri: string;
-    width: number;
-    height: number;
-    latitude?: number;
-    longitude?: number;
-    capturedAt: string;
-  }[];
-  voiceNote?: {
-    uri: string;
-    durationSeconds: number;
-    capturedAt: string;
-  };
-  instructionSource: InstructionSource;
-  instructionReference?: string;
-  instructedBy?: string;
-  estimatedValue?: number; // cents
-  notes?: string;
-  startedAt: string;
-  latitude?: number;
-  longitude?: number;
+export interface UserProfile {
+  id: string;
+  email: string;
+  fullName?: string;
+  company?: string;
+  role?: string;
+  createdAt: string;
+}
+
+export interface AuthState {
+  user: UserProfile | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
 }

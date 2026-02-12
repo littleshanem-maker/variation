@@ -1,8 +1,7 @@
 /**
  * Root Layout
  *
- * Initialises the database, loads fonts, and sets up
- * the navigation stack for the entire app.
+ * Initialises the database, loads seed data, sets up navigation.
  */
 
 import { useEffect, useState } from 'react';
@@ -23,7 +22,7 @@ export default function RootLayout() {
         await seedDatabase();
         console.log('[App] Database initialised');
       } catch (error) {
-        console.error('[App] Initialisation failed:', error);
+        console.error('[App] Init failed:', error);
       } finally {
         setIsReady(true);
       }
@@ -41,7 +40,7 @@ export default function RootLayout() {
 
   return (
     <>
-      <StatusBar style="dark" backgroundColor={colors.bg} />
+      <StatusBar style="dark" />
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: colors.bg },
@@ -53,7 +52,6 @@ export default function RootLayout() {
           },
           headerShadowVisible: false,
           contentStyle: { backgroundColor: colors.bg },
-          animation: 'slide_from_right',
         }}
       >
         <Stack.Screen

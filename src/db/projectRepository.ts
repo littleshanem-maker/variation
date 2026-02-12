@@ -1,8 +1,5 @@
 /**
  * Project Repository
- *
- * Data access layer for projects. All reads/writes go through here.
- * Never import the database directly in screens.
  */
 
 import { getDatabase } from './schema';
@@ -122,10 +119,11 @@ export async function getProjectById(id: string): Promise<Project | null> {
   };
 }
 
-/**
- * Get the next sequence number for a variation in a project.
- * Thread-safe via SQLite transaction.
- */
+export async function deleteProject(id: string): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync('DELETE FROM projects WHERE id = ?', id);
+}
+
 export async function getNextVariationSequence(projectId: string): Promise<number> {
   const db = await getDatabase();
   const result = await db.getFirstAsync<{ max_seq: number | null }>(

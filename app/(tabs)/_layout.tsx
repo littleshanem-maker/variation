@@ -1,14 +1,10 @@
 /**
- * Tab Layout
- *
- * Bottom tab navigation. Kept minimal for MVP:
- * - Projects (home)
- * - Settings (placeholder)
+ * Tab Layout — Bottom navigation
  */
 
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, touchTargets } from '../../src/theme';
+import { colors } from '../../src/theme';
 
 export default function TabLayout() {
   return (

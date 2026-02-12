@@ -1,358 +1,222 @@
 /**
- * Variation Register Screen
+ * Project Detail — Variation Register
  *
- * Shows all variations for a project, filterable by status.
- * Displays total value and at-risk value prominently.
- * The "Capture Variation" button lives in the thumb zone.
+ * Shows all variations for a project with filtering, batch export, delete.
  */
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  ScrollView,
+  View, Text, FlatList, Pressable, StyleSheet, RefreshControl, Alert, Modal,
 } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack, useFocusEffect } from 'expo-router';
+import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { getProjectById } from '../../src/db/projectRepository';
-import { getVariationsForProject } from '../../src/db/variationRepository';
-import { Project, Variation, VariationStatus } from '../../src/types';
-import { colors, spacing, borderRadius, typography, touchTargets } from '../../src/theme';
-import { formatCurrency, formatDate, formatVariationId } from '../../src/utils/helpers';
+import { getProjectById, deleteProject } from '../../src/db/projectRepository';
+import { getVariationsForProject, getVariationDetail } from '../../src/db/variationRepository';
+import { Project, Variation, VariationStatus, VariationDetail } from '../../src/types/domain';
+import { colors, spacing, borderRadius, typography, touchTargets, getStatusColor, getStatusLabel } from '../../src/theme';
+import { formatCurrency, timeAgo, formatVariationId } from '../../src/utils/helpers';
+import { exportProjectBatchPDF } from '../../src/services/pdfExport';
 
-const STATUS_CONFIG: Record<VariationStatus, { color: string; bg: string; label: string }> = {
-  [VariationStatus.CAPTURED]: { color: colors.status.captured, bg: colors.accentLight, label: 'Captured' },
-  [VariationStatus.SUBMITTED]: { color: colors.status.submitted, bg: colors.infoLight, label: 'Submitted' },
-  [VariationStatus.APPROVED]: { color: colors.status.approved, bg: colors.successLight, label: 'Approved' },
-  [VariationStatus.DISPUTED]: { color: colors.status.disputed, bg: colors.dangerLight, label: 'Disputed' },
-  [VariationStatus.PAID]: { color: colors.status.paid, bg: colors.surfaceAlt, label: 'Paid' },
-};
+const STATUS_FILTERS = [
+  { value: undefined, label: 'All' },
+  { value: VariationStatus.CAPTURED, label: 'Captured' },
+  { value: VariationStatus.SUBMITTED, label: 'Submitted' },
+  { value: VariationStatus.APPROVED, label: 'Approved' },
+  { value: VariationStatus.DISPUTED, label: 'Disputed' },
+  { value: VariationStatus.PAID, label: 'Paid' },
+];
 
-export default function VariationRegisterScreen() {
+export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [project, setProject] = useState<Project | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
-  const [filter, setFilter] = useState<'all' | VariationStatus>('all');
+  const [statusFilter, setStatusFilter] = useState<VariationStatus | undefined>();
+  const [refreshing, setRefreshing] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
-  const loadData = useCallback(async () => {
+  const load = useCallback(async () => {
     if (!id) return;
-    const [proj, vars] = await Promise.all([
-      getProjectById(id),
-      getVariationsForProject(id),
-    ]);
-    setProject(proj);
-    setVariations(vars);
-  }, [id]);
+    const p = await getProjectById(id);
+    setProject(p);
+    const v = await getVariationsForProject(id, statusFilter);
+    setVariations(v);
+  }, [id, statusFilter]);
 
-  useFocusEffect(useCallback(() => { loadData(); }, [loadData]));
+  useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  const filtered = filter === 'all'
-    ? variations
-    : variations.filter((v) => v.status === filter);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await load();
+    setRefreshing(false);
+  };
 
-  const totalValue = variations.reduce((sum, v) => sum + v.estimatedValue, 0);
-  const atRiskValue = variations
-    .filter((v) => [VariationStatus.CAPTURED, VariationStatus.SUBMITTED, VariationStatus.DISPUTED].includes(v.status))
-    .reduce((sum, v) => sum + v.estimatedValue, 0);
+  const handleBatchExport = async () => {
+    if (variations.length === 0) {
+      Alert.alert('No Variations', 'Nothing to export.');
+      return;
+    }
+    setExporting(true);
+    try {
+      const details: VariationDetail[] = [];
+      for (const v of variations) {
+        const detail = await getVariationDetail(v.id);
+        if (detail) details.push(detail);
+      }
+      await exportProjectBatchPDF(project?.name || 'Project', details);
+    } catch (error) {
+      Alert.alert('Error', 'Batch export failed.');
+    } finally {
+      setExporting(false);
+    }
+  };
 
-  const filterOptions: { key: 'all' | VariationStatus; label: string; count: number }[] = [
-    { key: 'all', label: 'All', count: variations.length },
-    { key: VariationStatus.CAPTURED, label: 'Captured', count: variations.filter((v) => v.status === VariationStatus.CAPTURED).length },
-    { key: VariationStatus.SUBMITTED, label: 'Submitted', count: variations.filter((v) => v.status === VariationStatus.SUBMITTED).length },
-    { key: VariationStatus.DISPUTED, label: 'Disputed', count: variations.filter((v) => v.status === VariationStatus.DISPUTED).length },
-  ];
-
-  const renderVariation = ({ item }: { item: Variation }) => {
-    const config = STATUS_CONFIG[item.status];
-    return (
-      <Pressable
-        style={({ pressed }) => [
-          styles.variationCard,
-          { borderLeftColor: config.color },
-          pressed && styles.variationCardPressed,
-        ]}
-        onPress={() => router.push(`/variation/${item.id}`)}
-      >
-        <View style={styles.variationHeader}>
-          <View style={styles.variationInfo}>
-            <View style={styles.variationMeta}>
-              <Text style={styles.variationRef}>
-                {formatVariationId(item.sequenceNumber)}
-              </Text>
-              <View style={[styles.statusBadge, { backgroundColor: config.bg }]}>
-                <View style={[styles.statusDot, { backgroundColor: config.color }]} />
-                <Text style={[styles.statusText, { color: config.color }]}>
-                  {config.label}
-                </Text>
-              </View>
-            </View>
-            <Text style={styles.variationTitle}>{item.title}</Text>
-          </View>
-          <Text style={styles.variationValue}>
-            {formatCurrency(item.estimatedValue)}
-          </Text>
-        </View>
-        <View style={styles.variationFooter}>
-          <Text style={styles.variationDate}>{formatDate(item.capturedAt)}</Text>
-        </View>
-      </Pressable>
+  const handleDeleteProject = () => {
+    Alert.alert(
+      'Delete Project',
+      `Delete "${project?.name}" and all its variations? This cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await deleteProject(id!);
+            router.back();
+          },
+        },
+      ],
     );
   };
 
-  if (!project) return null;
+  const totalValue = variations.reduce((s, v) => s + v.estimatedValue, 0);
+
+  const renderVariation = ({ item }: { item: Variation }) => (
+    <Pressable
+      style={({ pressed }) => [styles.variationCard, pressed && styles.variationCardPressed]}
+      onPress={() => router.push(`/variation/${item.id}`)}
+    >
+      <View style={styles.variationHeader}>
+        <Text style={styles.variationSeq}>{formatVariationId(item.sequenceNumber)}</Text>
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+          <Text style={styles.statusText}>{getStatusLabel(item.status)}</Text>
+        </View>
+      </View>
+      <Text style={styles.variationTitle} numberOfLines={2}>{item.title}</Text>
+      <View style={styles.variationFooter}>
+        <Text style={styles.variationValue}>{formatCurrency(item.estimatedValue)}</Text>
+        <Text style={styles.variationTime}>{timeAgo(item.capturedAt)}</Text>
+      </View>
+    </Pressable>
+  );
 
   return (
     <View style={styles.container}>
-      <Stack.Screen
-        options={{
-          title: project.name,
-          headerBackTitle: 'Projects',
-        }}
-      />
-
       {/* Summary Bar */}
       <View style={styles.summaryBar}>
-        <View style={[styles.summaryItem, styles.summaryItemBorder]}>
+        <View>
           <Text style={styles.summaryLabel}>TOTAL VALUE</Text>
           <Text style={styles.summaryValue}>{formatCurrency(totalValue)}</Text>
         </View>
-        <View style={styles.summaryItem}>
-          <Text style={styles.summaryLabel}>AT RISK</Text>
-          <Text style={[styles.summaryValue, styles.summaryDanger]}>
-            {formatCurrency(atRiskValue)}
-          </Text>
+        <View style={styles.summaryActions}>
+          <Pressable style={styles.iconButton} onPress={handleBatchExport} disabled={exporting}>
+            <Ionicons name="document-text-outline" size={22} color={colors.accent} />
+          </Pressable>
+          <Pressable style={styles.iconButton} onPress={() => setShowMenu(true)}>
+            <Ionicons name="ellipsis-vertical" size={22} color={colors.textSecondary} />
+          </Pressable>
         </View>
       </View>
 
-      {/* Filter Tabs */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterContainer}
-        contentContainerStyle={styles.filterContent}
-      >
-        {filterOptions.map((f) => (
+      {/* Status Filter */}
+      <View style={styles.filterRow}>
+        {STATUS_FILTERS.map((f) => (
           <Pressable
-            key={f.key}
-            style={[
-              styles.filterTab,
-              filter === f.key && styles.filterTabActive,
-            ]}
-            onPress={() => setFilter(f.key)}
+            key={f.label}
+            style={[styles.filterChip, statusFilter === f.value && styles.filterChipActive]}
+            onPress={() => setStatusFilter(f.value)}
           >
-            <Text
-              style={[
-                styles.filterTabText,
-                filter === f.key && styles.filterTabTextActive,
-              ]}
-            >
-              {f.label} ({f.count})
+            <Text style={[styles.filterChipText, statusFilter === f.value && styles.filterChipTextActive]}>
+              {f.label}
             </Text>
           </Pressable>
         ))}
-      </ScrollView>
+      </View>
 
       {/* Variation List */}
       <FlatList
-        data={filtered}
+        data={variations}
         renderItem={renderVariation}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Ionicons name="document-text-outline" size={40} color={colors.textMuted} />
-            <Text style={styles.emptyText}>No variations yet</Text>
+            <Ionicons name="layers-outline" size={48} color={colors.textMuted} />
+            <Text style={styles.emptyText}>No variations{statusFilter ? ` with status "${getStatusLabel(statusFilter)}"` : ''}</Text>
           </View>
         }
       />
 
-      {/* Capture Button — thumb zone */}
-      <View style={styles.bottomAction}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.captureButton,
-            pressed && styles.captureButtonPressed,
-          ]}
-          onPress={() => router.push(`/capture/${project.id}`)}
-        >
-          <Ionicons name="camera" size={24} color={colors.textInverse} />
-          <Text style={styles.captureButtonText}>Capture Variation</Text>
+      {/* FAB */}
+      <Pressable
+        style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
+        onPress={() => router.push(`/capture/${id}`)}
+      >
+        <Ionicons name="camera" size={28} color={colors.textInverse} />
+      </Pressable>
+
+      {/* Menu Modal */}
+      <Modal visible={showMenu} transparent animationType="fade">
+        <Pressable style={styles.modalOverlay} onPress={() => setShowMenu(false)}>
+          <View style={styles.menuCard}>
+            <Pressable style={styles.menuItem} onPress={() => { setShowMenu(false); handleBatchExport(); }}>
+              <Ionicons name="download-outline" size={20} color={colors.text} />
+              <Text style={styles.menuItemText}>{exporting ? 'Exporting...' : 'Export All as PDF'}</Text>
+            </Pressable>
+            <View style={styles.menuDivider} />
+            <Pressable style={styles.menuItem} onPress={() => { setShowMenu(false); handleDeleteProject(); }}>
+              <Ionicons name="trash-outline" size={20} color={colors.danger} />
+              <Text style={[styles.menuItemText, { color: colors.danger }]}>Delete Project</Text>
+            </Pressable>
+          </View>
         </Pressable>
-      </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  summaryBar: {
-    flexDirection: 'row',
-    backgroundColor: colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  summaryItem: {
-    flex: 1,
-    padding: spacing.md,
-  },
-  summaryItemBorder: {
-    borderRightWidth: 1,
-    borderRightColor: colors.border,
-  },
-  summaryLabel: {
-    ...typography.overline,
-    color: colors.textMuted,
-  },
-  summaryValue: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: colors.text,
-    marginTop: 2,
-  },
-  summaryDanger: {
-    color: colors.danger,
-  },
-  filterContainer: {
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    backgroundColor: colors.bg,
-    maxHeight: 44,
-  },
-  filterContent: {
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    gap: spacing.xs,
-  },
-  filterTab: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs + 1,
-    borderRadius: borderRadius.sm,
-  },
-  filterTabActive: {
-    backgroundColor: colors.text,
-  },
-  filterTabText: {
-    ...typography.labelSmall,
-    color: colors.textMuted,
-  },
-  filterTabTextActive: {
-    color: colors.textInverse,
-  },
-  list: {
-    padding: spacing.lg,
-    paddingBottom: 100,
-  },
-  variationCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderLeftWidth: 4,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  variationCardPressed: {
-    backgroundColor: colors.surfaceAlt,
-  },
-  variationHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  variationInfo: {
-    flex: 1,
-    marginRight: spacing.md,
-  },
-  variationMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginBottom: spacing.xs,
-  },
-  variationRef: {
-    ...typography.overline,
-    color: colors.textMuted,
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: borderRadius.sm,
-  },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  statusText: {
-    fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.3,
-  },
-  variationTitle: {
-    ...typography.labelMedium,
-    color: colors.text,
-    lineHeight: 19,
-  },
-  variationValue: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: colors.text,
-  },
-  variationFooter: {
-    flexDirection: 'row',
-    gap: spacing.md,
-    marginTop: spacing.sm,
-  },
-  variationDate: {
-    ...typography.caption,
-    color: colors.textMuted,
-  },
-  empty: {
-    alignItems: 'center',
-    paddingTop: 60,
-  },
-  emptyText: {
-    ...typography.bodyMedium,
-    color: colors.textMuted,
-    marginTop: spacing.sm,
-  },
-  bottomAction: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: spacing.lg,
-    paddingBottom: spacing.xl,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    backgroundColor: colors.bg,
-  },
-  captureButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.accent,
-    borderRadius: borderRadius.lg,
-    paddingVertical: 16,
-    minHeight: touchTargets.buttonLarge,
-  },
-  captureButtonPressed: {
-    backgroundColor: colors.accentHover,
-  },
-  captureButtonText: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: colors.textInverse,
-  },
+  container: { flex: 1, backgroundColor: colors.bg },
+  summaryBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: spacing.lg, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
+  summaryLabel: { ...typography.overline, color: colors.textMuted },
+  summaryValue: { fontSize: 22, fontWeight: '800', color: colors.text, marginTop: 2 },
+  summaryActions: { flexDirection: 'row', gap: spacing.sm },
+  iconButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.surfaceAlt, alignItems: 'center' as const, justifyContent: 'center' as const },
+  filterRow: { flexDirection: 'row', padding: spacing.md, paddingHorizontal: spacing.lg, gap: spacing.sm, flexWrap: 'wrap' },
+  filterChip: { paddingHorizontal: spacing.md, paddingVertical: 6, borderRadius: borderRadius.full, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
+  filterChipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
+  filterChipText: { ...typography.caption, color: colors.textSecondary },
+  filterChipTextActive: { color: colors.textInverse, fontWeight: '700' },
+  list: { padding: spacing.lg, paddingBottom: 100 },
+  variationCard: { backgroundColor: colors.surface, borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.lg, marginBottom: spacing.sm },
+  variationCardPressed: { borderColor: colors.accent },
+  variationHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
+  variationSeq: { ...typography.overline, color: colors.accent },
+  statusBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4 },
+  statusText: { fontSize: 10, fontWeight: '700', color: colors.textInverse, textTransform: 'uppercase' as const },
+  variationTitle: { ...typography.labelMedium, color: colors.text },
+  variationFooter: { flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.sm },
+  variationValue: { ...typography.labelMedium, color: colors.text, fontWeight: '800' },
+  variationTime: { ...typography.caption, color: colors.textMuted },
+  empty: { alignItems: 'center' as const, paddingTop: 80 },
+  emptyText: { ...typography.bodyMedium, color: colors.textMuted, marginTop: spacing.md },
+  fab: { position: 'absolute' as const, bottom: 24, right: 24, width: touchTargets.fab, height: touchTargets.fab, borderRadius: touchTargets.fab / 2, backgroundColor: colors.accent, alignItems: 'center' as const, justifyContent: 'center' as const, elevation: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
+  fabPressed: { backgroundColor: colors.accentHover },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
+  menuCard: { backgroundColor: colors.surface, borderRadius: borderRadius.lg, width: 280, overflow: 'hidden' as const },
+  menuItem: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.lg },
+  menuItemText: { ...typography.labelMedium, color: colors.text },
+  menuDivider: { height: 1, backgroundColor: colors.border },
 });

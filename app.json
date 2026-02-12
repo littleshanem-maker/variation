@@ -2,12 +2,11 @@
   "expo": {
     "name": "Variation Capture",
     "slug": "variation-capture",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "scheme": "variationcapture",
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -17,10 +16,10 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.pipelineconsulting.variationcapture",
       "infoPlist": {
-        "NSCameraUsageDescription": "Variation Capture needs camera access to photograph scope changes on site.",
-        "NSMicrophoneUsageDescription": "Variation Capture needs microphone access to record voice notes describing scope changes.",
-        "NSLocationWhenInUseUsageDescription": "Variation Capture records your location to tag variation evidence with GPS coordinates.",
-        "NSPhotoLibraryUsageDescription": "Variation Capture needs photo library access to attach existing photos to variations."
+        "NSCameraUsageDescription": "Variation Capture needs camera access to photograph site evidence.",
+        "NSMicrophoneUsageDescription": "Variation Capture needs microphone access to record voice memos.",
+        "NSLocationWhenInUseUsageDescription": "Variation Capture needs location access to GPS-stamp evidence.",
+        "NSPhotoLibraryUsageDescription": "Variation Capture needs photo library access to attach existing photos as evidence."
       }
     },
     "android": {
@@ -33,18 +32,47 @@
         "CAMERA",
         "RECORD_AUDIO",
         "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION"
-      ],
-      "edgeToEdgeEnabled": true
+        "ACCESS_COARSE_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
     },
     "web": {
       "bundler": "metro",
+      "output": "static",
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router",
-      ["expo-camera", { "cameraPermission": "Variation Capture needs camera access to photograph scope changes." }],
-      ["expo-location", { "locationWhenInUsePermission": "Variation Capture records GPS coordinates for evidence tagging." }]
-    ]
+      "expo-sqlite",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Variation Capture to access your camera to photograph site evidence."
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow Variation Capture to access your microphone to record voice memos."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow Variation Capture to access your location to GPS-stamp evidence."
+        }
+      ]
+    ],
+    "scheme": "variationcapture",
+    "extra": {
+      "eas": {
+        "projectId": "your-eas-project-id"
+      },
+      "supabaseUrl": "",
+      "supabaseAnonKey": "",
+      "openaiApiKey": "",
+      "anthropicApiKey": ""
+    }
   }
 }

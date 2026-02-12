@@ -1,161 +1,79 @@
 /**
  * Variation Repository
  *
- * Data access for variations and their evidence artifacts.
- * The core of the offline-first data layer.
+ * Full CRUD operations, status lifecycle, evidence management.
  */
 
 import { getDatabase } from './schema';
 import {
   Variation,
-  VariationWithEvidence,
+  VariationDetail,
   VariationStatus,
   PhotoEvidence,
   VoiceNote,
   StatusChange,
   SyncStatus,
-  CaptureInProgress,
   InstructionSource,
 } from '../types/domain';
 import { generateId, nowISO } from '../utils/helpers';
-import { getNextVariationSequence } from './projectRepository';
-import { computeEvidenceHash } from '../services/evidenceChain';
 
 // ============================================================
-// CREATE — from capture flow
+// CREATE
 // ============================================================
 
-/**
- * Save a completed capture as a new variation.
- * This is the main write operation — called when the user taps "Save Variation".
- *
- * Runs in a single transaction to ensure atomicity.
- */
-export async function saveVariation(
-  capture: CaptureInProgress,
-  userId: string,
-): Promise<Variation> {
+export interface CreateVariationInput {
+  projectId: string;
+  sequenceNumber: number;
+  title: string;
+  description: string;
+  instructionSource: InstructionSource;
+  instructedBy?: string;
+  referenceDoc?: string;
+  estimatedValue: number;
+  latitude?: number;
+  longitude?: number;
+  locationAccuracy?: number;
+  notes?: string;
+}
+
+export async function createVariation(input: CreateVariationInput): Promise<Variation> {
   const db = await getDatabase();
   const now = nowISO();
-  const variationId = generateId();
-  const sequenceNumber = await getNextVariationSequence(capture.projectId);
+  const id = generateId();
 
-  // Compute evidence hash from all photo hashes + voice hash
-  const photoHashes: string[] = []; // Will be populated below
-  let voiceHash: string | undefined;
+  const variation: Variation = {
+    id,
+    projectId: input.projectId,
+    sequenceNumber: input.sequenceNumber,
+    title: input.title,
+    description: input.description,
+    instructionSource: input.instructionSource,
+    instructedBy: input.instructedBy,
+    referenceDoc: input.referenceDoc,
+    estimatedValue: input.estimatedValue,
+    status: VariationStatus.CAPTURED,
+    capturedAt: now,
+    latitude: input.latitude,
+    longitude: input.longitude,
+    locationAccuracy: input.locationAccuracy,
+    notes: input.notes,
+    syncStatus: SyncStatus.PENDING,
+  };
 
-  // Build title from instruction source + reference
-  const sourceLabel = formatInstructionSource(capture.instructionSource);
-  const title = capture.instructionReference
-    ? `${sourceLabel} — ${capture.instructionReference}`
-    : sourceLabel;
+  await db.runAsync(
+    `INSERT INTO variations (id, project_id, sequence_number, title, description, instruction_source, instructed_by, reference_doc, estimated_value, status, captured_at, latitude, longitude, location_accuracy, notes, sync_status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    id, input.projectId, input.sequenceNumber, input.title, input.description,
+    input.instructionSource, input.instructedBy ?? null, input.referenceDoc ?? null,
+    input.estimatedValue, VariationStatus.CAPTURED, now,
+    input.latitude ?? null, input.longitude ?? null, input.locationAccuracy ?? null,
+    input.notes ?? null, SyncStatus.PENDING,
+  );
 
-  await db.withTransactionAsync(async () => {
-    // 1. Insert variation
-    await db.runAsync(
-      `INSERT INTO variations (
-        id, project_id, sequence_number, title, status,
-        estimated_value, instruction_source, instruction_reference,
-        instructed_by, notes, captured_at, captured_by,
-        latitude, longitude, evidence_hash,
-        created_at, updated_at, sync_status
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      variationId,
-      capture.projectId,
-      sequenceNumber,
-      title,
-      VariationStatus.CAPTURED,
-      capture.estimatedValue ?? 0,
-      capture.instructionSource,
-      capture.instructionReference ?? null,
-      capture.instructedBy ?? null,
-      capture.notes ?? null,
-      capture.startedAt,
-      userId,
-      capture.latitude ?? null,
-      capture.longitude ?? null,
-      'pending', // evidence hash computed after artifacts saved
-      now,
-      now,
-      SyncStatus.PENDING,
-    );
+  // Record initial status
+  await addStatusChange(id, null, VariationStatus.CAPTURED);
 
-    // 2. Insert photos
-    for (let i = 0; i < capture.photos.length; i++) {
-      const photo = capture.photos[i];
-      const photoId = generateId();
-      // Hash will be computed by the evidence service
-      const hash = await computeEvidenceHash(photo.uri);
-      photoHashes.push(hash);
-
-      await db.runAsync(
-        `INSERT INTO photo_evidence (
-          id, variation_id, local_uri, mime_type, file_size_bytes,
-          width, height, latitude, longitude, captured_at,
-          sha256_hash, sort_order, sync_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        photoId,
-        variationId,
-        photo.uri,
-        'image/jpeg',
-        0, // Will be populated by file system check
-        photo.width,
-        photo.height,
-        photo.latitude ?? null,
-        photo.longitude ?? null,
-        photo.capturedAt,
-        hash,
-        i,
-        SyncStatus.PENDING,
-      );
-    }
-
-    // 3. Insert voice note if present
-    if (capture.voiceNote) {
-      const voiceId = generateId();
-      voiceHash = await computeEvidenceHash(capture.voiceNote.uri);
-
-      await db.runAsync(
-        `INSERT INTO voice_notes (
-          id, variation_id, local_uri, mime_type, duration_seconds,
-          file_size_bytes, captured_at, sha256_hash, sync_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        voiceId,
-        variationId,
-        capture.voiceNote.uri,
-        'audio/m4a',
-        capture.voiceNote.durationSeconds,
-        0,
-        capture.voiceNote.capturedAt,
-        voiceHash,
-        SyncStatus.PENDING,
-      );
-    }
-
-    // 4. Record initial status change
-    await db.runAsync(
-      `INSERT INTO status_changes (id, variation_id, from_status, to_status, changed_by, changed_at)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      generateId(),
-      variationId,
-      null,
-      VariationStatus.CAPTURED,
-      userId,
-      now,
-    );
-
-    // 5. Update evidence hash on the variation
-    const allHashes = [...photoHashes, voiceHash].filter(Boolean) as string[];
-    const combinedHash = await computeCombinedHash(allHashes);
-    await db.runAsync(
-      'UPDATE variations SET evidence_hash = ? WHERE id = ?',
-      combinedHash,
-      variationId,
-    );
-  });
-
-  // Return the saved variation
-  return (await getVariationById(variationId))!;
+  return variation;
 }
 
 // ============================================================
@@ -167,7 +85,6 @@ export async function getVariationsForProject(
   statusFilter?: VariationStatus,
 ): Promise<Variation[]> {
   const db = await getDatabase();
-
   let query = 'SELECT * FROM variations WHERE project_id = ?';
   const params: any[] = [projectId];
 
@@ -175,35 +92,29 @@ export async function getVariationsForProject(
     query += ' AND status = ?';
     params.push(statusFilter);
   }
-
-  query += ' ORDER BY captured_at DESC';
+  query += ' ORDER BY sequence_number DESC';
 
   const rows = await db.getAllAsync<any>(query, ...params);
-  return rows.map(mapRowToVariation);
+  return rows.map(mapVariationRow);
 }
 
-export async function getVariationById(id: string): Promise<Variation | null> {
+export async function getVariationDetail(id: string): Promise<VariationDetail | null> {
   const db = await getDatabase();
   const row = await db.getFirstAsync<any>(
-    'SELECT * FROM variations WHERE id = ?',
+    `SELECT v.*, p.name as project_name FROM variations v
+     LEFT JOIN projects p ON p.id = v.project_id
+     WHERE v.id = ?`,
     id,
   );
-  return row ? mapRowToVariation(row) : null;
-}
-
-export async function getVariationWithEvidence(id: string): Promise<VariationWithEvidence | null> {
-  const variation = await getVariationById(id);
-  if (!variation) return null;
-
-  const db = await getDatabase();
+  if (!row) return null;
 
   const photos = await db.getAllAsync<any>(
-    'SELECT * FROM photo_evidence WHERE variation_id = ? ORDER BY sort_order',
+    'SELECT * FROM photo_evidence WHERE variation_id = ? ORDER BY captured_at',
     id,
   );
 
-  const voiceRow = await db.getFirstAsync<any>(
-    'SELECT * FROM voice_notes WHERE variation_id = ?',
+  const voiceNotes = await db.getAllAsync<any>(
+    'SELECT * FROM voice_notes WHERE variation_id = ? ORDER BY captured_at',
     id,
   );
 
@@ -213,10 +124,11 @@ export async function getVariationWithEvidence(id: string): Promise<VariationWit
   );
 
   return {
-    ...variation,
-    photos: photos.map(mapRowToPhoto),
-    voiceNote: voiceRow ? mapRowToVoiceNote(voiceRow) : undefined,
-    statusHistory: statusHistory.map(mapRowToStatusChange),
+    ...mapVariationRow(row),
+    projectName: row.project_name,
+    photos: photos.map(mapPhotoRow),
+    voiceNotes: voiceNotes.map(mapVoiceRow),
+    statusHistory: statusHistory.map(mapStatusRow),
   };
 }
 
@@ -224,170 +136,218 @@ export async function getVariationWithEvidence(id: string): Promise<VariationWit
 // UPDATE
 // ============================================================
 
+export interface UpdateVariationInput {
+  estimatedValue?: number;
+  referenceDoc?: string;
+  description?: string;
+  notes?: string;
+  instructedBy?: string;
+  aiDescription?: string;
+  aiTranscription?: string;
+}
+
+export async function updateVariation(id: string, input: UpdateVariationInput): Promise<void> {
+  const db = await getDatabase();
+  const sets: string[] = [];
+  const vals: any[] = [];
+
+  if (input.estimatedValue !== undefined) { sets.push('estimated_value = ?'); vals.push(input.estimatedValue); }
+  if (input.referenceDoc !== undefined) { sets.push('reference_doc = ?'); vals.push(input.referenceDoc); }
+  if (input.description !== undefined) { sets.push('description = ?'); vals.push(input.description); }
+  if (input.notes !== undefined) { sets.push('notes = ?'); vals.push(input.notes); }
+  if (input.instructedBy !== undefined) { sets.push('instructed_by = ?'); vals.push(input.instructedBy); }
+  if (input.aiDescription !== undefined) { sets.push('ai_description = ?'); vals.push(input.aiDescription); }
+  if (input.aiTranscription !== undefined) { sets.push('ai_transcription = ?'); vals.push(input.aiTranscription); }
+
+  if (sets.length === 0) return;
+  sets.push("sync_status = 'pending'");
+  vals.push(id);
+
+  await db.runAsync(`UPDATE variations SET ${sets.join(', ')} WHERE id = ?`, ...vals);
+}
+
 export async function updateVariationStatus(
-  variationId: string,
+  id: string,
   newStatus: VariationStatus,
-  userId: string,
   notes?: string,
 ): Promise<void> {
   const db = await getDatabase();
-  const now = nowISO();
+  const current = await db.getFirstAsync<{ status: string }>('SELECT status FROM variations WHERE id = ?', id);
+  if (!current) throw new Error('Variation not found');
 
-  await db.withTransactionAsync(async () => {
-    const current = await db.getFirstAsync<{ status: string }>(
-      'SELECT status FROM variations WHERE id = ?',
-      variationId,
-    );
+  await db.runAsync(
+    "UPDATE variations SET status = ?, sync_status = 'pending' WHERE id = ?",
+    newStatus, id,
+  );
 
-    await db.runAsync(
-      'UPDATE variations SET status = ?, updated_at = ?, sync_status = ? WHERE id = ?',
-      newStatus,
-      now,
-      SyncStatus.PENDING,
-      variationId,
-    );
-
-    await db.runAsync(
-      `INSERT INTO status_changes (id, variation_id, from_status, to_status, changed_by, changed_at, notes)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      generateId(),
-      variationId,
-      current?.status ?? null,
-      newStatus,
-      userId,
-      now,
-      notes ?? null,
-    );
-  });
+  await addStatusChange(id, current.status as VariationStatus, newStatus, notes);
 }
 
-export async function updateVariationDescription(
-  variationId: string,
-  description: string,
-  isAiGenerated: boolean,
+export async function updateEvidenceHash(variationId: string, hash: string): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync('UPDATE variations SET evidence_hash = ? WHERE id = ?', hash, variationId);
+}
+
+// ============================================================
+// DELETE
+// ============================================================
+
+export async function deleteVariation(id: string): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync('DELETE FROM variations WHERE id = ?', id);
+}
+
+// ============================================================
+// EVIDENCE
+// ============================================================
+
+export async function addPhotoEvidence(photo: Omit<PhotoEvidence, 'syncStatus'>): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync(
+    `INSERT INTO photo_evidence (id, variation_id, local_uri, sha256_hash, latitude, longitude, width, height, captured_at, sync_status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    photo.id, photo.variationId, photo.localUri, photo.sha256Hash,
+    photo.latitude ?? null, photo.longitude ?? null,
+    photo.width ?? null, photo.height ?? null,
+    photo.capturedAt, SyncStatus.PENDING,
+  );
+}
+
+export async function addVoiceNote(note: Omit<VoiceNote, 'syncStatus'>): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync(
+    `INSERT INTO voice_notes (id, variation_id, local_uri, duration_seconds, transcription, transcription_status, sha256_hash, captured_at, sync_status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    note.id, note.variationId, note.localUri, note.durationSeconds,
+    note.transcription ?? null, note.transcriptionStatus,
+    note.sha256Hash ?? null, note.capturedAt, SyncStatus.PENDING,
+  );
+}
+
+export async function updateVoiceTranscription(
+  voiceNoteId: string,
+  transcription: string,
+  status: 'complete' | 'failed',
 ): Promise<void> {
   const db = await getDatabase();
-  const now = nowISO();
+  await db.runAsync(
+    'UPDATE voice_notes SET transcription = ?, transcription_status = ? WHERE id = ?',
+    transcription, status, voiceNoteId,
+  );
+}
 
-  if (isAiGenerated) {
-    await db.runAsync(
-      'UPDATE variations SET ai_description = ?, description = ?, updated_at = ?, sync_status = ? WHERE id = ?',
-      description,
-      description,
-      now,
-      SyncStatus.PENDING,
-      variationId,
-    );
-  } else {
-    await db.runAsync(
-      'UPDATE variations SET description = ?, updated_at = ?, sync_status = ? WHERE id = ?',
-      description,
-      now,
-      SyncStatus.PENDING,
-      variationId,
-    );
-  }
+export async function getPhotosForVariation(variationId: string): Promise<PhotoEvidence[]> {
+  const db = await getDatabase();
+  const rows = await db.getAllAsync<any>(
+    'SELECT * FROM photo_evidence WHERE variation_id = ? ORDER BY captured_at',
+    variationId,
+  );
+  return rows.map(mapPhotoRow);
 }
 
 // ============================================================
-// HELPERS
+// STATUS CHANGES
 // ============================================================
 
-function mapRowToVariation(row: any): Variation {
+async function addStatusChange(
+  variationId: string,
+  fromStatus: VariationStatus | null,
+  toStatus: VariationStatus,
+  notes?: string,
+): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync(
+    `INSERT INTO status_changes (id, variation_id, from_status, to_status, changed_at, notes)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    generateId(), variationId, fromStatus, toStatus, nowISO(), notes ?? null,
+  );
+}
+
+// ============================================================
+// SYNC HELPERS
+// ============================================================
+
+export async function getPendingSyncCount(): Promise<number> {
+  const db = await getDatabase();
+  const tables = ['projects', 'variations', 'photo_evidence', 'voice_notes'];
+  let total = 0;
+  for (const table of tables) {
+    const result = await db.getFirstAsync<{ count: number }>(
+      `SELECT COUNT(*) as count FROM ${table} WHERE sync_status = 'pending'`
+    );
+    total += result?.count ?? 0;
+  }
+  return total;
+}
+
+// ============================================================
+// ROW MAPPERS
+// ============================================================
+
+function mapVariationRow(row: any): Variation {
   return {
     id: row.id,
     projectId: row.project_id,
     sequenceNumber: row.sequence_number,
     title: row.title,
-    status: row.status as VariationStatus,
-    estimatedValue: row.estimated_value,
-    approvedValue: row.approved_value ?? undefined,
+    description: row.description,
     instructionSource: row.instruction_source as InstructionSource,
-    instructionReference: row.instruction_reference ?? undefined,
     instructedBy: row.instructed_by ?? undefined,
-    description: row.description ?? undefined,
-    aiDescription: row.ai_description ?? undefined,
-    notes: row.notes ?? undefined,
+    referenceDoc: row.reference_doc ?? undefined,
+    estimatedValue: row.estimated_value,
+    status: row.status as VariationStatus,
     capturedAt: row.captured_at,
-    capturedBy: row.captured_by,
-    submittedAt: row.submitted_at ?? undefined,
-    approvedAt: row.approved_at ?? undefined,
     latitude: row.latitude ?? undefined,
     longitude: row.longitude ?? undefined,
     locationAccuracy: row.location_accuracy ?? undefined,
-    evidenceHash: row.evidence_hash,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
+    evidenceHash: row.evidence_hash ?? undefined,
+    notes: row.notes ?? undefined,
     syncStatus: row.sync_status as SyncStatus,
+    remoteId: row.remote_id ?? undefined,
+    aiDescription: row.ai_description ?? undefined,
+    aiTranscription: row.ai_transcription ?? undefined,
   };
 }
 
-function mapRowToPhoto(row: any): PhotoEvidence {
+function mapPhotoRow(row: any): PhotoEvidence {
   return {
     id: row.id,
     variationId: row.variation_id,
     localUri: row.local_uri,
     remoteUri: row.remote_uri ?? undefined,
-    thumbnailUri: row.thumbnail_uri ?? undefined,
-    mimeType: row.mime_type,
-    fileSizeBytes: row.file_size_bytes,
-    width: row.width,
-    height: row.height,
+    sha256Hash: row.sha256_hash,
     latitude: row.latitude ?? undefined,
     longitude: row.longitude ?? undefined,
+    width: row.width ?? undefined,
+    height: row.height ?? undefined,
     capturedAt: row.captured_at,
-    sha256Hash: row.sha256_hash,
-    sortOrder: row.sort_order,
     syncStatus: row.sync_status as SyncStatus,
   };
 }
 
-function mapRowToVoiceNote(row: any): VoiceNote {
+function mapVoiceRow(row: any): VoiceNote {
   return {
     id: row.id,
     variationId: row.variation_id,
     localUri: row.local_uri,
     remoteUri: row.remote_uri ?? undefined,
-    mimeType: row.mime_type,
     durationSeconds: row.duration_seconds,
-    fileSizeBytes: row.file_size_bytes,
     transcription: row.transcription ?? undefined,
-    transcriptionConfidence: row.transcription_confidence ?? undefined,
+    transcriptionStatus: row.transcription_status,
+    sha256Hash: row.sha256_hash ?? undefined,
     capturedAt: row.captured_at,
-    sha256Hash: row.sha256_hash,
     syncStatus: row.sync_status as SyncStatus,
   };
 }
 
-function mapRowToStatusChange(row: any): StatusChange {
+function mapStatusRow(row: any): StatusChange {
   return {
     id: row.id,
     variationId: row.variation_id,
     fromStatus: row.from_status as VariationStatus | null,
     toStatus: row.to_status as VariationStatus,
-    changedBy: row.changed_by,
     changedAt: row.changed_at,
+    changedBy: row.changed_by ?? undefined,
     notes: row.notes ?? undefined,
   };
-}
-
-function formatInstructionSource(source: InstructionSource): string {
-  const labels: Record<InstructionSource, string> = {
-    [InstructionSource.SITE_INSTRUCTION]: 'Site Instruction',
-    [InstructionSource.RFI_RESPONSE]: 'RFI Response',
-    [InstructionSource.VERBAL_DIRECTION]: 'Verbal Direction',
-    [InstructionSource.DRAWING_REVISION]: 'Drawing Revision',
-    [InstructionSource.LATENT_CONDITION]: 'Latent Condition',
-    [InstructionSource.EMAIL]: 'Email Instruction',
-    [InstructionSource.OTHER]: 'Other',
-  };
-  return labels[source] ?? source;
-}
-
-async function computeCombinedHash(hashes: string[]): Promise<string> {
-  // Combine all individual hashes into one evidence chain hash
-  const combined = hashes.sort().join(':');
-  // In production, this would be a proper SHA-256 of the combined string
-  // For now, use the first hash as a placeholder
-  return `sha256:${combined.slice(0, 8)}...${combined.slice(-4)}`;
 }

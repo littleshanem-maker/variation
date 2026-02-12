@@ -1,21 +1,12 @@
 /**
  * Projects Screen (Home)
- *
- * Shows all active projects with variation counts and value-at-risk.
- * This is the first screen the user sees on launch.
  */
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  RefreshControl,
+  View, Text, FlatList, Pressable, StyleSheet, RefreshControl,
 } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useFocusEffect } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { getActiveProjects } from '../../src/db/projectRepository';
 import { ProjectSummary } from '../../src/types';
@@ -38,7 +29,6 @@ export default function ProjectsScreen() {
     }
   }, []);
 
-  // Reload when screen comes into focus
   useFocusEffect(
     useCallback(() => {
       loadProjects();
@@ -63,7 +53,7 @@ export default function ProjectsScreen() {
         <View style={styles.projectInfo}>
           <Text style={styles.projectName}>{item.name}</Text>
           <Text style={styles.projectClient}>
-            {item.client} · {item.reference}
+            {item.client} {'\u00B7'} {item.reference}
           </Text>
         </View>
       </View>
@@ -141,7 +131,6 @@ export default function ProjectsScreen() {
         }
       />
 
-      {/* New Project Button — bottom of screen, thumb zone */}
       <View style={styles.bottomAction}>
         <Pressable
           style={({ pressed }) => [
@@ -159,140 +148,31 @@ export default function ProjectsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.bg,
-  },
-  list: {
-    padding: spacing.lg,
-    paddingBottom: 100, // Space for bottom button
-  },
-  listHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.md,
-  },
-  connectivityBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  connectivityDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  connectivityText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  projectCount: {
-    ...typography.caption,
-    color: colors.textMuted,
-  },
-  projectCard: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: spacing.lg,
-    marginBottom: spacing.sm,
-  },
-  projectCardPressed: {
-    borderColor: colors.accent,
-  },
-  projectHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  projectInfo: {
-    flex: 1,
-  },
-  projectName: {
-    ...typography.headingSmall,
-    color: colors.text,
-  },
-  projectClient: {
-    ...typography.caption,
-    color: colors.textMuted,
-    marginTop: 2,
-  },
-  projectStats: {
-    flexDirection: 'row',
-    marginTop: spacing.md,
-    paddingTop: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: `${colors.border}60`,
-  },
-  stat: {
-    marginRight: spacing.lg,
-  },
-  statRight: {
-    marginLeft: 'auto',
-    marginRight: 0,
-    alignItems: 'flex-end',
-  },
-  statLabel: {
-    ...typography.overline,
-    color: colors.textMuted,
-  },
-  statValue: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: colors.text,
-    marginTop: 2,
-  },
-  statDanger: {
-    color: colors.danger,
-  },
-  statTime: {
-    ...typography.labelMedium,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  empty: {
-    alignItems: 'center',
-    paddingTop: 80,
-    paddingHorizontal: spacing.xxl,
-  },
-  emptyTitle: {
-    ...typography.headingMedium,
-    color: colors.text,
-    marginTop: spacing.lg,
-  },
-  emptyText: {
-    ...typography.bodyMedium,
-    color: colors.textMuted,
-    textAlign: 'center',
-    marginTop: spacing.sm,
-  },
-  bottomAction: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: spacing.lg,
-    paddingBottom: spacing.xl,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    backgroundColor: colors.bg,
-  },
-  newProjectButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.accent,
-    borderRadius: borderRadius.lg,
-    paddingVertical: 14,
-    minHeight: touchTargets.button,
-  },
-  newProjectButtonPressed: {
-    backgroundColor: colors.accentHover,
-  },
-  newProjectButtonText: {
-    ...typography.labelLarge,
-    color: colors.textInverse,
-  },
+  container: { flex: 1, backgroundColor: colors.bg },
+  list: { padding: spacing.lg, paddingBottom: 100 },
+  listHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md },
+  connectivityBadge: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  connectivityDot: { width: 8, height: 8, borderRadius: 4 },
+  connectivityText: { fontSize: 12, fontWeight: '600' },
+  projectCount: { ...typography.caption, color: colors.textMuted },
+  projectCard: { backgroundColor: colors.surface, borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.lg, marginBottom: spacing.sm },
+  projectCardPressed: { borderColor: colors.accent },
+  projectHeader: { flexDirection: 'row', justifyContent: 'space-between' },
+  projectInfo: { flex: 1 },
+  projectName: { ...typography.headingSmall, color: colors.text },
+  projectClient: { ...typography.caption, color: colors.textMuted, marginTop: 2 },
+  projectStats: { flexDirection: 'row', marginTop: spacing.md, paddingTop: spacing.md, borderTopWidth: 1, borderTopColor: `${colors.border}60` },
+  stat: { marginRight: spacing.lg },
+  statRight: { marginLeft: 'auto', marginRight: 0, alignItems: 'flex-end' as const },
+  statLabel: { ...typography.overline, color: colors.textMuted },
+  statValue: { fontSize: 16, fontWeight: '800', color: colors.text, marginTop: 2 },
+  statDanger: { color: colors.danger },
+  statTime: { ...typography.labelMedium, color: colors.textSecondary, marginTop: 2 },
+  empty: { alignItems: 'center' as const, paddingTop: 80, paddingHorizontal: spacing.xxl },
+  emptyTitle: { ...typography.headingMedium, color: colors.text, marginTop: spacing.lg },
+  emptyText: { ...typography.bodyMedium, color: colors.textMuted, textAlign: 'center' as const, marginTop: spacing.sm },
+  bottomAction: { position: 'absolute' as const, bottom: 0, left: 0, right: 0, padding: spacing.lg, paddingBottom: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.bg },
+  newProjectButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 14, minHeight: touchTargets.button },
+  newProjectButtonPressed: { backgroundColor: colors.accentHover },
+  newProjectButtonText: { ...typography.labelLarge, color: colors.textInverse },
 });
