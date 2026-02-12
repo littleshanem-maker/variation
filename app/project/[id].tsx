@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   variationTime: { ...typography.caption, color: colors.textMuted },
   empty: { alignItems: 'center' as const, paddingTop: 80 },
   emptyText: { ...typography.bodyMedium, color: colors.textMuted, marginTop: spacing.md },
-  bottomAction: { position: 'absolute' as const, bottom: 0, left: 0, right: 0, padding: spacing.lg, paddingBottom: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.bg },
+  bottomAction: { position: 'absolute' as const, bottom: 20, left: 0, right: 0, padding: spacing.lg, paddingBottom: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.bg },
   newVarButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 14, minHeight: touchTargets.button },
   newVarButtonPressed: { backgroundColor: colors.accentHover },
   newVarButtonText: { ...typography.labelLarge, color: colors.textInverse },
