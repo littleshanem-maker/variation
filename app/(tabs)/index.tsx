@@ -13,12 +13,14 @@ import { ProjectSummary } from '../../src/types';
 import { colors, spacing, borderRadius, typography, touchTargets } from '../../src/theme';
 import { formatCurrency, timeAgo } from '../../src/utils/helpers';
 import { useConnectivity } from '../../src/hooks/useConnectivity';
+import { useAppMode } from '../../src/contexts/AppModeContext';
 
 export default function ProjectsScreen() {
   const router = useRouter();
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [refreshing, setRefreshing] = useState(false);
   const isConnected = useConnectivity();
+  const { isOffice, mode } = useAppMode();
 
   const loadProjects = useCallback(async () => {
     try {
@@ -63,12 +65,14 @@ export default function ProjectsScreen() {
           <Text style={styles.statLabel}>VARIATIONS</Text>
           <Text style={styles.statValue}>{item.variationCount}</Text>
         </View>
-        <View style={styles.stat}>
-          <Text style={styles.statLabel}>AT RISK</Text>
-          <Text style={[styles.statValue, styles.statDanger]}>
-            {formatCurrency(item.atRiskValue)}
-          </Text>
-        </View>
+        {isOffice && (
+          <View style={styles.stat}>
+            <Text style={styles.statLabel}>AT RISK</Text>
+            <Text style={[styles.statValue, styles.statDanger]}>
+              {formatCurrency(item.atRiskValue)}
+            </Text>
+          </View>
+        )}
         <View style={[styles.stat, styles.statRight]}>
           <Text style={styles.statLabel}>LAST CAPTURE</Text>
           <Text style={styles.statTime}>
@@ -97,9 +101,12 @@ export default function ProjectsScreen() {
           {isConnected ? 'Online' : 'Offline'}
         </Text>
       </View>
-      <Text style={styles.projectCount}>
-        {projects.length} active project{projects.length !== 1 ? 's' : ''}
-      </Text>
+      <View style={styles.modeBadge}>
+        <Ionicons name={isOffice ? 'briefcase' : 'hammer'} size={12} color={isOffice ? colors.info : colors.accent} />
+        <Text style={[styles.modeText, { color: isOffice ? colors.info : colors.accent }]}>
+          {isOffice ? 'Office' : 'Field'}
+        </Text>
+      </View>
     </View>
   );
 
@@ -134,18 +141,20 @@ export default function ProjectsScreen() {
         }
       />
 
-      <View style={styles.bottomAction}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.newProjectButton,
-            pressed && styles.newProjectButtonPressed,
-          ]}
-          onPress={() => router.push('/project/new')}
-        >
-          <Ionicons name="add" size={24} color={colors.textInverse} />
-          <Text style={styles.newProjectButtonText}>New Project</Text>
-        </Pressable>
-      </View>
+      {isOffice && (
+        <View style={styles.bottomAction}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.newProjectButton,
+              pressed && styles.newProjectButtonPressed,
+            ]}
+            onPress={() => router.push('/project/new')}
+          >
+            <Ionicons name="add" size={24} color={colors.textInverse} />
+            <Text style={styles.newProjectButtonText}>New Project</Text>
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 }
@@ -153,13 +162,14 @@ export default function ProjectsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   screenHeader: { paddingTop: 60, paddingHorizontal: spacing.lg, paddingBottom: spacing.md, backgroundColor: colors.bg },
-  screenTitle: { fontSize: 28, fontWeight: '900', color: colors.text, letterSpacing: -0.5, textAlign: 'center'},
+  screenTitle: { fontSize: 28, fontWeight: '900', color: colors.text, letterSpacing: -0.5 },
   list: { padding: spacing.lg, paddingBottom: 100 },
   listHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.md },
   connectivityBadge: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   connectivityDot: { width: 8, height: 8, borderRadius: 4 },
   connectivityText: { fontSize: 12, fontWeight: '600' },
-  projectCount: { ...typography.caption, color: colors.textMuted },
+  modeBadge: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  modeText: { fontSize: 12, fontWeight: '600' },
   projectCard: { backgroundColor: colors.surface, borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.lg, marginBottom: spacing.sm },
   projectCardPressed: { borderColor: colors.accent },
   projectHeader: { flexDirection: 'row', justifyContent: 'space-between' },

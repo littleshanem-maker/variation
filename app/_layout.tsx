@@ -11,6 +11,7 @@ import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { getDatabase } from '../src/db/schema';
 import { seedDatabase } from '../src/db/seedData';
 import { colors } from '../src/theme';
+import { AppModeProvider } from '../src/contexts/AppModeContext';
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
@@ -39,7 +40,7 @@ export default function RootLayout() {
   }
 
   return (
-    <>
+    <AppModeProvider>
       <StatusBar style="dark" />
       <Stack
         screenOptions={{
@@ -89,7 +90,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
-    </>
+    </AppModeProvider>
   );
 }
 

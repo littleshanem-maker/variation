@@ -22,6 +22,7 @@ import { generateId, nowISO, formatDuration, parseInputToCents, capitalize } fro
 import { hashFile, computeCombinedEvidenceHash } from '../../src/services/evidenceChain';
 import { getCurrentLocation } from '../../src/services/location';
 import { transcribeVoiceNote } from '../../src/services/ai';
+import { useAppMode } from '../../src/contexts/AppModeContext';
 
 const STEPS = ['Photos', 'Voice', 'Details', 'Confirm'];
 
@@ -43,6 +44,7 @@ interface CapturedPhoto {
 export default function CaptureScreen() {
   const { projectId } = useLocalSearchParams<{ projectId: string }>();
   const router = useRouter();
+  const { isOffice } = useAppMode();
   const [step, setStep] = useState(0);
 
   // Step 1: Photos
@@ -405,17 +407,19 @@ export default function CaptureScreen() {
             </View>
 
             <View style={styles.fieldRow}>
-              <View style={[styles.field, { flex: 1 }]}>
-                <Text style={styles.fieldLabel}>ESTIMATED VALUE ($)</Text>
-                <TextInput
-                  style={styles.input}
-                  value={estimatedValue}
-                  onChangeText={setEstimatedValue}
-                  placeholder="0"
-                  keyboardType="numeric"
-                  placeholderTextColor={colors.textMuted}
-                />
-              </View>
+              {isOffice && (
+                <View style={[styles.field, { flex: 1 }]}>
+                  <Text style={styles.fieldLabel}>ESTIMATED VALUE ($)</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={estimatedValue}
+                    onChangeText={setEstimatedValue}
+                    placeholder="0"
+                    keyboardType="numeric"
+                    placeholderTextColor={colors.textMuted}
+                  />
+                </View>
+              )}
               <View style={[styles.field, { flex: 1 }]}>
                 <Text style={styles.fieldLabel}>REFERENCE DOC</Text>
                 <TextInput
@@ -459,10 +463,12 @@ export default function CaptureScreen() {
                   <Text style={styles.confirmValue}>{instructedBy}</Text>
                 </View>
               ) : null}
-              <View style={styles.confirmRow}>
-                <Text style={styles.confirmLabel}>Value</Text>
-                <Text style={styles.confirmValue}>{estimatedValue ? `$${estimatedValue}` : '$0'}</Text>
-              </View>
+              {isOffice && (
+                <View style={styles.confirmRow}>
+                  <Text style={styles.confirmLabel}>Value</Text>
+                  <Text style={styles.confirmValue}>{estimatedValue ? `$${estimatedValue}` : '$0'}</Text>
+                </View>
+              )}
               <View style={styles.confirmRow}>
                 <Text style={styles.confirmLabel}>Photos</Text>
                 <Text style={styles.confirmValue}>{photos.length}</Text>

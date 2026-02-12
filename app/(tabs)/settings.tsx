@@ -1,11 +1,13 @@
 /**
  * Settings Screen — Phase 2
  *
- * Sync status, AI services status, cloud config, demo reset.
+ * Mode toggle (Field/Office), sync status, AI services, demo reset.
  */
 
 import { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Pressable, Alert, ScrollView } from 'react-native';
+import {
+  View, Text, StyleSheet, Pressable, Alert, ScrollView, TextInput, Modal,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
 import { colors, spacing, borderRadius, typography, touchTargets } from '../../src/theme';
@@ -14,13 +16,20 @@ import { resetAndReseed } from '../../src/db/seedData';
 import { useConnectivity } from '../../src/hooks/useConnectivity';
 import { syncPendingChanges, getPendingSyncCount } from '../../src/services/sync';
 import { config } from '../../src/config';
+import { useAppMode } from '../../src/contexts/AppModeContext';
 
 export default function SettingsScreen() {
   const isConnected = useConnectivity();
+  const { mode, isOffice, isField, switchToOffice, switchToField } = useAppMode();
   const [pendingCount, setPendingCount] = useState(0);
   const [totalVariations, setTotalVariations] = useState(0);
   const [resetting, setResetting] = useState(false);
   const [syncing, setSyncing] = useState(false);
+
+  // PIN modal state
+  const [showPinModal, setShowPinModal] = useState(false);
+  const [pinInput, setPinInput] = useState('');
+  const [pinError, setPinError] = useState('');
 
   const loadStats = useCallback(async () => {
     try {
@@ -61,6 +70,30 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleModeToggle = () => {
+    if (isOffice) {
+      // Switch to field — no PIN needed
+      switchToField();
+    } else {
+      // Switch to office — need PIN
+      setPinInput('');
+      setPinError('');
+      setShowPinModal(true);
+    }
+  };
+
+  const handlePinSubmit = () => {
+    const success = switchToOffice(pinInput);
+    if (success) {
+      setShowPinModal(false);
+      setPinInput('');
+      setPinError('');
+    } else {
+      setPinError('Incorrect PIN');
+      setPinInput('');
+    }
+  };
+
   const handleResetDemo = () => {
     Alert.alert(
       'Reset Demo Data',
@@ -88,6 +121,15 @@ export default function SettingsScreen() {
   };
 
   const items = [
+    {
+      icon: (isOffice ? 'briefcase' : 'hammer') as const,
+      label: isOffice ? 'Office Mode' : 'Field Mode',
+      subtitle: isOffice
+        ? 'Full access — values, exports, project management'
+        : 'Capture only — no values, limited controls',
+      highlight: true,
+      onPress: handleModeToggle,
+    },
     {
       icon: 'cloud-outline' as const,
       label: 'Cloud Sync',
@@ -179,6 +221,7 @@ export default function SettingsScreen() {
               index === 0 ? styles.rowFirst : null,
               index === items.length - 1 ? styles.rowLast : null,
               index < items.length - 1 ? styles.rowBorder : null,
+              item.highlight ? styles.rowHighlight : null,
             ]}
             onPress={item.onPress}
             disabled={(resetting && item.label === 'Reset Demo Data') || (syncing && item.label === 'Cloud Sync')}
@@ -187,7 +230,7 @@ export default function SettingsScreen() {
               <Ionicons
                 name={item.icon}
                 size={22}
-                color={item.destructive ? colors.status.disputed : colors.textSecondary}
+                color={item.highlight ? (isOffice ? colors.info : colors.accent) : item.destructive ? colors.status.disputed : colors.textSecondary}
               />
             </View>
             <View style={styles.rowContent}>
@@ -195,6 +238,7 @@ export default function SettingsScreen() {
                 style={[
                   styles.rowLabel,
                   item.destructive ? { color: colors.status.disputed } : null,
+                  item.highlight ? { color: isOffice ? colors.info : colors.accent } : null,
                 ]}
               >
                 {item.label === 'Reset Demo Data' && resetting ? 'Resetting...'
@@ -203,7 +247,11 @@ export default function SettingsScreen() {
               </Text>
               <Text style={styles.rowSubtitle}>{item.subtitle}</Text>
             </View>
-            {item.badge ? (
+            {item.highlight ? (
+              <View style={[styles.modeToggle, isOffice ? styles.modeToggleOffice : styles.modeToggleField]}>
+                <Text style={styles.modeToggleText}>{isOffice ? 'OFFICE' : 'FIELD'}</Text>
+              </View>
+            ) : item.badge ? (
               <View style={styles.badge}>
                 <Text style={styles.badgeText}>{item.badge}</Text>
               </View>
@@ -214,10 +262,45 @@ export default function SettingsScreen() {
         ))}
       </View>
 
+      <Text style={styles.pinHint}>
+        {isField ? 'Tap above to switch to Office mode (PIN required)' : 'Default PIN: 1234'}
+      </Text>
+
       <Text style={styles.footer}>
         Variation Capture {'\u00B7'} Pipeline Consulting Pty Ltd{'\n'}
         Built for Victorian construction contractors
       </Text>
+
+      {/* PIN Entry Modal */}
+      <Modal visible={showPinModal} transparent animationType="fade">
+        <Pressable style={styles.modalOverlay} onPress={() => setShowPinModal(false)}>
+          <View style={styles.pinCard} onStartShouldSetResponder={() => true}>
+            <Text style={styles.pinTitle}>Enter Office PIN</Text>
+            <Text style={styles.pinSubtitle}>PIN is required to access Office mode</Text>
+            <TextInput
+              style={styles.pinInput}
+              value={pinInput}
+              onChangeText={setPinInput}
+              placeholder="Enter PIN"
+              placeholderTextColor={colors.textMuted}
+              keyboardType="number-pad"
+              secureTextEntry
+              maxLength={8}
+              autoFocus
+              onSubmitEditing={handlePinSubmit}
+            />
+            {pinError ? <Text style={styles.pinError}>{pinError}</Text> : null}
+            <View style={styles.pinActions}>
+              <Pressable style={styles.pinCancel} onPress={() => setShowPinModal(false)}>
+                <Text style={styles.pinCancelText}>Cancel</Text>
+              </Pressable>
+              <Pressable style={styles.pinSubmit} onPress={handlePinSubmit}>
+                <Text style={styles.pinSubmitText}>Unlock</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
     </ScrollView>
   );
 }
@@ -234,11 +317,30 @@ const styles = StyleSheet.create({
   rowFirst: { borderTopLeftRadius: borderRadius.lg, borderTopRightRadius: borderRadius.lg },
   rowLast: { borderBottomLeftRadius: borderRadius.lg, borderBottomRightRadius: borderRadius.lg },
   rowBorder: { borderBottomWidth: 1, borderBottomColor: colors.border },
+  rowHighlight: { backgroundColor: colors.accentLight },
   rowIcon: { width: 32, marginRight: spacing.md },
   rowContent: { flex: 1 },
   rowLabel: { ...typography.labelMedium, color: colors.text },
   rowSubtitle: { ...typography.caption, color: colors.textMuted, marginTop: 1 },
   badge: { backgroundColor: colors.accent, borderRadius: 10, minWidth: 20, height: 20, alignItems: 'center' as const, justifyContent: 'center' as const, paddingHorizontal: 6 },
   badgeText: { ...typography.caption, color: colors.textInverse, fontWeight: '700', fontSize: 11 },
+  modeToggle: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4 },
+  modeToggleField: { backgroundColor: colors.accent },
+  modeToggleOffice: { backgroundColor: colors.info },
+  modeToggleText: { fontSize: 10, fontWeight: '800', color: colors.textInverse, letterSpacing: 0.5 },
+  pinHint: { ...typography.caption, color: colors.textMuted, textAlign: 'center' as const, marginTop: spacing.md },
   footer: { ...typography.caption, color: colors.textMuted, textAlign: 'center' as const, marginTop: spacing.xxxl, lineHeight: 18 },
+
+  // PIN Modal
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
+  pinCard: { backgroundColor: colors.surface, borderRadius: borderRadius.lg, padding: spacing.xxl, width: 300 },
+  pinTitle: { ...typography.headingSmall, color: colors.text, textAlign: 'center' as const },
+  pinSubtitle: { ...typography.caption, color: colors.textMuted, textAlign: 'center' as const, marginTop: 4, marginBottom: spacing.lg },
+  pinInput: { backgroundColor: colors.bg, borderWidth: 1, borderColor: colors.border, borderRadius: borderRadius.md, padding: spacing.lg, fontSize: 24, fontWeight: '800', textAlign: 'center' as const, color: colors.text, letterSpacing: 8 },
+  pinError: { ...typography.caption, color: colors.danger, textAlign: 'center' as const, marginTop: spacing.sm },
+  pinActions: { flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg },
+  pinCancel: { flex: 1, paddingVertical: 12, borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.border, alignItems: 'center' as const },
+  pinCancelText: { ...typography.labelMedium, color: colors.textSecondary },
+  pinSubmit: { flex: 1, paddingVertical: 12, borderRadius: borderRadius.lg, backgroundColor: colors.accent, alignItems: 'center' as const },
+  pinSubmitText: { ...typography.labelMedium, color: colors.textInverse },
 });

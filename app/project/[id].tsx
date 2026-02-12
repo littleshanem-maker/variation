@@ -16,6 +16,7 @@ import { Project, Variation, VariationStatus, VariationDetail } from '../../src/
 import { colors, spacing, borderRadius, typography, touchTargets, getStatusColor, getStatusLabel } from '../../src/theme';
 import { formatCurrency, timeAgo, formatVariationId } from '../../src/utils/helpers';
 import { exportProjectBatchPDF } from '../../src/services/pdfExport';
+import { useAppMode } from '../../src/contexts/AppModeContext';
 
 const STATUS_FILTERS = [
   { value: undefined, label: 'All' },
@@ -29,6 +30,7 @@ const STATUS_FILTERS = [
 export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { isOffice } = useAppMode();
   const [project, setProject] = useState<Project | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [statusFilter, setStatusFilter] = useState<VariationStatus | undefined>();
@@ -105,7 +107,7 @@ export default function ProjectDetailScreen() {
       </View>
       <Text style={styles.variationTitle} numberOfLines={2}>{item.title}</Text>
       <View style={styles.variationFooter}>
-        <Text style={styles.variationValue}>{formatCurrency(item.estimatedValue)}</Text>
+        {isOffice && <Text style={styles.variationValue}>{formatCurrency(item.estimatedValue)}</Text>}
         <Text style={styles.variationTime}>{timeAgo(item.capturedAt)}</Text>
       </View>
     </Pressable>
@@ -116,17 +118,19 @@ export default function ProjectDetailScreen() {
       {/* Summary Bar */}
       <View style={styles.summaryBar}>
         <View>
-          <Text style={styles.summaryLabel}>TOTAL VALUE</Text>
-          <Text style={styles.summaryValue}>{formatCurrency(totalValue)}</Text>
+          <Text style={styles.summaryLabel}>{isOffice ? 'TOTAL VALUE' : 'VARIATIONS'}</Text>
+          <Text style={styles.summaryValue}>{isOffice ? formatCurrency(totalValue) : `${variations.length}`}</Text>
         </View>
-        <View style={styles.summaryActions}>
-          <Pressable style={styles.iconButton} onPress={handleBatchExport} disabled={exporting}>
-            <Ionicons name="document-text-outline" size={22} color={colors.accent} />
-          </Pressable>
-          <Pressable style={styles.iconButton} onPress={() => setShowMenu(true)}>
-            <Ionicons name="ellipsis-vertical" size={22} color={colors.textSecondary} />
-          </Pressable>
-        </View>
+        {isOffice && (
+          <View style={styles.summaryActions}>
+            <Pressable style={styles.iconButton} onPress={handleBatchExport} disabled={exporting}>
+              <Ionicons name="document-text-outline" size={22} color={colors.accent} />
+            </Pressable>
+            <Pressable style={styles.iconButton} onPress={() => setShowMenu(true)}>
+              <Ionicons name="ellipsis-vertical" size={22} color={colors.textSecondary} />
+            </Pressable>
+          </View>
+        )}
       </View>
 
       {/* Status Filter */}
@@ -215,7 +219,7 @@ const styles = StyleSheet.create({
   variationTime: { ...typography.caption, color: colors.textMuted },
   empty: { alignItems: 'center' as const, paddingTop: 80 },
   emptyText: { ...typography.bodyMedium, color: colors.textMuted, marginTop: spacing.md },
-  bottomAction: { position: 'absolute' as const, bottom: 20, left: 0, right: 0, padding: spacing.lg, paddingBottom: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.bg },
+  bottomAction: { position: 'absolute' as const, bottom: 0, left: 0, right: 0, padding: spacing.lg, paddingBottom: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.bg },
   newVarButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 14, minHeight: touchTargets.button },
   newVarButtonPressed: { backgroundColor: colors.accentHover },
   newVarButtonText: { ...typography.labelLarge, color: colors.textInverse },

@@ -32,6 +32,7 @@ import { formatCoordinates } from '../../src/services/location';
 import { exportVariationPDF } from '../../src/services/pdfExport';
 import { generateVariationDescription } from '../../src/services/ai';
 import { config } from '../../src/config';
+import { useAppMode } from '../../src/contexts/AppModeContext';
 
 // Status transition rules
 const NEXT_STATUS: Record<string, VariationStatus[]> = {
@@ -45,6 +46,7 @@ const NEXT_STATUS: Record<string, VariationStatus[]> = {
 export default function VariationDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { isOffice, isField } = useAppMode();
   const [variation, setVariation] = useState<VariationDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
@@ -226,6 +228,9 @@ export default function VariationDetailScreen() {
   }
 
   const nextStatuses = NEXT_STATUS[variation.status] || [];
+  const availableStatuses = isField
+    ? nextStatuses.filter(s => s === VariationStatus.SUBMITTED)
+    : nextStatuses;
 
   return (
     <View style={styles.container}>
@@ -242,13 +247,13 @@ export default function VariationDetailScreen() {
           {variation.projectName && (
             <Text style={styles.projectName}>{variation.projectName}</Text>
           )}
-          <Text style={styles.value}>{formatCurrency(variation.estimatedValue)}</Text>
+          {isOffice && <Text style={styles.value}>{formatCurrency(variation.estimatedValue)}</Text>}
         </View>
 
         {/* Status Actions */}
-        {nextStatuses.length > 0 && (
+        {availableStatuses.length > 0 && (
           <View style={styles.statusActions}>
-            {nextStatuses.map((s) => (
+            {availableStatuses.map((s) => (
               <Pressable
                 key={s}
                 style={[
@@ -274,9 +279,11 @@ export default function VariationDetailScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Details</Text>
-            <Pressable onPress={() => setEditing(!editing)}>
-              <Ionicons name={editing ? 'close' : 'create-outline'} size={20} color={colors.accent} />
-            </Pressable>
+            {isOffice && (
+              <Pressable onPress={() => setEditing(!editing)}>
+                <Ionicons name={editing ? 'close' : 'create-outline'} size={20} color={colors.accent} />
+              </Pressable>
+            )}
           </View>
 
           {editing ? (
@@ -496,25 +503,27 @@ export default function VariationDetailScreen() {
         )}
 
         {/* Actions */}
-        <View style={styles.actionsSection}>
-          <Pressable
-            style={[styles.actionRow, exporting && styles.actionRowDisabled]}
-            onPress={handleExportPDF}
-            disabled={exporting}
-          >
-            <Ionicons name="document-text-outline" size={22} color={colors.accent} />
-            <Text style={styles.actionRowText}>
-              {exporting ? 'Generating PDF...' : 'Export as PDF'}
-            </Text>
-          </Pressable>
+        {isOffice && (
+          <View style={styles.actionsSection}>
+            <Pressable
+              style={[styles.actionRow, exporting && styles.actionRowDisabled]}
+              onPress={handleExportPDF}
+              disabled={exporting}
+            >
+              <Ionicons name="document-text-outline" size={22} color={colors.accent} />
+              <Text style={styles.actionRowText}>
+                {exporting ? 'Generating PDF...' : 'Export as PDF'}
+              </Text>
+            </Pressable>
 
-          <View style={styles.actionDivider} />
+            <View style={styles.actionDivider} />
 
-          <Pressable style={styles.actionRow} onPress={handleDelete}>
-            <Ionicons name="trash-outline" size={22} color={colors.danger} />
-            <Text style={[styles.actionRowText, { color: colors.danger }]}>Delete Variation</Text>
-          </Pressable>
-        </View>
+            <Pressable style={styles.actionRow} onPress={handleDelete}>
+              <Ionicons name="trash-outline" size={22} color={colors.danger} />
+              <Text style={[styles.actionRowText, { color: colors.danger }]}>Delete Variation</Text>
+            </Pressable>
+          </View>
+        )}
       </ScrollView>
 
       {/* Photo Viewer Modal */}
