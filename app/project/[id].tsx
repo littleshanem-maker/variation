@@ -13,7 +13,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { getProjectById, deleteProject } from '../../src/db/projectRepository';
 import { getVariationsForProject, getVariationDetail } from '../../src/db/variationRepository';
 import { Project, Variation, VariationStatus, VariationDetail } from '../../src/types/domain';
-import { colors, spacing, borderRadius, typography, touchTargets, getStatusColor, getStatusLabel } from '../../src/theme';
+import { spacing, borderRadius, typography, touchTargets, getStatusColor, getStatusLabel } from '../../src/theme';
+import { useThemeColors } from '../../src/contexts/AppModeContext';
 import { formatCurrency, timeAgo, formatVariationId } from '../../src/utils/helpers';
 import { exportProjectBatchPDF } from '../../src/services/pdfExport';
 import { useAppMode } from '../../src/contexts/AppModeContext';
@@ -28,6 +29,7 @@ const STATUS_FILTERS = [
 ];
 
 export default function ProjectDetailScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { isOffice } = useAppMode();
@@ -192,9 +194,8 @@ export default function ProjectDetailScreen() {
       </Modal>
     </View>
   );
-}
 
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   summaryBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: spacing.lg, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
   summaryLabel: { ...typography.overline, color: colors.textMuted },
@@ -228,4 +229,5 @@ const styles = StyleSheet.create({
   menuItem: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.lg },
   menuItemText: { ...typography.labelMedium, color: colors.text },
   menuDivider: { height: 1, backgroundColor: colors.border },
-});
+  });
+}

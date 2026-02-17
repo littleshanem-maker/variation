@@ -10,7 +10,8 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { createProject } from '../../src/db/projectRepository';
 import { ContractType } from '../../src/types/domain';
-import { colors, spacing, borderRadius, typography, touchTargets } from '../../src/theme';
+import { spacing, borderRadius, typography, touchTargets } from '../../src/theme';
+import { useThemeColors } from '../../src/contexts/AppModeContext';
 import { getCurrentLocation } from '../../src/services/location';
 
 const CONTRACT_TYPES = [
@@ -21,6 +22,7 @@ const CONTRACT_TYPES = [
 ];
 
 export default function NewProjectScreen() {
+  const colors = useThemeColors();
   const router = useRouter();
   const [name, setName] = useState('');
   const [client, setClient] = useState('');
@@ -143,9 +145,8 @@ export default function NewProjectScreen() {
       </View>
     </KeyboardAvoidingView>
   );
-}
 
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   content: { padding: spacing.lg, paddingBottom: 120 },
   field: { marginBottom: spacing.xl },
@@ -163,4 +164,5 @@ const styles = StyleSheet.create({
   saveButtonPressed: { backgroundColor: colors.accentHover },
   saveButtonDisabled: { opacity: 0.6 },
   saveButtonText: { ...typography.labelLarge, color: colors.textInverse },
-});
+  });
+}

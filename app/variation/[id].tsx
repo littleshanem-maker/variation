@@ -23,7 +23,8 @@ import { VariationDetail, VariationStatus } from '../../src/types/domain';
 import {
   getVariationDetail, updateVariation, updateVariationStatus, deleteVariation,
 } from '../../src/db/variationRepository';
-import { colors, spacing, borderRadius, typography, touchTargets, getStatusColor, getStatusLabel } from '../../src/theme';
+import { spacing, borderRadius, typography, touchTargets, getStatusColor, getStatusLabel } from '../../src/theme';
+import { useThemeColors } from '../../src/contexts/AppModeContext';
 import {
   formatCurrency, formatDateTime, formatVariationId, formatDuration,
   capitalize, centsToInputString, parseInputToCents,
@@ -44,6 +45,7 @@ const NEXT_STATUS: Record<string, VariationStatus[]> = {
 };
 
 export default function VariationDetailScreen() {
+  const colors = useThemeColors();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { isOffice, isField } = useAppMode();
@@ -543,18 +545,8 @@ export default function VariationDetailScreen() {
       </Modal>
     </View>
   );
-}
 
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.detailRow}>
-      <Text style={styles.detailLabel}>{label.toUpperCase()}</Text>
-      <Text style={styles.detailValue}>{value}</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bg },
   content: { padding: spacing.lg, paddingBottom: 40 },
@@ -648,4 +640,14 @@ const styles = StyleSheet.create({
   viewerOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', justifyContent: 'center', alignItems: 'center' },
   viewerImage: { width: '90%', height: '80%' },
   viewerClose: { position: 'absolute' as const, top: 50, right: 20 },
-});
+  });
+
+  function DetailRow({ label, value }: { label: string; value: string }) {
+    return (
+      <View style={styles.detailRow}>
+        <Text style={styles.detailLabel}>{label.toUpperCase()}</Text>
+        <Text style={styles.detailValue}>{value}</Text>
+      </View>
+    );
+  }
+}

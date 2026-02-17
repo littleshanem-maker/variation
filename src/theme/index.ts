@@ -14,7 +14,8 @@ import { TextStyle } from 'react-native';
 // COLOURS
 // ============================================================
 
-export const colors = {
+// Field theme — Safety Orange, high contrast for outdoor/site use
+export const fieldColors = {
   // Core
   bg: '#F5F2ED',
   surface: '#FFFFFF',
@@ -52,6 +53,49 @@ export const colors = {
     paid: '#1A1A1A',
   },
 } as const;
+
+// Office theme — Navy/Blue, professional for office/dashboard use
+export const officeColors = {
+  // Core
+  bg: '#F0F4F8',
+  surface: '#FFFFFF',
+  surfaceAlt: '#E8EDF2',
+  border: '#CBD5E1',
+  borderLight: '#E2E8F0',
+
+  // Text
+  text: '#0F172A',
+  textSecondary: '#334155',
+  textMuted: '#64748B',
+  textInverse: '#FFFFFF',
+
+  // Accent — Blue
+  accent: '#3B82F6',
+  accentHover: '#2563EB',
+  accentLight: '#EFF6FF',
+
+  // Status
+  success: '#16A34A',
+  successLight: '#F0FDF4',
+  danger: '#DC2626',
+  dangerLight: '#FEF2F2',
+  warning: '#D97706',
+  warningLight: '#FFFBEB',
+  info: '#2563EB',
+  infoLight: '#EFF6FF',
+
+  // Variation status
+  status: {
+    captured: '#3B82F6',
+    submitted: '#6366F1',
+    approved: '#16A34A',
+    disputed: '#DC2626',
+    paid: '#0F172A',
+  },
+} as const;
+
+// Default export — field theme (overridden at runtime by AppModeContext)
+export const colors = fieldColors;
 
 // ============================================================
 // SPACING

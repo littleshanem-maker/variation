@@ -1,5 +1,5 @@
 /**
- * Projects Screen (Home)
+ * Home Screen - Projects List (Field Mode) / Dashboard (Office Mode)
  */
 
 import { useState, useCallback } from 'react';
@@ -10,12 +10,15 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { getActiveProjects } from '../../src/db/projectRepository';
 import { ProjectSummary } from '../../src/types';
-import { colors, spacing, borderRadius, typography, touchTargets } from '../../src/theme';
+import { spacing, borderRadius, typography, touchTargets } from '../../src/theme';
+import { useThemeColors } from '../../src/contexts/AppModeContext';
 import { formatCurrency, timeAgo } from '../../src/utils/helpers';
 import { useConnectivity } from '../../src/hooks/useConnectivity';
 import { useAppMode } from '../../src/contexts/AppModeContext';
+import { OfficeDashboard } from '../../src/components/OfficeDashboard';
 
-export default function ProjectsScreen() {
+export default function HomeScreen() {
+  const colors = useThemeColors();
   const router = useRouter();
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -43,6 +46,12 @@ export default function ProjectsScreen() {
     setRefreshing(false);
   };
 
+  // Office mode renders the dashboard
+  if (isOffice) {
+    return <OfficeDashboard />;
+  }
+
+  // Field mode renders the project list
   const renderProject = ({ item }: { item: ProjectSummary }) => (
     <Pressable
       style={({ pressed }) => [
@@ -65,14 +74,6 @@ export default function ProjectsScreen() {
           <Text style={styles.statLabel}>VARIATIONS</Text>
           <Text style={styles.statValue}>{item.variationCount}</Text>
         </View>
-        {isOffice && (
-          <View style={styles.stat}>
-            <Text style={styles.statLabel}>AT RISK</Text>
-            <Text style={[styles.statValue, styles.statDanger]}>
-              {formatCurrency(item.atRiskValue)}
-            </Text>
-          </View>
-        )}
         <View style={[styles.stat, styles.statRight]}>
           <Text style={styles.statLabel}>LAST CAPTURE</Text>
           <Text style={styles.statTime}>
@@ -140,26 +141,10 @@ export default function ProjectsScreen() {
           />
         }
       />
-
-      {isOffice && (
-        <View style={styles.bottomAction}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.newProjectButton,
-              pressed && styles.newProjectButtonPressed,
-            ]}
-            onPress={() => router.push('/project/new')}
-          >
-            <Ionicons name="add" size={24} color={colors.textInverse} />
-            <Text style={styles.newProjectButtonText}>New Project</Text>
-          </Pressable>
-        </View>
-      )}
     </View>
   );
-}
 
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   screenHeader: { paddingTop: 60, paddingHorizontal: spacing.lg, paddingBottom: spacing.md, backgroundColor: colors.bg },
   screenTitle: { fontSize: 28, fontWeight: '900', color: colors.text, letterSpacing: -0.5 },
@@ -190,4 +175,5 @@ const styles = StyleSheet.create({
   newProjectButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 14, minHeight: touchTargets.button },
   newProjectButtonPressed: { backgroundColor: colors.accentHover },
   newProjectButtonText: { ...typography.labelLarge, color: colors.textInverse },
-});
+  });
+}

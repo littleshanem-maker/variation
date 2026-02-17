@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
-import { colors, spacing, borderRadius, typography, touchTargets } from '../../src/theme';
+import { spacing, borderRadius, typography, touchTargets } from '../../src/theme';
+import { useThemeColors } from '../../src/contexts/AppModeContext';
 import { getDatabase } from '../../src/db/schema';
 import { resetAndReseed } from '../../src/db/seedData';
 import { useConnectivity } from '../../src/hooks/useConnectivity';
@@ -19,6 +20,7 @@ import { config } from '../../src/config';
 import { useAppMode } from '../../src/contexts/AppModeContext';
 
 export default function SettingsScreen() {
+  const colors = useThemeColors();
   const isConnected = useConnectivity();
   const { mode, isOffice, isField, switchToOffice, switchToField } = useAppMode();
   const [pendingCount, setPendingCount] = useState(0);
@@ -303,9 +305,8 @@ export default function SettingsScreen() {
       </Modal>
     </ScrollView>
   );
-}
 
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   content: { padding: spacing.lg, paddingBottom: 40 },
   connectionBanner: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.successLight, padding: spacing.md, borderRadius: borderRadius.md, marginBottom: spacing.lg },
@@ -343,4 +344,5 @@ const styles = StyleSheet.create({
   pinCancelText: { ...typography.labelMedium, color: colors.textSecondary },
   pinSubmit: { flex: 1, paddingVertical: 12, borderRadius: borderRadius.lg, backgroundColor: colors.accent, alignItems: 'center' as const },
   pinSubmitText: { ...typography.labelMedium, color: colors.textInverse },
-});
+  });
+}

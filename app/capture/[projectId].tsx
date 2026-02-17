@@ -1,8 +1,8 @@
 /**
- * Capture Flow — Phase 2
+ * Capture Flow — Simplified
  *
- * 4-step, 60-second capture: Photos → Voice → Details → Confirm
- * Now with direct camera option (Phase 2) and AI transcription trigger.
+ * 2-step, streamlined capture: Capture (Photos + Voice) → Tag (Title + Source + Instructed By)
+ * Optimized for on-site use with direct camera option and AI transcription trigger.
  */
 
 import { useState, useRef, useCallback } from 'react';
@@ -14,17 +14,16 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Audio } from 'expo-av';
-import { colors, spacing, borderRadius, typography, touchTargets } from '../../src/theme';
+import { spacing, borderRadius, typography, touchTargets } from '../../src/theme';
+import { useThemeColors } from '../../src/contexts/AppModeContext';
 import { getNextVariationSequence } from '../../src/db/projectRepository';
 import { createVariation, addPhotoEvidence, addVoiceNote, updateEvidenceHash } from '../../src/db/variationRepository';
 import { InstructionSource } from '../../src/types/domain';
-import { generateId, nowISO, formatDuration, parseInputToCents, capitalize } from '../../src/utils/helpers';
+import { generateId, nowISO, formatDuration } from '../../src/utils/helpers';
 import { hashFile, computeCombinedEvidenceHash } from '../../src/services/evidenceChain';
 import { getCurrentLocation } from '../../src/services/location';
 import { transcribeVoiceNote } from '../../src/services/ai';
-import { useAppMode } from '../../src/contexts/AppModeContext';
-
-const STEPS = ['Photos', 'Voice', 'Details', 'Confirm'];
+const STEPS = ['Capture', 'Tag'];
 
 const SOURCES: { value: InstructionSource; label: string; icon: string }[] = [
   { value: InstructionSource.SITE_INSTRUCTION, label: 'Site Instruction', icon: 'document-text-outline' },
@@ -42,9 +41,9 @@ interface CapturedPhoto {
 }
 
 export default function CaptureScreen() {
+  const colors = useThemeColors();
   const { projectId } = useLocalSearchParams<{ projectId: string }>();
   const router = useRouter();
-  const { isOffice } = useAppMode();
   const [step, setStep] = useState(0);
 
   // Step 1: Photos
@@ -58,15 +57,12 @@ export default function CaptureScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const durationInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Step 3: Details
+  // Step 2: Tag details
   const [title, setTitle] = useState('');
   const [source, setSource] = useState<InstructionSource>(InstructionSource.SITE_INSTRUCTION);
   const [instructedBy, setInstructedBy] = useState('');
-  const [estimatedValue, setEstimatedValue] = useState('');
-  const [referenceDoc, setReferenceDoc] = useState('');
-  const [notes, setNotes] = useState('');
 
-  // Step 4: Saving
+  // Saving
   const [saving, setSaving] = useState(false);
 
   // ============================================================
@@ -178,7 +174,6 @@ export default function CaptureScreen() {
   const handleSave = async () => {
     if (!title.trim()) {
       Alert.alert('Required', 'Variation title is required.');
-      setStep(2);
       return;
     }
 
@@ -194,12 +189,12 @@ export default function CaptureScreen() {
         description: '',
         instructionSource: source,
         instructedBy: instructedBy.trim() || undefined,
-        referenceDoc: referenceDoc.trim() || undefined,
-        estimatedValue: parseInputToCents(estimatedValue),
+        referenceDoc: undefined,
+        estimatedValue: 0,
         latitude: location?.latitude,
         longitude: location?.longitude,
         locationAccuracy: location?.accuracy,
-        notes: notes.trim() || undefined,
+        notes: undefined,
       });
 
       // Save photos
@@ -263,7 +258,7 @@ export default function CaptureScreen() {
   // ============================================================
 
   const canProceed = () => {
-    if (step === 2 && !title.trim()) return false;
+    if (step === 1 && !title.trim()) return false;
     return true;
   };
 
@@ -295,7 +290,13 @@ export default function CaptureScreen() {
       <KeyboardAvoidingView style={styles.content} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         {step === 0 && (
           <ScrollView contentContainerStyle={styles.stepContent}>
-            <Text style={styles.stepInstruction}>Capture photographic evidence</Text>
+            <Text style={styles.stepInstruction}>Gather evidence — photos and voice memo</Text>
+
+            {/* Primary Camera Button */}
+            <Pressable style={styles.primaryCameraButton} onPress={takePhoto}>
+              <Ionicons name="camera" size={32} color={colors.textInverse} />
+              <Text style={styles.primaryCameraText}>Take Photo</Text>
+            </Pressable>
 
             {/* Photo Grid */}
             <View style={styles.photoGrid}>
@@ -309,26 +310,18 @@ export default function CaptureScreen() {
               ))}
             </View>
 
-            <View style={styles.photoActions}>
-              <Pressable style={[styles.actionButton, styles.actionButtonPrimary]} onPress={takePhoto}>
-                <Ionicons name="camera" size={24} color={colors.textInverse} />
-                <Text style={styles.actionButtonTextPrimary}>Take Photo</Text>
-              </Pressable>
-              <Pressable style={styles.actionButton} onPress={pickFromLibrary}>
-                <Ionicons name="images-outline" size={24} color={colors.accent} />
-                <Text style={styles.actionButtonText}>Library</Text>
-              </Pressable>
-            </View>
+            {/* Secondary Library Button */}
+            <Pressable style={styles.libraryButton} onPress={pickFromLibrary}>
+              <Ionicons name="images-outline" size={20} color={colors.accent} />
+              <Text style={styles.libraryButtonText}>Choose from Library</Text>
+            </Pressable>
 
             <Text style={styles.photoCount}>{photos.length} photo{photos.length !== 1 ? 's' : ''} captured</Text>
-          </ScrollView>
-        )}
 
-        {step === 1 && (
-          <View style={styles.stepContent}>
-            <Text style={styles.stepInstruction}>Record a voice memo describing the variation</Text>
-
-            <View style={styles.voiceArea}>
+            {/* Voice Recording Section */}
+            <View style={styles.voiceSection}>
+              <Text style={styles.voiceSectionTitle}>Voice Memo</Text>
+              
               {isRecording && (
                 <View style={styles.recordingIndicator}>
                   <View style={styles.recordingDot} />
@@ -361,11 +354,13 @@ export default function CaptureScreen() {
                 {isRecording ? 'Tap to stop' : voiceUri ? 'Tap to re-record' : 'Tap to start recording'}
               </Text>
             </View>
-          </View>
+          </ScrollView>
         )}
 
-        {step === 2 && (
+        {step === 1 && (
           <ScrollView contentContainerStyle={styles.stepContent}>
+            <Text style={styles.stepInstruction}>Add tags and save</Text>
+
             <View style={styles.field}>
               <Text style={styles.fieldLabel}>TITLE *</Text>
               <TextInput
@@ -405,110 +400,25 @@ export default function CaptureScreen() {
                 placeholderTextColor={colors.textMuted}
               />
             </View>
-
-            <View style={styles.fieldRow}>
-              {isOffice && (
-                <View style={[styles.field, { flex: 1 }]}>
-                  <Text style={styles.fieldLabel}>ESTIMATED VALUE ($)</Text>
-                  <TextInput
-                    style={styles.input}
-                    value={estimatedValue}
-                    onChangeText={setEstimatedValue}
-                    placeholder="0"
-                    keyboardType="numeric"
-                    placeholderTextColor={colors.textMuted}
-                  />
-                </View>
-              )}
-              <View style={[styles.field, { flex: 1 }]}>
-                <Text style={styles.fieldLabel}>REFERENCE DOC</Text>
-                <TextInput
-                  style={styles.input}
-                  value={referenceDoc}
-                  onChangeText={setReferenceDoc}
-                  placeholder="SI-042"
-                  placeholderTextColor={colors.textMuted}
-                />
-              </View>
-            </View>
-
-            <View style={styles.field}>
-              <Text style={styles.fieldLabel}>NOTES</Text>
-              <TextInput
-                style={[styles.input, styles.inputMultiline]}
-                value={notes}
-                onChangeText={setNotes}
-                placeholder="Additional context..."
-                placeholderTextColor={colors.textMuted}
-                multiline
-                numberOfLines={3}
-              />
-            </View>
-          </ScrollView>
-        )}
-
-        {step === 3 && (
-          <ScrollView contentContainerStyle={styles.stepContent}>
-            <Text style={styles.stepInstruction}>Review and confirm</Text>
-
-            <View style={styles.confirmCard}>
-              <Text style={styles.confirmTitle}>{title || 'Untitled'}</Text>
-              <View style={styles.confirmRow}>
-                <Text style={styles.confirmLabel}>Source</Text>
-                <Text style={styles.confirmValue}>{capitalize(source)}</Text>
-              </View>
-              {instructedBy ? (
-                <View style={styles.confirmRow}>
-                  <Text style={styles.confirmLabel}>Instructed By</Text>
-                  <Text style={styles.confirmValue}>{instructedBy}</Text>
-                </View>
-              ) : null}
-              {isOffice && (
-                <View style={styles.confirmRow}>
-                  <Text style={styles.confirmLabel}>Value</Text>
-                  <Text style={styles.confirmValue}>{estimatedValue ? `$${estimatedValue}` : '$0'}</Text>
-                </View>
-              )}
-              <View style={styles.confirmRow}>
-                <Text style={styles.confirmLabel}>Photos</Text>
-                <Text style={styles.confirmValue}>{photos.length}</Text>
-              </View>
-              <View style={styles.confirmRow}>
-                <Text style={styles.confirmLabel}>Voice</Text>
-                <Text style={styles.confirmValue}>{voiceUri ? formatDuration(voiceDuration) : 'None'}</Text>
-              </View>
-            </View>
-
-            {/* Photo thumbnails */}
-            {photos.length > 0 && (
-              <ScrollView horizontal style={styles.confirmPhotos} showsHorizontalScrollIndicator={false}>
-                {photos.map(p => (
-                  <Image key={p.id} source={{ uri: p.uri }} style={styles.confirmPhotoThumb} />
-                ))}
-              </ScrollView>
-            )}
           </ScrollView>
         )}
       </KeyboardAvoidingView>
 
       {/* Bottom Actions */}
       <View style={styles.bottomBar}>
-        {step < 3 ? (
+        {step === 0 ? (
           <Pressable
-            style={[styles.nextButton, !canProceed() && styles.nextButtonDisabled]}
-            onPress={() => setStep(step + 1)}
-            disabled={!canProceed()}
+            style={styles.nextButton}
+            onPress={() => setStep(1)}
           >
-            <Text style={styles.nextButtonText}>
-              {step === 0 && photos.length === 0 ? 'Skip Photos' : 'Next'}
-            </Text>
+            <Text style={styles.nextButtonText}>Next: Tag</Text>
             <Ionicons name="arrow-forward" size={20} color={colors.textInverse} />
           </Pressable>
         ) : (
           <Pressable
-            style={[styles.saveButton, saving && styles.saveButtonDisabled]}
+            style={[styles.saveButton, (!canProceed() || saving) && styles.saveButtonDisabled]}
             onPress={handleSave}
-            disabled={saving}
+            disabled={!canProceed() || saving}
           >
             <Ionicons name="checkmark-circle" size={24} color={colors.textInverse} />
             <Text style={styles.saveButtonText}>{saving ? 'Saving...' : 'Save Variation'}</Text>
@@ -527,9 +437,8 @@ export default function CaptureScreen() {
       </Modal>
     </SafeAreaView>
   );
-}
 
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: spacing.lg },
   headerTitle: { ...typography.headingSmall, color: colors.text },
@@ -541,28 +450,28 @@ const styles = StyleSheet.create({
   stepInstruction: { ...typography.bodyLarge, color: colors.textSecondary, marginBottom: spacing.lg },
 
   // Photos
-  photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.lg },
+  primaryCameraButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.md, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 18, marginBottom: spacing.lg },
+  primaryCameraText: { ...typography.labelLarge, color: colors.textInverse },
+  photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md },
   photoThumb: { width: 100, height: 100, borderRadius: borderRadius.md, overflow: 'hidden' as const },
   photoImage: { width: '100%', height: '100%' },
   photoRemove: { position: 'absolute' as const, top: 4, right: 4 },
-  photoActions: { flexDirection: 'row', gap: spacing.md, marginBottom: spacing.md },
-  actionButton: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, paddingVertical: 14, borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.accent },
-  actionButtonPrimary: { backgroundColor: colors.accent, borderColor: colors.accent },
-  actionButtonText: { ...typography.labelMedium, color: colors.accent },
-  actionButtonTextPrimary: { ...typography.labelMedium, color: colors.textInverse },
-  photoCount: { ...typography.caption, color: colors.textMuted, textAlign: 'center' as const },
+  libraryButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, borderWidth: 1, borderColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 12, marginBottom: spacing.sm },
+  libraryButtonText: { ...typography.labelMedium, color: colors.accent },
+  photoCount: { ...typography.caption, color: colors.textMuted, textAlign: 'center' as const, marginBottom: spacing.xxl },
 
   // Voice
-  voiceArea: { alignItems: 'center' as const, paddingTop: spacing.xxxxl },
-  recordingIndicator: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.xxl },
+  voiceSection: { alignItems: 'center' as const, paddingTop: spacing.lg, paddingBottom: spacing.lg, backgroundColor: colors.surface, borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.border },
+  voiceSectionTitle: { ...typography.labelMedium, color: colors.text, marginBottom: spacing.lg },
+  recordingIndicator: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.lg },
   recordingDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: colors.danger },
   recordingText: { ...typography.labelMedium, color: colors.danger },
   recordingTime: { ...typography.headingMedium, color: colors.text },
-  voicePreview: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.xxl },
+  voicePreview: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.lg },
   voicePreviewText: { ...typography.labelMedium, color: colors.success },
-  recordButton: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.accent, alignItems: 'center' as const, justifyContent: 'center' as const },
+  recordButton: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.accent, alignItems: 'center' as const, justifyContent: 'center' as const, marginBottom: spacing.md },
   recordButtonActive: { backgroundColor: colors.danger },
-  voiceHint: { ...typography.caption, color: colors.textMuted, marginTop: spacing.lg },
+  voiceHint: { ...typography.caption, color: colors.textMuted },
 
   // Details
   field: { marginBottom: spacing.lg },
@@ -575,15 +484,6 @@ const styles = StyleSheet.create({
   sourceChipActive: { borderColor: colors.accent, backgroundColor: colors.accentLight },
   sourceChipText: { ...typography.caption, color: colors.textSecondary },
   sourceChipTextActive: { color: colors.accent, fontWeight: '700' },
-
-  // Confirm
-  confirmCard: { backgroundColor: colors.surface, borderRadius: borderRadius.lg, padding: spacing.lg, borderWidth: 1, borderColor: colors.border },
-  confirmTitle: { ...typography.headingSmall, color: colors.text, marginBottom: spacing.md },
-  confirmRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.borderLight },
-  confirmLabel: { ...typography.caption, color: colors.textMuted },
-  confirmValue: { ...typography.labelSmall, color: colors.text },
-  confirmPhotos: { marginTop: spacing.lg },
-  confirmPhotoThumb: { width: 80, height: 80, borderRadius: borderRadius.md, marginRight: spacing.sm },
 
   // Bottom
   bottomBar: { padding: spacing.lg, paddingBottom: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.bg },
@@ -598,4 +498,5 @@ const styles = StyleSheet.create({
   viewerOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', justifyContent: 'center', alignItems: 'center' },
   viewerImage: { width: '90%', height: '80%' },
   viewerClose: { position: 'absolute' as const, top: 50, right: 20 },
-});
+  });
+}

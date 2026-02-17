@@ -132,3 +132,51 @@ export async function getNextVariationSequence(projectId: string): Promise<numbe
   );
   return (result?.max_seq ?? 0) + 1;
 }
+
+export async function getDashboardStats(): Promise<{
+  totalVariations: number;
+  totalValue: number;
+  atRiskValue: number;
+  approvedCount: number;
+  totalWithOutcome: number;
+}> {
+  const db = await getDatabase();
+  
+  const result = await db.getFirstAsync<{
+    total_variations: number;
+    total_value: number;
+    at_risk_value: number;
+    approved_count: number;
+    disputed_count: number;
+    paid_count: number;
+  }>(`
+    SELECT
+      COUNT(*) as total_variations,
+      COALESCE(SUM(estimated_value), 0) as total_value,
+      COALESCE(SUM(CASE WHEN status IN ('captured', 'submitted', 'disputed') THEN estimated_value ELSE 0 END), 0) as at_risk_value,
+      COUNT(CASE WHEN status = 'approved' THEN 1 END) as approved_count,
+      COUNT(CASE WHEN status = 'disputed' THEN 1 END) as disputed_count,
+      COUNT(CASE WHEN status = 'paid' THEN 1 END) as paid_count
+    FROM variations v
+    INNER JOIN projects p ON p.id = v.project_id
+    WHERE p.is_active = 1
+  `);
+
+  if (!result) {
+    return {
+      totalVariations: 0,
+      totalValue: 0,
+      atRiskValue: 0,
+      approvedCount: 0,
+      totalWithOutcome: 0,
+    };
+  }
+
+  return {
+    totalVariations: result.total_variations,
+    totalValue: result.total_value,
+    atRiskValue: result.at_risk_value,
+    approvedCount: result.approved_count,
+    totalWithOutcome: result.approved_count + result.disputed_count + result.paid_count,
+  };
+}

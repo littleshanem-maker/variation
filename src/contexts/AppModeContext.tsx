@@ -7,7 +7,8 @@
  * Default PIN: 1234
  */
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useMemo, ReactNode } from 'react';
+import { fieldColors, officeColors } from '../theme';
 
 export type AppMode = 'field' | 'office';
 
@@ -15,6 +16,7 @@ interface AppModeContextType {
   mode: AppMode;
   isOffice: boolean;
   isField: boolean;
+  colors: typeof fieldColors;
   switchToOffice: (pin: string) => boolean;
   switchToField: () => void;
 }
@@ -23,6 +25,7 @@ const AppModeContext = createContext<AppModeContextType>({
   mode: 'field',
   isOffice: false,
   isField: true,
+  colors: fieldColors,
   switchToOffice: () => false,
   switchToField: () => {},
 });
@@ -44,11 +47,14 @@ export function AppModeProvider({ children }: { children: ReactNode }) {
     setMode('field');
   };
 
+  const activeColors = useMemo(() => mode === 'office' ? officeColors : fieldColors, [mode]);
+
   return (
     <AppModeContext.Provider value={{
       mode,
       isOffice: mode === 'office',
       isField: mode === 'field',
+      colors: activeColors,
       switchToOffice,
       switchToField,
     }}>
@@ -59,4 +65,10 @@ export function AppModeProvider({ children }: { children: ReactNode }) {
 
 export function useAppMode() {
   return useContext(AppModeContext);
+}
+
+/** Shortcut — returns the active color palette based on field/office mode */
+export function useThemeColors() {
+  const { colors } = useContext(AppModeContext);
+  return colors;
 }
