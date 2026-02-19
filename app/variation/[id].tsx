@@ -34,6 +34,8 @@ import { exportVariationPDF } from '../../src/services/pdfExport';
 import { generateVariationDescription } from '../../src/services/ai';
 import { config } from '../../src/config';
 import { useAppMode } from '../../src/contexts/AppModeContext';
+import { getAttachmentsForVariation, addAttachment, Attachment } from '../../src/db/attachmentRepository';
+import { openAttachment, getFileIcon, formatFileSize, pickAttachment } from '../../src/services/attachments';
 
 // Status transition rules
 const NEXT_STATUS: Record<string, VariationStatus[]> = {
@@ -69,6 +71,9 @@ export default function VariationDetailScreen() {
   // Photo viewer
   const [viewerUri, setViewerUri] = useState<string | null>(null);
 
+  // Attachments
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+
   const load = useCallback(async () => {
     if (!id) return;
     setLoading(true);
@@ -82,6 +87,8 @@ export default function VariationDetailScreen() {
         setEditReference(data.referenceDoc || '');
         setEditInstructedBy(data.instructedBy || '');
       }
+      const atts = await getAttachmentsForVariation(id);
+      setAttachments(atts);
     } catch (error) {
       console.error('[Detail] Failed to load:', error);
     } finally {
@@ -221,331 +228,6 @@ export default function VariationDetailScreen() {
   // RENDER
   // ============================================================
 
-  if (loading || !variation) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.accent} />
-      </View>
-    );
-  }
-
-  const nextStatuses = NEXT_STATUS[variation.status] || [];
-  const availableStatuses = isField
-    ? nextStatuses.filter(s => s === VariationStatus.SUBMITTED)
-    : nextStatuses;
-
-  return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
-        {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.headerTop}>
-            <Text style={styles.varId}>{formatVariationId(variation.sequenceNumber)}</Text>
-            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(variation.status) }]}>
-              <Text style={styles.statusText}>{getStatusLabel(variation.status)}</Text>
-            </View>
-          </View>
-          <Text style={styles.title}>{variation.title}</Text>
-          {variation.projectName && (
-            <Text style={styles.projectName}>{variation.projectName}</Text>
-          )}
-          {isOffice && <Text style={styles.value}>{formatCurrency(variation.estimatedValue)}</Text>}
-        </View>
-
-        {/* Status Actions */}
-        {availableStatuses.length > 0 && (
-          <View style={styles.statusActions}>
-            {availableStatuses.map((s) => (
-              <Pressable
-                key={s}
-                style={[
-                  styles.statusButton,
-                  { borderColor: getStatusColor(s) },
-                ]}
-                onPress={() => handleStatusChange(s)}
-              >
-                <Text
-                  style={[
-                    styles.statusButtonText,
-                    { color: getStatusColor(s) },
-                  ]}
-                >
-                  {s === VariationStatus.DISPUTED ? 'Dispute' : `Mark ${getStatusLabel(s)}`}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-        )}
-
-        {/* Details */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Details</Text>
-            {isOffice && (
-              <Pressable onPress={() => setEditing(!editing)}>
-                <Ionicons name={editing ? 'close' : 'create-outline'} size={20} color={colors.accent} />
-              </Pressable>
-            )}
-          </View>
-
-          {editing ? (
-            <View style={styles.editForm}>
-              <View style={styles.editField}>
-                <Text style={styles.editLabel}>ESTIMATED VALUE ($)</Text>
-                <TextInput
-                  style={styles.editInput}
-                  value={editValue}
-                  onChangeText={setEditValue}
-                  keyboardType="numeric"
-                />
-              </View>
-              <View style={styles.editField}>
-                <Text style={styles.editLabel}>INSTRUCTED BY</Text>
-                <TextInput
-                  style={styles.editInput}
-                  value={editInstructedBy}
-                  onChangeText={setEditInstructedBy}
-                />
-              </View>
-              <View style={styles.editField}>
-                <Text style={styles.editLabel}>REFERENCE</Text>
-                <TextInput
-                  style={styles.editInput}
-                  value={editReference}
-                  onChangeText={setEditReference}
-                />
-              </View>
-              <View style={styles.editField}>
-                <Text style={styles.editLabel}>DESCRIPTION</Text>
-                <TextInput
-                  style={[styles.editInput, styles.editInputMulti]}
-                  value={editDescription}
-                  onChangeText={setEditDescription}
-                  multiline
-                  numberOfLines={4}
-                />
-              </View>
-              <View style={styles.editField}>
-                <Text style={styles.editLabel}>NOTES</Text>
-                <TextInput
-                  style={[styles.editInput, styles.editInputMulti]}
-                  value={editNotes}
-                  onChangeText={setEditNotes}
-                  multiline
-                  numberOfLines={3}
-                />
-              </View>
-              <Pressable style={styles.editSaveButton} onPress={handleSaveEdit}>
-                <Text style={styles.editSaveText}>Save Changes</Text>
-              </Pressable>
-            </View>
-          ) : (
-            <View style={styles.detailGrid}>
-              <DetailRow label="Captured" value={formatDateTime(variation.capturedAt)} />
-              <DetailRow label="Source" value={capitalize(variation.instructionSource)} />
-              {variation.instructedBy && <DetailRow label="Instructed By" value={variation.instructedBy} />}
-              {variation.referenceDoc && <DetailRow label="Reference" value={variation.referenceDoc} />}
-              {variation.latitude && (
-                <DetailRow label="GPS" value={formatCoordinates(variation.latitude, variation.longitude!)} />
-              )}
-              {variation.locationAccuracy && (
-                <DetailRow label="Accuracy" value={`\u00B1${Math.round(variation.locationAccuracy)}m`} />
-              )}
-              {variation.description ? (
-                <View style={styles.fullWidth}>
-                  <Text style={styles.detailLabel}>DESCRIPTION</Text>
-                  <Text style={styles.descriptionText}>{variation.description}</Text>
-                </View>
-              ) : null}
-              {variation.notes ? (
-                <View style={styles.fullWidth}>
-                  <Text style={styles.detailLabel}>NOTES</Text>
-                  <Text style={styles.descriptionText}>{variation.notes}</Text>
-                </View>
-              ) : null}
-            </View>
-          )}
-        </View>
-
-        {/* AI Description (Phase 2) */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <View style={styles.sectionTitleRow}>
-              <Ionicons name="sparkles" size={16} color={colors.accent} />
-              <Text style={styles.sectionTitle}>AI Description</Text>
-            </View>
-            {!variation.aiDescription && (
-              <Pressable
-                style={styles.aiButton}
-                onPress={handleGenerateAI}
-                disabled={generatingAI}
-              >
-                {generatingAI ? (
-                  <ActivityIndicator size="small" color={colors.accent} />
-                ) : (
-                  <Text style={styles.aiButtonText}>Generate</Text>
-                )}
-              </Pressable>
-            )}
-          </View>
-
-          {variation.aiDescription ? (
-            <View style={styles.aiCard}>
-              <Text style={styles.aiText}>{variation.aiDescription}</Text>
-              <Pressable style={styles.aiRegenerate} onPress={handleGenerateAI} disabled={generatingAI}>
-                <Ionicons name="refresh-outline" size={14} color={colors.accent} />
-                <Text style={styles.aiRegenerateText}>Regenerate</Text>
-              </Pressable>
-            </View>
-          ) : (
-            <Text style={styles.aiPlaceholder}>
-              {config.anthropic.enabled
-                ? 'Tap Generate to create a professional, contract-ready description using AI.'
-                : 'Add your Anthropic API key in app.json to enable AI-generated descriptions.'}
-            </Text>
-          )}
-        </View>
-
-        {/* Photos */}
-        {variation.photos.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Photos ({variation.photos.length})</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.photoScroll}>
-              {variation.photos.map((photo) => (
-                <Pressable
-                  key={photo.id}
-                  style={styles.photoCard}
-                  onPress={() => setViewerUri(photo.localUri)}
-                >
-                  <Image source={{ uri: photo.localUri }} style={styles.photoImage} />
-                  <View style={styles.photoMeta}>
-                    <Text style={styles.photoHash} numberOfLines={1}>
-                      SHA-256: {photo.sha256Hash.slice(0, 12)}...
-                    </Text>
-                    {photo.latitude && (
-                      <Text style={styles.photoGps}>
-                        {formatCoordinates(photo.latitude, photo.longitude!)}
-                      </Text>
-                    )}
-                  </View>
-                </Pressable>
-              ))}
-            </ScrollView>
-          </View>
-        )}
-
-        {/* Voice Notes */}
-        {variation.voiceNotes.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Voice Notes ({variation.voiceNotes.length})</Text>
-            {variation.voiceNotes.map((vn) => (
-              <View key={vn.id} style={styles.voiceCard}>
-                <Pressable
-                  style={styles.playButton}
-                  onPress={() => togglePlayback(vn.localUri)}
-                >
-                  <Ionicons
-                    name={playing ? 'stop' : 'play'}
-                    size={24}
-                    color={colors.textInverse}
-                  />
-                </Pressable>
-                <View style={styles.voiceInfo}>
-                  <Text style={styles.voiceDuration}>{formatDuration(vn.durationSeconds)}</Text>
-                  {vn.transcription ? (
-                    <Text style={styles.voiceTranscription} numberOfLines={3}>
-                      "{vn.transcription}"
-                    </Text>
-                  ) : (
-                    <Text style={styles.voiceTranscriptionPending}>
-                      {vn.transcriptionStatus === 'pending' ? 'Transcribing...'
-                        : vn.transcriptionStatus === 'failed' ? 'Transcription failed'
-                        : 'No transcription'}
-                    </Text>
-                  )}
-                  {vn.sha256Hash && (
-                    <Text style={styles.voiceHash}>SHA-256: {vn.sha256Hash.slice(0, 12)}...</Text>
-                  )}
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Status History */}
-        {variation.statusHistory.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Status History</Text>
-            {variation.statusHistory.map((sc, i) => (
-              <View key={sc.id} style={styles.historyItem}>
-                <View style={[styles.historyDot, { backgroundColor: getStatusColor(sc.toStatus) }]} />
-                <View style={styles.historyContent}>
-                  <Text style={styles.historyStatus}>
-                    {sc.fromStatus ? `${getStatusLabel(sc.fromStatus)} \u2192 ` : ''}
-                    {getStatusLabel(sc.toStatus)}
-                  </Text>
-                  <Text style={styles.historyDate}>{formatDateTime(sc.changedAt)}</Text>
-                  {sc.notes && <Text style={styles.historyNotes}>{sc.notes}</Text>}
-                </View>
-                {i < variation.statusHistory.length - 1 && <View style={styles.historyLine} />}
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Evidence Hash */}
-        {variation.evidenceHash && (
-          <View style={styles.evidenceSection}>
-            <Ionicons name="shield-checkmark" size={16} color={colors.success} />
-            <View>
-              <Text style={styles.evidenceLabel}>Evidence Chain Verified</Text>
-              <Text style={styles.evidenceHash}>{variation.evidenceHash}</Text>
-            </View>
-          </View>
-        )}
-
-        {/* Actions */}
-        {isOffice && (
-          <View style={styles.actionsSection}>
-            <Pressable
-              style={[styles.actionRow, exporting && styles.actionRowDisabled]}
-              onPress={handleExportPDF}
-              disabled={exporting}
-            >
-              <Ionicons name="document-text-outline" size={22} color={colors.accent} />
-              <Text style={styles.actionRowText}>
-                {exporting ? 'Generating PDF...' : 'Export as PDF'}
-              </Text>
-            </Pressable>
-
-            <View style={styles.actionDivider} />
-
-            <Pressable style={styles.actionRow} onPress={handleDelete}>
-              <Ionicons name="trash-outline" size={22} color={colors.danger} />
-              <Text style={[styles.actionRowText, { color: colors.danger }]}>Delete Variation</Text>
-            </Pressable>
-          </View>
-        )}
-      </ScrollView>
-
-      {/* Photo Viewer Modal */}
-      <Modal visible={viewerUri !== null} transparent animationType="fade">
-        <Pressable style={styles.viewerOverlay} onPress={() => setViewerUri(null)}>
-          {viewerUri && (
-            <Image
-              source={{ uri: viewerUri }}
-              style={styles.viewerImage}
-              resizeMode="contain"
-            />
-          )}
-          <Pressable style={styles.viewerClose} onPress={() => setViewerUri(null)}>
-            <Ionicons name="close" size={28} color="#fff" />
-          </Pressable>
-        </Pressable>
-      </Modal>
-    </View>
-  );
-
   const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.bg },
@@ -640,6 +322,12 @@ export default function VariationDetailScreen() {
   viewerOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', justifyContent: 'center', alignItems: 'center' },
   viewerImage: { width: '90%', height: '80%' },
   viewerClose: { position: 'absolute' as const, top: 50, right: 20 },
+
+  // Attachments
+  attachRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.md, backgroundColor: colors.surface, borderRadius: borderRadius.md, borderWidth: 1, borderColor: colors.border, marginBottom: spacing.sm },
+  attachInfo: { flex: 1 },
+  attachName: { ...typography.labelSmall, color: colors.text },
+  attachSize: { fontSize: 10, fontFamily: 'monospace', color: colors.textMuted, marginTop: 2 },
   });
 
   function DetailRow({ label, value }: { label: string; value: string }) {
@@ -650,4 +338,360 @@ export default function VariationDetailScreen() {
       </View>
     );
   }
+
+  if (loading || !variation) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.accent} />
+      </View>
+    );
+  }
+
+  const nextStatuses = NEXT_STATUS[variation.status] || [];
+  const availableStatuses = isField
+    ? nextStatuses.filter(s => s === VariationStatus.SUBMITTED)
+    : nextStatuses;
+
+  return (
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        {/* Header */}
+        <View style={styles.header}>
+          <View style={styles.headerTop}>
+            <Text style={styles.varId}>{formatVariationId(variation.sequenceNumber)}</Text>
+            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(variation.status) }]}>
+              <Text style={styles.statusText}>{getStatusLabel(variation.status)}</Text>
+            </View>
+          </View>
+          <Text style={styles.title}>{variation.title}</Text>
+          {variation.projectName && (
+            <Text style={styles.projectName}>{variation.projectName}</Text>
+          )}
+          {isOffice && <Text style={styles.value}>{formatCurrency(variation.estimatedValue)}</Text>}
+        </View>
+
+        {/* Status Actions */}
+        {availableStatuses.length > 0 && (
+          <View style={styles.statusActions}>
+            {availableStatuses.map((s) => (
+              <Pressable
+                key={s}
+                style={[
+                  styles.statusButton,
+                  { borderColor: getStatusColor(s) },
+                ]}
+                onPress={() => handleStatusChange(s)}
+              >
+                <Text
+                  style={[
+                    styles.statusButtonText,
+                    { color: getStatusColor(s) },
+                  ]}
+                >
+                  {s === VariationStatus.DISPUTED ? 'Dispute'
+                    : (isField && s === VariationStatus.SUBMITTED) ? 'Submit'
+                    : `Mark ${getStatusLabel(s)}`}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        )}
+
+        {/* Details */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Details</Text>
+            {isOffice && (
+              <Pressable onPress={() => setEditing(!editing)}>
+                <Ionicons name={editing ? 'close' : 'create-outline'} size={20} color={colors.accent} />
+              </Pressable>
+            )}
+          </View>
+
+          {editing ? (
+            <View style={styles.editForm}>
+              {isOffice && (
+                <View style={styles.editField}>
+                  <Text style={styles.editLabel}>ESTIMATED VALUE ($)</Text>
+                  <TextInput
+                    style={styles.editInput}
+                    value={editValue}
+                    onChangeText={setEditValue}
+                    keyboardType="numeric"
+                  />
+                </View>
+              )}
+              <View style={styles.editField}>
+                <Text style={styles.editLabel}>INSTRUCTED BY</Text>
+                <TextInput
+                  style={styles.editInput}
+                  value={editInstructedBy}
+                  onChangeText={setEditInstructedBy}
+                />
+              </View>
+              <View style={styles.editField}>
+                <Text style={styles.editLabel}>REFERENCE</Text>
+                <TextInput
+                  style={styles.editInput}
+                  value={editReference}
+                  onChangeText={setEditReference}
+                />
+              </View>
+              <View style={styles.editField}>
+                <Text style={styles.editLabel}>DESCRIPTION</Text>
+                <TextInput
+                  style={[styles.editInput, styles.editInputMulti]}
+                  value={editDescription}
+                  onChangeText={setEditDescription}
+                  multiline
+                  numberOfLines={4}
+                />
+              </View>
+              <View style={styles.editField}>
+                <Text style={styles.editLabel}>NOTES</Text>
+                <TextInput
+                  style={[styles.editInput, styles.editInputMulti]}
+                  value={editNotes}
+                  onChangeText={setEditNotes}
+                  multiline
+                  numberOfLines={3}
+                />
+              </View>
+              <Pressable style={styles.editSaveButton} onPress={handleSaveEdit}>
+                <Text style={styles.editSaveText}>Save Changes</Text>
+              </Pressable>
+            </View>
+          ) : (
+            <View style={styles.detailGrid}>
+              <DetailRow label="Captured" value={formatDateTime(variation.capturedAt)} />
+              <DetailRow label="Source" value={capitalize(variation.instructionSource)} />
+              {variation.instructedBy && <DetailRow label="Instructed By" value={variation.instructedBy} />}
+              {variation.referenceDoc && <DetailRow label="Reference" value={variation.referenceDoc} />}
+              {variation.latitude && (
+                <DetailRow label="GPS" value={formatCoordinates(variation.latitude, variation.longitude!)} />
+              )}
+              {variation.locationAccuracy && (
+                <DetailRow label="Accuracy" value={`\u00B1${Math.round(variation.locationAccuracy)}m`} />
+              )}
+              {variation.description ? (
+                <View style={styles.fullWidth}>
+                  <Text style={styles.detailLabel}>DESCRIPTION</Text>
+                  <Text style={styles.descriptionText}>{variation.description}</Text>
+                </View>
+              ) : null}
+              {variation.notes ? (
+                <View style={styles.fullWidth}>
+                  <Text style={styles.detailLabel}>NOTES</Text>
+                  <Text style={styles.descriptionText}>{variation.notes}</Text>
+                </View>
+              ) : null}
+            </View>
+          )}
+        </View>
+
+        {/* AI Description — Phase 2 (hidden for MVP) */}
+        {/* Uncomment to re-enable:
+        <View style={styles.section}>
+          ...AI description section...
+        </View>
+        */}
+
+        {/* Photos */}
+        {variation.photos.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Photos ({variation.photos.length})</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.photoScroll}>
+              {variation.photos.map((photo) => (
+                <Pressable
+                  key={photo.id}
+                  style={styles.photoCard}
+                  onPress={() => setViewerUri(photo.localUri)}
+                >
+                  <Image source={{ uri: photo.localUri }} style={styles.photoImage} />
+                  <View style={styles.photoMeta}>
+                    <Text style={styles.photoHash} numberOfLines={1}>
+                      SHA-256: {photo.sha256Hash.slice(0, 12)}...
+                    </Text>
+                    {photo.latitude && (
+                      <Text style={styles.photoGps}>
+                        {formatCoordinates(photo.latitude, photo.longitude!)}
+                      </Text>
+                    )}
+                  </View>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
+        {/* Voice Notes */}
+        {variation.voiceNotes.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Voice Notes ({variation.voiceNotes.length})</Text>
+            {variation.voiceNotes.map((vn) => (
+              <View key={vn.id} style={styles.voiceCard}>
+                <Pressable
+                  style={styles.playButton}
+                  onPress={() => togglePlayback(vn.localUri)}
+                >
+                  <Ionicons
+                    name={playing ? 'stop' : 'play'}
+                    size={24}
+                    color={colors.textInverse}
+                  />
+                </Pressable>
+                <View style={styles.voiceInfo}>
+                  <Text style={styles.voiceDuration}>{formatDuration(vn.durationSeconds)}</Text>
+                  {vn.transcription ? (
+                    <Text style={styles.voiceTranscription} numberOfLines={3}>
+                      "{vn.transcription}"
+                    </Text>
+                  ) : (
+                    <Text style={styles.voiceTranscriptionPending}>
+                      {vn.transcriptionStatus === 'pending' ? 'Transcribing...'
+                        : vn.transcriptionStatus === 'failed' ? 'Transcription failed'
+                        : 'No transcription'}
+                    </Text>
+                  )}
+                  {vn.sha256Hash && (
+                    <Text style={styles.voiceHash}>SHA-256: {vn.sha256Hash.slice(0, 12)}...</Text>
+                  )}
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Attachments */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Attachments ({attachments.length})</Text>
+            {(variation.status === VariationStatus.CAPTURED || variation.status === VariationStatus.SUBMITTED) && isOffice && (
+              <Pressable onPress={async () => {
+                const picked = await pickAttachment();
+                if (picked) {
+                  await addAttachment({
+                    id: picked.id,
+                    variationId: id!,
+                    localUri: picked.uri,
+                    fileName: picked.fileName,
+                    fileSize: picked.fileSize,
+                    mimeType: picked.mimeType,
+                    sha256Hash: picked.hash,
+                  });
+                  await load();
+                }
+              }}>
+                <Ionicons name="add-circle-outline" size={22} color={colors.accent} />
+              </Pressable>
+            )}
+          </View>
+
+          {attachments.length === 0 ? (
+            <Text style={styles.aiPlaceholder}>No attachments. Tap + to add site instructions, RFIs or emails.</Text>
+          ) : (
+            attachments.map((att) => (
+              <Pressable key={att.id} style={styles.attachRow} onPress={() => openAttachment(att.localUri)}>
+                <Ionicons name={getFileIcon(att.mimeType) as any} size={22} color={colors.accent} />
+                <View style={styles.attachInfo}>
+                  <Text style={styles.attachName} numberOfLines={1}>{att.fileName}</Text>
+                  <Text style={styles.attachSize}>{formatFileSize(att.fileSize)} · SHA: {att.sha256Hash.slice(0, 8)}...</Text>
+                </View>
+                <Ionicons name="open-outline" size={18} color={colors.textMuted} />
+              </Pressable>
+            ))
+          )}
+        </View>
+
+        {/* Status History */}
+        {variation.statusHistory.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Status History</Text>
+            {variation.statusHistory.map((sc, i) => (
+              <View key={sc.id} style={styles.historyItem}>
+                <View style={[styles.historyDot, { backgroundColor: getStatusColor(sc.toStatus) }]} />
+                <View style={styles.historyContent}>
+                  <Text style={styles.historyStatus}>
+                    {sc.fromStatus ? `${getStatusLabel(sc.fromStatus)} \u2192 ` : ''}
+                    {getStatusLabel(sc.toStatus)}
+                  </Text>
+                  <Text style={styles.historyDate}>{formatDateTime(sc.changedAt)}</Text>
+                  {sc.notes && <Text style={styles.historyNotes}>{sc.notes}</Text>}
+                </View>
+                {i < variation.statusHistory.length - 1 && <View style={styles.historyLine} />}
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Evidence Hash */}
+        {variation.evidenceHash && (
+          <View style={styles.evidenceSection}>
+            <Ionicons name="shield-checkmark" size={16} color={colors.success} />
+            <View>
+              <Text style={styles.evidenceLabel}>Evidence Chain Verified</Text>
+              <Text style={styles.evidenceHash}>{variation.evidenceHash}</Text>
+            </View>
+          </View>
+        )}
+
+        {/* Actions */}
+        {(isOffice || variation.status === VariationStatus.CAPTURED) && (
+          <View style={styles.actionsSection}>
+            {/* Modify — Field can modify Draft; Office can modify Draft + Submitted */}
+            {((isField && variation.status === VariationStatus.CAPTURED) ||
+              (isOffice && (variation.status === VariationStatus.CAPTURED || variation.status === VariationStatus.SUBMITTED))) && (
+              <>
+                <Pressable
+                  style={styles.actionRow}
+                  onPress={() => setEditing(!editing)}
+                >
+                  <Ionicons name="create-outline" size={22} color={colors.accent} />
+                  <Text style={styles.actionRowText}>{editing ? 'Cancel Modify' : 'Modify Variation'}</Text>
+                </Pressable>
+                <View style={styles.actionDivider} />
+              </>
+            )}
+
+            {isOffice && (
+              <>
+                <Pressable
+                  style={[styles.actionRow, exporting && styles.actionRowDisabled]}
+                  onPress={handleExportPDF}
+                  disabled={exporting}
+                >
+                  <Ionicons name="document-text-outline" size={22} color={colors.accent} />
+                  <Text style={styles.actionRowText}>
+                    {exporting ? 'Generating PDF...' : 'Export as PDF'}
+                  </Text>
+                </Pressable>
+                <View style={styles.actionDivider} />
+              </>
+            )}
+
+            <Pressable style={styles.actionRow} onPress={handleDelete}>
+              <Ionicons name="trash-outline" size={22} color={colors.danger} />
+              <Text style={[styles.actionRowText, { color: colors.danger }]}>Delete Variation</Text>
+            </Pressable>
+          </View>
+        )}
+      </ScrollView>
+
+      {/* Photo Viewer Modal */}
+      <Modal visible={viewerUri !== null} transparent animationType="fade">
+        <Pressable style={styles.viewerOverlay} onPress={() => setViewerUri(null)}>
+          {viewerUri && (
+            <Image
+              source={{ uri: viewerUri }}
+              style={styles.viewerImage}
+              resizeMode="contain"
+            />
+          )}
+          <Pressable style={styles.viewerClose} onPress={() => setViewerUri(null)}>
+            <Ionicons name="close" size={28} color="#fff" />
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </View>
+  );
 }

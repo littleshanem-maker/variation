@@ -72,7 +72,7 @@ export default function HomeScreen() {
       <View style={styles.projectStats}>
         <View style={styles.stat}>
           <Text style={styles.statLabel}>VARIATIONS</Text>
-          <Text style={styles.statValue}>{item.variationCount}</Text>
+          <Text style={styles.statValue}>{isOffice ? item.variationCount : item.fieldVariationCount}</Text>
         </View>
         <View style={[styles.stat, styles.statRight]}>
           <Text style={styles.statLabel}>LAST CAPTURE</Text>
@@ -121,29 +121,6 @@ export default function HomeScreen() {
     </View>
   );
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.screenHeader}>
-        <Text style={styles.screenTitle}>Projects</Text>
-      </View>
-      <FlatList
-        data={projects}
-        renderItem={renderProject}
-        keyExtractor={(item) => item.id}
-        ListHeaderComponent={ListHeader}
-        ListEmptyComponent={EmptyState}
-        contentContainerStyle={styles.list}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={colors.accent}
-          />
-        }
-      />
-    </View>
-  );
-
   const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   screenHeader: { paddingTop: 60, paddingHorizontal: spacing.lg, paddingBottom: spacing.md, backgroundColor: colors.bg },
@@ -176,4 +153,27 @@ export default function HomeScreen() {
   newProjectButtonPressed: { backgroundColor: colors.accentHover },
   newProjectButtonText: { ...typography.labelLarge, color: colors.textInverse },
   });
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.screenHeader}>
+        <Text style={styles.screenTitle}>Projects</Text>
+      </View>
+      <FlatList
+        data={projects}
+        renderItem={renderProject}
+        keyExtractor={(item) => item.id}
+        ListHeaderComponent={ListHeader}
+        ListEmptyComponent={EmptyState}
+        contentContainerStyle={styles.list}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.accent}
+          />
+        }
+      />
+    </View>
+  );
 }

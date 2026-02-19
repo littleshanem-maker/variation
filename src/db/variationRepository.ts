@@ -132,6 +132,25 @@ export async function getVariationDetail(id: string): Promise<VariationDetail | 
   };
 }
 
+export async function getVariationsByStatus(statuses: string[]): Promise<VariationDetail[]> {
+  const db = await getDatabase();
+  const placeholders = statuses.map(() => '?').join(',');
+  const rows = await db.getAllAsync<any>(
+    `SELECT v.*, p.name as project_name FROM variations v
+     INNER JOIN projects p ON p.id = v.project_id
+     WHERE p.is_active = 1 AND v.status IN (${placeholders})
+     ORDER BY v.estimated_value DESC`,
+    ...statuses,
+  );
+  return rows.map(row => ({
+    ...mapVariationRow(row),
+    projectName: row.project_name,
+    photos: [],
+    voiceNotes: [],
+    statusHistory: [],
+  }));
+}
+
 export async function getRecentVariations(limit: number = 10): Promise<VariationDetail[]> {
   const db = await getDatabase();
   

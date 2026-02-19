@@ -14,62 +14,62 @@ import { TextStyle } from 'react-native';
 // COLOURS
 // ============================================================
 
-// Field theme — Safety Orange, high contrast for outdoor/site use
+// Field theme — Dark, website palette, high contrast for outdoor/sunlight use
 export const fieldColors = {
-  // Core
-  bg: '#F5F2ED',
-  surface: '#FFFFFF',
-  surfaceAlt: '#EDE9E3',
-  border: '#D4CFC7',
-  borderLight: '#E8E4DD',
+  // Core — dark navy matching website
+  bg: '#0F172A',
+  surface: '#1E293B',
+  surfaceAlt: '#263448',
+  border: '#334155',
+  borderLight: '#2D3748',
 
-  // Text
-  text: '#1A1A1A',
-  textSecondary: '#4A4A4A',
-  textMuted: '#8A8580',
-  textInverse: '#FFFFFF',
+  // Text — light on dark
+  text: '#F1F5F9',
+  textSecondary: '#CBD5E1',
+  textMuted: '#94A3B8',
+  textInverse: '#0F172A',
 
-  // Accent — Safety Orange
-  accent: '#D4600A',
-  accentHover: '#B8520A',
-  accentLight: '#FFF0E6',
+  // Accent — Blue (website blue)
+  accent: '#3B82F6',
+  accentHover: '#60A5FA',
+  accentLight: '#1E3A5F',
 
-  // Status
-  success: '#2D7D46',
-  successLight: '#E8F5E9',
-  danger: '#C62828',
-  dangerLight: '#FFEBEE',
-  warning: '#F57F17',
-  warningLight: '#FFF8E1',
-  info: '#1565C0',
-  infoLight: '#E3F2FD',
+  // Status — bright for dark backgrounds
+  success: '#4ADE80',
+  successLight: '#052E16',
+  danger: '#F87171',
+  dangerLight: '#2A1010',
+  warning: '#FBBF24',
+  warningLight: '#2A1F00',
+  info: '#60A5FA',
+  infoLight: '#1E2F4A',
 
   // Variation status
   status: {
-    captured: '#D4600A',
-    submitted: '#1565C0',
-    approved: '#2D7D46',
-    disputed: '#C62828',
-    paid: '#1A1A1A',
+    captured: '#94A3B8',
+    submitted: '#3B82F6',
+    approved: '#4ADE80',
+    disputed: '#F87171',
+    paid: '#64748B',
   },
 } as const;
 
-// Office theme — Navy/Blue, professional for office/dashboard use
+// Office theme — Light, inverted website palette, clean for office/desktop use
 export const officeColors = {
-  // Core
-  bg: '#F0F4F8',
+  // Core — light, slightly blue-tinted
+  bg: '#F8FAFC',
   surface: '#FFFFFF',
-  surfaceAlt: '#E8EDF2',
-  border: '#CBD5E1',
-  borderLight: '#E2E8F0',
+  surfaceAlt: '#F1F5F9',
+  border: '#E2E8F0',
+  borderLight: '#F1F5F9',
 
-  // Text
+  // Text — dark navy on light
   text: '#0F172A',
   textSecondary: '#334155',
   textMuted: '#64748B',
   textInverse: '#FFFFFF',
 
-  // Accent — Blue
+  // Accent — Blue (same as website + field)
   accent: '#3B82F6',
   accentHover: '#2563EB',
   accentLight: '#EFF6FF',
@@ -86,8 +86,8 @@ export const officeColors = {
 
   // Variation status
   status: {
-    captured: '#3B82F6',
-    submitted: '#6366F1',
+    captured: '#64748B',
+    submitted: '#3B82F6',
     approved: '#16A34A',
     disputed: '#DC2626',
     paid: '#0F172A',
@@ -204,7 +204,7 @@ export function getStatusColor(status: string): string {
 
 export function getStatusLabel(status: string): string {
   const labels: Record<string, string> = {
-    captured: 'Captured',
+    captured: 'Draft',
     submitted: 'Submitted',
     approved: 'Approved',
     disputed: 'Disputed',

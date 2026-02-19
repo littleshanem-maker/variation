@@ -126,6 +126,7 @@ export interface StatusChange {
 
 export interface ProjectSummary extends Project {
   variationCount: number;
+  fieldVariationCount: number;
   totalValue: number;
   atRiskValue: number;
   lastCaptureAt?: string;

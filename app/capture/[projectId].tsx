@@ -15,14 +15,16 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { Audio } from 'expo-av';
 import { spacing, borderRadius, typography, touchTargets } from '../../src/theme';
-import { useThemeColors } from '../../src/contexts/AppModeContext';
+import { useThemeColors, useAppMode } from '../../src/contexts/AppModeContext';
 import { getNextVariationSequence } from '../../src/db/projectRepository';
 import { createVariation, addPhotoEvidence, addVoiceNote, updateEvidenceHash } from '../../src/db/variationRepository';
 import { InstructionSource } from '../../src/types/domain';
-import { generateId, nowISO, formatDuration } from '../../src/utils/helpers';
+import { generateId, nowISO, formatDuration, parseInputToCents } from '../../src/utils/helpers';
 import { hashFile, computeCombinedEvidenceHash } from '../../src/services/evidenceChain';
 import { getCurrentLocation } from '../../src/services/location';
 import { transcribeVoiceNote } from '../../src/services/ai';
+import { pickAttachment, getFileIcon, formatFileSize, PickedAttachment } from '../../src/services/attachments';
+import { addAttachment } from '../../src/db/attachmentRepository';
 const STEPS = ['Capture', 'Tag'];
 
 const SOURCES: { value: InstructionSource; label: string; icon: string }[] = [
@@ -42,6 +44,7 @@ interface CapturedPhoto {
 
 export default function CaptureScreen() {
   const colors = useThemeColors();
+  const { isOffice } = useAppMode();
   const { projectId } = useLocalSearchParams<{ projectId: string }>();
   const router = useRouter();
   const [step, setStep] = useState(0);
@@ -61,6 +64,11 @@ export default function CaptureScreen() {
   const [title, setTitle] = useState('');
   const [source, setSource] = useState<InstructionSource>(InstructionSource.SITE_INSTRUCTION);
   const [instructedBy, setInstructedBy] = useState('');
+  const [estimatedValue, setEstimatedValue] = useState('');
+  const [description, setDescription] = useState('');
+
+  // Attachments
+  const [attachments, setAttachments] = useState<PickedAttachment[]>([]);
 
   // Saving
   const [saving, setSaving] = useState(false);
@@ -186,11 +194,11 @@ export default function CaptureScreen() {
         projectId: projectId!,
         sequenceNumber: seq,
         title: title.trim(),
-        description: '',
+        description: description.trim(),
         instructionSource: source,
         instructedBy: instructedBy.trim() || undefined,
         referenceDoc: undefined,
-        estimatedValue: 0,
+        estimatedValue: parseInputToCents(estimatedValue),
         latitude: location?.latitude,
         longitude: location?.longitude,
         locationAccuracy: location?.accuracy,
@@ -234,6 +242,19 @@ export default function CaptureScreen() {
         transcribeVoiceNote(vnId, voiceUri).catch(() => {});
       }
 
+      // Save attachments
+      for (const att of attachments) {
+        await addAttachment({
+          id: att.id,
+          variationId: variation.id,
+          localUri: att.uri,
+          fileName: att.fileName,
+          fileSize: att.fileSize,
+          mimeType: att.mimeType,
+          sha256Hash: att.hash,
+        });
+      }
+
       // Compute combined evidence hash
       const combinedHash = await computeCombinedEvidenceHash(
         photoHashes,
@@ -261,6 +282,78 @@ export default function CaptureScreen() {
     if (step === 1 && !title.trim()) return false;
     return true;
   };
+
+  const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.bg },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: spacing.lg },
+  headerTitle: { ...typography.headingSmall, color: colors.text },
+  stepIndicator: { ...typography.caption, color: colors.textMuted },
+  progressBar: { height: 3, backgroundColor: colors.border, marginHorizontal: spacing.lg },
+  progressFill: { height: 3, backgroundColor: colors.accent, borderRadius: 2 },
+  content: { flex: 1 },
+  stepContent: { padding: spacing.lg, paddingBottom: 100 },
+  stepInstruction: { ...typography.bodyLarge, color: colors.textSecondary, marginBottom: spacing.lg },
+
+  // Photos
+  primaryCameraButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.md, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 18, marginBottom: spacing.lg },
+  primaryCameraText: { ...typography.labelLarge, color: colors.textInverse },
+  photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md },
+  photoThumb: { width: 100, height: 100, borderRadius: borderRadius.md, overflow: 'hidden' as const },
+  photoImage: { width: '100%', height: '100%' },
+  photoRemove: { position: 'absolute' as const, top: 4, right: 4 },
+  libraryButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, borderWidth: 1, borderColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 12, marginBottom: spacing.sm },
+  libraryButtonText: { ...typography.labelMedium, color: colors.accent },
+  photoCount: { ...typography.caption, color: colors.textMuted, textAlign: 'center' as const, marginBottom: spacing.xxl },
+
+  // Voice
+  voiceSection: { alignItems: 'center' as const, paddingTop: spacing.lg, paddingBottom: spacing.lg, backgroundColor: colors.surface, borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.border },
+  voiceSectionTitle: { ...typography.labelMedium, color: colors.text, marginBottom: spacing.lg },
+  recordingIndicator: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.lg },
+  recordingDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: colors.danger },
+  recordingText: { ...typography.labelMedium, color: colors.danger },
+  recordingTime: { ...typography.headingMedium, color: colors.text },
+  voicePreview: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.lg },
+  voicePreviewText: { ...typography.labelMedium, color: colors.success },
+  recordButton: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.accent, alignItems: 'center' as const, justifyContent: 'center' as const, marginBottom: spacing.md },
+  recordButtonActive: { backgroundColor: colors.danger },
+  voiceHint: { ...typography.caption, color: colors.textMuted },
+
+  // Details
+  field: { marginBottom: spacing.lg },
+  fieldLabel: { ...typography.overline, color: colors.textMuted, marginBottom: spacing.sm },
+  fieldRow: { flexDirection: 'row', gap: spacing.md },
+  input: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: borderRadius.md, padding: spacing.md, fontSize: 15, color: colors.text, minHeight: 48 },
+  inputMultiline: { minHeight: 80, textAlignVertical: 'top' as const },
+  sourceGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  sourceChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing.md, paddingVertical: 8, borderRadius: borderRadius.full, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
+  sourceChipActive: { borderColor: colors.accent, backgroundColor: colors.accentLight },
+  sourceChipText: { ...typography.caption, color: colors.textSecondary },
+  sourceChipTextActive: { color: colors.accent, fontWeight: '700' },
+
+  // Attachments
+  attachSection: { marginTop: spacing.xl, backgroundColor: colors.surface, borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.border, padding: spacing.lg },
+  attachSectionTitle: { ...typography.labelMedium, color: colors.text, marginBottom: spacing.md },
+  attachRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.borderLight },
+  attachInfo: { flex: 1 },
+  attachName: { ...typography.labelSmall, color: colors.text },
+  attachSize: { ...typography.caption, color: colors.textMuted },
+  attachButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, paddingTop: spacing.md, marginTop: spacing.sm },
+  attachButtonText: { ...typography.labelMedium, color: colors.accent },
+
+  // Bottom
+  bottomBar: { padding: spacing.lg, paddingBottom: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.bg },
+  nextButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 14, minHeight: touchTargets.button },
+  nextButtonDisabled: { opacity: 0.5 },
+  nextButtonText: { ...typography.labelLarge, color: colors.textInverse },
+  saveButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.success, borderRadius: borderRadius.lg, paddingVertical: 14, minHeight: touchTargets.button },
+  saveButtonDisabled: { opacity: 0.6 },
+  saveButtonText: { ...typography.labelLarge, color: colors.textInverse },
+
+  // Viewer
+  viewerOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', justifyContent: 'center', alignItems: 'center' },
+  viewerImage: { width: '90%', height: '80%' },
+  viewerClose: { position: 'absolute' as const, top: 50, right: 20 },
+  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -354,6 +447,32 @@ export default function CaptureScreen() {
                 {isRecording ? 'Tap to stop' : voiceUri ? 'Tap to re-record' : 'Tap to start recording'}
               </Text>
             </View>
+
+            {/* Attachments */}
+            <View style={styles.attachSection}>
+              <Text style={styles.attachSectionTitle}>Attachments</Text>
+
+              {attachments.map((att) => (
+                <View key={att.id} style={styles.attachRow}>
+                  <Ionicons name={getFileIcon(att.mimeType) as any} size={20} color={colors.accent} />
+                  <View style={styles.attachInfo}>
+                    <Text style={styles.attachName} numberOfLines={1}>{att.fileName}</Text>
+                    <Text style={styles.attachSize}>{formatFileSize(att.fileSize)}</Text>
+                  </View>
+                  <Pressable onPress={() => setAttachments(prev => prev.filter(a => a.id !== att.id))}>
+                    <Ionicons name="close-circle" size={20} color={colors.danger} />
+                  </Pressable>
+                </View>
+              ))}
+
+              <Pressable style={styles.attachButton} onPress={async () => {
+                const picked = await pickAttachment();
+                if (picked) setAttachments(prev => [...prev, picked]);
+              }}>
+                <Ionicons name="attach" size={20} color={colors.accent} />
+                <Text style={styles.attachButtonText}>Attach Document</Text>
+              </Pressable>
+            </View>
           </ScrollView>
         )}
 
@@ -400,6 +519,33 @@ export default function CaptureScreen() {
                 placeholderTextColor={colors.textMuted}
               />
             </View>
+
+            {isOffice && (
+              <View style={styles.field}>
+                <Text style={styles.fieldLabel}>ESTIMATED VALUE ($)</Text>
+                <TextInput
+                  style={styles.input}
+                  value={estimatedValue}
+                  onChangeText={setEstimatedValue}
+                  placeholder="e.g. 45000"
+                  placeholderTextColor={colors.textMuted}
+                  keyboardType="numeric"
+                />
+              </View>
+            )}
+
+            <View style={styles.field}>
+              <Text style={styles.fieldLabel}>DESCRIPTION</Text>
+              <TextInput
+                style={[styles.input, styles.inputMultiline]}
+                value={description}
+                onChangeText={setDescription}
+                placeholder="Describe the scope change — rough notes are fine. AI will formalise it."
+                placeholderTextColor={colors.textMuted}
+                multiline
+                numberOfLines={4}
+              />
+            </View>
           </ScrollView>
         )}
       </KeyboardAvoidingView>
@@ -437,66 +583,4 @@ export default function CaptureScreen() {
       </Modal>
     </SafeAreaView>
   );
-
-  const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: spacing.lg },
-  headerTitle: { ...typography.headingSmall, color: colors.text },
-  stepIndicator: { ...typography.caption, color: colors.textMuted },
-  progressBar: { height: 3, backgroundColor: colors.border, marginHorizontal: spacing.lg },
-  progressFill: { height: 3, backgroundColor: colors.accent, borderRadius: 2 },
-  content: { flex: 1 },
-  stepContent: { padding: spacing.lg, paddingBottom: 100 },
-  stepInstruction: { ...typography.bodyLarge, color: colors.textSecondary, marginBottom: spacing.lg },
-
-  // Photos
-  primaryCameraButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.md, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 18, marginBottom: spacing.lg },
-  primaryCameraText: { ...typography.labelLarge, color: colors.textInverse },
-  photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md },
-  photoThumb: { width: 100, height: 100, borderRadius: borderRadius.md, overflow: 'hidden' as const },
-  photoImage: { width: '100%', height: '100%' },
-  photoRemove: { position: 'absolute' as const, top: 4, right: 4 },
-  libraryButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, borderWidth: 1, borderColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 12, marginBottom: spacing.sm },
-  libraryButtonText: { ...typography.labelMedium, color: colors.accent },
-  photoCount: { ...typography.caption, color: colors.textMuted, textAlign: 'center' as const, marginBottom: spacing.xxl },
-
-  // Voice
-  voiceSection: { alignItems: 'center' as const, paddingTop: spacing.lg, paddingBottom: spacing.lg, backgroundColor: colors.surface, borderRadius: borderRadius.lg, borderWidth: 1, borderColor: colors.border },
-  voiceSectionTitle: { ...typography.labelMedium, color: colors.text, marginBottom: spacing.lg },
-  recordingIndicator: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.lg },
-  recordingDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: colors.danger },
-  recordingText: { ...typography.labelMedium, color: colors.danger },
-  recordingTime: { ...typography.headingMedium, color: colors.text },
-  voicePreview: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.lg },
-  voicePreviewText: { ...typography.labelMedium, color: colors.success },
-  recordButton: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.accent, alignItems: 'center' as const, justifyContent: 'center' as const, marginBottom: spacing.md },
-  recordButtonActive: { backgroundColor: colors.danger },
-  voiceHint: { ...typography.caption, color: colors.textMuted },
-
-  // Details
-  field: { marginBottom: spacing.lg },
-  fieldLabel: { ...typography.overline, color: colors.textMuted, marginBottom: spacing.sm },
-  fieldRow: { flexDirection: 'row', gap: spacing.md },
-  input: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: borderRadius.md, padding: spacing.md, fontSize: 15, color: colors.text, minHeight: 48 },
-  inputMultiline: { minHeight: 80, textAlignVertical: 'top' as const },
-  sourceGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  sourceChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: spacing.md, paddingVertical: 8, borderRadius: borderRadius.full, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
-  sourceChipActive: { borderColor: colors.accent, backgroundColor: colors.accentLight },
-  sourceChipText: { ...typography.caption, color: colors.textSecondary },
-  sourceChipTextActive: { color: colors.accent, fontWeight: '700' },
-
-  // Bottom
-  bottomBar: { padding: spacing.lg, paddingBottom: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.bg },
-  nextButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 14, minHeight: touchTargets.button },
-  nextButtonDisabled: { opacity: 0.5 },
-  nextButtonText: { ...typography.labelLarge, color: colors.textInverse },
-  saveButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.success, borderRadius: borderRadius.lg, paddingVertical: 14, minHeight: touchTargets.button },
-  saveButtonDisabled: { opacity: 0.6 },
-  saveButtonText: { ...typography.labelLarge, color: colors.textInverse },
-
-  // Viewer
-  viewerOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.9)', justifyContent: 'center', alignItems: 'center' },
-  viewerImage: { width: '90%', height: '80%' },
-  viewerClose: { position: 'absolute' as const, top: 50, right: 20 },
-  });
 }

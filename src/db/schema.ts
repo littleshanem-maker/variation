@@ -111,6 +111,19 @@ async function createTables(database: SQLite.SQLiteDatabase): Promise<void> {
       FOREIGN KEY (variation_id) REFERENCES variations(id) ON DELETE CASCADE
     );
 
+    CREATE TABLE IF NOT EXISTS attachments (
+      id TEXT PRIMARY KEY NOT NULL,
+      variation_id TEXT NOT NULL,
+      local_uri TEXT NOT NULL,
+      file_name TEXT NOT NULL,
+      file_size INTEGER,
+      mime_type TEXT,
+      sha256_hash TEXT NOT NULL,
+      captured_at TEXT NOT NULL DEFAULT (datetime('now')),
+      sync_status TEXT NOT NULL DEFAULT 'pending',
+      FOREIGN KEY (variation_id) REFERENCES variations(id) ON DELETE CASCADE
+    );
+
     CREATE INDEX IF NOT EXISTS idx_variations_project ON variations(project_id);
     CREATE INDEX IF NOT EXISTS idx_variations_status ON variations(status);
     CREATE INDEX IF NOT EXISTS idx_photos_variation ON photo_evidence(variation_id);
@@ -118,6 +131,7 @@ async function createTables(database: SQLite.SQLiteDatabase): Promise<void> {
     CREATE INDEX IF NOT EXISTS idx_status_variation ON status_changes(variation_id);
     CREATE INDEX IF NOT EXISTS idx_sync_projects ON projects(sync_status);
     CREATE INDEX IF NOT EXISTS idx_sync_variations ON variations(sync_status);
+    CREATE INDEX IF NOT EXISTS idx_attachments_variation ON attachments(variation_id);
   `);
 }
 

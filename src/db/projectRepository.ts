@@ -58,6 +58,7 @@ export async function getActiveProjects(): Promise<ProjectSummary[]> {
     updated_at: string;
     sync_status: string;
     variation_count: number;
+    field_variation_count: number;
     total_value: number;
     at_risk_value: number;
     last_capture_at: string | null;
@@ -65,6 +66,7 @@ export async function getActiveProjects(): Promise<ProjectSummary[]> {
     SELECT
       p.*,
       COUNT(v.id) as variation_count,
+      COUNT(CASE WHEN v.status IN ('captured', 'submitted') THEN 1 END) as field_variation_count,
       COALESCE(SUM(v.estimated_value), 0) as total_value,
       COALESCE(SUM(CASE WHEN v.status IN ('captured', 'submitted', 'disputed') THEN v.estimated_value ELSE 0 END), 0) as at_risk_value,
       MAX(v.captured_at) as last_capture_at
@@ -89,6 +91,7 @@ export async function getActiveProjects(): Promise<ProjectSummary[]> {
     updatedAt: row.updated_at,
     syncStatus: row.sync_status as SyncStatus,
     variationCount: row.variation_count,
+    fieldVariationCount: row.field_variation_count,
     totalValue: row.total_value,
     atRiskValue: row.at_risk_value,
     lastCaptureAt: row.last_capture_at ?? undefined,
@@ -134,26 +137,29 @@ export async function getNextVariationSequence(projectId: string): Promise<numbe
 }
 
 export async function getDashboardStats(): Promise<{
-  totalVariations: number;
-  totalValue: number;
-  atRiskValue: number;
+  approvedValue: number;
+  inFlightValue: number;
+  disputedValue: number;
+  submittedCount: number;
   approvedCount: number;
   totalWithOutcome: number;
 }> {
   const db = await getDatabase();
   
   const result = await db.getFirstAsync<{
-    total_variations: number;
-    total_value: number;
-    at_risk_value: number;
+    approved_value: number;
+    in_flight_value: number;
+    disputed_value: number;
+    submitted_count: number;
     approved_count: number;
     disputed_count: number;
     paid_count: number;
   }>(`
     SELECT
-      COUNT(*) as total_variations,
-      COALESCE(SUM(estimated_value), 0) as total_value,
-      COALESCE(SUM(CASE WHEN status IN ('captured', 'submitted', 'disputed') THEN estimated_value ELSE 0 END), 0) as at_risk_value,
+      COALESCE(SUM(CASE WHEN status = 'approved' THEN estimated_value ELSE 0 END), 0) as approved_value,
+      COALESCE(SUM(CASE WHEN status = 'submitted' THEN estimated_value ELSE 0 END), 0) as in_flight_value,
+      COALESCE(SUM(CASE WHEN status = 'disputed' THEN estimated_value ELSE 0 END), 0) as disputed_value,
+      COUNT(CASE WHEN status = 'submitted' THEN 1 END) as submitted_count,
       COUNT(CASE WHEN status = 'approved' THEN 1 END) as approved_count,
       COUNT(CASE WHEN status = 'disputed' THEN 1 END) as disputed_count,
       COUNT(CASE WHEN status = 'paid' THEN 1 END) as paid_count
@@ -164,18 +170,20 @@ export async function getDashboardStats(): Promise<{
 
   if (!result) {
     return {
-      totalVariations: 0,
-      totalValue: 0,
-      atRiskValue: 0,
+      approvedValue: 0,
+      inFlightValue: 0,
+      disputedValue: 0,
+      submittedCount: 0,
       approvedCount: 0,
       totalWithOutcome: 0,
     };
   }
 
   return {
-    totalVariations: result.total_variations,
-    totalValue: result.total_value,
-    atRiskValue: result.at_risk_value,
+    approvedValue: result.approved_value,
+    inFlightValue: result.in_flight_value,
+    disputedValue: result.disputed_value,
+    submittedCount: result.submitted_count,
     approvedCount: result.approved_count,
     totalWithOutcome: result.approved_count + result.disputed_count + result.paid_count,
   };

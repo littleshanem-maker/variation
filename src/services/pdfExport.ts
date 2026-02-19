@@ -63,13 +63,23 @@ export async function exportProjectBatchPDF(
         <p class="cover-date">Generated ${formatDate(new Date().toISOString())}</p>
         <div class="cover-summary">
           <div class="summary-item">
-            <span class="summary-label">Total Value</span>
-            <span class="summary-value">${formatCurrency(variations.reduce((s, v) => s + v.estimatedValue, 0))}</span>
+            <span class="summary-label">Approved Value</span>
+            <span class="summary-value">${formatCurrency(
+              variations.filter(v => v.status === 'approved' || v.status === 'paid')
+                .reduce((s, v) => s + v.estimatedValue, 0)
+            )}</span>
           </div>
           <div class="summary-item">
-            <span class="summary-label">At Risk</span>
+            <span class="summary-label">In Flight</span>
+            <span class="summary-value">${formatCurrency(
+              variations.filter(v => v.status === 'submitted')
+                .reduce((s, v) => s + v.estimatedValue, 0)
+            )}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Disputed</span>
             <span class="summary-value danger">${formatCurrency(
-              variations.filter(v => ['captured', 'submitted', 'disputed'].includes(v.status))
+              variations.filter(v => v.status === 'disputed')
                 .reduce((s, v) => s + v.estimatedValue, 0)
             )}</span>
           </div>

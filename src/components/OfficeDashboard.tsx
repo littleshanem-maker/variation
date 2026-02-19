@@ -12,6 +12,8 @@ import { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
+  Alert,
+  Modal,
   FlatList,
   Pressable,
   StyleSheet,
@@ -21,7 +23,7 @@ import {
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { getDashboardStats, getActiveProjects } from '../db/projectRepository';
-import { getRecentVariations } from '../db/variationRepository';
+import { getRecentVariations, getVariationsByStatus } from '../db/variationRepository';
 import { ProjectSummary, VariationDetail } from '../types/domain';
 import { formatCurrency, timeAgo } from '../utils/helpers';
 import { getStatusLabel } from '../theme';
@@ -40,9 +42,10 @@ const getOfficeStatusColor = (status: string, colors: any): string => {
 };
 
 interface DashboardStats {
-  totalVariations: number;
-  totalValue: number;
-  atRiskValue: number;
+  approvedValue: number;
+  inFlightValue: number;
+  disputedValue: number;
+  submittedCount: number;
   approvedCount: number;
   totalWithOutcome: number;
 }
@@ -239,6 +242,59 @@ export function OfficeDashboard() {
     },
 
     // Quick Actions
+    captureRow: {
+      paddingHorizontal: 20,
+      marginBottom: 16,
+    },
+    captureButton: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+      gap: 8,
+      backgroundColor: colors.accent,
+      borderRadius: 12,
+      paddingVertical: 14,
+      minHeight: 48,
+    },
+    captureButtonPressed: {
+      backgroundColor: colors.accentHover,
+    },
+    captureButtonText: {
+      fontSize: 15,
+      fontWeight: '700' as const,
+      color: colors.textInverse,
+    },
+    captureButtonSecondary: {
+      flexDirection: 'row' as const,
+      alignItems: 'center' as const,
+      justifyContent: 'center' as const,
+      gap: 8,
+      backgroundColor: 'transparent',
+      borderRadius: 12,
+      paddingVertical: 14,
+      minHeight: 48,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 10,
+    },
+    captureButtonSecondaryText: {
+      fontSize: 15,
+      fontWeight: '700' as const,
+      color: colors.text,
+    },
+    drilldownContainer: { flex: 1, backgroundColor: colors.bg },
+    drilldownHeader: { flexDirection: 'row' as const, alignItems: 'center' as const, justifyContent: 'space-between' as const, padding: 20, paddingTop: 24, borderBottomWidth: 1, borderBottomColor: colors.border },
+    drilldownTitle: { fontSize: 18, fontWeight: '800' as const, color: colors.text, flex: 1 },
+    drilldownClose: { padding: 4 },
+    drilldownEmpty: { flex: 1, alignItems: 'center' as const, justifyContent: 'center' as const, gap: 12 },
+    drilldownEmptyText: { fontSize: 15, color: colors.textMuted },
+    drilldownItem: { backgroundColor: colors.surface, borderRadius: 12, padding: 16, marginBottom: 10, flexDirection: 'row' as const, alignItems: 'center' as const, justifyContent: 'space-between' as const, borderWidth: 1, borderColor: colors.border },
+    drilldownItemLeft: { flex: 1, marginRight: 12 },
+    drilldownItemTitle: { fontSize: 15, fontWeight: '600' as const, color: colors.text },
+    drilldownItemProject: { fontSize: 12, color: colors.textMuted, marginTop: 2 },
+    drilldownItemRight: { alignItems: 'flex-end' as const },
+    drilldownItemValue: { fontSize: 15, fontWeight: '800' as const },
+    drilldownItemStatus: { fontSize: 10, color: colors.textMuted, marginTop: 2, letterSpacing: 0.5 },
     quickActions: {
       flexDirection: 'row',
       paddingHorizontal: 20,
@@ -283,15 +339,22 @@ export function OfficeDashboard() {
 
   const router = useRouter();
   const [stats, setStats] = useState<DashboardStats>({
-    totalVariations: 0,
-    totalValue: 0,
-    atRiskValue: 0,
+    approvedValue: 0,
+    inFlightValue: 0,
+    disputedValue: 0,
+    submittedCount: 0,
     approvedCount: 0,
     totalWithOutcome: 0,
   });
   const [recentVariations, setRecentVariations] = useState<VariationDetail[]>([]);
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [drilldown, setDrilldown] = useState<{ title: string; items: VariationDetail[] } | null>(null);
+
+  const openDrilldown = async (title: string, statuses: string[]) => {
+    const items = await getVariationsByStatus(statuses);
+    setDrilldown({ title, items });
+  };
 
   const loadDashboardData = useCallback(async () => {
     try {
@@ -321,16 +384,20 @@ export function OfficeDashboard() {
     setRefreshing(false);
   };
 
-  const approvalRate = stats.totalWithOutcome > 0 
+  const approvalRate = stats.totalWithOutcome > 0
     ? Math.round((stats.approvedCount / stats.totalWithOutcome) * 100) 
     : 0;
 
-  const renderStatCard = (title: string, value: string | number, subtitle?: string, color?: string) => (
-    <View style={styles.statCard}>
+  const renderStatCard = (title: string, value: string | number, subtitle?: string, color?: string, onPress?: () => void) => (
+    <Pressable
+      style={({ pressed }) => [styles.statCard, pressed && { opacity: 0.75 }]}
+      onPress={onPress}
+    >
       <Text style={styles.statTitle}>{title}</Text>
       <Text style={[styles.statValue, color && { color }]}>{value}</Text>
       {subtitle && <Text style={styles.statSubtitle}>{subtitle}</Text>}
-    </View>
+      {onPress && <Text style={[styles.statSubtitle, { color: colors.accent, marginTop: 4, fontSize: 10 }]}>Tap to view →</Text>}
+    </Pressable>
   );
 
   const renderRecentVariation = ({ item }: { item: VariationDetail }) => (
@@ -370,7 +437,7 @@ export function OfficeDashboard() {
       <Text style={styles.projectOverviewName} numberOfLines={1}>{item.name}</Text>
       <Text style={styles.projectOverviewClient}>{item.client}</Text>
       <View style={styles.projectOverviewStats}>
-        <Text style={styles.projectOverviewStat}>{item.variationCount} vars</Text>
+        <Text style={styles.projectOverviewStat}>{item.variationCount} {item.variationCount === 1 ? 'Variation' : 'Variations'}</Text>
         <Text style={styles.projectOverviewValue}>{formatCurrency(item.totalValue)}</Text>
       </View>
       {item.atRiskValue > 0 && (
@@ -401,30 +468,49 @@ export function OfficeDashboard() {
         {/* Stats Grid — 2x2 */}
         <View style={styles.statsGrid}>
           <View style={styles.statsGridRow}>
-            {renderStatCard('Total Variations', stats.totalVariations)}
-            {renderStatCard('Total Value', formatCurrency(stats.totalValue))}
+            {renderStatCard('Approved Value', formatCurrency(stats.approvedValue), 'Confirmed wins', colors.success, () => openDrilldown('Approved Variations', ['approved', 'paid']))}
+            {renderStatCard('In Flight', formatCurrency(stats.inFlightValue), `${stats.submittedCount} submitted`, colors.info, () => openDrilldown('In Flight — Awaiting Approval', ['submitted']))}
           </View>
           <View style={styles.statsGridRow}>
-            {renderStatCard('At Risk', formatCurrency(stats.atRiskValue), undefined, colors.warning)}
-            {renderStatCard('Approval Rate', `${approvalRate}%`, `${stats.approvedCount} approved`, colors.success)}
+            {renderStatCard('Disputed', formatCurrency(stats.disputedValue), 'Being contested', colors.warning, () => openDrilldown('Disputed Variations', ['disputed']))}
+            {renderStatCard('Win Rate', `${approvalRate}%`, `${stats.approvedCount} approved`, colors.success)}
           </View>
         </View>
 
-        {/* Recent Activity */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Recent Activity</Text>
-          {recentVariations.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>No recent variations</Text>
-            </View>
-          ) : (
-            <FlatList
-              data={recentVariations}
-              renderItem={renderRecentVariation}
-              keyExtractor={(item) => item.id}
-              style={styles.recentList}
-            />
-          )}
+        {/* Quick Actions */}
+        <View style={styles.captureRow}>
+          <Pressable
+            style={({ pressed }) => [styles.captureButtonSecondary, pressed && { opacity: 0.75 }]}
+            onPress={() => router.push('/project/new')}
+          >
+            <Ionicons name="folder-open-outline" size={20} color={colors.text} />
+            <Text style={styles.captureButtonSecondaryText}>New Project</Text>
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [styles.captureButton, pressed && styles.captureButtonPressed]}
+            onPress={() => {
+              if (projects.length === 0) {
+                Alert.alert('No Projects', 'Create a project first before capturing a variation.');
+              } else if (projects.length === 1) {
+                router.push(`/capture/${projects[0].id}`);
+              } else {
+                Alert.alert(
+                  'Select Project',
+                  'Which project is this variation for?',
+                  [
+                    ...projects.map(p => ({
+                      text: p.name,
+                      onPress: () => router.push(`/capture/${p.id}`),
+                    })),
+                    { text: 'Cancel', style: 'cancel' as const },
+                  ],
+                );
+              }
+            }}
+          >
+            <Ionicons name="add-circle-outline" size={22} color={colors.textInverse} />
+            <Text style={styles.captureButtonText}>New Variation</Text>
+          </Pressable>
         </View>
 
         {/* Projects Overview */}
@@ -435,53 +521,75 @@ export function OfficeDashboard() {
               <Text style={styles.emptyText}>No active projects</Text>
             </View>
           ) : (
-            <FlatList
-              data={projects}
-              renderItem={renderProjectOverview}
-              keyExtractor={(item) => item.id}
-              numColumns={2}
-              columnWrapperStyle={styles.projectRow}
-              style={styles.projectsList}
-            />
+            <View style={styles.projectsList}>
+              {projects.reduce((rows: ProjectSummary[][], item, index) => {
+                if (index % 2 === 0) rows.push([item]);
+                else rows[rows.length - 1].push(item);
+                return rows;
+              }, []).map((row, rowIndex) => (
+                <View key={rowIndex} style={styles.projectRow}>
+                  {row.map((item) => renderProjectOverview({ item }))}
+                </View>
+              ))}
+            </View>
           )}
         </View>
 
-        {/* Quick Actions */}
-        <View style={styles.quickActions}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.actionButton,
-              styles.actionButtonSecondary,
-              pressed && styles.actionButtonPressed,
-            ]}
-            onPress={() => router.push('/project/new')}
-          >
-            <Ionicons name="add-circle-outline" size={24} color={colors.text} />
-            <Text style={styles.actionButtonText}>New Project</Text>
-          </Pressable>
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.actionButton,
-              styles.actionButtonPrimary,
-              pressed && styles.actionButtonPressed,
-            ]}
-            onPress={() => {
-              // For now, navigate to first project's capture or show project picker
-              if (projects.length > 0) {
-                router.push(`/capture/${projects[0].id}`);
-              } else {
-                router.push('/project/new');
-              }
-            }}
-          >
-            <Ionicons name="camera" size={24} color={colors.text} />
-            <Text style={styles.actionButtonText}>Capture Variation</Text>
-          </Pressable>
+        {/* Recent Activity */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Recent Activity</Text>
+          {recentVariations.length === 0 ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyText}>No recent variations</Text>
+            </View>
+          ) : (
+            <View style={styles.recentList}>
+              {recentVariations.map((item) => renderRecentVariation({ item }))}
+            </View>
+          )}
         </View>
 
         <View style={{ height: 32 }} />
       </ScrollView>
+
+      {/* Drilldown Modal */}
+      <Modal visible={!!drilldown} animationType="slide" presentationStyle="pageSheet">
+        <View style={styles.drilldownContainer}>
+          <View style={styles.drilldownHeader}>
+            <Text style={styles.drilldownTitle}>{drilldown?.title}</Text>
+            <Pressable onPress={() => setDrilldown(null)} style={styles.drilldownClose}>
+              <Ionicons name="close" size={24} color={colors.text} />
+            </Pressable>
+          </View>
+          {drilldown?.items.length === 0 ? (
+            <View style={styles.drilldownEmpty}>
+              <Ionicons name="checkmark-circle-outline" size={48} color={colors.textMuted} />
+              <Text style={styles.drilldownEmptyText}>No variations in this category</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={drilldown?.items}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={{ padding: 16 }}
+              renderItem={({ item }) => (
+                <Pressable
+                  style={({ pressed }) => [styles.drilldownItem, pressed && { opacity: 0.75 }]}
+                  onPress={() => { setDrilldown(null); router.push(`/variation/${item.id}`); }}
+                >
+                  <View style={styles.drilldownItemLeft}>
+                    <Text style={styles.drilldownItemTitle} numberOfLines={1}>{item.title}</Text>
+                    <Text style={styles.drilldownItemProject}>{item.projectName}</Text>
+                  </View>
+                  <View style={styles.drilldownItemRight}>
+                    <Text style={[styles.drilldownItemValue, { color: colors.accent }]}>{formatCurrency(item.estimatedValue)}</Text>
+                    <Text style={styles.drilldownItemStatus}>{item.status.toUpperCase()}</Text>
+                  </View>
+                </Pressable>
+              )}
+            />
+          )}
+        </View>
+      </Modal>
     </View>
   );
 }

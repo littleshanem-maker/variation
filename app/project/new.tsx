@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import {
-  View, Text, TextInput, StyleSheet, Pressable, ScrollView, Alert, KeyboardAvoidingView, Platform,
+  View, Text, TextInput, StyleSheet, Pressable, ScrollView, Alert, KeyboardAvoidingView, SafeAreaView, Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -55,9 +55,30 @@ export default function NewProjectScreen() {
     }
   };
 
+  const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.bg },
+  content: { padding: spacing.lg, paddingBottom: 120 },
+  field: { marginBottom: spacing.xl },
+  label: { ...typography.overline, color: colors.textMuted, marginBottom: spacing.sm },
+  input: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: borderRadius.md, padding: spacing.lg, fontSize: 16, color: colors.text, minHeight: touchTargets.button },
+  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  chip: { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: borderRadius.full, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },
+  chipActive: { borderColor: colors.accent, backgroundColor: colors.accentLight },
+  chipText: { ...typography.labelSmall, color: colors.textSecondary },
+  chipTextActive: { color: colors.accent, fontWeight: '700' },
+  locationNote: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.md },
+  locationNoteText: { ...typography.caption, color: colors.textMuted },
+  bottomAction: { position: 'absolute' as const, bottom: 0, left: 0, right: 0, padding: spacing.lg, paddingBottom: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.bg },
+  saveButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 14, minHeight: touchTargets.button },
+  saveButtonPressed: { backgroundColor: colors.accentHover },
+  saveButtonDisabled: { opacity: 0.6 },
+  saveButtonText: { ...typography.labelLarge, color: colors.textInverse },
+  });
+
   return (
+    <SafeAreaView style={styles.container}>
     <KeyboardAvoidingView
-      style={styles.container}
+      style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.content}>
@@ -144,25 +165,6 @@ export default function NewProjectScreen() {
         </Pressable>
       </View>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   );
-
-  const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  content: { padding: spacing.lg, paddingBottom: 120 },
-  field: { marginBottom: spacing.xl },
-  label: { ...typography.overline, color: colors.textMuted, marginBottom: spacing.sm },
-  input: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: borderRadius.md, padding: spacing.lg, fontSize: 16, color: colors.text, minHeight: touchTargets.button },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  chip: { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, borderRadius: borderRadius.full, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface },
-  chipActive: { borderColor: colors.accent, backgroundColor: colors.accentLight },
-  chipText: { ...typography.labelSmall, color: colors.textSecondary },
-  chipTextActive: { color: colors.accent, fontWeight: '700' },
-  locationNote: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingVertical: spacing.md },
-  locationNoteText: { ...typography.caption, color: colors.textMuted },
-  bottomAction: { position: 'absolute' as const, bottom: 0, left: 0, right: 0, padding: spacing.lg, paddingBottom: spacing.xl, borderTopWidth: 1, borderTopColor: colors.border, backgroundColor: colors.bg },
-  saveButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm, backgroundColor: colors.accent, borderRadius: borderRadius.lg, paddingVertical: 14, minHeight: touchTargets.button },
-  saveButtonPressed: { backgroundColor: colors.accentHover },
-  saveButtonDisabled: { opacity: 0.6 },
-  saveButtonText: { ...typography.labelLarge, color: colors.textInverse },
-  });
 }

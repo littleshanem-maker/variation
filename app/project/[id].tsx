@@ -8,7 +8,7 @@ import { useState, useCallback } from 'react';
 import {
   View, Text, FlatList, Pressable, StyleSheet, RefreshControl, Alert, Modal,
 } from 'react-native';
-import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
+import { useLocalSearchParams, useRouter, useFocusEffect, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { getProjectById, deleteProject } from '../../src/db/projectRepository';
 import { getVariationsForProject, getVariationDetail } from '../../src/db/variationRepository';
@@ -21,7 +21,7 @@ import { useAppMode } from '../../src/contexts/AppModeContext';
 
 const STATUS_FILTERS = [
   { value: undefined, label: 'All' },
-  { value: VariationStatus.CAPTURED, label: 'Captured' },
+  { value: VariationStatus.CAPTURED, label: 'Draft' },
   { value: VariationStatus.SUBMITTED, label: 'Submitted' },
   { value: VariationStatus.APPROVED, label: 'Approved' },
   { value: VariationStatus.DISPUTED, label: 'Disputed' },
@@ -45,8 +45,12 @@ export default function ProjectDetailScreen() {
     const p = await getProjectById(id);
     setProject(p);
     const v = await getVariationsForProject(id, statusFilter);
-    setVariations(v);
-  }, [id, statusFilter]);
+    // Field mode: only show Draft and Submitted variations
+    const filtered = isOffice
+      ? v
+      : v.filter(item => item.status === VariationStatus.CAPTURED || item.status === VariationStatus.SUBMITTED);
+    setVariations(filtered);
+  }, [id, statusFilter, isOffice]);
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
@@ -57,14 +61,16 @@ export default function ProjectDetailScreen() {
   };
 
   const handleBatchExport = async () => {
-    if (variations.length === 0) {
-      Alert.alert('No Variations', 'Nothing to export.');
-      return;
-    }
     setExporting(true);
     try {
+      // Always fetch ALL variations for the project regardless of current filter
+      const allVariations = await getVariationsForProject(id!);
+      if (allVariations.length === 0) {
+        Alert.alert('No Variations', 'Nothing to export.');
+        return;
+      }
       const details: VariationDetail[] = [];
-      for (const v of variations) {
+      for (const v of allVariations) {
         const detail = await getVariationDetail(v.id);
         if (detail) details.push(detail);
       }
@@ -96,112 +102,17 @@ export default function ProjectDetailScreen() {
 
   const totalValue = variations.reduce((s, v) => s + v.estimatedValue, 0);
 
-  const renderVariation = ({ item }: { item: Variation }) => (
-    <Pressable
-      style={({ pressed }) => [styles.variationCard, pressed && styles.variationCardPressed]}
-      onPress={() => router.push(`/variation/${item.id}`)}
-    >
-      <View style={styles.variationHeader}>
-        <Text style={styles.variationSeq}>{formatVariationId(item.sequenceNumber)}</Text>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-          <Text style={styles.statusText}>{getStatusLabel(item.status)}</Text>
-        </View>
-      </View>
-      <Text style={styles.variationTitle} numberOfLines={2}>{item.title}</Text>
-      <View style={styles.variationFooter}>
-        {isOffice && <Text style={styles.variationValue}>{formatCurrency(item.estimatedValue)}</Text>}
-        <Text style={styles.variationTime}>{timeAgo(item.capturedAt)}</Text>
-      </View>
-    </Pressable>
-  );
-
-  return (
-    <View style={styles.container}>
-      {/* Summary Bar */}
-      <View style={styles.summaryBar}>
-        <View>
-          <Text style={styles.summaryLabel}>{isOffice ? 'TOTAL VALUE' : 'VARIATIONS'}</Text>
-          <Text style={styles.summaryValue}>{isOffice ? formatCurrency(totalValue) : `${variations.length}`}</Text>
-        </View>
-        {isOffice && (
-          <View style={styles.summaryActions}>
-            <Pressable style={styles.iconButton} onPress={handleBatchExport} disabled={exporting}>
-              <Ionicons name="document-text-outline" size={22} color={colors.accent} />
-            </Pressable>
-            <Pressable style={styles.iconButton} onPress={() => setShowMenu(true)}>
-              <Ionicons name="ellipsis-vertical" size={22} color={colors.textSecondary} />
-            </Pressable>
-          </View>
-        )}
-      </View>
-
-      {/* Status Filter */}
-      <View style={styles.filterRow}>
-        {STATUS_FILTERS.map((f) => (
-          <Pressable
-            key={f.label}
-            style={[styles.filterChip, statusFilter === f.value && styles.filterChipActive]}
-            onPress={() => setStatusFilter(f.value)}
-          >
-            <Text style={[styles.filterChipText, statusFilter === f.value && styles.filterChipTextActive]}>
-              {f.label}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-
-      {/* Variation List */}
-      <FlatList
-        data={variations}
-        renderItem={renderVariation}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
-        ListEmptyComponent={
-          <View style={styles.empty}>
-            <Ionicons name="layers-outline" size={48} color={colors.textMuted} />
-            <Text style={styles.emptyText}>No variations{statusFilter ? ` with status "${getStatusLabel(statusFilter)}"` : ''}</Text>
-          </View>
-        }
-      />
-
-      {/* New Variation Button */}
-      <View style={styles.bottomAction}>
-        <Pressable
-          style={({ pressed }) => [styles.newVarButton, pressed && styles.newVarButtonPressed]}
-          onPress={() => router.push(`/capture/${id}`)}
-        >
-          <Ionicons name="add-circle-outline" size={22} color={colors.textInverse} />
-          <Text style={styles.newVarButtonText}>New Variation</Text>
-        </Pressable>
-      </View>
-
-      {/* Menu Modal */}
-      <Modal visible={showMenu} transparent animationType="fade">
-        <Pressable style={styles.modalOverlay} onPress={() => setShowMenu(false)}>
-          <View style={styles.menuCard}>
-            <Pressable style={styles.menuItem} onPress={() => { setShowMenu(false); handleBatchExport(); }}>
-              <Ionicons name="download-outline" size={20} color={colors.text} />
-              <Text style={styles.menuItemText}>{exporting ? 'Exporting...' : 'Export All as PDF'}</Text>
-            </Pressable>
-            <View style={styles.menuDivider} />
-            <Pressable style={styles.menuItem} onPress={() => { setShowMenu(false); handleDeleteProject(); }}>
-              <Ionicons name="trash-outline" size={20} color={colors.danger} />
-              <Text style={[styles.menuItemText, { color: colors.danger }]}>Delete Project</Text>
-            </Pressable>
-          </View>
-        </Pressable>
-      </Modal>
-    </View>
-  );
-
   const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  summaryBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: spacing.lg, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
+  summaryBar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', padding: spacing.lg, backgroundColor: colors.surface, borderBottomWidth: 1, borderBottomColor: colors.border },
+  summaryLeft: { flex: 1 },
+  projectTitle: { fontSize: 16, fontWeight: '700', color: colors.text, marginBottom: 2 },
+  projectMeta: { ...typography.caption, color: colors.textMuted, marginBottom: spacing.sm },
   summaryLabel: { ...typography.overline, color: colors.textMuted },
   summaryValue: { fontSize: 22, fontWeight: '800', color: colors.text, marginTop: 2 },
   summaryActions: { flexDirection: 'row', gap: spacing.sm },
   iconButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.surfaceAlt, alignItems: 'center' as const, justifyContent: 'center' as const },
+  fieldCaptureRow: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.md },
   filterRow: { flexDirection: 'row', padding: spacing.md, paddingHorizontal: spacing.lg, gap: spacing.sm, flexWrap: 'wrap' },
   filterChip: { paddingHorizontal: spacing.md, paddingVertical: 6, borderRadius: borderRadius.full, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border },
   filterChipActive: { backgroundColor: colors.accent, borderColor: colors.accent },
@@ -230,4 +141,123 @@ export default function ProjectDetailScreen() {
   menuItemText: { ...typography.labelMedium, color: colors.text },
   menuDivider: { height: 1, backgroundColor: colors.border },
   });
+
+  const renderVariation = ({ item }: { item: Variation }) => (
+    <Pressable
+      style={({ pressed }) => [styles.variationCard, pressed && styles.variationCardPressed]}
+      onPress={() => router.push(`/variation/${item.id}`)}
+    >
+      <View style={styles.variationHeader}>
+        <Text style={styles.variationSeq}>{formatVariationId(item.sequenceNumber)}</Text>
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+          <Text style={styles.statusText}>{getStatusLabel(item.status)}</Text>
+        </View>
+      </View>
+      <Text style={styles.variationTitle} numberOfLines={2}>{item.title}</Text>
+      <View style={styles.variationFooter}>
+        {isOffice && <Text style={styles.variationValue}>{formatCurrency(item.estimatedValue)}</Text>}
+        <Text style={styles.variationTime}>{timeAgo(item.capturedAt)}</Text>
+      </View>
+    </Pressable>
+  );
+
+  return (
+    <View style={styles.container}>
+      <Stack.Screen options={{ title: '' }} />
+      {/* Summary Bar */}
+      <View style={styles.summaryBar}>
+        <View style={styles.summaryLeft}>
+          <Text style={styles.projectTitle} numberOfLines={1}>{project?.name}</Text>
+          <Text style={styles.projectMeta} numberOfLines={1}>{project?.client} · {project?.reference}</Text>
+          <Text style={styles.summaryLabel}>{isOffice ? 'TOTAL VALUE' : 'VARIATIONS'}</Text>
+          <Text style={styles.summaryValue}>{isOffice ? formatCurrency(totalValue) : `${variations.filter(v => v.status === VariationStatus.CAPTURED || v.status === VariationStatus.SUBMITTED).length}`}</Text>
+        </View>
+        {isOffice && (
+          <View style={styles.summaryActions}>
+            <Pressable style={styles.iconButton} onPress={handleBatchExport} disabled={exporting}>
+              <Ionicons name="document-text-outline" size={22} color={colors.accent} />
+            </Pressable>
+            <Pressable style={styles.iconButton} onPress={() => setShowMenu(true)}>
+              <Ionicons name="ellipsis-vertical" size={22} color={colors.textSecondary} />
+            </Pressable>
+          </View>
+        )}
+      </View>
+
+      {/* New Variation — Field mode: shown inline below summary bar */}
+      {!isOffice && (
+        <View style={styles.fieldCaptureRow}>
+          <Pressable
+            style={({ pressed }) => [styles.newVarButton, pressed && styles.newVarButtonPressed]}
+            onPress={() => router.push(`/capture/${id}`)}
+          >
+            <Ionicons name="add-circle-outline" size={22} color={colors.textInverse} />
+            <Text style={styles.newVarButtonText}>New Variation</Text>
+          </Pressable>
+        </View>
+      )}
+
+      {/* Status Filter — Office shows all, Field shows Draft + Submitted only */}
+      <View style={styles.filterRow}>
+        {STATUS_FILTERS
+          .filter(f => isOffice || f.value === undefined || f.value === VariationStatus.CAPTURED || f.value === VariationStatus.SUBMITTED)
+          .map((f) => (
+            <Pressable
+              key={f.label}
+              style={[styles.filterChip, statusFilter === f.value && styles.filterChipActive]}
+              onPress={() => setStatusFilter(f.value)}
+            >
+              <Text style={[styles.filterChipText, statusFilter === f.value && styles.filterChipTextActive]}>
+                {f.label}
+              </Text>
+            </Pressable>
+          ))}
+      </View>
+
+      {/* Variation List */}
+      <FlatList
+        data={variations}
+        renderItem={renderVariation}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
+        ListEmptyComponent={
+          <View style={styles.empty}>
+            <Ionicons name="layers-outline" size={48} color={colors.textMuted} />
+            <Text style={styles.emptyText}>No variations{statusFilter ? ` with status "${getStatusLabel(statusFilter)}"` : ''}</Text>
+          </View>
+        }
+      />
+
+      {/* New Variation Button — Office mode only at bottom */}
+      {isOffice && (
+        <View style={styles.bottomAction}>
+          <Pressable
+            style={({ pressed }) => [styles.newVarButton, pressed && styles.newVarButtonPressed]}
+            onPress={() => router.push(`/capture/${id}`)}
+          >
+            <Ionicons name="add-circle-outline" size={22} color={colors.textInverse} />
+            <Text style={styles.newVarButtonText}>New Variation</Text>
+          </Pressable>
+        </View>
+      )}
+
+      {/* Menu Modal */}
+      <Modal visible={showMenu} transparent animationType="fade">
+        <Pressable style={styles.modalOverlay} onPress={() => setShowMenu(false)}>
+          <View style={styles.menuCard}>
+            <Pressable style={styles.menuItem} onPress={() => { setShowMenu(false); handleBatchExport(); }}>
+              <Ionicons name="download-outline" size={20} color={colors.text} />
+              <Text style={styles.menuItemText}>{exporting ? 'Exporting...' : 'Export All as PDF'}</Text>
+            </Pressable>
+            <View style={styles.menuDivider} />
+            <Pressable style={styles.menuItem} onPress={() => { setShowMenu(false); handleDeleteProject(); }}>
+              <Ionicons name="trash-outline" size={20} color={colors.danger} />
+              <Text style={[styles.menuItemText, { color: colors.danger }]}>Delete Project</Text>
+            </Pressable>
+          </View>
+        </Pressable>
+      </Modal>
+    </View>
+  );
 }

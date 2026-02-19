@@ -47,7 +47,7 @@ export function AppModeProvider({ children }: { children: ReactNode }) {
     setMode('field');
   };
 
-  const activeColors = useMemo(() => mode === 'office' ? officeColors : fieldColors, [mode]);
+  const activeColors = useMemo(() => (mode === 'office' ? officeColors : fieldColors) as typeof fieldColors, [mode]);
 
   return (
     <AppModeContext.Provider value={{
