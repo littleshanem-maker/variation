@@ -359,8 +359,32 @@ export default function VariationDetailScreen() {
         <View style={styles.header}>
           <View style={styles.headerTop}>
             <Text style={styles.varId}>{formatVariationId(variation.sequenceNumber)}</Text>
-            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(variation.status) }]}>
-              <Text style={styles.statusText}>{getStatusLabel(variation.status)}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              {/* Quick PDF Export */}
+              <Pressable
+                onPress={handleExportPDF}
+                disabled={exporting}
+                style={({ pressed }) => ({
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 5,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  borderRadius: 6,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  backgroundColor: pressed ? colors.border : colors.surface,
+                  opacity: exporting ? 0.5 : 1,
+                })}
+              >
+                <Ionicons name="document-text-outline" size={14} color={colors.accent} />
+                <Text style={{ fontSize: 12, fontWeight: '600', color: colors.accent }}>
+                  {exporting ? '…' : 'PDF'}
+                </Text>
+              </Pressable>
+              <View style={[styles.statusBadge, { backgroundColor: getStatusColor(variation.status) }]}>
+                <Text style={styles.statusText}>{getStatusLabel(variation.status)}</Text>
+              </View>
             </View>
           </View>
           <Text style={styles.title}>{variation.title}</Text>

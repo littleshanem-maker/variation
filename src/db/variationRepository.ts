@@ -151,6 +151,21 @@ export async function getVariationsByStatus(statuses: string[]): Promise<Variati
   }));
 }
 
+export async function getVariationStatusCounts(): Promise<Record<string, number>> {
+  const db = await getDatabase();
+  const rows = await db.getAllAsync<{ status: string; count: number }>(
+    `SELECT v.status, COUNT(*) as count FROM variations v
+     INNER JOIN projects p ON p.id = v.project_id
+     WHERE p.is_active = 1
+     GROUP BY v.status`,
+  );
+  const counts: Record<string, number> = {};
+  for (const row of rows) {
+    counts[row.status] = row.count;
+  }
+  return counts;
+}
+
 export async function getRecentVariations(limit: number = 10): Promise<VariationDetail[]> {
   const db = await getDatabase();
   

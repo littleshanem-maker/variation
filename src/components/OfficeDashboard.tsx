@@ -21,7 +21,7 @@ import {
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { getDashboardStats, getActiveProjects } from '../db/projectRepository';
-import { getRecentVariations, getVariationsByStatus } from '../db/variationRepository';
+import { getRecentVariations, getVariationsByStatus, getVariationStatusCounts } from '../db/variationRepository';
 import { ProjectSummary, VariationDetail } from '../types/domain';
 import { formatCurrency, timeAgo } from '../utils/helpers';
 import { getStatusLabel } from '../theme';
@@ -47,7 +47,7 @@ interface DashboardStats {
   totalWithOutcome: number;
 }
 
-type NavSection = 'dashboard' | 'projects' | 'variations' | 'settings';
+type NavSection = 'dashboard' | 'settings';
 
 // ─────────────────────────────────────────────
 // DESKTOP LAYOUT
@@ -56,6 +56,7 @@ function DesktopDashboard({
   stats,
   recentVariations,
   projects,
+  statusCounts,
   refreshing,
   onRefresh,
   openDrilldown,
@@ -69,8 +70,6 @@ function DesktopDashboard({
 
   const navItems: { key: NavSection; label: string; icon: string }[] = [
     { key: 'dashboard', label: 'Dashboard', icon: 'home-outline' },
-    { key: 'projects', label: 'Projects', icon: 'folder-outline' },
-    { key: 'variations', label: 'Variations', icon: 'document-text-outline' },
     { key: 'settings', label: 'Settings', icon: 'settings-outline' },
   ];
 
@@ -82,6 +81,16 @@ function DesktopDashboard({
     backgroundColor: getOfficeStatusColor(status, colors),
     alignSelf: 'flex-start' as any,
   });
+
+  // Status filter boxes config
+  const statusFilters = [
+    { key: 'draft',     label: 'Draft',     statuses: ['captured'],          color: colors.warning,    icon: 'create-outline' },
+    { key: 'submitted', label: 'Submitted',  statuses: ['submitted'],         color: colors.accent,     icon: 'paper-plane-outline' },
+    { key: 'approved',  label: 'Approved',   statuses: ['approved'],          color: colors.success,    icon: 'checkmark-circle-outline' },
+    { key: 'paid',      label: 'Paid',       statuses: ['paid'],              color: '#6366f1',         icon: 'cash-outline' },
+    { key: 'disputed',  label: 'Disputed',   statuses: ['disputed'],          color: colors.danger,     icon: 'alert-circle-outline' },
+    { key: 'at-risk',   label: 'At Risk',    statuses: ['disputed'],          color: '#f97316',         icon: 'warning-outline' },
+  ];
 
   return (
     <View style={{ flex: 1, flexDirection: 'row', backgroundColor: colors.bg }}>
@@ -141,8 +150,29 @@ function DesktopDashboard({
           })}
         </View>
 
-        {/* New Variation Button */}
-        <View style={{ paddingHorizontal: 12 }}>
+        {/* Bottom Actions */}
+        <View style={{ paddingHorizontal: 12, gap: 8 }}>
+          {/* New Project */}
+          <Pressable
+            onPress={() => router.push('/project/new')}
+            style={({ pressed }) => ({
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              backgroundColor: 'transparent',
+              borderRadius: 10,
+              paddingVertical: 11,
+              borderWidth: 1,
+              borderColor: colors.border,
+              opacity: pressed ? 0.75 : 1,
+            })}
+          >
+            <Ionicons name="folder-open-outline" size={16} color={colors.text} />
+            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text }}>New Project</Text>
+          </Pressable>
+
+          {/* New Variation */}
           <Pressable
             onPress={() => {
               if (projects.length === 0) {
@@ -191,7 +221,7 @@ function DesktopDashboard({
           backgroundColor: colors.surface,
         }}>
           <Text style={{ fontSize: 16, fontWeight: '700', color: colors.text }}>
-            {navItems.find(n => n.key === activeNav)?.label ?? 'Dashboard'}
+            Variation Register
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <View style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, backgroundColor: `${colors.accent}20`, borderWidth: 1, borderColor: `${colors.accent}40` }}>
@@ -206,6 +236,40 @@ function DesktopDashboard({
           contentContainerStyle={{ padding: 32 }}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
         >
+
+          {/* ── STATUS FILTER BOXES ── */}
+          <View style={{ flexDirection: 'row', gap: 12, marginBottom: 32, flexWrap: 'wrap' }}>
+            {statusFilters.map((sf) => {
+              const count = sf.key === 'at-risk'
+                ? (statusCounts['disputed'] ?? 0)
+                : sf.key === 'draft'
+                ? (statusCounts['captured'] ?? 0)
+                : (statusCounts[sf.statuses[0]] ?? 0);
+              return (
+                <Pressable
+                  key={sf.key}
+                  onPress={() => openDrilldown(sf.label, sf.statuses)}
+                  style={({ pressed }) => ({
+                    flex: 1,
+                    minWidth: 120,
+                    backgroundColor: colors.surface,
+                    borderRadius: 12,
+                    padding: 16,
+                    borderWidth: 1,
+                    borderColor: pressed ? sf.color : colors.border,
+                    borderTopWidth: 3,
+                    borderTopColor: sf.color,
+                    alignItems: 'center',
+                    gap: 6,
+                    opacity: pressed ? 0.85 : 1,
+                  })}
+                >
+                  <Text style={{ fontSize: 26, fontWeight: '900', color: sf.color }}>{count}</Text>
+                  <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 }}>{sf.label}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
 
           {/* ── STATS ROW (4 cards) ── */}
           <View style={{ flexDirection: 'row', gap: 16, marginBottom: 32 }}>
@@ -234,6 +298,54 @@ function DesktopDashboard({
                 {card.onPress && <Text style={{ fontSize: 11, color: colors.accent, marginTop: 6 }}>View details →</Text>}
               </Pressable>
             ))}
+          </View>
+
+          {/* ── PROJECTS GRID (3 cols) ── */}
+          <View style={{ marginBottom: 40 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text }}>Projects</Text>
+              <Pressable onPress={() => router.push('/project/new')} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6 })}>
+                <Ionicons name="add" size={16} color={colors.text} />
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text }}>New Project</Text>
+              </Pressable>
+            </View>
+
+            {projects.length === 0 ? (
+              <View style={{ padding: 40, alignItems: 'center', backgroundColor: colors.surface, borderRadius: 12, borderWidth: 1, borderColor: colors.border }}>
+                <Ionicons name="folder-open-outline" size={40} color={colors.textMuted} />
+                <Text style={{ color: colors.textMuted, marginTop: 12 }}>No active projects</Text>
+              </View>
+            ) : (
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 16 }}>
+                {projects.map((item: ProjectSummary) => (
+                  <Pressable
+                    key={item.id}
+                    onPress={() => router.push(`/project/${item.id}`)}
+                    style={({ pressed }) => ({
+                      width: 'calc(33.333% - 11px)' as any,
+                      minWidth: 240,
+                      backgroundColor: colors.surface,
+                      borderRadius: 12,
+                      padding: 20,
+                      borderWidth: 1,
+                      borderColor: pressed ? colors.accent : colors.border,
+                    })}
+                  >
+                    <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text, marginBottom: 4 }} numberOfLines={1}>{item.name}</Text>
+                    <Text style={{ fontSize: 13, color: colors.textMuted, marginBottom: 16 }}>{item.client}</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.border }}>
+                      <Text style={{ fontSize: 12, color: colors.textMuted }}>{item.variationCount} variation{item.variationCount !== 1 ? 's' : ''}</Text>
+                      <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text }}>{formatCurrency(item.totalValue)}</Text>
+                    </View>
+                    {item.atRiskValue > 0 && (
+                      <View style={{ marginTop: 10, backgroundColor: 'rgba(245,158,11,0.1)', borderRadius: 6, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(245,158,11,0.25)' }}>
+                        <Text style={{ fontSize: 12, fontWeight: '600', color: colors.warning }}>⚠ At Risk: {formatCurrency(item.atRiskValue)}</Text>
+                      </View>
+                    )}
+                  </Pressable>
+                ))}
+              </View>
+            )}
           </View>
 
           {/* ── RECENT ACTIVITY TABLE ── */}
@@ -289,54 +401,6 @@ function DesktopDashboard({
                 </Pressable>
               ))}
             </View>
-          </View>
-
-          {/* ── PROJECTS GRID (3 cols) ── */}
-          <View style={{ marginBottom: 40 }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-              <Text style={{ fontSize: 18, fontWeight: '700', color: colors.text }}>Projects</Text>
-              <Pressable onPress={() => router.push('/project/new')} style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1, flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: 8, paddingHorizontal: 12, paddingVertical: 6 })}>
-                <Ionicons name="add" size={16} color={colors.text} />
-                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text }}>New Project</Text>
-              </Pressable>
-            </View>
-
-            {projects.length === 0 ? (
-              <View style={{ padding: 40, alignItems: 'center', backgroundColor: colors.surface, borderRadius: 12, borderWidth: 1, borderColor: colors.border }}>
-                <Ionicons name="folder-open-outline" size={40} color={colors.textMuted} />
-                <Text style={{ color: colors.textMuted, marginTop: 12 }}>No active projects</Text>
-              </View>
-            ) : (
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 16 }}>
-                {projects.map((item: ProjectSummary) => (
-                  <Pressable
-                    key={item.id}
-                    onPress={() => router.push(`/project/${item.id}`)}
-                    style={({ pressed }) => ({
-                      width: 'calc(33.333% - 11px)' as any,
-                      minWidth: 240,
-                      backgroundColor: colors.surface,
-                      borderRadius: 12,
-                      padding: 20,
-                      borderWidth: 1,
-                      borderColor: pressed ? colors.accent : colors.border,
-                    })}
-                  >
-                    <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text, marginBottom: 4 }} numberOfLines={1}>{item.name}</Text>
-                    <Text style={{ fontSize: 13, color: colors.textMuted, marginBottom: 16 }}>{item.client}</Text>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 12, borderTopWidth: 1, borderTopColor: colors.border }}>
-                      <Text style={{ fontSize: 12, color: colors.textMuted }}>{item.variationCount} variation{item.variationCount !== 1 ? 's' : ''}</Text>
-                      <Text style={{ fontSize: 16, fontWeight: '800', color: colors.text }}>{formatCurrency(item.totalValue)}</Text>
-                    </View>
-                    {item.atRiskValue > 0 && (
-                      <View style={{ marginTop: 10, backgroundColor: 'rgba(245,158,11,0.1)', borderRadius: 6, paddingHorizontal: 10, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(245,158,11,0.25)' }}>
-                        <Text style={{ fontSize: 12, fontWeight: '600', color: colors.warning }}>⚠ At Risk: {formatCurrency(item.atRiskValue)}</Text>
-                      </View>
-                    )}
-                  </Pressable>
-                ))}
-              </View>
-            )}
           </View>
 
         </ScrollView>
@@ -400,6 +464,7 @@ export function OfficeDashboard() {
   });
   const [recentVariations, setRecentVariations] = useState<VariationDetail[]>([]);
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
+  const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
   const [refreshing, setRefreshing] = useState(false);
   const [drilldown, setDrilldown] = useState<{ title: string; items: VariationDetail[] } | null>(null);
 
@@ -410,14 +475,16 @@ export function OfficeDashboard() {
 
   const loadDashboardData = useCallback(async () => {
     try {
-      const [statsData, recentData, projectsData] = await Promise.all([
+      const [statsData, recentData, projectsData, countsData] = await Promise.all([
         getDashboardStats(),
         getRecentVariations(10),
         getActiveProjects(),
+        getVariationStatusCounts(),
       ]);
       setStats(statsData);
       setRecentVariations(recentData);
       setProjects(projectsData);
+      setStatusCounts(countsData);
     } catch (error) {
       console.error('[OfficeDashboard] Failed to load:', error);
     }
@@ -438,6 +505,7 @@ export function OfficeDashboard() {
         stats={stats}
         recentVariations={recentVariations}
         projects={projects}
+        statusCounts={statusCounts}
         refreshing={refreshing}
         onRefresh={onRefresh}
         openDrilldown={openDrilldown}
@@ -498,7 +566,7 @@ export function OfficeDashboard() {
     <View style={styles.container}>
       <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Dashboard</Text>
+          <Text style={styles.headerTitle}>Variation Register</Text>
           <Text style={styles.headerSubtitle}>Business Intelligence Overview</Text>
         </View>
         <View style={styles.statsGrid}>
