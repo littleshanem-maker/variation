@@ -314,6 +314,99 @@ function getBaseStyles(): string {
 }
 
 // ============================================================
+// WEB PROJECT DETAILED PRINT (one page per variation, no photo embed)
+// ============================================================
+
+export function printProjectDetailedWeb(
+  projectName: string,
+  variations: VariationDetail[],
+): void {
+  const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
+  const totalValue = variations.reduce((s, v) => s + v.estimatedValue, 0);
+  const statusColors: Record<string, string> = {
+    captured: '#D4600A', submitted: '#1565C0', approved: '#2D7D46', paid: '#1A1A1A', disputed: '#C62828',
+  };
+
+  const pages = variations.map((v, i) => `
+    <div class="var-page${i > 0 ? ' page-break' : ''}">
+      <div class="var-header">
+        <div class="var-header-left">
+          <div class="var-id">${formatVariationId(v.sequenceNumber)}</div>
+          <div class="var-title">${escapeHtml(v.title)}</div>
+          <div class="var-project">${escapeHtml(v.projectName ?? projectName)}</div>
+        </div>
+        <div class="var-header-right">
+          <span class="status-pill" style="background:${statusColors[v.status] ?? '#888'}">${getStatusLabel(v.status)}</span>
+          <div class="var-value">${formatCurrency(v.estimatedValue)}</div>
+        </div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="dl">Captured</span><span>${formatDateTime(v.capturedAt)}</span></div>
+        <div class="detail-item"><span class="dl">Source</span><span>${v.instructionSource.replace(/_/g, ' ')}</span></div>
+        ${v.instructedBy ? `<div class="detail-item"><span class="dl">Instructed By</span><span>${escapeHtml(v.instructedBy)}</span></div>` : ''}
+        ${v.referenceDoc ? `<div class="detail-item"><span class="dl">Reference</span><span>${escapeHtml(v.referenceDoc)}</span></div>` : ''}
+        ${v.latitude ? `<div class="detail-item"><span class="dl">GPS</span><span>${v.latitude.toFixed(5)}, ${v.longitude?.toFixed(5)}</span></div>` : ''}
+      </div>
+      ${v.description ? `<div class="var-section"><div class="sec-label">Description</div><p>${escapeHtml(v.description)}</p></div>` : ''}
+      ${v.notes ? `<div class="var-section"><div class="sec-label">Notes</div><p>${escapeHtml(v.notes)}</p></div>` : ''}
+      ${v.statusHistory && v.statusHistory.length > 0 ? `
+        <div class="var-section">
+          <div class="sec-label">Status History</div>
+          <table class="history-table">
+            <tr><th>Date</th><th>From</th><th>To</th></tr>
+            ${v.statusHistory.map(sc => `<tr><td>${formatDateTime(sc.changedAt)}</td><td>${sc.fromStatus ? getStatusLabel(sc.fromStatus) : '—'}</td><td><strong>${getStatusLabel(sc.toStatus)}</strong></td></tr>`).join('')}
+          </table>
+        </div>
+      ` : ''}
+      <div class="var-footer">Pipeline Consulting Pty Ltd · Variation Capture · Generated ${now}</div>
+    </div>
+  `).join('\n');
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${escapeHtml(projectName)} — Variation Detail Export</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:-apple-system,Helvetica Neue,Arial,sans-serif; font-size:9.5pt; color:#1a1a1a; background:white; }
+    .page-break { page-break-before:always; }
+    .var-page { padding:32px 48px; min-height:100vh; display:flex; flex-direction:column; }
+    .var-header { display:flex; justify-content:space-between; align-items:flex-start; border-bottom:2px solid #D4600A; padding-bottom:14px; margin-bottom:18px; }
+    .var-id { font-size:8.5pt; color:#D4600A; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
+    .var-title { font-size:18pt; font-weight:800; color:#1a1a1a; line-height:1.1; margin-bottom:4px; }
+    .var-project { font-size:9pt; color:#6b6460; }
+    .var-header-right { text-align:right; flex-shrink:0; margin-left:24px; }
+    .status-pill { display:inline-block; padding:3px 10px; border-radius:3px; font-size:8.5pt; font-weight:700; color:white; margin-bottom:8px; }
+    .var-value { font-size:22pt; font-weight:900; color:#1a1a1a; }
+    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#f8f6f3; padding:14px; border-radius:6px; margin-bottom:18px; }
+    .detail-item { }
+    .dl { display:block; font-size:7.5pt; color:#9a9490; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:2px; }
+    .var-section { margin-bottom:16px; }
+    .sec-label { font-size:9pt; font-weight:700; color:#D4600A; text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid #e8e4dd; padding-bottom:4px; margin-bottom:8px; }
+    .var-section p { font-size:9.5pt; line-height:1.5; color:#2a2a2a; }
+    .history-table { width:100%; border-collapse:collapse; font-size:8.5pt; }
+    .history-table th { text-align:left; padding:5px 8px; background:#f5f2ed; font-weight:700; border-bottom:1px solid #d4cfc7; }
+    .history-table td { padding:5px 8px; border-bottom:1px solid #ede9e3; }
+    .var-footer { margin-top:auto; padding-top:16px; border-top:1px solid #e8e4dd; font-size:7.5pt; color:#aaa; font-family:monospace; }
+    @media print {
+      body { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+      .var-page { min-height:0; padding:20px 32px; }
+      @page { margin:12mm 10mm; size:A4; }
+    }
+  </style>
+</head>
+<body>${pages}</body>
+<script>window.onload=function(){window.print();}</script>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+// ============================================================
 // WEB REGISTER PRINT
 // ============================================================
 
