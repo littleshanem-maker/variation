@@ -150,155 +150,118 @@ export default function CaptureScreen() {
   const isWeb = Platform.OS === 'web';
 
   // ════════════════════════════════════════════════════════════
-  // DESKTOP LAYOUT
+  // DESKTOP LAYOUT — single page, no voice
   // ════════════════════════════════════════════════════════════
   if (isWeb) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.bg }}>
         <Stack.Screen options={{ title: 'New Variation' }} />
 
-        {/* Step tabs */}
-        <View style={{ flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: colors.border, backgroundColor: colors.surface, paddingHorizontal: 32 }}>
-          {STEPS.map((s, i) => (
-            <Pressable
-              key={s}
-              onPress={() => i < step || (i === 1 && step === 0) ? setStep(i) : null}
-              style={{ paddingVertical: 14, paddingHorizontal: 20, borderBottomWidth: 2, borderBottomColor: step === i ? colors.accent : 'transparent', marginRight: 4 }}
-            >
-              <Text style={{ fontSize: 14, fontWeight: '700', color: step === i ? colors.accent : colors.textMuted }}>
-                {i + 1}. {s}
-              </Text>
-            </Pressable>
-          ))}
-          <View style={{ flex: 1 }} />
-          {/* Top-right actions */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        {/* Top bar */}
+        <View style={{
+          flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+          paddingHorizontal: 32, height: 56,
+          borderBottomWidth: 1, borderBottomColor: colors.border,
+          backgroundColor: colors.surface,
+        }}>
+          <Text style={{ fontSize: 16, fontWeight: '700', color: colors.text }}>New Variation</Text>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
             <Pressable
               onPress={() => router.back()}
               style={({ pressed }) => ({ paddingHorizontal: 14, paddingVertical: 7, borderRadius: 7, borderWidth: 1, borderColor: colors.border, backgroundColor: pressed ? colors.border : 'transparent' })}
             >
               <Text style={{ fontSize: 13, fontWeight: '600', color: colors.textMuted }}>Cancel</Text>
             </Pressable>
-            {step === 0 ? (
-              <Pressable
-                onPress={() => setStep(1)}
-                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 7, borderRadius: 7, backgroundColor: colors.accent, opacity: pressed ? 0.85 : 1 })}
-              >
-                <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>Next: Details</Text>
-                <Ionicons name="arrow-forward" size={14} color="#fff" />
-              </Pressable>
-            ) : (
-              <Pressable
-                onPress={handleSave}
-                disabled={saving || !title.trim()}
-                style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 7, borderRadius: 7, backgroundColor: colors.success, opacity: pressed || saving || !title.trim() ? 0.6 : 1 })}
-              >
-                <Ionicons name="checkmark-circle" size={15} color="#fff" />
-                <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>{saving ? 'Saving…' : 'Save Variation'}</Text>
-              </Pressable>
-            )}
+            <Pressable
+              onPress={handleSave}
+              disabled={saving || !title.trim()}
+              style={({ pressed }) => ({
+                flexDirection: 'row', alignItems: 'center', gap: 6,
+                paddingHorizontal: 16, paddingVertical: 7, borderRadius: 7,
+                backgroundColor: colors.accent,
+                opacity: pressed || saving || !title.trim() ? 0.6 : 1,
+              })}
+            >
+              <Ionicons name="checkmark-circle" size={15} color="#fff" />
+              <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>
+                {saving ? 'Saving…' : 'Save Variation'}
+              </Text>
+            </Pressable>
           </View>
         </View>
 
-        <ScrollView contentContainerStyle={{ maxWidth: 900, width: '100%', alignSelf: 'center', padding: 32 }}>
-          {step === 0 ? (
-            /* ── STEP 1: EVIDENCE — two columns ── */
-            <View style={{ flexDirection: 'row', gap: 24, alignItems: 'flex-start' }}>
-              {/* Left: Photos */}
-              <View style={{ flex: 1 }}>
-                <WebSectionHeader title="Photos" count={photos.length} colors={colors} />
-                <Pressable
-                  onPress={pickFromLibrary}
-                  style={({ pressed }) => ({
-                    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10,
-                    borderWidth: 2, borderStyle: 'dashed' as any, borderColor: pressed ? colors.accent : colors.border,
-                    borderRadius: 12, paddingVertical: 24, marginBottom: 14,
-                    backgroundColor: pressed ? `${colors.accent}08` : 'transparent',
-                  })}
-                >
-                  <Ionicons name="cloud-upload-outline" size={24} color={colors.accent} />
-                  <Text style={{ fontSize: 14, fontWeight: '600', color: colors.accent }}>Upload Photos</Text>
-                </Pressable>
-                {photos.length > 0 && (
-                  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-                    {photos.map((photo) => (
-                      <View key={photo.id} style={{ width: 80, height: 80, borderRadius: 8, overflow: 'hidden', position: 'relative' }}>
-                        <Image source={{ uri: photo.uri }} style={{ width: '100%', height: '100%' }} />
-                        <Pressable
-                          onPress={() => setPhotos(prev => prev.filter(p => p.id !== photo.id))}
-                          style={{ position: 'absolute', top: 2, right: 2 }}
-                        >
-                          <Ionicons name="close-circle" size={18} color="#fff" />
-                        </Pressable>
-                      </View>
-                    ))}
-                  </View>
-                )}
-                <Text style={{ fontSize: 12, color: colors.textMuted }}>
-                  {photos.length} photo{photos.length !== 1 ? 's' : ''} · SHA-256 hashed automatically
-                </Text>
-              </View>
+        {/* Single-page form — two columns */}
+        <ScrollView contentContainerStyle={{ maxWidth: 960, width: '100%', alignSelf: 'center', padding: 32 }}>
+          <View style={{ flexDirection: 'row', gap: 32, alignItems: 'flex-start' }}>
 
-              {/* Right: Voice + Attachments */}
-              <View style={{ flex: 1, gap: 20 }}>
-                <WebSectionHeader title="Voice Memo" colors={colors} />
-                <View style={{ backgroundColor: colors.surface, borderRadius: 12, borderWidth: 1, borderColor: colors.border, padding: 20, alignItems: 'center', gap: 12 }}>
-                  {isRecording && (
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                      <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: colors.danger }} />
-                      <Text style={{ fontSize: 13, fontWeight: '700', color: colors.danger }}>Recording — {formatDuration(voiceDuration)}</Text>
-                    </View>
-                  )}
-                  {voiceUri && !isRecording && (
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                      <Ionicons name="checkmark-circle" size={18} color={colors.success} />
-                      <Text style={{ fontSize: 13, color: colors.success, fontWeight: '600' }}>{formatDuration(voiceDuration)} recorded</Text>
-                    </View>
-                  )}
-                  <Pressable
-                    onPress={isRecording ? stopRecording : startRecording}
-                    style={({ pressed }) => ({
-                      width: 60, height: 60, borderRadius: 30,
-                      backgroundColor: isRecording ? colors.danger : colors.accent,
-                      alignItems: 'center', justifyContent: 'center',
-                      opacity: pressed ? 0.85 : 1,
-                    })}
-                  >
-                    <Ionicons name={isRecording ? 'stop' : 'mic'} size={26} color="#fff" />
-                  </Pressable>
-                  <Text style={{ fontSize: 12, color: colors.textMuted }}>
-                    {isRecording ? 'Tap to stop' : voiceUri ? 'Tap to re-record' : 'Tap to record'}
-                  </Text>
-                </View>
+            {/* ── LEFT: Photos + Attachments ── */}
+            <View style={{ width: 280, flexShrink: 0, gap: 16 }}>
 
-                <WebSectionHeader title="Attachments" count={attachments.length} colors={colors} />
-                <View style={{ backgroundColor: colors.surface, borderRadius: 12, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' }}>
-                  {attachments.map((att, i) => (
-                    <View key={att.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 12, borderBottomWidth: i < attachments.length - 1 ? 1 : 0, borderBottomColor: colors.border }}>
-                      <Ionicons name={getFileIcon(att.mimeType) as any} size={18} color={colors.accent} />
-                      <View style={{ flex: 1 }}>
-                        <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text }} numberOfLines={1}>{att.fileName}</Text>
-                        <Text style={{ fontSize: 11, color: colors.textMuted }}>{formatFileSize(att.fileSize)}</Text>
-                      </View>
-                      <Pressable onPress={() => setAttachments(prev => prev.filter(a => a.id !== att.id))}>
-                        <Ionicons name="close" size={16} color={colors.danger} />
+              {/* Photo upload zone */}
+              <Pressable
+                onPress={pickFromLibrary}
+                style={({ pressed }) => ({
+                  flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  borderWidth: 2, borderStyle: 'dashed' as any,
+                  borderColor: pressed ? colors.accent : colors.border,
+                  borderRadius: 12, paddingVertical: 28,
+                  backgroundColor: pressed ? `${colors.accent}08` : colors.surface,
+                })}
+              >
+                <Ionicons name="images-outline" size={28} color={colors.accent} />
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.accent }}>Upload Photos</Text>
+                <Text style={{ fontSize: 11, color: colors.textMuted }}>Click to browse</Text>
+              </Pressable>
+
+              {/* Photo grid */}
+              {photos.length > 0 && (
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                  {photos.map((photo) => (
+                    <View key={photo.id} style={{ width: 76, height: 76, borderRadius: 8, overflow: 'hidden' }}>
+                      <Image source={{ uri: photo.uri }} style={{ width: '100%', height: '100%' }} />
+                      <Pressable
+                        onPress={() => setPhotos(prev => prev.filter(p => p.id !== photo.id))}
+                        style={{ position: 'absolute', top: 2, right: 2 }}
+                      >
+                        <Ionicons name="close-circle" size={18} color="#fff" />
                       </Pressable>
                     </View>
                   ))}
-                  <Pressable
-                    onPress={async () => { const p = await pickAttachment(); if (p) setAttachments(prev => [...prev, p]); }}
-                    style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12, opacity: pressed ? 0.7 : 1 })}
-                  >
-                    <Ionicons name="attach" size={16} color={colors.accent} />
-                    <Text style={{ fontSize: 13, fontWeight: '600', color: colors.accent }}>Attach Document</Text>
-                  </Pressable>
                 </View>
+              )}
+
+              <Text style={{ fontSize: 11, color: colors.textMuted }}>
+                {photos.length} photo{photos.length !== 1 ? 's' : ''}
+              </Text>
+
+              {/* Attachments */}
+              <View style={{ backgroundColor: colors.surface, borderRadius: 10, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' }}>
+                <View style={{ padding: 10, borderBottomWidth: attachments.length > 0 ? 1 : 0, borderBottomColor: colors.border }}>
+                  <Text style={{ fontSize: 11, fontWeight: '700', color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 }}>Attachments</Text>
+                </View>
+                {attachments.map((att, i) => (
+                  <View key={att.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 10, paddingVertical: 8, borderBottomWidth: i < attachments.length - 1 ? 1 : 0, borderBottomColor: colors.border }}>
+                    <Ionicons name={getFileIcon(att.mimeType) as any} size={16} color={colors.accent} />
+                    <Text style={{ flex: 1, fontSize: 12, color: colors.text }} numberOfLines={1}>{att.fileName}</Text>
+                    <Pressable onPress={() => setAttachments(prev => prev.filter(a => a.id !== att.id))}>
+                      <Ionicons name="close" size={14} color={colors.danger} />
+                    </Pressable>
+                  </View>
+                ))}
+                <Pressable
+                  onPress={async () => { const p = await pickAttachment(); if (p) setAttachments(prev => [...prev, p]); }}
+                  style={({ pressed }) => ({ flexDirection: 'row', alignItems: 'center', gap: 6, padding: 10, opacity: pressed ? 0.7 : 1 })}
+                >
+                  <Ionicons name="attach" size={14} color={colors.accent} />
+                  <Text style={{ fontSize: 12, fontWeight: '600', color: colors.accent }}>Attach file</Text>
+                </Pressable>
               </View>
             </View>
-          ) : (
-            /* ── STEP 2: DETAILS — compact form ── */
-            <View style={{ gap: 20 }}>
-              {/* Title — full width */}
+
+            {/* ── RIGHT: Form fields ── */}
+            <View style={{ flex: 1, gap: 16 }}>
+
+              {/* Title */}
               <View>
                 <Text style={webLabelStyle}>TITLE *</Text>
                 <TextInput
@@ -311,25 +274,22 @@ export default function CaptureScreen() {
                 />
               </View>
 
-              {/* Source chips */}
+              {/* Source */}
               <View>
                 <Text style={webLabelStyle}>INSTRUCTION SOURCE</Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
                   {SOURCES.map((s) => (
                     <Pressable
                       key={s.value}
                       onPress={() => setSource(s.value)}
                       style={({ pressed }) => ({
-                        flexDirection: 'row', alignItems: 'center', gap: 5,
-                        paddingHorizontal: 12, paddingVertical: 7,
-                        borderRadius: borderRadius.full,
-                        borderWidth: 1,
+                        paddingHorizontal: 11, paddingVertical: 6,
+                        borderRadius: borderRadius.full, borderWidth: 1,
                         borderColor: source === s.value ? colors.accent : colors.border,
                         backgroundColor: source === s.value ? colors.accentLight : 'transparent',
                         opacity: pressed ? 0.8 : 1,
                       })}
                     >
-                      <Ionicons name={s.icon as any} size={13} color={source === s.value ? colors.accent : colors.textSecondary} />
                       <Text style={{ fontSize: 12, fontWeight: source === s.value ? '700' : '500', color: source === s.value ? colors.accent : colors.textSecondary }}>
                         {s.label}
                       </Text>
@@ -338,23 +298,23 @@ export default function CaptureScreen() {
                 </View>
               </View>
 
-              {/* Two-column row: Instructed By + Reference */}
-              <View style={{ flexDirection: 'row', gap: 16 }}>
+              {/* Instructed By + Reference */}
+              <View style={{ flexDirection: 'row', gap: 12 }}>
                 <View style={{ flex: 1 }}>
                   <Text style={webLabelStyle}>INSTRUCTED BY</Text>
                   <TextInput style={webInputStyle(colors)} value={instructedBy} onChangeText={setInstructedBy} placeholder="e.g. Site Superintendent" placeholderTextColor={colors.textMuted} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={webLabelStyle}>REFERENCE DOC</Text>
+                  <Text style={webLabelStyle}>REFERENCE</Text>
                   <TextInput style={webInputStyle(colors)} value={referenceDoc} onChangeText={setReferenceDoc} placeholder="e.g. SI-042" placeholderTextColor={colors.textMuted} />
                 </View>
               </View>
 
-              {/* Value (office only) */}
+              {/* Value */}
               {isOffice && (
-                <View style={{ maxWidth: 240 }}>
+                <View style={{ maxWidth: 200 }}>
                   <Text style={webLabelStyle}>ESTIMATED VALUE ($)</Text>
-                  <TextInput style={webInputStyle(colors)} value={estimatedValue} onChangeText={setEstimatedValue} placeholder="e.g. 45000" placeholderTextColor={colors.textMuted} keyboardType="numeric" />
+                  <TextInput style={webInputStyle(colors)} value={estimatedValue} onChangeText={setEstimatedValue} placeholder="0" placeholderTextColor={colors.textMuted} keyboardType="numeric" />
                 </View>
               )}
 
@@ -362,10 +322,10 @@ export default function CaptureScreen() {
               <View>
                 <Text style={webLabelStyle}>DESCRIPTION</Text>
                 <TextInput
-                  style={[webInputStyle(colors), { minHeight: 80, textAlignVertical: 'top' }]}
+                  style={[webInputStyle(colors), { minHeight: 90, textAlignVertical: 'top' }]}
                   value={description}
                   onChangeText={setDescription}
-                  placeholder="Describe the scope change — rough notes OK, AI will formalise."
+                  placeholder="Describe the scope change…"
                   placeholderTextColor={colors.textMuted}
                   multiline
                   numberOfLines={4}
@@ -386,7 +346,7 @@ export default function CaptureScreen() {
                 />
               </View>
             </View>
-          )}
+          </View>
         </ScrollView>
       </View>
     );
