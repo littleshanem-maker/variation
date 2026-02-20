@@ -21,7 +21,8 @@ import {
 import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { getDashboardStats, getActiveProjects } from '../db/projectRepository';
-import { getRecentVariations, getVariationsByStatus, getVariationStatusCounts } from '../db/variationRepository';
+import { getRecentVariations, getVariationsByStatus, getVariationStatusSummary, getAllVariationsForRegister, VariationStatusSummary } from '../db/variationRepository';
+import { printRegisterWeb } from '../services/pdfExport';
 import { ProjectSummary, VariationDetail } from '../types/domain';
 import { formatCurrency, timeAgo } from '../utils/helpers';
 import { getStatusLabel } from '../theme';
@@ -53,16 +54,16 @@ type NavSection = 'dashboard' | 'settings';
 // DESKTOP LAYOUT
 // ─────────────────────────────────────────────
 function DesktopDashboard({
-  stats,
   recentVariations,
   projects,
-  statusCounts,
+  statusSummary,
   refreshing,
   onRefresh,
   openDrilldown,
   drilldown,
   setDrilldown,
-  approvalRate,
+  onPrintRegister,
+  printing,
 }: any) {
   const colors = useThemeColors();
   const router = useRouter();
@@ -82,14 +83,14 @@ function DesktopDashboard({
     alignSelf: 'flex-start' as any,
   });
 
-  // Status filter boxes config
+  // Status card config — matches the old stat-card style
   const statusFilters = [
-    { key: 'draft',     label: 'Draft',     statuses: ['captured'],          color: colors.warning,    icon: 'create-outline' },
-    { key: 'submitted', label: 'Submitted',  statuses: ['submitted'],         color: colors.accent,     icon: 'paper-plane-outline' },
-    { key: 'approved',  label: 'Approved',   statuses: ['approved'],          color: colors.success,    icon: 'checkmark-circle-outline' },
-    { key: 'paid',      label: 'Paid',       statuses: ['paid'],              color: '#6366f1',         icon: 'cash-outline' },
-    { key: 'disputed',  label: 'Disputed',   statuses: ['disputed'],          color: colors.danger,     icon: 'alert-circle-outline' },
-    { key: 'at-risk',   label: 'At Risk',    statuses: ['disputed'],          color: '#f97316',         icon: 'warning-outline' },
+    { key: 'draft',     label: 'Draft',      statuses: ['captured'],  color: colors.warning, sub: (s: VariationStatusSummary|undefined) => `${s?.count ?? 0} variation${(s?.count ?? 0) !== 1 ? 's' : ''}` },
+    { key: 'submitted', label: 'Submitted',   statuses: ['submitted'], color: colors.accent,  sub: (s: VariationStatusSummary|undefined) => `${s?.count ?? 0} waiting` },
+    { key: 'approved',  label: 'Approved',    statuses: ['approved'],  color: colors.success, sub: (s: VariationStatusSummary|undefined) => `${s?.count ?? 0} approved` },
+    { key: 'paid',      label: 'Paid',        statuses: ['paid'],      color: '#6366f1',      sub: (s: VariationStatusSummary|undefined) => `${s?.count ?? 0} settled` },
+    { key: 'disputed',  label: 'Disputed',    statuses: ['disputed'],  color: colors.danger,  sub: (s: VariationStatusSummary|undefined) => `${s?.count ?? 0} contested` },
+    { key: 'at-risk',   label: 'At Risk',     statuses: ['disputed'],  color: '#f97316',      sub: (s: VariationStatusSummary|undefined) => `${s?.count ?? 0} at risk` },
   ];
 
   return (
@@ -150,60 +151,8 @@ function DesktopDashboard({
           })}
         </View>
 
-        {/* Bottom Actions */}
-        <View style={{ paddingHorizontal: 12, gap: 8 }}>
-          {/* New Project */}
-          <Pressable
-            onPress={() => router.push('/project/new')}
-            style={({ pressed }) => ({
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              backgroundColor: 'transparent',
-              borderRadius: 10,
-              paddingVertical: 11,
-              borderWidth: 1,
-              borderColor: colors.border,
-              opacity: pressed ? 0.75 : 1,
-            })}
-          >
-            <Ionicons name="folder-open-outline" size={16} color={colors.text} />
-            <Text style={{ fontSize: 14, fontWeight: '600', color: colors.text }}>New Project</Text>
-          </Pressable>
-
-          {/* New Variation */}
-          <Pressable
-            onPress={() => {
-              if (projects.length === 0) {
-                Alert.alert('No Projects', 'Create a project first.');
-              } else if (projects.length === 1) {
-                router.push(`/capture/${projects[0].id}`);
-              } else {
-                Alert.alert('Select Project', 'Which project?', [
-                  ...projects.map((p: ProjectSummary) => ({
-                    text: p.name,
-                    onPress: () => router.push(`/capture/${p.id}`),
-                  })),
-                  { text: 'Cancel', style: 'cancel' as const },
-                ]);
-              }
-            }}
-            style={({ pressed }) => ({
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              backgroundColor: colors.accent,
-              borderRadius: 10,
-              paddingVertical: 12,
-              opacity: pressed ? 0.85 : 1,
-            })}
-          >
-            <Ionicons name="add-circle-outline" size={18} color="#fff" />
-            <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>New Variation</Text>
-          </Pressable>
-        </View>
+        {/* No bottom actions — use top bar buttons instead */}
+        <View />
       </View>
 
       {/* ── MAIN CONTENT ── */}
@@ -223,7 +172,28 @@ function DesktopDashboard({
           <Text style={{ fontSize: 16, fontWeight: '700', color: colors.text }}>
             Variation Register
           </Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Pressable
+              onPress={onPrintRegister}
+              disabled={printing}
+              style={({ pressed }) => ({
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+                paddingHorizontal: 14,
+                paddingVertical: 6,
+                borderRadius: 8,
+                backgroundColor: pressed ? colors.border : colors.surface,
+                borderWidth: 1,
+                borderColor: colors.border,
+                opacity: printing ? 0.5 : 1,
+              })}
+            >
+              <Ionicons name="print-outline" size={15} color={colors.text} />
+              <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text }}>
+                {printing ? 'Loading…' : 'Print Register'}
+              </Text>
+            </Pressable>
             <View style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, backgroundColor: `${colors.accent}20`, borderWidth: 1, borderColor: `${colors.accent}40` }}>
               <Text style={{ fontSize: 12, fontWeight: '600', color: colors.accent }}>Office Mode</Text>
             </View>
@@ -237,67 +207,35 @@ function DesktopDashboard({
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
         >
 
-          {/* ── STATUS FILTER BOXES ── */}
-          <View style={{ flexDirection: 'row', gap: 12, marginBottom: 32, flexWrap: 'wrap' }}>
+          {/* ── STATUS CARDS (same style, with dollar values) ── */}
+          <View style={{ flexDirection: 'row', gap: 16, marginBottom: 32, flexWrap: 'wrap' }}>
             {statusFilters.map((sf) => {
-              const count = sf.key === 'at-risk'
-                ? (statusCounts['disputed'] ?? 0)
-                : sf.key === 'draft'
-                ? (statusCounts['captured'] ?? 0)
-                : (statusCounts[sf.statuses[0]] ?? 0);
+              const match = sf.key === 'draft'
+                ? statusSummary.find((s: VariationStatusSummary) => s.status === 'captured')
+                : statusSummary.find((s: VariationStatusSummary) => s.status === sf.statuses[0]);
+              const value = match?.totalValue ?? 0;
               return (
                 <Pressable
                   key={sf.key}
                   onPress={() => openDrilldown(sf.label, sf.statuses)}
                   style={({ pressed }) => ({
                     flex: 1,
-                    minWidth: 120,
+                    minWidth: 140,
                     backgroundColor: colors.surface,
                     borderRadius: 12,
-                    padding: 16,
+                    padding: 20,
                     borderWidth: 1,
-                    borderColor: pressed ? sf.color : colors.border,
-                    borderTopWidth: 3,
-                    borderTopColor: sf.color,
-                    alignItems: 'center',
-                    gap: 6,
-                    opacity: pressed ? 0.85 : 1,
+                    borderColor: colors.border,
+                    opacity: pressed ? 0.8 : 1,
                   })}
                 >
-                  <Text style={{ fontSize: 26, fontWeight: '900', color: sf.color }}>{count}</Text>
-                  <Text style={{ fontSize: 12, fontWeight: '700', color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 }}>{sf.label}</Text>
+                  <Text style={{ fontSize: 12, fontWeight: '600', color: colors.textMuted, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>{sf.label}</Text>
+                  <Text style={{ fontSize: 22, fontWeight: '800', color: sf.color }}>{formatCurrency(value)}</Text>
+                  <Text style={{ fontSize: 12, color: colors.textMuted, marginTop: 4 }}>{sf.sub(match)}</Text>
+                  <Text style={{ fontSize: 11, color: colors.accent, marginTop: 6 }}>View details →</Text>
                 </Pressable>
               );
             })}
-          </View>
-
-          {/* ── STATS ROW (4 cards) ── */}
-          <View style={{ flexDirection: 'row', gap: 16, marginBottom: 32 }}>
-            {[
-              { label: 'Approved Value', value: formatCurrency(stats.approvedValue), sub: 'Confirmed wins', color: colors.success, onPress: () => openDrilldown('Approved Variations', ['approved', 'paid']) },
-              { label: 'In Flight', value: formatCurrency(stats.inFlightValue), sub: `${stats.submittedCount} submitted`, color: colors.accent, onPress: () => openDrilldown('In Flight', ['submitted']) },
-              { label: 'Disputed', value: formatCurrency(stats.disputedValue), sub: 'Being contested', color: colors.warning, onPress: () => openDrilldown('Disputed', ['disputed']) },
-              { label: 'Win Rate', value: `${approvalRate}%`, sub: `${stats.approvedCount} approved`, color: colors.success },
-            ].map((card) => (
-              <Pressable
-                key={card.label}
-                onPress={card.onPress}
-                style={({ pressed }) => ({
-                  flex: 1,
-                  backgroundColor: colors.surface,
-                  borderRadius: 12,
-                  padding: 20,
-                  borderWidth: 1,
-                  borderColor: colors.border,
-                  opacity: pressed ? 0.8 : 1,
-                })}
-              >
-                <Text style={{ fontSize: 12, fontWeight: '600', color: colors.textMuted, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 }}>{card.label}</Text>
-                <Text style={{ fontSize: 26, fontWeight: '800', color: card.color }}>{card.value}</Text>
-                <Text style={{ fontSize: 12, color: colors.textMuted, marginTop: 4 }}>{card.sub}</Text>
-                {card.onPress && <Text style={{ fontSize: 11, color: colors.accent, marginTop: 6 }}>View details →</Text>}
-              </Pressable>
-            ))}
           </View>
 
           {/* ── PROJECTS GRID (3 cols) ── */}
@@ -464,8 +402,9 @@ export function OfficeDashboard() {
   });
   const [recentVariations, setRecentVariations] = useState<VariationDetail[]>([]);
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
-  const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
+  const [statusSummary, setStatusSummary] = useState<VariationStatusSummary[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [printing, setPrinting] = useState(false);
   const [drilldown, setDrilldown] = useState<{ title: string; items: VariationDetail[] } | null>(null);
 
   const openDrilldown = async (title: string, statuses: string[]) => {
@@ -475,16 +414,16 @@ export function OfficeDashboard() {
 
   const loadDashboardData = useCallback(async () => {
     try {
-      const [statsData, recentData, projectsData, countsData] = await Promise.all([
+      const [statsData, recentData, projectsData, summaryData] = await Promise.all([
         getDashboardStats(),
         getRecentVariations(10),
         getActiveProjects(),
-        getVariationStatusCounts(),
+        getVariationStatusSummary(),
       ]);
       setStats(statsData);
       setRecentVariations(recentData);
       setProjects(projectsData);
-      setStatusCounts(countsData);
+      setStatusSummary(summaryData);
     } catch (error) {
       console.error('[OfficeDashboard] Failed to load:', error);
     }
@@ -498,20 +437,32 @@ export function OfficeDashboard() {
     ? Math.round((stats.approvedCount / stats.totalWithOutcome) * 100)
     : 0;
 
+  const handlePrintRegister = async () => {
+    setPrinting(true);
+    try {
+      const all = await getAllVariationsForRegister();
+      printRegisterWeb(all);
+    } catch (e) {
+      console.error('[Print] failed', e);
+    } finally {
+      setPrinting(false);
+    }
+  };
+
   // ── DESKTOP ──
   if (Platform.OS === 'web') {
     return (
       <DesktopDashboard
-        stats={stats}
         recentVariations={recentVariations}
         projects={projects}
-        statusCounts={statusCounts}
+        statusSummary={statusSummary}
         refreshing={refreshing}
         onRefresh={onRefresh}
         openDrilldown={openDrilldown}
         drilldown={drilldown}
         setDrilldown={setDrilldown}
-        approvalRate={approvalRate}
+        onPrintRegister={handlePrintRegister}
+        printing={printing}
       />
     );
   }

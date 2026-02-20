@@ -151,19 +151,43 @@ export async function getVariationsByStatus(statuses: string[]): Promise<Variati
   }));
 }
 
-export async function getVariationStatusCounts(): Promise<Record<string, number>> {
+export interface VariationStatusSummary {
+  status: string;
+  count: number;
+  totalValue: number;
+}
+
+export async function getVariationStatusSummary(): Promise<VariationStatusSummary[]> {
   const db = await getDatabase();
-  const rows = await db.getAllAsync<{ status: string; count: number }>(
-    `SELECT v.status, COUNT(*) as count FROM variations v
+  const rows = await db.getAllAsync<{ status: string; count: number; total_value: number }>(
+    `SELECT v.status, COUNT(*) as count, SUM(v.estimated_value) as total_value
+     FROM variations v
      INNER JOIN projects p ON p.id = v.project_id
      WHERE p.is_active = 1
      GROUP BY v.status`,
   );
-  const counts: Record<string, number> = {};
-  for (const row of rows) {
-    counts[row.status] = row.count;
-  }
-  return counts;
+  return rows.map(row => ({
+    status: row.status,
+    count: row.count,
+    totalValue: row.total_value ?? 0,
+  }));
+}
+
+export async function getAllVariationsForRegister(): Promise<VariationDetail[]> {
+  const db = await getDatabase();
+  const rows = await db.getAllAsync<any>(
+    `SELECT v.*, p.name as project_name FROM variations v
+     INNER JOIN projects p ON p.id = v.project_id
+     WHERE p.is_active = 1
+     ORDER BY p.name ASC, v.sequence_number ASC`,
+  );
+  return rows.map(row => ({
+    ...mapVariationRow(row),
+    projectName: row.project_name,
+    photos: [],
+    voiceNotes: [],
+    statusHistory: [],
+  }));
 }
 
 export async function getRecentVariations(limit: number = 10): Promise<VariationDetail[]> {

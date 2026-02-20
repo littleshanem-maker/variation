@@ -313,6 +313,201 @@ function getBaseStyles(): string {
   `;
 }
 
+// ============================================================
+// WEB REGISTER PRINT
+// ============================================================
+
+export function printRegisterWeb(
+  variations: VariationDetail[],
+  generatedAt?: string,
+): void {
+  const now = generatedAt ?? new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  // Group by project
+  const byProject: Record<string, VariationDetail[]> = {};
+  for (const v of variations) {
+    const key = v.projectName ?? 'Unknown Project';
+    if (!byProject[key]) byProject[key] = [];
+    byProject[key].push(v);
+  }
+
+  const totalValue = variations.reduce((s, v) => s + v.estimatedValue, 0);
+  const approvedValue = variations.filter(v => v.status === 'approved' || v.status === 'paid').reduce((s, v) => s + v.estimatedValue, 0);
+  const inFlightValue = variations.filter(v => v.status === 'submitted').reduce((s, v) => s + v.estimatedValue, 0);
+  const disputedValue = variations.filter(v => v.status === 'disputed').reduce((s, v) => s + v.estimatedValue, 0);
+
+  const statusColors: Record<string, string> = {
+    captured: '#D4600A',
+    submitted: '#1565C0',
+    approved: '#2D7D46',
+    paid: '#1A1A1A',
+    disputed: '#C62828',
+  };
+
+  const projectSections = Object.entries(byProject).map(([projectName, vars]) => {
+    const projectTotal = vars.reduce((s, v) => s + v.estimatedValue, 0);
+    const rows = vars.map((v, i) => `
+      <tr class="${i % 2 === 0 ? '' : 'alt-row'}">
+        <td class="col-id">${formatVariationId(v.sequenceNumber)}</td>
+        <td class="col-title">${escapeHtml(v.title)}</td>
+        <td class="col-ref">${v.referenceDoc ? escapeHtml(v.referenceDoc) : '—'}</td>
+        <td class="col-instructed">${v.instructedBy ? escapeHtml(v.instructedBy) : '—'}</td>
+        <td class="col-status"><span class="status-pill" style="background:${statusColors[v.status] ?? '#888'}">${getStatusLabel(v.status)}</span></td>
+        <td class="col-value">${formatCurrency(v.estimatedValue)}</td>
+        <td class="col-date">${formatDate(v.capturedAt)}</td>
+      </tr>
+    `).join('');
+
+    return `
+      <div class="project-section">
+        <div class="project-header">
+          <span class="project-name">${escapeHtml(projectName)}</span>
+          <span class="project-total">${formatCurrency(projectTotal)}</span>
+        </div>
+        <table class="register-table">
+          <thead>
+            <tr>
+              <th class="col-id">Var #</th>
+              <th class="col-title">Title / Description</th>
+              <th class="col-ref">Reference</th>
+              <th class="col-instructed">Instructed By</th>
+              <th class="col-status">Status</th>
+              <th class="col-value">Est. Value</th>
+              <th class="col-date">Captured</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+          <tfoot>
+            <tr class="total-row">
+              <td colspan="5" style="text-align:right;font-weight:700;padding-right:12px;">Project Total</td>
+              <td class="col-value" style="font-weight:800;">${formatCurrency(projectTotal)}</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    `;
+  }).join('\n');
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Variation Register — ${now}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, Helvetica Neue, Arial, sans-serif; font-size: 9pt; color: #1a1a1a; background: white; }
+
+    /* ── COVER ── */
+    .cover { padding: 60px 48px 48px; border-bottom: 3px solid #D4600A; page-break-after: always; }
+    .cover-brand { font-size: 9pt; letter-spacing: 3px; color: #D4600A; font-weight: 700; text-transform: uppercase; margin-bottom: 40px; }
+    .cover-title { font-size: 28pt; font-weight: 900; color: #1a1a1a; line-height: 1.1; margin-bottom: 6px; }
+    .cover-subtitle { font-size: 12pt; color: #6b6460; margin-bottom: 4px; }
+    .cover-meta { font-size: 9pt; color: #9a9490; margin-top: 32px; margin-bottom: 48px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #e8e4dd; border: 1px solid #e8e4dd; border-radius: 8px; overflow: hidden; margin-bottom: 40px; }
+    .summary-card { background: white; padding: 20px 24px; }
+    .summary-label { font-size: 8pt; color: #9a9490; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-bottom: 6px; }
+    .summary-value { font-size: 18pt; font-weight: 800; }
+    .summary-count { font-size: 8pt; color: #9a9490; margin-top: 4px; }
+    .cover-footer { font-size: 8pt; color: #9a9490; border-top: 1px solid #e8e4dd; padding-top: 16px; display: flex; justify-content: space-between; }
+
+    /* ── REGISTER ── */
+    .register-body { padding: 32px 48px; }
+    .project-section { margin-bottom: 40px; page-break-inside: avoid; }
+    .project-header { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 2px solid #D4600A; margin-bottom: 0; }
+    .project-name { font-size: 13pt; font-weight: 800; color: #1a1a1a; }
+    .project-total { font-size: 13pt; font-weight: 800; color: #D4600A; }
+
+    .register-table { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+    .register-table thead tr { background: #f5f2ed; }
+    .register-table th { padding: 8px 10px; text-align: left; font-weight: 700; font-size: 7.5pt; text-transform: uppercase; letter-spacing: 0.5px; color: #6b6460; border-bottom: 1px solid #d4cfc7; white-space: nowrap; }
+    .register-table td { padding: 9px 10px; border-bottom: 1px solid #ede9e3; vertical-align: middle; }
+    .alt-row td { background: #faf8f5; }
+    .total-row td { background: #f5f2ed; border-top: 2px solid #d4cfc7; padding: 8px 10px; font-size: 9pt; }
+
+    .col-id    { width: 60px; font-weight: 700; color: #D4600A; font-size: 8pt; }
+    .col-title { min-width: 180px; }
+    .col-ref   { width: 90px; color: #6b6460; }
+    .col-instructed { width: 110px; }
+    .col-status { width: 80px; }
+    .col-value { width: 90px; font-weight: 700; text-align: right; }
+    .col-date  { width: 80px; color: #9a9490; white-space: nowrap; }
+
+    .status-pill { display: inline-block; padding: 2px 7px; border-radius: 3px; font-size: 7.5pt; font-weight: 700; color: white; }
+
+    /* ── GRAND TOTAL ── */
+    .grand-total { margin: 0 0 40px; padding: 16px 24px; background: #f5f2ed; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .grand-total-label { font-size: 11pt; font-weight: 700; color: #1a1a1a; }
+    .grand-total-value { font-size: 20pt; font-weight: 900; color: #1a1a1a; }
+
+    /* ── PRINT ── */
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .cover { page-break-after: always; }
+      .project-section { page-break-inside: avoid; }
+      @page { margin: 15mm 12mm; size: A4; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover">
+    <div class="cover-brand">Pipeline Consulting · Variation Capture</div>
+    <div class="cover-title">Variation<br>Register</div>
+    <div class="cover-subtitle">${variations.length} variation${variations.length !== 1 ? 's' : ''} across ${Object.keys(byProject).length} project${Object.keys(byProject).length !== 1 ? 's' : ''}</div>
+    <div class="cover-meta">Generated ${now}</div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-label">Total Claimed</div>
+        <div class="summary-value">${formatCurrency(totalValue)}</div>
+        <div class="summary-count">${variations.length} variations</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Approved / Paid</div>
+        <div class="summary-value" style="color:#2D7D46">${formatCurrency(approvedValue)}</div>
+        <div class="summary-count">${variations.filter(v => v.status === 'approved' || v.status === 'paid').length} variations</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">In Flight</div>
+        <div class="summary-value" style="color:#1565C0">${formatCurrency(inFlightValue)}</div>
+        <div class="summary-count">${variations.filter(v => v.status === 'submitted').length} submitted</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Disputed</div>
+        <div class="summary-value" style="color:#C62828">${formatCurrency(disputedValue)}</div>
+        <div class="summary-count">${variations.filter(v => v.status === 'disputed').length} variations</div>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      <span>Pipeline Consulting Pty Ltd</span>
+      <span>Confidential — Not for Distribution</span>
+      <span>variationcapture.com.au</span>
+    </div>
+  </div>
+
+  <!-- REGISTER BODY -->
+  <div class="register-body">
+    <div class="grand-total">
+      <span class="grand-total-label">Total Portfolio Value</span>
+      <span class="grand-total-value">${formatCurrency(totalValue)}</span>
+    </div>
+    ${projectSections}
+  </div>
+
+  <script>window.onload = function() { window.print(); }</script>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  // Clean up after a delay
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, '&amp;')

@@ -142,22 +142,40 @@ export default function ProjectDetailScreen() {
   menuDivider: { height: 1, backgroundColor: colors.border },
   });
 
-  const renderVariation = ({ item }: { item: Variation }) => (
+  const renderVariation = ({ item, index }: { item: Variation; index: number }) => (
     <Pressable
-      style={({ pressed }) => [styles.variationCard, pressed && styles.variationCardPressed]}
       onPress={() => router.push(`/variation/${item.id}`)}
+      style={({ pressed }) => ({
+        flexDirection: 'row',
+        paddingHorizontal: spacing.lg,
+        paddingVertical: 14,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.border,
+        backgroundColor: pressed
+          ? `${colors.accent}10`
+          : index % 2 === 0 ? colors.surface : `${colors.border}30`,
+        alignItems: 'center',
+      })}
     >
-      <View style={styles.variationHeader}>
-        <Text style={styles.variationSeq}>{formatVariationId(item.sequenceNumber)}</Text>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+      <Text style={{ width: 56, fontSize: 12, fontWeight: '700', color: colors.accent }}>
+        {formatVariationId(item.sequenceNumber)}
+      </Text>
+      <Text style={{ flex: 2, fontSize: 14, fontWeight: '600', color: colors.text }} numberOfLines={1}>
+        {item.title}
+      </Text>
+      <View style={{ flex: 1 }}>
+        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status), alignSelf: 'flex-start' }]}>
           <Text style={styles.statusText}>{getStatusLabel(item.status)}</Text>
         </View>
       </View>
-      <Text style={styles.variationTitle} numberOfLines={2}>{item.title}</Text>
-      <View style={styles.variationFooter}>
-        {isOffice && <Text style={styles.variationValue}>{formatCurrency(item.estimatedValue)}</Text>}
-        <Text style={styles.variationTime}>{timeAgo(item.capturedAt)}</Text>
-      </View>
+      {isOffice && (
+        <Text style={{ width: 100, fontSize: 14, fontWeight: '700', color: colors.text, textAlign: 'right' }}>
+          {formatCurrency(item.estimatedValue)}
+        </Text>
+      )}
+      <Text style={{ width: 80, fontSize: 12, color: colors.textMuted, textAlign: 'right' }}>
+        {timeAgo(item.capturedAt)}
+      </Text>
     </Pressable>
   );
 
@@ -184,34 +202,56 @@ export default function ProjectDetailScreen() {
         )}
       </View>
 
-      {/* New Variation — Field mode: shown inline below summary bar */}
-      {!isOffice && (
-        <View style={styles.fieldCaptureRow}>
-          <Pressable
-            style={({ pressed }) => [styles.newVarButton, pressed && styles.newVarButtonPressed]}
-            onPress={() => router.push(`/capture/${id}`)}
-          >
-            <Ionicons name="add-circle-outline" size={22} color={colors.textInverse} />
-            <Text style={styles.newVarButtonText}>New Variation</Text>
-          </Pressable>
+      {/* Filter Row + New Variation (top, small) */}
+      <View style={[styles.filterRow, { justifyContent: 'space-between' }]}>
+        <View style={{ flexDirection: 'row', gap: spacing.sm, flexWrap: 'wrap', flex: 1 }}>
+          {STATUS_FILTERS
+            .filter(f => isOffice || f.value === undefined || f.value === VariationStatus.CAPTURED || f.value === VariationStatus.SUBMITTED)
+            .map((f) => (
+              <Pressable
+                key={f.label}
+                style={[styles.filterChip, statusFilter === f.value && styles.filterChipActive]}
+                onPress={() => setStatusFilter(f.value)}
+              >
+                <Text style={[styles.filterChipText, statusFilter === f.value && styles.filterChipTextActive]}>
+                  {f.label}
+                </Text>
+              </Pressable>
+            ))}
         </View>
-      )}
+        <Pressable
+          onPress={() => router.push(`/capture/${id}`)}
+          style={({ pressed }) => ({
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 5,
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            borderRadius: borderRadius.full,
+            backgroundColor: colors.accent,
+            opacity: pressed ? 0.85 : 1,
+            marginLeft: spacing.sm,
+          })}
+        >
+          <Ionicons name="add" size={15} color="#fff" />
+          <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff' }}>New Variation</Text>
+        </Pressable>
+      </View>
 
-      {/* Status Filter — Office shows all, Field shows Draft + Submitted only */}
-      <View style={styles.filterRow}>
-        {STATUS_FILTERS
-          .filter(f => isOffice || f.value === undefined || f.value === VariationStatus.CAPTURED || f.value === VariationStatus.SUBMITTED)
-          .map((f) => (
-            <Pressable
-              key={f.label}
-              style={[styles.filterChip, statusFilter === f.value && styles.filterChipActive]}
-              onPress={() => setStatusFilter(f.value)}
-            >
-              <Text style={[styles.filterChipText, statusFilter === f.value && styles.filterChipTextActive]}>
-                {f.label}
-              </Text>
-            </Pressable>
-          ))}
+      {/* Table header */}
+      <View style={{
+        flexDirection: 'row',
+        paddingHorizontal: spacing.lg,
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: colors.border,
+        backgroundColor: `${colors.border}50`,
+      }}>
+        <Text style={{ width: 56, fontSize: 10, fontWeight: '700', color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 }}>#</Text>
+        <Text style={{ flex: 2, fontSize: 10, fontWeight: '700', color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 }}>Title</Text>
+        <Text style={{ flex: 1, fontSize: 10, fontWeight: '700', color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5 }}>Status</Text>
+        {isOffice && <Text style={{ width: 100, fontSize: 10, fontWeight: '700', color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'right' }}>Value</Text>}
+        <Text style={{ width: 80, fontSize: 10, fontWeight: '700', color: colors.textMuted, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'right' }}>Age</Text>
       </View>
 
       {/* Variation List */}
@@ -219,28 +259,15 @@ export default function ProjectDetailScreen() {
         data={variations}
         renderItem={renderVariation}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
+        contentContainerStyle={{ paddingBottom: 40 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.accent} />}
         ListEmptyComponent={
-          <View style={styles.empty}>
+          <View style={[styles.empty, { paddingTop: 60 }]}>
             <Ionicons name="layers-outline" size={48} color={colors.textMuted} />
-            <Text style={styles.emptyText}>No variations{statusFilter ? ` with status "${getStatusLabel(statusFilter)}"` : ''}</Text>
+            <Text style={styles.emptyText}>No variations{statusFilter ? ` — filter: ${getStatusLabel(statusFilter)}` : ''}</Text>
           </View>
         }
       />
-
-      {/* New Variation Button — Office mode only at bottom */}
-      {isOffice && (
-        <View style={styles.bottomAction}>
-          <Pressable
-            style={({ pressed }) => [styles.newVarButton, pressed && styles.newVarButtonPressed]}
-            onPress={() => router.push(`/capture/${id}`)}
-          >
-            <Ionicons name="add-circle-outline" size={22} color={colors.textInverse} />
-            <Text style={styles.newVarButtonText}>New Variation</Text>
-          </Pressable>
-        </View>
-      )}
 
       {/* Menu Modal */}
       <Modal visible={showMenu} transparent animationType="fade">
