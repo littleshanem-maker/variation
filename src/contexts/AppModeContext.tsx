@@ -8,6 +8,7 @@
  */
 
 import { createContext, useContext, useState, useMemo, ReactNode } from 'react';
+import { Platform } from 'react-native';
 import { fieldColors, officeColors } from '../theme';
 
 export type AppMode = 'field' | 'office';
@@ -33,7 +34,8 @@ const AppModeContext = createContext<AppModeContextType>({
 const OFFICE_PIN = '1234';
 
 export function AppModeProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<AppMode>('field');
+  // Default to Office on Web, Field on Mobile
+  const [mode, setMode] = useState<AppMode>(Platform.OS === 'web' ? 'office' : 'field');
 
   const switchToOffice = (pin: string): boolean => {
     if (pin === OFFICE_PIN) {
