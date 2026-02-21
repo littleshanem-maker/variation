@@ -210,10 +210,10 @@ async function buildVariationHTML(variation: VariationDetail, isBatchPage = fals
           });
           const imgExt = att.mimeType?.includes('png') || att.fileName.toLowerCase().endsWith('.png') ? 'png' : 'jpeg';
           items.push(`
-            <div class="photo-item" style="page-break-before:always;">
-              <div style="padding:8px;background:#f8f6f3;font-weight:700;font-size:10pt;">${escapeHtml(att.fileName)}</div>
-              <img src="data:image/${imgExt};base64,${base64}" class="photo-img" style="width:100%;height:auto;" />
-              <div class="photo-hash">${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}...</div>
+            <div style="page-break-before:always;border:1px solid #e8e4dd;border-radius:6px;overflow:hidden;margin-bottom:16px;">
+              <div style="padding:8px 12px;background:#f8f6f3;font-weight:700;font-size:10pt;border-bottom:1px solid #e8e4dd;">${escapeHtml(att.fileName)}</div>
+              <img src="data:image/${imgExt};base64,${base64}" style="width:100%;height:auto;display:block;object-fit:contain;" />
+              <div style="padding:4px 12px 8px;font-size:7pt;color:#aaa;font-family:monospace;">${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}...</div>
             </div>
           `);
         } catch (err) {
