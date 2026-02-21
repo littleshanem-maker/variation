@@ -7,7 +7,9 @@
 import { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Pressable, Platform } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { getDatabase } from '../src/db/schema';
 import { seedDatabase } from '../src/db/seedData';
 import { colors } from '../src/theme';
@@ -39,6 +41,26 @@ export default function RootLayout() {
     );
   }
 
+  const router = useRouter();
+
+  function HomeButton() {
+    return (
+      <Pressable
+        onPress={() => router.replace('/')}
+        style={({ pressed }) => ({
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 8,
+          paddingVertical: 4,
+          borderRadius: 6,
+          opacity: pressed ? 0.6 : 1,
+        })}
+      >
+        <Ionicons name="home-outline" size={20} color={colors.accent} />
+      </Pressable>
+    );
+  }
+
   return (
     <AppModeProvider>
       <StatusBar style="dark" />
@@ -54,6 +76,7 @@ export default function RootLayout() {
           headerShadowVisible: false,
           contentStyle: { backgroundColor: colors.bg },
           headerBackTitle: 'Back',
+          headerRight: () => <HomeButton />,
         }}
       >
         <Stack.Screen
