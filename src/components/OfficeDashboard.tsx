@@ -562,20 +562,20 @@ export function OfficeDashboard() {
         </View>
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Projects</Text>
-          {projects.length === 0 ? <View style={styles.emptyState}><Text style={styles.emptyText}>No active projects</Text></View> : projects.reduce((rows: ProjectSummary[][], item, i) => { if (i % 2 === 0) rows.push([item]); else rows[rows.length - 1].push(item); return rows; }, []).map((row, ri) => (
-            <View key={ri} style={{ flexDirection: 'row', gap: 12 }}>
-              {row.map(item => (
-                <Pressable key={item.id} style={({ pressed }) => [styles.projectOverviewCard, pressed && { borderColor: colors.accent }]} onPress={() => router.push(`/project/${item.id}`)}>
+          {projects.length === 0 ? <View style={styles.emptyState}><Text style={styles.emptyText}>No active projects</Text></View> : projects.map(item => (
+            <Pressable key={item.id} style={({ pressed }) => [styles.projectOverviewCard, pressed && { borderColor: colors.accent }]} onPress={() => router.push(`/project/${item.id}`)}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View style={{ flex: 1, marginRight: 12 }}>
                   <Text style={styles.projectOverviewName} numberOfLines={1}>{item.name}</Text>
                   <Text style={styles.projectOverviewClient}>{item.client}</Text>
-                  <View style={styles.projectOverviewStats}>
-                    <Text style={{ fontSize: 12, color: colors.textMuted }}>{item.variationCount} variations</Text>
-                    <Text style={styles.projectOverviewValue}>{formatCurrency(item.totalValue)}</Text>
-                  </View>
-                  {item.atRiskValue > 0 && <View style={styles.atRiskIndicator}><Text style={styles.atRiskText}>At Risk: {formatCurrency(item.atRiskValue)}</Text></View>}
-                </Pressable>
-              ))}
-            </View>
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text style={styles.projectOverviewValue}>{formatCurrency(item.totalValue)}</Text>
+                  <Text style={{ fontSize: 12, color: colors.textMuted, marginTop: 2 }}>{item.variationCount} variation{item.variationCount !== 1 ? 's' : ''}</Text>
+                </View>
+              </View>
+              {item.atRiskValue > 0 && <View style={styles.atRiskIndicator}><Text style={styles.atRiskText}>⚠ At Risk: {formatCurrency(item.atRiskValue)}</Text></View>}
+            </Pressable>
           ))}
         </View>
         <View style={styles.section}>
