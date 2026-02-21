@@ -133,7 +133,7 @@ export default function VariationDetailScreen() {
     }
     setExporting(true);
     try {
-      await exportVariationPDF(variation);
+      await exportVariationPDF(variation, attachments);
     } catch (error) {
       Alert.alert('Error', 'PDF export failed.');
     } finally {

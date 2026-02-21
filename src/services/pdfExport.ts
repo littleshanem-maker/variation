@@ -20,8 +20,8 @@ import { getStatusLabel } from '../theme';
 // SINGLE VARIATION PDF
 // ============================================================
 
-export async function exportVariationPDF(variation: VariationDetail): Promise<void> {
-  const html = await buildVariationHTML(variation);
+export async function exportVariationPDF(variation: VariationDetail, attachments?: PrintAttachment[]): Promise<void> {
+  const html = await buildVariationHTML(variation, false, attachments);
   const { uri } = await Print.printToFileAsync({ html, width: 595, height: 842 });
 
   const filename = `${formatVariationId(variation.sequenceNumber)}-${variation.title.replace(/[^a-zA-Z0-9]/g, '-').slice(0, 30)}.pdf`;
@@ -108,7 +108,7 @@ export async function exportProjectBatchPDF(
 // HTML BUILDERS
 // ============================================================
 
-async function buildVariationHTML(variation: VariationDetail, isBatchPage = false): Promise<string> {
+async function buildVariationHTML(variation: VariationDetail, isBatchPage = false, attachments?: PrintAttachment[]): Promise<string> {
   // Build photo section with embedded base64 images (Phase 2)
   let photoHTML = '';
   if (variation.photos.length > 0) {
@@ -193,6 +193,52 @@ async function buildVariationHTML(variation: VariationDetail, isBatchPage = fals
     </div>
   ` : '';
 
+  // Attachments — embed images, list others
+  const atts = attachments ?? [];
+  let attachmentHTML = '';
+  if (atts.length > 0) {
+    const items: string[] = [];
+    for (const att of atts) {
+      const isImage = att.mimeType?.startsWith('image/');
+      if (isImage) {
+        try {
+          const base64 = await FileSystem.readAsStringAsync(att.localUri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+          const ext = att.mimeType?.includes('png') ? 'png' : 'jpeg';
+          items.push(`
+            <div class="photo-item" style="page-break-before:always;">
+              <div style="padding:8px;background:#f8f6f3;font-weight:700;font-size:10pt;">${escapeHtml(att.fileName)}</div>
+              <img src="data:image/${ext};base64,${base64}" class="photo-img" style="width:100%;height:auto;" />
+              <div class="photo-hash">${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}...</div>
+            </div>
+          `);
+        } catch {
+          items.push(`
+            <div class="photo-item photo-missing">
+              <div class="photo-placeholder">${escapeHtml(att.fileName)} — unavailable</div>
+              <div class="photo-hash">SHA-256: ${att.sha256Hash.slice(0, 16)}...</div>
+            </div>
+          `);
+        }
+      } else {
+        items.push(`
+          <div class="voice-item">
+            <strong>${escapeHtml(att.fileName)}</strong>
+            <div class="photo-hash">${att.mimeType ?? 'unknown'} · ${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}...</div>
+            <div style="font-size:9pt;color:#8a8580;font-style:italic;margin-top:4px;">File cannot be embedded — see digital record</div>
+          </div>
+        `);
+      }
+    }
+    attachmentHTML = `
+      <div class="section">
+        <h3>Attachments (${atts.length})</h3>
+        ${items.join('')}
+      </div>
+    `;
+  }
+
   const content = `
     <div class="variation-page">
       <div class="header">
@@ -232,6 +278,8 @@ async function buildVariationHTML(variation: VariationDetail, isBatchPage = fals
           <p>${escapeHtml(variation.notes)}</p>
         </div>
       ` : ''}
+
+      ${attachmentHTML}
 
       ${historyHTML}
 
