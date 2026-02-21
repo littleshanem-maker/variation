@@ -521,30 +521,36 @@ export function OfficeDashboard() {
           <Text style={styles.headerSubtitle}>Business Intelligence Overview</Text>
         </View>
         <View style={styles.statsGrid}>
-          <View style={styles.statsGridRow}>
-            <Pressable style={({ pressed }) => [styles.statCard, pressed && { opacity: 0.75 }]} onPress={() => openDrilldown('Approved Variations', ['approved', 'paid'])}>
-              <Text style={styles.statTitle}>Approved Value</Text>
-              <Text style={[styles.statValue, { color: colors.success }]}>{formatCurrency(stats.approvedValue)}</Text>
-              <Text style={styles.statSubtitle}>Confirmed wins</Text>
-            </Pressable>
-            <Pressable style={({ pressed }) => [styles.statCard, pressed && { opacity: 0.75 }]} onPress={() => openDrilldown('In Flight', ['submitted'])}>
-              <Text style={styles.statTitle}>In Flight</Text>
-              <Text style={[styles.statValue, { color: colors.accent }]}>{formatCurrency(stats.inFlightValue)}</Text>
-              <Text style={styles.statSubtitle}>{stats.submittedCount} submitted</Text>
-            </Pressable>
-          </View>
-          <View style={styles.statsGridRow}>
-            <Pressable style={({ pressed }) => [styles.statCard, pressed && { opacity: 0.75 }]} onPress={() => openDrilldown('Disputed', ['disputed'])}>
-              <Text style={styles.statTitle}>Disputed</Text>
-              <Text style={[styles.statValue, { color: colors.warning }]}>{formatCurrency(stats.disputedValue)}</Text>
-              <Text style={styles.statSubtitle}>Being contested</Text>
-            </Pressable>
-            <Pressable style={[styles.statCard]}>
-              <Text style={styles.statTitle}>Win Rate</Text>
-              <Text style={[styles.statValue, { color: colors.success }]}>{approvalRate}%</Text>
-              <Text style={styles.statSubtitle}>{stats.approvedCount} approved</Text>
-            </Pressable>
-          </View>
+          {[
+            [
+              { key: 'draft',     label: 'Draft',     statuses: ['captured'],  color: colors.warning, sub: () => { const s = statusSummary.find((x: VariationStatusSummary) => x.status === 'captured'); return `${s?.count ?? 0} variation${(s?.count ?? 0) !== 1 ? 's' : ''}`; } },
+              { key: 'submitted', label: 'Submitted',  statuses: ['submitted'], color: colors.accent,  sub: () => { const s = statusSummary.find((x: VariationStatusSummary) => x.status === 'submitted'); return `${s?.count ?? 0} waiting`; } },
+            ],
+            [
+              { key: 'approved',  label: 'Approved',   statuses: ['approved'],  color: colors.success, sub: () => { const s = statusSummary.find((x: VariationStatusSummary) => x.status === 'approved'); return `${s?.count ?? 0} approved`; } },
+              { key: 'paid',      label: 'Paid',       statuses: ['paid'],      color: '#6366f1',      sub: () => { const s = statusSummary.find((x: VariationStatusSummary) => x.status === 'paid'); return `${s?.count ?? 0} settled`; } },
+            ],
+            [
+              { key: 'disputed',  label: 'Disputed',   statuses: ['disputed'],  color: colors.danger,  sub: () => { const s = statusSummary.find((x: VariationStatusSummary) => x.status === 'disputed'); return `${s?.count ?? 0} contested`; } },
+              { key: 'at-risk',   label: 'At Risk',    statuses: ['disputed'],  color: '#f97316',      sub: () => { const s = statusSummary.find((x: VariationStatusSummary) => x.status === 'disputed'); return `${s?.count ?? 0} at risk`; } },
+            ],
+          ].map((row, ri) => (
+            <View key={ri} style={styles.statsGridRow}>
+              {row.map((sf) => {
+                const match = sf.key === 'draft'
+                  ? statusSummary.find((s: VariationStatusSummary) => s.status === 'captured')
+                  : statusSummary.find((s: VariationStatusSummary) => s.status === sf.statuses[0]);
+                const value = match?.totalValue ?? 0;
+                return (
+                  <Pressable key={sf.key} style={({ pressed }) => [styles.statCard, pressed && { opacity: 0.75 }]} onPress={() => openDrilldown(sf.label, sf.statuses)}>
+                    <Text style={styles.statTitle}>{sf.label}</Text>
+                    <Text style={[styles.statValue, { color: sf.color }]}>{formatCurrency(value)}</Text>
+                    <Text style={styles.statSubtitle}>{sf.sub()}</Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          ))}
         </View>
         <View style={styles.captureRow}>
           <Pressable style={[styles.captureButtonSecondary]} onPress={() => router.push('/project/new')}>
