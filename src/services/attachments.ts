@@ -2,11 +2,14 @@
  * Attachments Service
  *
  * Document picking, persistent storage, opening, and display helpers.
+ * Works on both native (expo-file-system) and web (browser File API).
  */
 
+import { Platform } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
+import * as Crypto from 'expo-crypto';
 import { hashFile } from './evidenceChain';
 import { generateId } from '../utils/helpers';
 
@@ -19,7 +22,74 @@ export interface PickedAttachment {
   hash: string;
 }
 
+// ── Web helpers ──────────────────────────────────────────────
+
+function pickFileWeb(): Promise<File | null> {
+  return new Promise((resolve) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '*/*';
+    input.onchange = () => {
+      const file = input.files?.[0] ?? null;
+      resolve(file);
+    };
+    // User cancelled
+    input.addEventListener('cancel', () => resolve(null));
+    input.click();
+  });
+}
+
+function readFileAsBase64Web(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      // Strip data URL prefix to get raw base64
+      const base64 = result.split(',')[1] ?? result;
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function fileToObjectUrl(file: File): string {
+  return URL.createObjectURL(file);
+}
+
+// ── Cross-platform picker ────────────────────────────────────
+
 export async function pickAttachment(): Promise<PickedAttachment | null> {
+  if (Platform.OS === 'web') {
+    return pickAttachmentWeb();
+  }
+  return pickAttachmentNative();
+}
+
+async function pickAttachmentWeb(): Promise<PickedAttachment | null> {
+  const file = await pickFileWeb();
+  if (!file) return null;
+
+  const base64 = await readFileAsBase64Web(file);
+  const hash = await Crypto.digestStringAsync(
+    Crypto.CryptoDigestAlgorithm.SHA256,
+    base64,
+  ).catch(() => 'hash-failed');
+
+  // Use object URL as the "local URI" on web
+  const uri = fileToObjectUrl(file);
+
+  return {
+    id: generateId(),
+    uri,
+    fileName: file.name,
+    fileSize: file.size,
+    mimeType: file.type || undefined,
+    hash,
+  };
+}
+
+async function pickAttachmentNative(): Promise<PickedAttachment | null> {
   const result = await DocumentPicker.getDocumentAsync({
     type: '*/*',
     copyToCacheDirectory: true,
@@ -50,6 +120,10 @@ export async function pickAttachment(): Promise<PickedAttachment | null> {
 }
 
 export async function openAttachment(localUri: string): Promise<void> {
+  if (Platform.OS === 'web') {
+    window.open(localUri, '_blank');
+    return;
+  }
   const canShare = await Sharing.isAvailableAsync();
   if (canShare) {
     await Sharing.shareAsync(localUri);
