@@ -34,7 +34,7 @@ import { exportVariationPDF, printVariationWeb } from '../../src/services/pdfExp
 import { generateVariationDescription } from '../../src/services/ai';
 import { config } from '../../src/config';
 import { useAppMode } from '../../src/contexts/AppModeContext';
-import { getAttachmentsForVariation, addAttachment, Attachment } from '../../src/db/attachmentRepository';
+import { getAttachmentsForVariation, addAttachment, deleteAttachment, Attachment } from '../../src/db/attachmentRepository';
 import { openAttachment, getFileIcon, formatFileSize, pickAttachment } from '../../src/services/attachments';
 
 // Status transition rules
@@ -624,14 +624,33 @@ export default function VariationDetailScreen() {
             <Text style={styles.aiPlaceholder}>No attachments. Tap + to add site instructions, RFIs or emails.</Text>
           ) : (
             attachments.map((att) => (
-              <Pressable key={att.id} style={styles.attachRow} onPress={() => openAttachment(att.localUri)}>
-                <Ionicons name={getFileIcon(att.mimeType) as any} size={22} color={colors.accent} />
-                <View style={styles.attachInfo}>
-                  <Text style={styles.attachName} numberOfLines={1}>{att.fileName}</Text>
-                  <Text style={styles.attachSize}>{formatFileSize(att.fileSize)} · SHA: {att.sha256Hash.slice(0, 8)}...</Text>
-                </View>
-                <Ionicons name="open-outline" size={18} color={colors.textMuted} />
-              </Pressable>
+              <View key={att.id} style={styles.attachRow}>
+                <Pressable style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, flex: 1 }} onPress={() => openAttachment(att.localUri)}>
+                  <Ionicons name={getFileIcon(att.mimeType) as any} size={22} color={colors.accent} />
+                  <View style={styles.attachInfo}>
+                    <Text style={styles.attachName} numberOfLines={1}>{att.fileName}</Text>
+                    <Text style={styles.attachSize}>{formatFileSize(att.fileSize)} · SHA: {att.sha256Hash.slice(0, 8)}...</Text>
+                  </View>
+                  <Ionicons name="open-outline" size={18} color={colors.textMuted} />
+                </Pressable>
+                <Pressable
+                  onPress={() => {
+                    Alert.alert('Delete Attachment', `Delete "${att.fileName}"?`, [
+                      { text: 'Cancel', style: 'cancel' },
+                      {
+                        text: 'Delete', style: 'destructive',
+                        onPress: async () => {
+                          await deleteAttachment(att.id);
+                          await load();
+                        },
+                      },
+                    ]);
+                  }}
+                  style={{ padding: 6 }}
+                >
+                  <Ionicons name="trash-outline" size={18} color={colors.danger} />
+                </Pressable>
+              </View>
             ))
           )}
         </View>
