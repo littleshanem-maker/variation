@@ -605,7 +605,7 @@ export function printRegisterWeb(
 // WEB SINGLE VARIATION PRINT
 // ============================================================
 
-export function printVariationWeb(variation: VariationDetail): void {
+export function printVariationWeb(variation: VariationDetail, attachments?: { fileName: string; fileSize?: number; mimeType?: string; sha256Hash: string }[]): void {
   const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
   const statusColors: Record<string, string> = {
     captured: '#D4600A', submitted: '#1565C0', approved: '#2D7D46', paid: '#1A1A1A', disputed: '#C62828',
@@ -665,6 +665,25 @@ export function printVariationWeb(variation: VariationDetail): void {
             <td>${sc.fromStatus ? getStatusLabel(sc.fromStatus) : '—'}</td>
             <td><strong>${getStatusLabel(sc.toStatus)}</strong></td>
             <td>${sc.notes ? escapeHtml(sc.notes) : '—'}</td>
+          </tr>
+        `).join('')}
+      </table>
+    </div>
+  ` : '';
+
+  // Attachments
+  const atts = attachments ?? [];
+  const attachHTML = atts.length > 0 ? `
+    <div class="section">
+      <h3>Attachments (${atts.length})</h3>
+      <table class="history-table">
+        <tr><th>File Name</th><th>Type</th><th>Size</th><th>SHA-256</th></tr>
+        ${atts.map(a => `
+          <tr>
+            <td>${escapeHtml(a.fileName)}</td>
+            <td>${a.mimeType ? escapeHtml(a.mimeType.split('/').pop() ?? '') : '—'}</td>
+            <td>${a.fileSize ? formatFileSizePrint(a.fileSize) : '—'}</td>
+            <td class="hash">${a.sha256Hash.slice(0, 16)}…</td>
           </tr>
         `).join('')}
       </table>
@@ -777,6 +796,8 @@ export function printVariationWeb(variation: VariationDetail): void {
     </div>
   ` : ''}
 
+  ${attachHTML}
+
   ${historyHTML}
 
   <div class="evidence-footer">
@@ -795,6 +816,12 @@ export function printVariationWeb(variation: VariationDetail): void {
   const url = URL.createObjectURL(blob);
   window.open(url, '_blank');
   setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+function formatFileSizePrint(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function escapeHtml(text: string): string {
