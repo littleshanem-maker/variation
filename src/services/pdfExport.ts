@@ -199,21 +199,25 @@ async function buildVariationHTML(variation: VariationDetail, isBatchPage = fals
   if (atts.length > 0) {
     const items: string[] = [];
     for (const att of atts) {
-      const isImage = att.mimeType?.startsWith('image/');
+      const ext = att.fileName.toLowerCase().split('.').pop() ?? '';
+      const imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'heic', 'heif'];
+      const isImage = att.mimeType?.startsWith('image/') || imageExts.includes(ext);
+      const isPdf = att.mimeType === 'application/pdf' || ext === 'pdf';
       if (isImage) {
         try {
           const base64 = await FileSystem.readAsStringAsync(att.localUri, {
             encoding: FileSystem.EncodingType.Base64,
           });
-          const ext = att.mimeType?.includes('png') ? 'png' : 'jpeg';
+          const imgExt = att.mimeType?.includes('png') || att.fileName.toLowerCase().endsWith('.png') ? 'png' : 'jpeg';
           items.push(`
             <div class="photo-item" style="page-break-before:always;">
               <div style="padding:8px;background:#f8f6f3;font-weight:700;font-size:10pt;">${escapeHtml(att.fileName)}</div>
-              <img src="data:image/${ext};base64,${base64}" class="photo-img" style="width:100%;height:auto;" />
+              <img src="data:image/${imgExt};base64,${base64}" class="photo-img" style="width:100%;height:auto;" />
               <div class="photo-hash">${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}...</div>
             </div>
           `);
-        } catch {
+        } catch (err) {
+          console.error('[PDF] Failed to embed attachment:', att.fileName, att.localUri, err);
           items.push(`
             <div class="photo-item photo-missing">
               <div class="photo-placeholder">${escapeHtml(att.fileName)} — unavailable</div>
