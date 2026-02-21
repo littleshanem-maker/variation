@@ -634,17 +634,24 @@ export default function VariationDetailScreen() {
                   <Ionicons name="open-outline" size={18} color={colors.textMuted} />
                 </Pressable>
                 <Pressable
-                  onPress={() => {
-                    Alert.alert('Delete Attachment', `Delete "${att.fileName}"?`, [
-                      { text: 'Cancel', style: 'cancel' },
-                      {
-                        text: 'Delete', style: 'destructive',
-                        onPress: async () => {
-                          await deleteAttachment(att.id);
-                          await load();
+                  onPress={async () => {
+                    if (Platform.OS === 'web') {
+                      if (window.confirm(`Delete "${att.fileName}"?`)) {
+                        await deleteAttachment(att.id);
+                        await load();
+                      }
+                    } else {
+                      Alert.alert('Delete Attachment', `Delete "${att.fileName}"?`, [
+                        { text: 'Cancel', style: 'cancel' },
+                        {
+                          text: 'Delete', style: 'destructive',
+                          onPress: async () => {
+                            await deleteAttachment(att.id);
+                            await load();
+                          },
                         },
-                      },
-                    ]);
+                      ]);
+                    }
                   }}
                   style={{ padding: 6 }}
                 >
