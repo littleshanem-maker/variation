@@ -694,58 +694,90 @@ export async function printVariationWeb(variation: VariationDetail, attachments?
     </div>
   ` : '';
 
-  // Attachments — embed actual content
+  // Attachments — convert everything to printable images
   const atts = attachments ?? [];
-  let attachHTML = '';
-  if (atts.length > 0) {
-    const items: string[] = [];
-    for (const att of atts) {
-      const isImage = att.mimeType?.startsWith('image/');
-      const isPdf = att.mimeType === 'application/pdf';
-      let dataUrl = '';
-      if (isImage || isPdf) {
-        dataUrl = await blobUrlToDataUrl(att.localUri);
-      }
-
-      if (isImage && dataUrl) {
-        items.push(`
-          <div class="attach-item">
-            <div class="attach-header">
-              <strong>${escapeHtml(att.fileName)}</strong>
-              <span class="hash">${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}…</span>
-            </div>
-            <img src="${dataUrl}" class="attach-img" />
-          </div>
-        `);
-      } else if (isPdf && dataUrl) {
-        items.push(`
-          <div class="attach-item">
-            <div class="attach-header">
-              <strong>${escapeHtml(att.fileName)}</strong>
-              <span class="hash">${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}…</span>
-            </div>
-            <embed src="${dataUrl}" type="application/pdf" class="attach-pdf" />
-          </div>
-        `);
-      } else {
-        items.push(`
-          <div class="attach-item">
-            <div class="attach-header">
-              <strong>${escapeHtml(att.fileName)}</strong>
-              <span class="hash">${att.mimeType ? escapeHtml(att.mimeType) + ' · ' : ''}${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}…</span>
-            </div>
-            <div class="attach-nopreview">Content cannot be previewed — see digital record</div>
-          </div>
-        `);
-      }
+  interface ResolvedAttachment {
+    fileName: string;
+    fileSize?: number;
+    mimeType?: string;
+    sha256Hash: string;
+    dataUrl: string;        // base64 data URL for images
+    pdfDataUrl?: string;    // raw data URL for pdf.js rendering
+    isImage: boolean;
+    isPdf: boolean;
+  }
+  const resolved: ResolvedAttachment[] = [];
+  for (const att of atts) {
+    const isImage = att.mimeType?.startsWith('image/') ?? false;
+    const isPdf = att.mimeType === 'application/pdf';
+    let dataUrl = '';
+    if (isImage || isPdf) {
+      dataUrl = await blobUrlToDataUrl(att.localUri);
     }
+    resolved.push({
+      fileName: att.fileName,
+      fileSize: att.fileSize,
+      mimeType: att.mimeType,
+      sha256Hash: att.sha256Hash,
+      dataUrl: isImage ? dataUrl : '',
+      pdfDataUrl: isPdf ? dataUrl : undefined,
+      isImage,
+      isPdf,
+    });
+  }
+
+  let attachHTML = '';
+  if (resolved.length > 0) {
+    const items = resolved.map((att, idx) => {
+      const meta = `${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}…`;
+      if (att.isImage && att.dataUrl) {
+        return `
+          <div class="attach-item page-break-before">
+            <div class="attach-header">
+              <strong>${escapeHtml(att.fileName)}</strong>
+              <span class="hash">${meta}</span>
+            </div>
+            <img src="${att.dataUrl}" class="attach-img" />
+          </div>
+        `;
+      } else if (att.isPdf && att.pdfDataUrl) {
+        return `
+          <div class="attach-item page-break-before">
+            <div class="attach-header">
+              <strong>${escapeHtml(att.fileName)}</strong>
+              <span class="hash">${meta}</span>
+            </div>
+            <div class="pdf-pages" data-pdf-idx="${idx}"></div>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="attach-item">
+            <div class="attach-header">
+              <strong>${escapeHtml(att.fileName)}</strong>
+              <span class="hash">${att.mimeType ? escapeHtml(att.mimeType) + ' · ' : ''}${meta}</span>
+            </div>
+            <div class="attach-nopreview">File type cannot be rendered — see digital record</div>
+          </div>
+        `;
+      }
+    });
     attachHTML = `
       <div class="section">
-        <h3>Attachments (${atts.length})</h3>
+        <h3>Attachments (${resolved.length})</h3>
         ${items.join('')}
       </div>
     `;
   }
+
+  // Build PDF data map for the client-side script
+  const pdfDataMap: Record<number, string> = {};
+  resolved.forEach((att, idx) => {
+    if (att.isPdf && att.pdfDataUrl) {
+      pdfDataMap[idx] = att.pdfDataUrl;
+    }
+  });
+  const hasPdfs = Object.keys(pdfDataMap).length > 0;
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -793,12 +825,13 @@ export async function printVariationWeb(variation: VariationDetail, attachments?
     .history-table td { padding: 6px 8px; border-bottom: 1px solid #ede9e3; }
 
     /* Attachments */
-    .attach-item { margin-bottom: 16px; border: 1px solid #e8e4dd; border-radius: 6px; overflow: hidden; page-break-inside: avoid; }
+    .attach-item { margin-bottom: 16px; border: 1px solid #e8e4dd; border-radius: 6px; overflow: hidden; }
     .attach-header { padding: 10px 14px; background: #f8f6f3; border-bottom: 1px solid #e8e4dd; }
     .attach-header strong { font-size: 10pt; display: block; margin-bottom: 2px; }
     .attach-img { width: 100%; height: auto; display: block; }
-    .attach-pdf { width: 100%; height: 800px; border: none; display: block; }
     .attach-nopreview { padding: 20px 14px; font-size: 9pt; color: #8a8580; font-style: italic; text-align: center; background: #faf8f5; }
+    .pdf-page-img { width: 100%; height: auto; display: block; }
+    .page-break-before { page-break-before: always; }
 
     /* Hashes */
     .hash { font-size: 7.5pt; color: #aaa; font-family: monospace; }
@@ -873,7 +906,50 @@ export async function printVariationWeb(variation: VariationDetail, attachments?
     </div>
   </div>
 
-  <script>window.onload = function() { window.print(); }</script>
+  ${hasPdfs ? `<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs" type="module"></script>` : ''}
+  <script${hasPdfs ? ' type="module"' : ''}>
+    async function renderAndPrint() {
+      ${hasPdfs ? `
+      const pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs');
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+      const pdfData = ${JSON.stringify(pdfDataMap)};
+      for (const [idx, dataUrl] of Object.entries(pdfData)) {
+        try {
+          const base64 = dataUrl.split(',')[1];
+          const binary = atob(base64);
+          const bytes = new Uint8Array(binary.length);
+          for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+          const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+          const container = document.querySelector('[data-pdf-idx="' + idx + '"]');
+          for (let p = 1; p <= pdf.numPages; p++) {
+            const page = await pdf.getPage(p);
+            const viewport = page.getViewport({ scale: 2.0 });
+            const canvas = document.createElement('canvas');
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            const ctx = canvas.getContext('2d');
+            await page.render({ canvasContext: ctx, viewport }).promise;
+            const img = document.createElement('img');
+            img.src = canvas.toDataURL('image/png');
+            img.className = 'pdf-page-img';
+            container.appendChild(img);
+          }
+        } catch (e) {
+          console.error('PDF render failed:', e);
+          const container = document.querySelector('[data-pdf-idx="' + idx + '"]');
+          if (container) container.innerHTML = '<div class="attach-nopreview">PDF could not be rendered</div>';
+        }
+      }
+      ` : ''}
+      // Wait for all images to load before printing
+      const images = document.querySelectorAll('img');
+      await Promise.all(Array.from(images).map(img =>
+        img.complete ? Promise.resolve() : new Promise(r => { img.onload = r; img.onerror = r; })
+      ));
+      window.print();
+    }
+    renderAndPrint();
+  </script>
 </body>
 </html>`;
 
