@@ -14,7 +14,7 @@
 import { useState, useCallback, useRef } from 'react';
 import {
   View, Text, ScrollView, Pressable, StyleSheet, Alert, TextInput,
-  Image, Modal, ActivityIndicator,
+  Image, Modal, ActivityIndicator, Platform,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -30,7 +30,7 @@ import {
   capitalize, centsToInputString, parseInputToCents,
 } from '../../src/utils/helpers';
 import { formatCoordinates } from '../../src/services/location';
-import { exportVariationPDF } from '../../src/services/pdfExport';
+import { exportVariationPDF, printVariationWeb } from '../../src/services/pdfExport';
 import { generateVariationDescription } from '../../src/services/ai';
 import { config } from '../../src/config';
 import { useAppMode } from '../../src/contexts/AppModeContext';
@@ -122,6 +122,10 @@ export default function VariationDetailScreen() {
 
   const handleExportPDF = async () => {
     if (!variation) return;
+    if (Platform.OS === 'web') {
+      printVariationWeb(variation);
+      return;
+    }
     setExporting(true);
     try {
       await exportVariationPDF(variation);

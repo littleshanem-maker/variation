@@ -601,6 +601,202 @@ export function printRegisterWeb(
   setTimeout(() => URL.revokeObjectURL(url), 60000);
 }
 
+// ============================================================
+// WEB SINGLE VARIATION PRINT
+// ============================================================
+
+export function printVariationWeb(variation: VariationDetail): void {
+  const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
+  const statusColors: Record<string, string> = {
+    captured: '#D4600A', submitted: '#1565C0', approved: '#2D7D46', paid: '#1A1A1A', disputed: '#C62828',
+  };
+
+  // Photos section
+  let photoHTML = '';
+  if (variation.photos.length > 0) {
+    photoHTML = `
+      <div class="section">
+        <h3>Photographic Evidence</h3>
+        <div class="photo-note">
+          <span class="photo-icon">📷</span>
+          <div>
+            <strong>${variation.photos.length} photo${variation.photos.length !== 1 ? 's' : ''} captured</strong> — see digital record for full images.
+            <div class="photo-details">
+              ${variation.photos.map((p, i) => `
+                <div class="photo-detail-item">
+                  Photo ${i + 1}: ${formatDateTime(p.capturedAt)}
+                  ${p.latitude ? ` · GPS: ${formatCoordinates(p.latitude, p.longitude!)}` : ''}
+                  <span class="hash">SHA-256: ${p.sha256Hash.slice(0, 16)}…</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Voice notes section
+  let voiceHTML = '';
+  if (variation.voiceNotes.length > 0) {
+    voiceHTML = `
+      <div class="section">
+        <h3>Voice Notes (${variation.voiceNotes.length})</h3>
+        ${variation.voiceNotes.map(vn => `
+          <div class="voice-item">
+            <span class="voice-duration">${Math.round(vn.durationSeconds)}s recording</span>
+            ${vn.transcription ? `<p class="voice-transcription">"${escapeHtml(vn.transcription)}"</p>` : '<p class="voice-pending">Transcription pending</p>'}
+            ${vn.sha256Hash ? `<div class="hash">SHA-256: ${vn.sha256Hash.slice(0, 16)}…</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  // Status history
+  const historyHTML = variation.statusHistory.length > 0 ? `
+    <div class="section">
+      <h3>Status History</h3>
+      <table class="history-table">
+        <tr><th>Date</th><th>From</th><th>To</th><th>Notes</th></tr>
+        ${variation.statusHistory.map(sc => `
+          <tr>
+            <td>${formatDateTime(sc.changedAt)}</td>
+            <td>${sc.fromStatus ? getStatusLabel(sc.fromStatus) : '—'}</td>
+            <td><strong>${getStatusLabel(sc.toStatus)}</strong></td>
+            <td>${sc.notes ? escapeHtml(sc.notes) : '—'}</td>
+          </tr>
+        `).join('')}
+      </table>
+    </div>
+  ` : '';
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${formatVariationId(variation.sequenceNumber)} — ${escapeHtml(variation.title)}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, Helvetica Neue, Arial, sans-serif; font-size: 10pt; color: #1a1a1a; line-height: 1.4; padding: 32px 48px; background: white; }
+
+    /* Header */
+    .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #D4600A; padding-bottom: 14px; margin-bottom: 20px; }
+    .header-left { }
+    .var-id { font-size: 9pt; color: #D4600A; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+    h1 { font-size: 18pt; font-weight: 800; color: #1a1a1a; line-height: 1.1; margin-bottom: 4px; }
+    .project-name { font-size: 9pt; color: #6b6460; }
+    .header-right { text-align: right; flex-shrink: 0; margin-left: 24px; }
+    .status-badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 9pt; font-weight: 700; color: white; margin-bottom: 8px; }
+    .value { font-size: 22pt; font-weight: 900; color: #1a1a1a; }
+
+    /* Details grid */
+    .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 20px; padding: 14px; background: #f8f6f3; border-radius: 6px; }
+    .detail-label { display: block; font-size: 8pt; color: #9a9490; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; margin-bottom: 2px; }
+
+    /* Sections */
+    .section { margin-bottom: 20px; }
+    .section h3 { font-size: 11pt; font-weight: 700; color: #D4600A; margin-bottom: 8px; border-bottom: 1px solid #e8e4dd; padding-bottom: 4px; }
+    .section p { font-size: 10pt; line-height: 1.6; }
+
+    /* Photos note */
+    .photo-note { display: flex; gap: 12px; padding: 14px; background: #f8f6f3; border-radius: 6px; border-left: 3px solid #D4600A; }
+    .photo-icon { font-size: 20pt; }
+    .photo-details { margin-top: 8px; }
+    .photo-detail-item { font-size: 8.5pt; color: #6b6460; padding: 3px 0; border-bottom: 1px solid #ede9e3; }
+
+    /* Voice */
+    .voice-item { padding: 10px 14px; background: #f8f6f3; border-radius: 6px; margin-bottom: 8px; }
+    .voice-duration { font-size: 9pt; font-weight: 600; color: #D4600A; }
+    .voice-transcription { font-size: 10pt; font-style: italic; margin-top: 4px; line-height: 1.5; }
+    .voice-pending { font-size: 9pt; color: #8a8580; font-style: italic; }
+
+    /* History */
+    .history-table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+    .history-table th { text-align: left; padding: 6px 8px; background: #f5f2ed; font-weight: 700; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.5px; color: #6b6460; border-bottom: 1px solid #d4cfc7; }
+    .history-table td { padding: 6px 8px; border-bottom: 1px solid #ede9e3; }
+
+    /* Hashes */
+    .hash { font-size: 7.5pt; color: #aaa; font-family: monospace; }
+
+    /* Evidence footer */
+    .evidence-footer { margin-top: 30px; padding-top: 14px; border-top: 1px solid #e8e4dd; font-size: 8pt; color: #9a9490; }
+    .evidence-hash { font-family: monospace; font-size: 7.5pt; color: #aaa; margin-bottom: 6px; }
+    .footer-brand { display: flex; justify-content: space-between; margin-top: 6px; }
+
+    /* Print */
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 0; }
+      @page { margin: 15mm 12mm; size: A4; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <div class="var-id">${formatVariationId(variation.sequenceNumber)}</div>
+      <h1>${escapeHtml(variation.title)}</h1>
+      ${variation.projectName ? `<div class="project-name">${escapeHtml(variation.projectName)}</div>` : ''}
+    </div>
+    <div class="header-right">
+      <div class="status-badge" style="background:${statusColors[variation.status] ?? '#888'}">${getStatusLabel(variation.status)}</div>
+      <div class="value">${formatCurrency(variation.estimatedValue)}</div>
+    </div>
+  </div>
+
+  <div class="details-grid">
+    <div><span class="detail-label">Captured</span><span>${formatDateTime(variation.capturedAt)}</span></div>
+    <div><span class="detail-label">Source</span><span>${variation.instructionSource.replace(/_/g, ' ')}</span></div>
+    ${variation.instructedBy ? `<div><span class="detail-label">Instructed By</span><span>${escapeHtml(variation.instructedBy)}</span></div>` : ''}
+    ${variation.referenceDoc ? `<div><span class="detail-label">Reference</span><span>${escapeHtml(variation.referenceDoc)}</span></div>` : ''}
+    ${variation.latitude ? `<div><span class="detail-label">GPS</span><span>${formatCoordinates(variation.latitude, variation.longitude!)}</span></div>` : ''}
+    ${variation.locationAccuracy ? `<div><span class="detail-label">Accuracy</span><span>±${Math.round(variation.locationAccuracy)}m</span></div>` : ''}
+  </div>
+
+  ${variation.description ? `
+    <div class="section">
+      <h3>Description</h3>
+      <p>${escapeHtml(variation.description)}</p>
+    </div>
+  ` : ''}
+
+  ${variation.aiDescription ? `
+    <div class="section" style="background:#fff8f0;padding:14px;border-radius:6px;border-left:3px solid #D4600A;">
+      <h3 style="border-bottom:none;padding-bottom:0;">AI-Generated Description</h3>
+      <p>${escapeHtml(variation.aiDescription)}</p>
+    </div>
+  ` : ''}
+
+  ${photoHTML}
+  ${voiceHTML}
+
+  ${variation.notes ? `
+    <div class="section">
+      <h3>Notes</h3>
+      <p>${escapeHtml(variation.notes)}</p>
+    </div>
+  ` : ''}
+
+  ${historyHTML}
+
+  <div class="evidence-footer">
+    ${variation.evidenceHash ? `<div class="evidence-hash">Evidence Hash: ${variation.evidenceHash}</div>` : ''}
+    <div class="footer-brand">
+      <span>Pipeline Consulting Pty Ltd · Variation Capture</span>
+      <span>Generated ${now}</span>
+    </div>
+  </div>
+
+  <script>window.onload = function() { window.print(); }</script>
+</body>
+</html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
 function escapeHtml(text: string): string {
   return text
     .replace(/&/g, '&amp;')
