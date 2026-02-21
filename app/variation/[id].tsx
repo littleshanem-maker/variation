@@ -123,7 +123,12 @@ export default function VariationDetailScreen() {
   const handleExportPDF = async () => {
     if (!variation) return;
     if (Platform.OS === 'web') {
-      printVariationWeb(variation, attachments);
+      setExporting(true);
+      try {
+        await printVariationWeb(variation, attachments);
+      } finally {
+        setExporting(false);
+      }
       return;
     }
     setExporting(true);

@@ -605,7 +605,30 @@ export function printRegisterWeb(
 // WEB SINGLE VARIATION PRINT
 // ============================================================
 
-export function printVariationWeb(variation: VariationDetail, attachments?: { fileName: string; fileSize?: number; mimeType?: string; sha256Hash: string }[]): void {
+export interface PrintAttachment {
+  localUri: string;
+  fileName: string;
+  fileSize?: number;
+  mimeType?: string;
+  sha256Hash: string;
+}
+
+async function blobUrlToDataUrl(blobUrl: string): Promise<string> {
+  try {
+    const response = await fetch(blobUrl);
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch {
+    return '';
+  }
+}
+
+export async function printVariationWeb(variation: VariationDetail, attachments?: PrintAttachment[]): Promise<void> {
   const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
   const statusColors: Record<string, string> = {
     captured: '#D4600A', submitted: '#1565C0', approved: '#2D7D46', paid: '#1A1A1A', disputed: '#C62828',
@@ -671,24 +694,58 @@ export function printVariationWeb(variation: VariationDetail, attachments?: { fi
     </div>
   ` : '';
 
-  // Attachments
+  // Attachments — embed actual content
   const atts = attachments ?? [];
-  const attachHTML = atts.length > 0 ? `
-    <div class="section">
-      <h3>Attachments (${atts.length})</h3>
-      <table class="history-table">
-        <tr><th>File Name</th><th>Type</th><th>Size</th><th>SHA-256</th></tr>
-        ${atts.map(a => `
-          <tr>
-            <td>${escapeHtml(a.fileName)}</td>
-            <td>${a.mimeType ? escapeHtml(a.mimeType.split('/').pop() ?? '') : '—'}</td>
-            <td>${a.fileSize ? formatFileSizePrint(a.fileSize) : '—'}</td>
-            <td class="hash">${a.sha256Hash.slice(0, 16)}…</td>
-          </tr>
-        `).join('')}
-      </table>
-    </div>
-  ` : '';
+  let attachHTML = '';
+  if (atts.length > 0) {
+    const items: string[] = [];
+    for (const att of atts) {
+      const isImage = att.mimeType?.startsWith('image/');
+      const isPdf = att.mimeType === 'application/pdf';
+      let dataUrl = '';
+      if (isImage || isPdf) {
+        dataUrl = await blobUrlToDataUrl(att.localUri);
+      }
+
+      if (isImage && dataUrl) {
+        items.push(`
+          <div class="attach-item">
+            <div class="attach-header">
+              <strong>${escapeHtml(att.fileName)}</strong>
+              <span class="hash">${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}…</span>
+            </div>
+            <img src="${dataUrl}" class="attach-img" />
+          </div>
+        `);
+      } else if (isPdf && dataUrl) {
+        items.push(`
+          <div class="attach-item">
+            <div class="attach-header">
+              <strong>${escapeHtml(att.fileName)}</strong>
+              <span class="hash">${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}…</span>
+            </div>
+            <embed src="${dataUrl}" type="application/pdf" class="attach-pdf" />
+          </div>
+        `);
+      } else {
+        items.push(`
+          <div class="attach-item">
+            <div class="attach-header">
+              <strong>${escapeHtml(att.fileName)}</strong>
+              <span class="hash">${att.mimeType ? escapeHtml(att.mimeType) + ' · ' : ''}${att.fileSize ? formatFileSizePrint(att.fileSize) + ' · ' : ''}SHA-256: ${att.sha256Hash.slice(0, 16)}…</span>
+            </div>
+            <div class="attach-nopreview">Content cannot be previewed — see digital record</div>
+          </div>
+        `);
+      }
+    }
+    attachHTML = `
+      <div class="section">
+        <h3>Attachments (${atts.length})</h3>
+        ${items.join('')}
+      </div>
+    `;
+  }
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -734,6 +791,14 @@ export function printVariationWeb(variation: VariationDetail, attachments?: { fi
     .history-table { width: 100%; border-collapse: collapse; font-size: 9pt; }
     .history-table th { text-align: left; padding: 6px 8px; background: #f5f2ed; font-weight: 700; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.5px; color: #6b6460; border-bottom: 1px solid #d4cfc7; }
     .history-table td { padding: 6px 8px; border-bottom: 1px solid #ede9e3; }
+
+    /* Attachments */
+    .attach-item { margin-bottom: 16px; border: 1px solid #e8e4dd; border-radius: 6px; overflow: hidden; page-break-inside: avoid; }
+    .attach-header { padding: 10px 14px; background: #f8f6f3; border-bottom: 1px solid #e8e4dd; }
+    .attach-header strong { font-size: 10pt; display: block; margin-bottom: 2px; }
+    .attach-img { width: 100%; height: auto; display: block; }
+    .attach-pdf { width: 100%; height: 800px; border: none; display: block; }
+    .attach-nopreview { padding: 20px 14px; font-size: 9pt; color: #8a8580; font-style: italic; text-align: center; background: #faf8f5; }
 
     /* Hashes */
     .hash { font-size: 7.5pt; color: #aaa; font-family: monospace; }
