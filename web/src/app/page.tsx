@@ -7,6 +7,7 @@ import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getStatusConfig } from '@/lib/utils';
+import { printRegister } from '@/lib/print';
 import type { Project, Variation } from '@/lib/types';
 
 interface StatusSummary {
@@ -22,6 +23,10 @@ export default function Dashboard() {
   const [recentVariations, setRecentVariations] = useState<(Variation & { project_name: string })[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showNewProject, setShowNewProject] = useState(false);
+  const [newProjectName, setNewProjectName] = useState('');
+  const [newProjectClient, setNewProjectClient] = useState('');
+  const [creatingProject, setCreatingProject] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -66,6 +71,35 @@ export default function Dashboard() {
     });
     setRecentVariations(recent);
     setLoading(false);
+  }
+
+  async function handleCreateProject() {
+    if (!newProjectName.trim() || !newProjectClient.trim()) return;
+    setCreatingProject(true);
+    const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { setCreatingProject(false); return; }
+
+    const { error } = await supabase.from('projects').insert({
+      id: crypto.randomUUID(),
+      user_id: session.user.id,
+      name: newProjectName.trim(),
+      client: newProjectClient.trim(),
+      reference: '',
+      is_active: true,
+    });
+
+    if (!error) {
+      setNewProjectName('');
+      setNewProjectClient('');
+      setShowNewProject(false);
+      loadData();
+    }
+    setCreatingProject(false);
+  }
+
+  function handlePrint() {
+    printRegister(projects);
   }
 
   if (loading) {
@@ -129,7 +163,7 @@ export default function Dashboard() {
 
   return (
     <AppShell>
-      <TopBar title="Variation Register" />
+      <TopBar title="Variation Register" onPrint={handlePrint} />
       <div className="p-8 space-y-8">
         {/* Status Summary Boxes */}
         <div className="grid grid-cols-6 gap-4">
@@ -140,9 +174,12 @@ export default function Dashboard() {
               <div className="text-[13px] text-[#6B7280] mt-1">
                 {s.count} {s.count === 1 ? 'variation' : 'variations'}
               </div>
-              <button className="text-[12px] text-[#1B365D] hover:text-[#24466F] mt-3 font-medium transition-colors duration-[120ms] ease-out">
+              <Link 
+                href={`/variations?status=${s.status}`}
+                className="text-[12px] text-[#1B365D] hover:text-[#24466F] mt-3 font-medium transition-colors duration-[120ms] ease-out inline-block"
+              >
                 View details →
-              </button>
+              </Link>
             </div>
           ))}
         </div>
@@ -151,7 +188,10 @@ export default function Dashboard() {
         <div>
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-lg font-semibold text-[#1C1C1E]">Projects</h2>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <button
+              onClick={() => setShowNewProject(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            >
               + New Project
             </button>
           </div>
@@ -229,6 +269,52 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+        {/* New Project Modal */}
+        {showNewProject && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowNewProject(false)}>
+            <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+              <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">New Project</h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Project Name</label>
+                  <input
+                    type="text"
+                    value={newProjectName}
+                    onChange={e => setNewProjectName(e.target.value)}
+                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                    placeholder="e.g. Northern Hospital — Mechanical"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Client</label>
+                  <input
+                    type="text"
+                    value={newProjectClient}
+                    onChange={e => setNewProjectClient(e.target.value)}
+                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                    placeholder="e.g. Lendlease"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-5">
+                <button
+                  onClick={() => setShowNewProject(false)}
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms]"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateProject}
+                  disabled={creatingProject || !newProjectName.trim() || !newProjectClient.trim()}
+                  className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
+                >
+                  {creatingProject ? 'Creating...' : 'Create Project'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </AppShell>
   );
