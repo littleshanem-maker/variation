@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Variation Capture — Office",
+  title: "Variation Capture — Office (v2)",
   description: "Desktop variation register for construction contractors",
 };
 
