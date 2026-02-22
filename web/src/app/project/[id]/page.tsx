@@ -8,6 +8,7 @@ import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { printProjectRegister } from '@/lib/print';
 import type { Project, Variation } from '@/lib/types';
 
 type SortKey = 'sequence_number' | 'title' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at';
@@ -31,6 +32,12 @@ export default function ProjectDetail() {
     setProject(proj);
     setVariations(vars || []);
     setLoading(false);
+  }
+
+  function handlePrint() {
+    if (project) {
+      printProjectRegister(project, variations);
+    }
   }
 
   function handleSort(key: SortKey) {
@@ -74,7 +81,7 @@ export default function ProjectDetail() {
 
   return (
     <AppShell>
-      <TopBar title={project.name} />
+      <TopBar title={project.name} onPrint={handlePrint} printLabel="Print Register" />
       <div className="p-8 space-y-6">
         <div>
           <Link href="/" className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">← Back to Dashboard</Link>

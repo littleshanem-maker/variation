@@ -8,6 +8,7 @@ import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { printVariation } from '@/lib/print';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange } from '@/lib/types';
 
 export default function VariationDetail() {
@@ -54,6 +55,12 @@ export default function VariationDetail() {
     setLoading(false);
   }
 
+  function handlePrint() {
+    if (variation && project) {
+      printVariation(variation, project, photos, photoUrls);
+    }
+  }
+
   if (loading) {
     return (
       <AppShell><TopBar title="Variation" />
@@ -72,7 +79,7 @@ export default function VariationDetail() {
 
   return (
     <AppShell>
-      <TopBar title={`Variation #${variation.sequence_number}`} />
+      <TopBar title={`Variation #${variation.sequence_number}`} onPrint={handlePrint} printLabel="Print Variation" />
       <div className="p-8 space-y-5 max-w-4xl">
         <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">
           ← Back to {project.name}
