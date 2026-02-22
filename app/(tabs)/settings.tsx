@@ -6,7 +6,7 @@
 
 import { useState, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, Pressable, Alert, ScrollView, Switch,
+  View, Text, StyleSheet, Pressable, Alert, ScrollView, Switch, TextInput, Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
@@ -16,6 +16,7 @@ import { getDatabase } from '../../src/db/schema';
 import { resetAndReseed } from '../../src/db/seedData';
 import { useConnectivity } from '../../src/hooks/useConnectivity';
 import { syncPendingChanges, getPendingSyncCount } from '../../src/services/sync';
+import { signUp, signIn, signOut, getCurrentUser, isCloudEnabled } from '../../src/services/auth';
 import { config } from '../../src/config';
 import { useAppMode } from '../../src/contexts/AppModeContext';
 
@@ -27,6 +28,13 @@ export default function SettingsScreen() {
   const [totalVariations, setTotalVariations] = useState(0);
   const [resetting, setResetting] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [authName, setAuthName] = useState('');
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [authLoading, setAuthLoading] = useState(false);
 
   const loadStats = useCallback(async () => {
     try {
@@ -39,10 +47,41 @@ export default function SettingsScreen() {
       );
       setPendingCount(pending?.count ?? 0);
       setTotalVariations(total?.count ?? 0);
+      const user = await getCurrentUser();
+      setUserEmail(user?.email ?? null);
     } catch (e) {
       console.error('[Settings] Failed to load stats:', e);
     }
   }, []);
+
+  const handleAuth = async () => {
+    setAuthLoading(true);
+    try {
+      const result = authMode === 'signup'
+        ? await signUp(authEmail, authPassword, authName)
+        : await signIn(authEmail, authPassword);
+      if (result.error) {
+        Alert.alert('Error', result.error);
+      } else {
+        setUserEmail(result.user?.email ?? null);
+        setShowAuthModal(false);
+        setAuthEmail('');
+        setAuthPassword('');
+        setAuthName('');
+        Alert.alert('Success', authMode === 'signup' ? 'Account created! Check your email to confirm.' : 'Signed in successfully.');
+      }
+    } catch (e) {
+      Alert.alert('Error', 'Authentication failed');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    setUserEmail(null);
+    Alert.alert('Signed Out', 'You have been signed out.');
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -143,6 +182,12 @@ export default function SettingsScreen() {
   });
 
   const items = [
+    {
+      icon: (userEmail ? 'person-circle' : 'log-in-outline') as 'person-circle' | 'log-in-outline',
+      label: userEmail ? `Signed in as ${userEmail}` : 'Sign In / Sign Up',
+      subtitle: userEmail ? 'Tap to sign out' : 'Create an account to enable cloud sync',
+      onPress: userEmail ? handleSignOut : () => setShowAuthModal(true),
+    },
     {
       icon: (isOffice ? 'briefcase' : 'hammer') as 'briefcase' | 'hammer',
       label: isOffice ? 'Office Mode' : 'Field Mode',
@@ -291,6 +336,59 @@ export default function SettingsScreen() {
         Variation Capture {'\u00B7'} Pipeline Consulting Pty Ltd{'\n'}
         Built for Victorian construction contractors
       </Text>
+
+      <Modal visible={showAuthModal} transparent animationType="fade">
+        <Pressable style={styles.modalOverlay} onPress={() => setShowAuthModal(false)}>
+          <Pressable style={styles.pinCard} onPress={() => {}}>
+            <Text style={styles.pinTitle}>{authMode === 'signup' ? 'Create Account' : 'Sign In'}</Text>
+            <Text style={styles.pinSubtitle}>
+              {authMode === 'signup' ? 'Set up cloud sync for your data' : 'Access your synced data'}
+            </Text>
+            {authMode === 'signup' && (
+              <TextInput
+                style={[styles.pinInput, { fontSize: 16, letterSpacing: 0, textAlign: 'left', marginBottom: spacing.sm }]}
+                placeholder="Full Name"
+                placeholderTextColor={colors.textMuted}
+                value={authName}
+                onChangeText={setAuthName}
+                autoCapitalize="words"
+              />
+            )}
+            <TextInput
+              style={[styles.pinInput, { fontSize: 16, letterSpacing: 0, textAlign: 'left', marginBottom: spacing.sm }]}
+              placeholder="Email"
+              placeholderTextColor={colors.textMuted}
+              value={authEmail}
+              onChangeText={setAuthEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            <TextInput
+              style={[styles.pinInput, { fontSize: 16, letterSpacing: 0, textAlign: 'left' }]}
+              placeholder="Password"
+              placeholderTextColor={colors.textMuted}
+              value={authPassword}
+              onChangeText={setAuthPassword}
+              secureTextEntry
+            />
+            <View style={styles.pinActions}>
+              <Pressable style={styles.pinCancel} onPress={() => setShowAuthModal(false)}>
+                <Text style={styles.pinCancelText}>Cancel</Text>
+              </Pressable>
+              <Pressable style={styles.pinSubmit} onPress={handleAuth} disabled={authLoading}>
+                <Text style={styles.pinSubmitText}>
+                  {authLoading ? 'Loading...' : authMode === 'signup' ? 'Sign Up' : 'Sign In'}
+                </Text>
+              </Pressable>
+            </View>
+            <Pressable onPress={() => setAuthMode(authMode === 'signin' ? 'signup' : 'signin')}>
+              <Text style={[styles.pinHint, { marginTop: spacing.md }]}>
+                {authMode === 'signin' ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
+              </Text>
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </ScrollView>
   );
 }

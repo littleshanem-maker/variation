@@ -12,6 +12,7 @@ import {
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system/legacy';
 import { Audio } from 'expo-av';
 import { spacing, borderRadius, typography, touchTargets } from '../../src/theme';
 import { useThemeColors, useAppMode } from '../../src/contexts/AppModeContext';
@@ -71,8 +72,13 @@ export default function CaptureScreen() {
     const result = await ImagePicker.launchCameraAsync({ quality: 0.8, allowsEditing: false });
     if (!result.canceled && result.assets[0]) {
       const asset = result.assets[0];
-      const hash = await hashFile(asset.uri).catch(() => 'hash-failed');
-      setPhotos(prev => [...prev, { id: generateId(), uri: asset.uri, hash }]);
+      const photoId = generateId();
+      // Copy to permanent storage so sync can access it later
+      const permanentUri = `${FileSystem.documentDirectory}photos/${photoId}.jpg`;
+      await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}photos/`, { intermediates: true }).catch(() => {});
+      await FileSystem.copyAsync({ from: asset.uri, to: permanentUri });
+      const hash = await hashFile(permanentUri).catch(() => 'hash-failed');
+      setPhotos(prev => [...prev, { id: photoId, uri: permanentUri, hash }]);
     }
   };
 
@@ -80,8 +86,12 @@ export default function CaptureScreen() {
     const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.8, allowsMultipleSelection: true, selectionLimit: 10 });
     if (!result.canceled) {
       for (const asset of result.assets) {
-        const hash = await hashFile(asset.uri).catch(() => 'hash-failed');
-        setPhotos(prev => [...prev, { id: generateId(), uri: asset.uri, hash }]);
+        const photoId = generateId();
+        const permanentUri = `${FileSystem.documentDirectory}photos/${photoId}.jpg`;
+        await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}photos/`, { intermediates: true }).catch(() => {});
+        await FileSystem.copyAsync({ from: asset.uri, to: permanentUri });
+        const hash = await hashFile(permanentUri).catch(() => 'hash-failed');
+        setPhotos(prev => [...prev, { id: photoId, uri: permanentUri, hash }]);
       }
     }
   };

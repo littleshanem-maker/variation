@@ -9,8 +9,11 @@
  */
 
 import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
+import * as FileSystem from 'expo-file-system/legacy';
+import { decode } from 'base64-arraybuffer';
 import { getDatabase } from '../db/schema';
 import { config } from '../config';
+import { getSupabase } from './supabase';
 import { SyncStatus } from '../types/domain';
 
 // ============================================================
@@ -73,8 +76,15 @@ export async function syncPendingChanges(): Promise<SyncResult> {
   let pulled = 0;
 
   try {
-    const { createClient } = await import('@supabase/supabase-js');
-    const supabase = createClient(config.supabase.url, config.supabase.anonKey);
+    const supabase = getSupabase();
+    if (!supabase) {
+      return { success: false, message: 'Supabase client failed', pushed: 0, pulled: 0 };
+    }
+
+    // Get current authenticated user for RLS
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id ?? null;
+    console.log('[Sync] User ID:', userId ?? 'NOT AUTHENTICATED');
 
     // ---- PUSH: Local → Server ----
 
@@ -86,6 +96,7 @@ export async function syncPendingChanges(): Promise<SyncResult> {
       try {
         const { error } = await supabase.from('projects').upsert({
           id: project.id,
+          user_id: userId,
           name: project.name,
           client: project.client,
           reference: project.reference,
@@ -142,15 +153,27 @@ export async function syncPendingChanges(): Promise<SyncResult> {
       }
     }
 
-    // 3. Sync pending photos (metadata — file upload separate)
+    // 3. Sync pending photos (metadata + file upload)
     const pendingPhotos = await db.getAllAsync<any>(
       "SELECT * FROM photo_evidence WHERE sync_status = 'pending'"
     );
     for (const photo of pendingPhotos) {
       try {
         // Upload photo file to Supabase Storage
-        // const fileData = await FileSystem.readAsStringAsync(photo.local_uri, { encoding: 'base64' });
-        // const { data: storageData } = await supabase.storage.from('evidence').upload(`photos/${photo.id}.jpg`, decode(fileData));
+        if (photo.local_uri) {
+           try {
+             const fileData = await FileSystem.readAsStringAsync(photo.local_uri, { encoding: 'base64' });
+             const { error: uploadError } = await supabase.storage.from('evidence').upload(`${userId}/photos/${photo.id}.jpg`, decode(fileData), {
+               contentType: 'image/jpeg',
+               upsert: true
+             });
+             if (uploadError) {
+               console.error('[Sync] Photo upload failed:', uploadError);
+             }
+           } catch {
+             console.log('[Sync] Photo file not found locally, skipping upload:', photo.local_uri);
+           }
+        }
 
         const { error } = await supabase.from('photo_evidence').upsert({
           id: photo.id,
@@ -167,8 +190,8 @@ export async function syncPendingChanges(): Promise<SyncResult> {
           await db.runAsync("UPDATE photo_evidence SET sync_status = 'synced' WHERE id = ?", photo.id);
           pushed++;
         }
-      } catch (e) {
-        console.error('[Sync] Photo push failed:', e);
+      } catch (e: any) {
+        console.error('[Sync] Photo push failed:', e?.message || e, 'photo_id:', photo.id, 'local_uri:', photo.local_uri);
       }
     }
 
@@ -178,6 +201,20 @@ export async function syncPendingChanges(): Promise<SyncResult> {
     );
     for (const voice of pendingVoice) {
       try {
+        // Upload voice file if needed
+        if (voice.local_uri) {
+           try {
+             const fileData = await FileSystem.readAsStringAsync(voice.local_uri, { encoding: 'base64' });
+             const { error: uploadError } = await supabase.storage.from('evidence').upload(`${userId}/voice/${voice.id}.m4a`, decode(fileData), {
+               contentType: 'audio/m4a',
+               upsert: true
+             });
+             if (uploadError) console.error('[Sync] Voice upload failed:', uploadError);
+           } catch {
+             console.log('[Sync] Voice file not found locally, skipping upload:', voice.local_uri);
+           }
+        }
+
         const { error } = await supabase.from('voice_notes').upsert({
           id: voice.id,
           variation_id: voice.variation_id,
