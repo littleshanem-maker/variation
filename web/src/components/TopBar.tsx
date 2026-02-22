@@ -2,14 +2,14 @@
 
 export default function TopBar({ title }: { title: string }) {
   return (
-    <header className="h-16 border-b border-gray-200 bg-white flex items-center justify-between px-8">
-      <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
-      <div className="flex items-center gap-4">
-        <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-          🖨 Print Register
+    <header className="h-14 border-b border-[#E5E7EB] bg-white flex items-center justify-between px-8">
+      <h1 className="text-lg font-semibold text-[#1C1C1E]">{title}</h1>
+      <div className="flex items-center gap-3">
+        <button className="flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms] ease-out">
+          Print Register
         </button>
-        <span className="px-3 py-1 text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 rounded-full uppercase tracking-wide">
-          Office Mode
+        <span className="px-2.5 py-1 text-[11px] font-semibold text-[#1B365D] bg-[#1B365D]/5 border border-[#1B365D]/10 rounded tracking-wide uppercase">
+          Office
         </span>
       </div>
     </header>

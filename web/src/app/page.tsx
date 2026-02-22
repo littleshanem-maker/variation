@@ -37,7 +37,6 @@ export default function Dashboard() {
       return;
     }
 
-    // Load projects
     const { data: projectsData, error: pErr } = await supabase
       .from('projects')
       .select('*')
@@ -46,7 +45,6 @@ export default function Dashboard() {
 
     if (pErr) { setError(pErr.message); setLoading(false); return; }
 
-    // Load all variations
     const { data: variationsData, error: vErr } = await supabase
       .from('variations')
       .select('*')
@@ -62,7 +60,6 @@ export default function Dashboard() {
 
     setProjects(allProjects);
 
-    // Recent variations with project name
     const recent = allVariations.slice(0, 10).map((v: Variation) => {
       const proj = (projectsData || []).find((p: Project) => p.id === v.project_id);
       return { ...v, project_name: proj?.name || 'Unknown' };
@@ -76,7 +73,7 @@ export default function Dashboard() {
       <AppShell>
         <TopBar title="Variation Register" />
         <div className="flex items-center justify-center h-96">
-          <div className="text-gray-400 text-lg">Loading...</div>
+          <div className="text-[#9CA3AF] text-sm">Loading...</div>
         </div>
       </AppShell>
     );
@@ -87,8 +84,8 @@ export default function Dashboard() {
       <AppShell>
         <TopBar title="Variation Register" />
         <div className="flex flex-col items-center justify-center h-96 gap-4">
-          <p className="text-gray-500">You need to sign in to view your data.</p>
-          <Link href="/login" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+          <p className="text-[#6B7280] text-sm">Sign in to view your variation register.</p>
+          <Link href="/login" className="px-5 py-2 bg-[#1B365D] text-white text-sm font-medium rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] ease-out">
             Sign In
           </Link>
         </div>
@@ -101,13 +98,12 @@ export default function Dashboard() {
       <AppShell>
         <TopBar title="Variation Register" />
         <div className="flex items-center justify-center h-96">
-          <p className="text-red-500">Error: {error}</p>
+          <p className="text-[#B25B4E] text-sm">Error: {error}</p>
         </div>
       </AppShell>
     );
   }
 
-  // Calculate status summaries
   const allVariations = projects.flatMap(p => p.variations);
   const statuses = ['captured', 'submitted', 'approved', 'paid', 'disputed'];
   const summaries: StatusSummary[] = statuses.map(s => {
@@ -122,14 +118,13 @@ export default function Dashboard() {
     };
   });
 
-  // At Risk = disputed + captured
   const atRiskVariations = allVariations.filter(v => v.status === 'disputed' || v.status === 'captured');
   summaries.push({
     status: 'at_risk',
     label: 'At Risk',
     count: atRiskVariations.length,
     total: atRiskVariations.reduce((sum, v) => sum + v.estimated_value, 0),
-    border: 'border-orange-500',
+    border: 'border-[#C8943E]',
   });
 
   return (
@@ -139,13 +134,13 @@ export default function Dashboard() {
         {/* Status Summary Boxes */}
         <div className="grid grid-cols-6 gap-4">
           {summaries.map(s => (
-            <div key={s.status} className={`bg-white rounded-xl border-t-4 ${s.border} border border-gray-200 p-5 shadow-sm`}>
-              <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{s.label}</div>
-              <div className="text-2xl font-bold text-gray-900">{formatCurrency(s.total)}</div>
-              <div className="text-sm text-gray-500 mt-1">
+            <div key={s.status} className={`bg-white rounded-md border border-[#E5E7EB] border-t-[3px] ${s.border} p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]`}>
+              <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-2">{s.label}</div>
+              <div className="text-xl font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(s.total)}</div>
+              <div className="text-[13px] text-[#6B7280] mt-1">
                 {s.count} {s.count === 1 ? 'variation' : 'variations'}
               </div>
-              <button className="text-xs text-blue-600 hover:text-blue-800 mt-2 font-medium">
+              <button className="text-[12px] text-[#1B365D] hover:text-[#24466F] mt-3 font-medium transition-colors duration-[120ms] ease-out">
                 View details →
               </button>
             </div>
@@ -154,15 +149,15 @@ export default function Dashboard() {
 
         {/* Projects */}
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Projects</h2>
-            <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-semibold text-[#1C1C1E]">Projects</h2>
+            <button className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
               + New Project
             </button>
           </div>
           {projects.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-400">
-              No projects yet. Create one from the mobile app or click + New Project.
+            <div className="bg-white rounded-md border border-[#E5E7EB] p-12 text-center text-[#9CA3AF] text-sm">
+              No projects yet. Capture your first variation from the mobile app.
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-4">
@@ -175,16 +170,16 @@ export default function Dashboard() {
                   <Link
                     key={p.id}
                     href={`/project/${p.id}`}
-                    className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm hover:shadow-md hover:border-gray-300 transition-all group"
+                    className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#F5F3EF] transition-colors duration-[120ms] ease-out group"
                   >
-                    <div className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{p.name}</div>
-                    <div className="text-sm text-gray-500 mt-0.5">{p.client}</div>
+                    <div className="font-semibold text-[15px] text-[#1C1C1E] group-hover:text-[#1B365D] transition-colors duration-[120ms]">{p.name}</div>
+                    <div className="text-[13px] text-[#6B7280] mt-0.5">{p.client}</div>
                     <div className="flex items-center justify-between mt-4">
-                      <span className="text-sm text-gray-500">{p.variations.length} variations</span>
-                      <span className="text-lg font-bold text-gray-900">{formatCurrency(totalValue)}</span>
+                      <span className="text-[13px] text-[#9CA3AF]">{p.variations.length} variations</span>
+                      <span className="text-[15px] font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(totalValue)}</span>
                     </div>
                     {atRisk > 0 && (
-                      <div className="mt-3 px-3 py-1.5 bg-orange-50 border border-orange-200 rounded-lg text-sm text-orange-700 font-medium">
+                      <div className="mt-3 px-3 py-1.5 bg-[#C8943E]/5 border border-[#C8943E]/15 rounded text-[12px] text-[#C8943E] font-medium tabular-nums">
                         ⚠ At Risk: {formatCurrency(atRisk)}
                       </div>
                     )}
@@ -197,35 +192,35 @@ export default function Dashboard() {
 
         {/* Recent Activity */}
         <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
-            <span className="text-sm text-blue-600 font-medium">Last 10 variations</span>
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-semibold text-[#1C1C1E]">Recent Activity</h2>
+            <span className="text-[12px] text-[#1B365D] font-medium">Last 10 variations</span>
           </div>
           {recentVariations.length === 0 ? (
-            <div className="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-400">
+            <div className="bg-white rounded-md border border-[#E5E7EB] p-12 text-center text-[#9CA3AF] text-sm">
               No variations captured yet.
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-6 py-3">Title</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-6 py-3">Project</th>
-                    <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-6 py-3">Status</th>
-                    <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wide px-6 py-3">Value</th>
-                    <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wide px-6 py-3">Captured</th>
+                  <tr className="border-b border-[#E5E7EB]">
+                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Title</th>
+                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Project</th>
+                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Status</th>
+                    <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Value</th>
+                    <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Captured</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {recentVariations.map(v => (
+                  {recentVariations.map((v, i) => (
                     <Link key={v.id} href={`/variation/${v.id}`} className="contents">
-                      <tr className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{v.title}</td>
-                        <td className="px-6 py-4 text-sm text-gray-500">{v.project_name}</td>
-                        <td className="px-6 py-4"><StatusBadge status={v.status} /></td>
-                        <td className="px-6 py-4 text-sm font-semibold text-gray-900 text-right">{formatCurrency(v.estimated_value)}</td>
-                        <td className="px-6 py-4 text-sm text-gray-500 text-right">{formatDate(v.captured_at)}</td>
+                      <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === recentVariations.length - 1 ? 'border-b-0' : ''}`}>
+                        <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{v.title}</td>
+                        <td className="px-5 py-2.5 text-[13px] text-[#6B7280]">{v.project_name}</td>
+                        <td className="px-5 py-2.5"><StatusBadge status={v.status} /></td>
+                        <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums">{formatCurrency(v.estimated_value)}</td>
+                        <td className="px-5 py-2.5 text-[13px] text-[#6B7280] text-right">{formatDate(v.captured_at)}</td>
                       </tr>
                     </Link>
                   ))}

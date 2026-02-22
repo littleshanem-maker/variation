@@ -20,13 +20,43 @@ export function formatDate(dateStr: string): string {
   return `${day} ${months[date.getMonth()]} ${date.getFullYear()}`;
 }
 
-/** Status display config */
-export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
-  captured: { label: 'Draft', color: 'text-gray-700', bg: 'bg-gray-100', border: 'border-gray-400' },
-  submitted: { label: 'Submitted', color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-500' },
-  approved: { label: 'Approved', color: 'text-green-700', bg: 'bg-green-50', border: 'border-green-500' },
-  paid: { label: 'Paid', color: 'text-gray-900', bg: 'bg-gray-800 text-white', border: 'border-gray-800' },
-  disputed: { label: 'Disputed', color: 'text-red-700', bg: 'bg-red-50', border: 'border-red-500' },
+/** Status display config — desaturated, sophisticated tones */
+export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; dot: string }> = {
+  captured: {
+    label: 'Draft',
+    color: 'text-[#6B7280]',
+    bg: 'bg-[#F3F4F6]',
+    border: 'border-[#9CA3AF]',
+    dot: 'bg-[#9CA3AF]',
+  },
+  submitted: {
+    label: 'Submitted',
+    color: 'text-[#92722E]',
+    bg: 'bg-[#FDF8ED]',
+    border: 'border-[#C8943E]',
+    dot: 'bg-[#C8943E]',
+  },
+  approved: {
+    label: 'Approved',
+    color: 'text-[#3D6B5E]',
+    bg: 'bg-[#F0F7F4]',
+    border: 'border-[#4A7C6F]',
+    dot: 'bg-[#4A7C6F]',
+  },
+  paid: {
+    label: 'Paid',
+    color: 'text-[#1C1C1E]',
+    bg: 'bg-[#F3F4F6]',
+    border: 'border-[#1C1C1E]',
+    dot: 'bg-[#1C1C1E]',
+  },
+  disputed: {
+    label: 'Disputed',
+    color: 'text-[#9A4A3E]',
+    bg: 'bg-[#FDF2F0]',
+    border: 'border-[#B25B4E]',
+    dot: 'bg-[#B25B4E]',
+  },
 };
 
 export function getStatusConfig(status: string) {

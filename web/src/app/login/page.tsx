@@ -30,44 +30,44 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-[#1B365D] flex items-center justify-center">
+      <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">V</div>
-            <span className="text-2xl font-semibold text-white">Variation Capture</span>
+          <div className="inline-flex items-center gap-3 mb-3">
+            <div className="w-9 h-9 bg-white/10 rounded-md flex items-center justify-center text-white text-sm font-semibold">VC</div>
+            <span className="text-xl font-semibold text-white tracking-tight">Variation Capture</span>
           </div>
-          <p className="text-slate-400 text-sm mt-2">Office Mode — Desktop Portal</p>
+          <p className="text-white/40 text-[13px]">Office Mode</p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Sign in to your account</h2>
+        <div className="bg-white rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.04)] p-7">
+          <h2 className="text-[15px] font-semibold text-[#1C1C1E] mb-5">Sign in to your account</h2>
 
           {error && (
-            <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+            <div className="mb-4 px-3 py-2.5 bg-[#B25B4E]/5 border border-[#B25B4E]/15 rounded text-[13px] text-[#B25B4E]">
               {error}
             </div>
           )}
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-[12px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1.5">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none transition-colors duration-[120ms]"
                 placeholder="you@company.com"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-[12px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1.5">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none transition-colors duration-[120ms]"
                 placeholder="••••••••"
                 required
               />
@@ -75,15 +75,15 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+              className="w-full py-2 bg-[#1B365D] text-white text-[14px] font-medium rounded-md hover:bg-[#24466F] disabled:opacity-50 transition-colors duration-[120ms] ease-out"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-slate-500 text-xs mt-6">
-          Pipeline Consulting Pty Ltd · Built for Victorian construction contractors
+        <p className="text-center text-white/25 text-[11px] mt-6">
+          Pipeline Consulting Pty Ltd
         </p>
       </div>
     </div>

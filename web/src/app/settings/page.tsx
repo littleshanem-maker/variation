@@ -28,18 +28,18 @@ export default function SettingsPage() {
   return (
     <AppShell>
       <TopBar title="Settings" />
-      <div className="p-8 max-w-2xl space-y-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h3 className="font-semibold text-gray-900 mb-4">Account</h3>
+      <div className="p-8 max-w-lg space-y-5">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Account</h3>
           {email && (
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm font-medium text-gray-900">{email}</div>
-                <div className="text-xs text-gray-500 mt-0.5">Signed in via Supabase Auth</div>
+                <div className="text-[14px] font-medium text-[#1C1C1E]">{email}</div>
+                <div className="text-[12px] text-[#9CA3AF] mt-0.5">Supabase Auth</div>
               </div>
               <button
                 onClick={handleSignOut}
-                className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] bg-[#B25B4E]/5 border border-[#B25B4E]/15 rounded-md hover:bg-[#B25B4E]/10 transition-colors duration-[120ms] ease-out"
               >
                 Sign Out
               </button>
@@ -47,10 +47,10 @@ export default function SettingsPage() {
           )}
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-          <h3 className="font-semibold text-gray-900 mb-2">About</h3>
-          <p className="text-sm text-gray-500">Variation Capture — Office Mode</p>
-          <p className="text-sm text-gray-500">Version 2.0.0 · Pipeline Consulting Pty Ltd</p>
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">About</h3>
+          <p className="text-[13px] text-[#6B7280]">Variation Capture · Office Mode</p>
+          <p className="text-[13px] text-[#9CA3AF] mt-0.5">Version 2.0.0 · Pipeline Consulting Pty Ltd</p>
         </div>
       </div>
     </AppShell>

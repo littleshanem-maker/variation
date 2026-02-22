@@ -20,13 +20,10 @@ export default function VariationDetail() {
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadVariation();
-  }, [id]);
+  useEffect(() => { loadVariation(); }, [id]);
 
   async function loadVariation() {
     const supabase = createClient();
-
     const { data: v } = await supabase.from('variations').select('*').eq('id', id).single();
     if (!v) { setLoading(false); return; }
     setVariation(v);
@@ -43,7 +40,6 @@ export default function VariationDetail() {
     const { data: sc } = await supabase.from('status_changes').select('*').eq('variation_id', id).order('changed_at');
     setStatusHistory(sc || []);
 
-    // Load photo URLs from storage
     if (ph && ph.length > 0 && proj) {
       const urls: Record<string, string> = {};
       for (const photo of ph) {
@@ -60,69 +56,64 @@ export default function VariationDetail() {
 
   if (loading) {
     return (
-      <AppShell>
-        <TopBar title="Variation" />
-        <div className="flex items-center justify-center h-96 text-gray-400">Loading...</div>
+      <AppShell><TopBar title="Variation" />
+        <div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Loading...</div>
       </AppShell>
     );
   }
 
   if (!variation || !project) {
     return (
-      <AppShell>
-        <TopBar title="Variation" />
-        <div className="flex items-center justify-center h-96 text-gray-400">Variation not found</div>
+      <AppShell><TopBar title="Variation" />
+        <div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Variation not found</div>
       </AppShell>
     );
   }
 
-  const instructionLabel = variation.instruction_source?.replace(/_/g, ' ') || 'Unknown';
-
   return (
     <AppShell>
       <TopBar title={`Variation #${variation.sequence_number}`} />
-      <div className="p-8 space-y-6 max-w-5xl">
-        {/* Back link */}
-        <Link href={`/project/${project.id}`} className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+      <div className="p-8 space-y-5 max-w-4xl">
+        <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">
           ← Back to {project.name}
         </Link>
 
-        {/* Header */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        {/* Header Card */}
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{variation.title}</h2>
-              <p className="text-gray-500 mt-1">{project.name} · {project.client}</p>
+              <h2 className="text-xl font-semibold text-[#1C1C1E]">{variation.title}</h2>
+              <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold text-gray-900">{formatCurrency(variation.estimated_value)}</div>
+              <div className="text-2xl font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(variation.estimated_value)}</div>
               <div className="mt-2"><StatusBadge status={variation.status} /></div>
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-6 mt-6 pt-6 border-t border-gray-100">
+          <div className="grid grid-cols-3 gap-6 mt-6 pt-5 border-t border-[#F0F0EE]">
             <div>
-              <div className="text-xs font-semibold text-gray-500 uppercase">Instruction Source</div>
-              <div className="text-sm text-gray-900 mt-1 capitalize">{instructionLabel}</div>
+              <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Instruction Source</div>
+              <div className="text-[14px] text-[#1C1C1E] mt-1 capitalize">{variation.instruction_source?.replace(/_/g, ' ')}</div>
             </div>
             <div>
-              <div className="text-xs font-semibold text-gray-500 uppercase">Instructed By</div>
-              <div className="text-sm text-gray-900 mt-1">{variation.instructed_by || '—'}</div>
+              <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Instructed By</div>
+              <div className="text-[14px] text-[#1C1C1E] mt-1">{variation.instructed_by || '—'}</div>
             </div>
             <div>
-              <div className="text-xs font-semibold text-gray-500 uppercase">Captured</div>
-              <div className="text-sm text-gray-900 mt-1">{formatDate(variation.captured_at)}</div>
+              <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Captured</div>
+              <div className="text-[14px] text-[#1C1C1E] mt-1">{formatDate(variation.captured_at)}</div>
             </div>
             {variation.reference_doc && (
               <div>
-                <div className="text-xs font-semibold text-gray-500 uppercase">Reference Document</div>
-                <div className="text-sm text-gray-900 mt-1">{variation.reference_doc}</div>
+                <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Reference Document</div>
+                <div className="text-[14px] text-[#1C1C1E] mt-1">{variation.reference_doc}</div>
               </div>
             )}
             {variation.evidence_hash && (
               <div className="col-span-2">
-                <div className="text-xs font-semibold text-gray-500 uppercase">Evidence Hash</div>
-                <div className="text-xs text-gray-500 mt-1 font-mono break-all">{variation.evidence_hash}</div>
+                <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Evidence Hash</div>
+                <div className="text-[11px] text-[#9CA3AF] mt-1 font-mono break-all">{variation.evidence_hash}</div>
               </div>
             )}
           </div>
@@ -130,15 +121,15 @@ export default function VariationDetail() {
 
         {/* Description */}
         {(variation.description || variation.ai_description) && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h3 className="font-semibold text-gray-900 mb-3">Description</h3>
-            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Description</h3>
+            <p className="text-[14px] text-[#1C1C1E] leading-relaxed whitespace-pre-wrap">
               {variation.ai_description || variation.description}
             </p>
             {variation.ai_description && variation.description && (
               <details className="mt-4">
-                <summary className="text-xs text-blue-600 cursor-pointer font-medium">View original description</summary>
-                <p className="text-sm text-gray-500 mt-2 whitespace-pre-wrap">{variation.description}</p>
+                <summary className="text-[12px] text-[#1B365D] cursor-pointer font-medium">View original</summary>
+                <p className="text-[13px] text-[#6B7280] mt-2 whitespace-pre-wrap">{variation.description}</p>
               </details>
             )}
           </div>
@@ -146,25 +137,23 @@ export default function VariationDetail() {
 
         {/* Notes */}
         {variation.notes && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h3 className="font-semibold text-gray-900 mb-3">Notes</h3>
-            <p className="text-sm text-gray-700 whitespace-pre-wrap">{variation.notes}</p>
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Notes</h3>
+            <p className="text-[14px] text-[#1C1C1E] whitespace-pre-wrap">{variation.notes}</p>
           </div>
         )}
 
         {/* Photos */}
         {photos.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h3 className="font-semibold text-gray-900 mb-4">Photo Evidence ({photos.length})</h3>
-            <div className="grid grid-cols-3 gap-4">
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Photo Evidence ({photos.length})</h3>
+            <div className="grid grid-cols-3 gap-3">
               {photos.map(photo => (
-                <div key={photo.id} className="aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                <div key={photo.id} className="aspect-square bg-[#F8F8F6] rounded-md overflow-hidden border border-[#E5E7EB]">
                   {photoUrls[photo.id] ? (
                     <img src={photoUrls[photo.id]} alt="Evidence" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
-                      📷 Loading...
-                    </div>
+                    <div className="w-full h-full flex items-center justify-center text-[#9CA3AF] text-[13px]">Loading...</div>
                   )}
                 </div>
               ))}
@@ -174,18 +163,16 @@ export default function VariationDetail() {
 
         {/* Voice Notes */}
         {voiceNotes.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h3 className="font-semibold text-gray-900 mb-4">Voice Notes ({voiceNotes.length})</h3>
-            <div className="space-y-3">
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Voice Notes ({voiceNotes.length})</h3>
+            <div className="space-y-2">
               {voiceNotes.map(vn => (
-                <div key={vn.id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
-                  <div className="text-2xl">🎤</div>
+                <div key={vn.id} className="flex items-start gap-3 p-3 bg-[#F8F8F6] rounded-md">
+                  <div className="text-[#9CA3AF]">🎤</div>
                   <div className="flex-1">
-                    <div className="text-sm text-gray-500">
-                      {Math.round(vn.duration_seconds)}s · {formatDate(vn.captured_at)}
-                    </div>
+                    <div className="text-[12px] text-[#9CA3AF]">{Math.round(vn.duration_seconds)}s · {formatDate(vn.captured_at)}</div>
                     {vn.transcription && (
-                      <p className="text-sm text-gray-700 mt-2 italic">&ldquo;{vn.transcription}&rdquo;</p>
+                      <p className="text-[13px] text-[#6B7280] mt-1.5 italic leading-relaxed">&ldquo;{vn.transcription}&rdquo;</p>
                     )}
                   </div>
                 </div>
@@ -196,19 +183,18 @@ export default function VariationDetail() {
 
         {/* Status History */}
         {statusHistory.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-            <h3 className="font-semibold text-gray-900 mb-4">Status History</h3>
-            <div className="space-y-3">
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Status History</h3>
+            <div className="space-y-2.5">
               {statusHistory.map(sc => (
-                <div key={sc.id} className="flex items-center gap-4 text-sm">
-                  <div className="text-gray-400 w-32">{formatDate(sc.changed_at)}</div>
+                <div key={sc.id} className="flex items-center gap-4 text-[13px]">
+                  <div className="text-[#9CA3AF] w-28 tabular-nums">{formatDate(sc.changed_at)}</div>
                   <div className="flex items-center gap-2">
                     {sc.from_status && <StatusBadge status={sc.from_status} />}
-                    {sc.from_status && <span className="text-gray-400">→</span>}
+                    {sc.from_status && <span className="text-[#9CA3AF]">→</span>}
                     <StatusBadge status={sc.to_status} />
                   </div>
-                  {sc.changed_by && <span className="text-gray-500">by {sc.changed_by}</span>}
-                  {sc.notes && <span className="text-gray-400">— {sc.notes}</span>}
+                  {sc.changed_by && <span className="text-[#6B7280]">by {sc.changed_by}</span>}
                 </div>
               ))}
             </div>
