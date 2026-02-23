@@ -68,6 +68,16 @@ export interface StatusChange {
   notes?: string;
 }
 
+export interface Document {
+  id: string;
+  variation_id: string;
+  file_name: string;
+  file_type: string;
+  file_size: number;
+  storage_path: string;
+  uploaded_at: string;
+}
+
 export interface ProjectWithStats extends Project {
   variation_count: number;
   total_value: number;

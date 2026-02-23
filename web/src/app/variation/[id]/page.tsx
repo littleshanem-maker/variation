@@ -9,7 +9,7 @@ import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { printVariation } from '@/lib/print';
-import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange } from '@/lib/types';
+import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document } from '@/lib/types';
 
 export default function VariationDetail() {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +18,8 @@ export default function VariationDetail() {
   const [photos, setPhotos] = useState<PhotoEvidence[]>([]);
   const [voiceNotes, setVoiceNotes] = useState<VoiceNote[]>([]);
   const [statusHistory, setStatusHistory] = useState<StatusChange[]>([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [docUrls, setDocUrls] = useState<Record<string, string>>({});
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +42,18 @@ export default function VariationDetail() {
 
     const { data: sc } = await supabase.from('status_changes').select('*').eq('variation_id', id).order('changed_at');
     setStatusHistory(sc || []);
+
+    const { data: docs } = await supabase.from('documents').select('*').eq('variation_id', id).order('uploaded_at');
+    setDocuments(docs || []);
+
+    if (docs && docs.length > 0) {
+      const urls: Record<string, string> = {};
+      for (const doc of docs) {
+        const { data } = await supabase.storage.from('documents').createSignedUrl(doc.storage_path, 3600);
+        if (data?.signedUrl) urls[doc.id] = data.signedUrl;
+      }
+      setDocUrls(urls);
+    }
 
     if (ph && ph.length > 0 && proj) {
       const urls: Record<string, string> = {};
@@ -147,6 +161,31 @@ export default function VariationDetail() {
           <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Notes</h3>
             <p className="text-[14px] text-[#1C1C1E] whitespace-pre-wrap">{variation.notes}</p>
+          </div>
+        )}
+
+        {/* Documents */}
+        {documents.length > 0 && (
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Documents ({documents.length})</h3>
+            <div className="space-y-2">
+              {documents.map(doc => (
+                <a
+                  key={doc.id}
+                  href={docUrls[doc.id] || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 p-3 bg-[#F8F8F6] rounded-md hover:bg-[#F0F0EE] transition-colors duration-[120ms]"
+                >
+                  <div className="text-[#6B7280]">📄</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[14px] font-medium text-[#1C1C1E] truncate">{doc.file_name}</div>
+                    <div className="text-[12px] text-[#9CA3AF]">{(doc.file_size / 1024).toFixed(0)} KB</div>
+                  </div>
+                  <span className="text-[12px] text-[#1B365D] font-medium">Download ↓</span>
+                </a>
+              ))}
+            </div>
           </div>
         )}
 

@@ -26,6 +26,7 @@ export default function ProjectDetail() {
   const [newSource, setNewSource] = useState('verbal');
   const [newInstructedBy, setNewInstructedBy] = useState('');
   const [newValue, setNewValue] = useState('');
+  const [newFiles, setNewFiles] = useState<File[]>([]);
   const [creatingVariation, setCreatingVariation] = useState(false);
 
   useEffect(() => {
@@ -51,11 +52,13 @@ export default function ProjectDetail() {
     if (!newTitle.trim()) return;
     setCreatingVariation(true);
     const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
     const nextSeq = variations.length > 0 ? Math.max(...variations.map(v => v.sequence_number)) + 1 : 1;
     const valueCents = Math.round(parseFloat(newValue || '0') * 100);
+    const variationId = crypto.randomUUID();
 
     const { error } = await supabase.from('variations').insert({
-      id: crypto.randomUUID(),
+      id: variationId,
       project_id: id,
       sequence_number: nextSeq,
       title: newTitle.trim(),
@@ -67,12 +70,31 @@ export default function ProjectDetail() {
       captured_at: new Date().toISOString(),
     });
 
+    if (!error && newFiles.length > 0 && user) {
+      for (const file of newFiles) {
+        const docId = crypto.randomUUID();
+        const storagePath = `${user.id}/documents/${docId}/${file.name}`;
+        const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file);
+        if (!uploadErr) {
+          await supabase.from('documents').insert({
+            id: docId,
+            variation_id: variationId,
+            file_name: file.name,
+            file_type: file.type,
+            file_size: file.size,
+            storage_path: storagePath,
+          });
+        }
+      }
+    }
+
     if (!error) {
       setNewTitle('');
       setNewDescription('');
       setNewSource('verbal');
       setNewInstructedBy('');
       setNewValue('');
+      setNewFiles([]);
       setShowNewVariation(false);
       loadProject();
     }
@@ -237,6 +259,44 @@ export default function ProjectDetail() {
                     step="0.01"
                     min="0"
                   />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Attachments</label>
+                  <div
+                    className="w-full px-3 py-4 border border-dashed border-[#D1D5DB] rounded-md text-center cursor-pointer hover:border-[#1B365D] hover:bg-[#F8FAFC] transition-colors duration-[120ms]"
+                    onClick={() => document.getElementById('file-input')?.click()}
+                  >
+                    <input
+                      id="file-input"
+                      type="file"
+                      multiple
+                      className="hidden"
+                      accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.heic"
+                      onChange={e => {
+                        if (e.target.files) {
+                          setNewFiles(prev => [...prev, ...Array.from(e.target.files!)]);
+                        }
+                      }}
+                    />
+                    <p className="text-[13px] text-[#6B7280]">Click to attach files</p>
+                    <p className="text-[11px] text-[#9CA3AF] mt-1">PDF, Word, Excel, Images</p>
+                  </div>
+                  {newFiles.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {newFiles.map((f, i) => (
+                        <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-[#F8F8F6] rounded text-[13px]">
+                          <span className="text-[#1C1C1E] truncate">{f.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))}
+                            className="text-[#9CA3AF] hover:text-[#B25B4E] ml-2 transition-colors"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex justify-end gap-2 mt-5">
