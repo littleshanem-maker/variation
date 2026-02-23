@@ -11,6 +11,8 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import { printVariation } from '@/lib/print';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document } from '@/lib/types';
 
+const EDITABLE_STATUSES = ['captured', 'submitted'];
+
 export default function VariationDetail() {
   const { id } = useParams<{ id: string }>();
   const [variation, setVariation] = useState<Variation | null>(null);
@@ -23,7 +25,94 @@ export default function VariationDetail() {
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
+  // Edit state
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editSource, setEditSource] = useState('');
+  const [editInstructedBy, setEditInstructedBy] = useState('');
+  const [editValue, setEditValue] = useState('');
+  const [editStatus, setEditStatus] = useState('');
+  const [editNotes, setEditNotes] = useState('');
+  const [editReferenceDoc, setEditReferenceDoc] = useState('');
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+
   useEffect(() => { loadVariation(); }, [id]);
+
+  function startEditing() {
+    if (!variation) return;
+    setEditTitle(variation.title);
+    setEditDescription(variation.description || variation.ai_description || '');
+    setEditSource(variation.instruction_source || 'verbal');
+    setEditInstructedBy(variation.instructed_by || '');
+    setEditValue((variation.estimated_value / 100).toFixed(2));
+    setEditStatus(variation.status);
+    setEditNotes(variation.notes || '');
+    setEditReferenceDoc(variation.reference_doc || '');
+    setNewFiles([]);
+    setEditing(true);
+  }
+
+  async function handleSave() {
+    if (!variation || !editTitle.trim()) return;
+    setSaving(true);
+    const supabase = createClient();
+    const valueCents = Math.round(parseFloat(editValue || '0') * 100);
+    const oldStatus = variation.status;
+
+    const { error } = await supabase.from('variations').update({
+      title: editTitle.trim(),
+      description: editDescription.trim(),
+      instruction_source: editSource,
+      instructed_by: editInstructedBy.trim() || null,
+      estimated_value: valueCents,
+      status: editStatus,
+      notes: editNotes.trim() || null,
+      reference_doc: editReferenceDoc.trim() || null,
+    }).eq('id', variation.id);
+
+    // Log status change if changed
+    if (!error && editStatus !== oldStatus) {
+      await supabase.from('status_changes').insert({
+        id: crypto.randomUUID(),
+        variation_id: variation.id,
+        from_status: oldStatus,
+        to_status: editStatus,
+        changed_at: new Date().toISOString(),
+        changed_by: 'Office',
+      });
+    }
+
+    // Upload new files
+    if (!error && newFiles.length > 0) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        for (const file of newFiles) {
+          const docId = crypto.randomUUID();
+          const storagePath = `${user.id}/documents/${docId}/${file.name}`;
+          const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file);
+          if (!uploadErr) {
+            await supabase.from('documents').insert({
+              id: docId,
+              variation_id: variation.id,
+              file_name: file.name,
+              file_type: file.type,
+              file_size: file.size,
+              storage_path: storagePath,
+            });
+          }
+        }
+      }
+    }
+
+    if (!error) {
+      setEditing(false);
+      setNewFiles([]);
+      loadVariation();
+    }
+    setSaving(false);
+  }
 
   async function loadVariation() {
     const supabase = createClient();
@@ -91,83 +180,183 @@ export default function VariationDetail() {
     );
   }
 
+  const canEdit = EDITABLE_STATUSES.includes(variation.status);
+
+  const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none";
+  const labelClass = "block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1";
+
   return (
     <AppShell>
       <TopBar title={`Variation #${variation.sequence_number}`} onPrint={handlePrint} printLabel="Print Variation" />
       <div className="p-8 space-y-5 max-w-4xl">
-        <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">
-          ← Back to {project.name}
-        </Link>
+        <div className="flex items-center justify-between">
+          <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">
+            ← Back to {project.name}
+          </Link>
+          {canEdit && !editing && (
+            <button
+              onClick={startEditing}
+              className="px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+            >
+              Edit Variation
+            </button>
+          )}
+          {editing && (
+            <div className="flex gap-2">
+              <button
+                onClick={() => { setEditing(false); setNewFiles([]); }}
+                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSave}
+                disabled={saving || !editTitle.trim()}
+                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Header Card */}
         <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <div className="flex items-start justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-[#1C1C1E]">{variation.title}</h2>
-              <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
-            </div>
-            <div className="text-right">
-              <div className="text-2xl font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(variation.estimated_value)}</div>
-              <div className="mt-2"><StatusBadge status={variation.status} /></div>
-            </div>
-          </div>
+          {editing ? (
+            <>
+              <div className="space-y-4">
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <label className={labelClass}>Title</label>
+                    <input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)} className={inputClass} />
+                  </div>
+                  <div className="w-48">
+                    <label className={labelClass}>Estimated Value ($)</label>
+                    <input type="number" value={editValue} onChange={e => setEditValue(e.target.value)} className={inputClass} step="0.01" min="0" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className={labelClass}>Status</label>
+                    <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className={inputClass + " bg-white"}>
+                      <option value="captured">Draft</option>
+                      <option value="submitted">Submitted</option>
+                      <option value="approved">Approved</option>
+                      <option value="disputed">Disputed</option>
+                      <option value="paid">Paid</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Instruction Source</label>
+                    <select value={editSource} onChange={e => setEditSource(e.target.value)} className={inputClass + " bg-white"}>
+                      <option value="verbal">Verbal</option>
+                      <option value="email">Email</option>
+                      <option value="site_instruction">Site Instruction</option>
+                      <option value="drawing_revision">Drawing Revision</option>
+                      <option value="rfi">RFI</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelClass}>Instructed By</label>
+                    <input type="text" value={editInstructedBy} onChange={e => setEditInstructedBy(e.target.value)} className={inputClass} />
+                  </div>
+                </div>
+                <div>
+                  <label className={labelClass}>Reference Document</label>
+                  <input type="text" value={editReferenceDoc} onChange={e => setEditReferenceDoc(e.target.value)} className={inputClass} placeholder="e.g. RFI-042, Rev C drawings" />
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-start justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold text-[#1C1C1E]">{variation.title}</h2>
+                  <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(variation.estimated_value)}</div>
+                  <div className="mt-2"><StatusBadge status={variation.status} /></div>
+                </div>
+              </div>
 
-          <div className="grid grid-cols-3 gap-6 mt-6 pt-5 border-t border-[#F0F0EE]">
-            <div>
-              <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Instruction Source</div>
-              <div className="text-[14px] text-[#1C1C1E] mt-1 capitalize">{variation.instruction_source?.replace(/_/g, ' ')}</div>
-            </div>
-            <div>
-              <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Instructed By</div>
-              <div className="text-[14px] text-[#1C1C1E] mt-1">{variation.instructed_by || '—'}</div>
-            </div>
-            <div>
-              <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Captured</div>
-              <div className="text-[14px] text-[#1C1C1E] mt-1">{formatDate(variation.captured_at)}</div>
-            </div>
-            {variation.reference_doc && (
-              <div>
-                <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Reference Document</div>
-                <div className="text-[14px] text-[#1C1C1E] mt-1">{variation.reference_doc}</div>
+              <div className="grid grid-cols-3 gap-6 mt-6 pt-5 border-t border-[#F0F0EE]">
+                <div>
+                  <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Instruction Source</div>
+                  <div className="text-[14px] text-[#1C1C1E] mt-1 capitalize">{variation.instruction_source?.replace(/_/g, ' ')}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Instructed By</div>
+                  <div className="text-[14px] text-[#1C1C1E] mt-1">{variation.instructed_by || '—'}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Captured</div>
+                  <div className="text-[14px] text-[#1C1C1E] mt-1">{formatDate(variation.captured_at)}</div>
+                </div>
+                {variation.reference_doc && (
+                  <div>
+                    <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Reference Document</div>
+                    <div className="text-[14px] text-[#1C1C1E] mt-1">{variation.reference_doc}</div>
+                  </div>
+                )}
+                {variation.evidence_hash && (
+                  <div className="col-span-2">
+                    <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Evidence Hash</div>
+                    <div className="text-[11px] text-[#9CA3AF] mt-1 font-mono break-all">{variation.evidence_hash}</div>
+                  </div>
+                )}
               </div>
-            )}
-            {variation.evidence_hash && (
-              <div className="col-span-2">
-                <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Evidence Hash</div>
-                <div className="text-[11px] text-[#9CA3AF] mt-1 font-mono break-all">{variation.evidence_hash}</div>
-              </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
 
         {/* Description */}
-        {(variation.description || variation.ai_description) && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Description</h3>
-            <p className="text-[14px] text-[#1C1C1E] leading-relaxed whitespace-pre-wrap">
-              {variation.ai_description || variation.description}
-            </p>
-            {variation.ai_description && variation.description && (
-              <details className="mt-4">
-                <summary className="text-[12px] text-[#1B365D] cursor-pointer font-medium">View original</summary>
-                <p className="text-[13px] text-[#6B7280] mt-2 whitespace-pre-wrap">{variation.description}</p>
-              </details>
-            )}
-          </div>
-        )}
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Description</h3>
+          {editing ? (
+            <textarea
+              value={editDescription}
+              onChange={e => setEditDescription(e.target.value)}
+              className={inputClass + " resize-none"}
+              rows={4}
+              placeholder="Describe the scope change..."
+            />
+          ) : (
+            <>
+              <p className="text-[14px] text-[#1C1C1E] leading-relaxed whitespace-pre-wrap">
+                {variation.ai_description || variation.description || '—'}
+              </p>
+              {variation.ai_description && variation.description && (
+                <details className="mt-4">
+                  <summary className="text-[12px] text-[#1B365D] cursor-pointer font-medium">View original</summary>
+                  <p className="text-[13px] text-[#6B7280] mt-2 whitespace-pre-wrap">{variation.description}</p>
+                </details>
+              )}
+            </>
+          )}
+        </div>
 
         {/* Notes */}
-        {variation.notes && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Notes</h3>
-            <p className="text-[14px] text-[#1C1C1E] whitespace-pre-wrap">{variation.notes}</p>
-          </div>
-        )}
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Notes</h3>
+          {editing ? (
+            <textarea
+              value={editNotes}
+              onChange={e => setEditNotes(e.target.value)}
+              className={inputClass + " resize-none"}
+              rows={3}
+              placeholder="Internal notes..."
+            />
+          ) : (
+            <p className="text-[14px] text-[#1C1C1E] whitespace-pre-wrap">{variation.notes || '—'}</p>
+          )}
+        </div>
 
         {/* Documents */}
-        {documents.length > 0 && (
+        {(documents.length > 0 || editing) && (
           <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Documents ({documents.length})</h3>
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Documents {documents.length > 0 && `(${documents.length})`}</h3>
             <div className="space-y-2">
               {documents.map(doc => (
                 <a
@@ -186,6 +375,45 @@ export default function VariationDetail() {
                 </a>
               ))}
             </div>
+            {editing && (
+              <div className="mt-3">
+                <div
+                  className="w-full px-3 py-4 border border-dashed border-[#D1D5DB] rounded-md text-center cursor-pointer hover:border-[#1B365D] hover:bg-[#F8FAFC] transition-colors duration-[120ms]"
+                  onClick={() => document.getElementById('edit-file-input')?.click()}
+                >
+                  <input
+                    id="edit-file-input"
+                    type="file"
+                    multiple
+                    className="hidden"
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.heic"
+                    onChange={e => {
+                      if (e.target.files) {
+                        setNewFiles(prev => [...prev, ...Array.from(e.target.files!)]);
+                      }
+                    }}
+                  />
+                  <p className="text-[13px] text-[#6B7280]">Click to attach more files</p>
+                  <p className="text-[11px] text-[#9CA3AF] mt-1">PDF, Word, Excel, Images</p>
+                </div>
+                {newFiles.length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    {newFiles.map((f, i) => (
+                      <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-[#F8F8F6] rounded text-[13px]">
+                        <span className="text-[#1C1C1E] truncate">{f.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))}
+                          className="text-[#9CA3AF] hover:text-[#B25B4E] ml-2 transition-colors"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
