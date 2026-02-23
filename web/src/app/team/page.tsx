@@ -87,19 +87,24 @@ export default function TeamPage() {
   }
 
   async function handleInvite() {
-    if (!inviteEmail.trim() || !companyId) return;
+    if (!inviteEmail.trim()) return;
+    if (!companyId) { alert('Company not loaded yet. Please refresh and try again.'); return; }
     setSending(true);
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setSending(false); return; }
 
     const { error } = await supabase.from('invitations').insert({
       company_id: companyId,
       email: inviteEmail.trim().toLowerCase(),
       role: inviteRole,
-      invited_by: user?.id,
+      invited_by: user.id,
     });
 
-    if (!error) {
+    if (error) {
+      console.error('Invite failed:', error);
+      alert('Failed to send invitation: ' + error.message);
+    } else {
       setInviteEmail('');
       setShowInvite(false);
       loadTeam();

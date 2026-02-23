@@ -77,6 +77,7 @@ export default function Dashboard() {
 
   async function handleCreateProject() {
     if (!newProjectName.trim() || !newProjectClient.trim()) return;
+    if (!companyId) { alert('Company not loaded yet. Please refresh and try again.'); return; }
     setCreatingProject(true);
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
@@ -92,7 +93,10 @@ export default function Dashboard() {
       is_active: true,
     });
 
-    if (!error) {
+    if (error) {
+      console.error('Create project failed:', error);
+      alert('Failed to create project: ' + error.message);
+    } else {
       setNewProjectName('');
       setNewProjectClient('');
       setShowNewProject(false);

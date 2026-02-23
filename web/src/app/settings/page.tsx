@@ -39,16 +39,23 @@ export default function SettingsPage() {
   }
 
   async function handleSaveCompany() {
-    if (!companyId || !companyName.trim()) return;
+    if (!companyName.trim()) return;
+    if (!companyId) { alert('Company not loaded yet. Please refresh and try again.'); return; }
     setSavingCompany(true);
     const supabase = createClient();
-    await supabase.from('companies').update({
+    const { error } = await supabase.from('companies').update({
       name: companyName.trim(),
       abn: companyAbn.trim() || null,
     }).eq('id', companyId);
+
+    if (error) {
+      console.error('Save company failed:', error);
+      alert('Failed to save: ' + error.message);
+    } else {
+      setCompanySaved(true);
+      setTimeout(() => setCompanySaved(false), 2000);
+    }
     setSavingCompany(false);
-    setCompanySaved(true);
-    setTimeout(() => setCompanySaved(false), 2000);
   }
 
   const roleBadgeColors: Record<string, string> = {

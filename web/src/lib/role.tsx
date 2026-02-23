@@ -50,38 +50,48 @@ export function RoleProvider({ children }: { children: ReactNode }) {
 
     setUserId(session.user.id);
 
-    const { data, error } = await supabase
+    // First fetch memberships
+    const { data: memberData, error: memberError } = await supabase
       .from('company_members')
-      .select(`
-        id,
-        company_id,
-        user_id,
-        role,
-        is_active,
-        invited_at,
-        accepted_at,
-        companies:company_id (
-          id, name, abn, address, phone, logo_url, created_at, updated_at
-        )
-      `)
+      .select('id, company_id, user_id, role, is_active, invited_at, accepted_at')
       .eq('user_id', session.user.id)
       .eq('is_active', true);
 
-    if (!error && data) {
-      const mapped: CompanyMembership[] = data.map((m: any) => ({
-        id: m.id,
-        company_id: m.company_id,
-        user_id: m.user_id,
-        role: m.role as UserRole,
-        is_active: m.is_active,
-        invited_at: m.invited_at,
-        accepted_at: m.accepted_at,
-        company: m.companies || undefined,
-      }));
-      setMemberships(mapped);
-      if (mapped.length > 0) {
-        setActiveCompanyId(mapped[0].company_id);
-      }
+    if (memberError) {
+      console.error('Failed to fetch memberships:', memberError);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!memberData || memberData.length === 0) {
+      console.warn('No company memberships found for user');
+      setIsLoading(false);
+      return;
+    }
+
+    // Then fetch company details for those memberships
+    const companyIds = [...new Set(memberData.map(m => m.company_id))];
+    const { data: companyData } = await supabase
+      .from('companies')
+      .select('id, name, abn, address, phone, logo_url, created_at, updated_at')
+      .in('id', companyIds);
+
+    const companyMap = new Map((companyData || []).map((c: any) => [c.id, c]));
+
+    const mapped: CompanyMembership[] = memberData.map((m: any) => ({
+      id: m.id,
+      company_id: m.company_id,
+      user_id: m.user_id,
+      role: m.role as UserRole,
+      is_active: m.is_active,
+      invited_at: m.invited_at,
+      accepted_at: m.accepted_at,
+      company: companyMap.get(m.company_id) || undefined,
+    }));
+
+    setMemberships(mapped);
+    if (mapped.length > 0) {
+      setActiveCompanyId(mapped[0].company_id);
     }
     setIsLoading(false);
   }
