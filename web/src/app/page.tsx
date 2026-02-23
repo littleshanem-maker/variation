@@ -114,16 +114,13 @@ export default function Dashboard() {
   }
 
   if (error === 'not_authenticated') {
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
     return (
-      <AppShell>
-        <TopBar title="Variation Register" />
-        <div className="flex flex-col items-center justify-center h-96 gap-4">
-          <p className="text-[#6B7280] text-sm">Sign in to view your variation register.</p>
-          <Link href="/login" className="px-5 py-2 bg-[#1B365D] text-white text-sm font-medium rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] ease-out">
-            Sign In
-          </Link>
-        </div>
-      </AppShell>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-[#9CA3AF] text-sm">Redirecting to login...</p>
+      </div>
     );
   }
 
