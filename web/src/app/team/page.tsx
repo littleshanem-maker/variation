@@ -59,9 +59,11 @@ export default function TeamPage() {
     const supabase = createClient();
 
     // Fetch members with emails via RPC
-    const { data: memberData } = await supabase.rpc('get_company_members', {
+    const { data: memberData, error: memberErr } = await supabase.rpc('get_company_members', {
       p_company_id: companyId,
     });
+
+    console.log('[Team] members RPC:', { memberData, memberErr, companyId });
 
     if (memberData) {
       setMembers(memberData as TeamMember[]);
