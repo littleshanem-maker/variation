@@ -58,15 +58,35 @@ export default function TeamPage() {
     if (!companyId) return;
     const supabase = createClient();
 
-    // Fetch members with emails via RPC
-    const { data: memberData, error: memberErr } = await supabase.rpc('get_company_members', {
-      p_company_id: companyId,
-    });
+    // Fetch members
+    const { data: memberData, error: memberErr } = await supabase
+      .from('company_members')
+      .select('id, company_id, user_id, role, is_active, invited_at, accepted_at')
+      .eq('company_id', companyId)
+      .order('invited_at');
 
-    console.log('[Team] members RPC:', { memberData, memberErr, companyId });
+    console.log('[Team] members:', { memberData, memberErr });
 
-    if (memberData) {
-      setMembers(memberData as TeamMember[]);
+    if (memberData && memberData.length > 0) {
+      // Fetch emails via RPC
+      const userIds = memberData.map(m => m.user_id);
+      const { data: emailData } = await supabase.rpc('get_user_emails', { user_ids: userIds });
+      const emailMap: Record<string, { email: string; full_name: string | null }> = {};
+      for (const e of (emailData || []) as any[]) {
+        emailMap[e.user_id] = { email: e.email, full_name: e.full_name };
+      }
+
+      const enriched: TeamMember[] = memberData.map(m => ({
+        id: m.id,
+        user_id: m.user_id,
+        role: m.role as UserRole,
+        is_active: m.is_active,
+        invited_at: m.invited_at,
+        accepted_at: m.accepted_at,
+        email: emailMap[m.user_id]?.email || m.user_id.slice(0, 8) + '...',
+        full_name: emailMap[m.user_id]?.full_name || null,
+      }));
+      setMembers(enriched);
     }
 
     // Fetch pending invitations
