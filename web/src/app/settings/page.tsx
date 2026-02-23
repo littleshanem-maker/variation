@@ -40,7 +40,7 @@ export default function SettingsPage() {
 
   async function handleSaveCompany() {
     if (!companyName.trim()) return;
-    if (!companyId) { console.error('[Settings] companyId is null, roleLoading:', roleLoading); alert('Company not loaded yet. Please refresh and try again.'); return; }
+    if (!companyId) { alert('Company not loaded yet. Please refresh and try again.'); return; }
     setSavingCompany(true);
     const supabase = createClient();
     const { error } = await supabase.from('companies').update({
