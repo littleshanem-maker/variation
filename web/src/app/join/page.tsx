@@ -123,23 +123,16 @@ function JoinForm() {
       return;
     }
 
-    // Add user to company
-    const { error: memberErr } = await supabase.from('company_members').insert({
-      company_id: invite.company_id,
-      user_id: signupData.user.id,
-      role: invite.role,
-      accepted_at: new Date().toISOString(),
+    // Accept invitation via server function (bypasses RLS)
+    const { data: acceptResult, error: acceptErr } = await supabase.rpc('accept_invitation', {
+      invite_token: token!,
     });
 
-    if (memberErr) {
-      console.error('Failed to join company:', memberErr);
-      // Don't block — user is created, they can be added manually
+    if (acceptErr) {
+      console.error('Failed to accept invitation:', acceptErr);
+    } else if (acceptResult?.error) {
+      console.error('Accept invitation error:', acceptResult.error);
     }
-
-    // Mark invitation as accepted
-    await supabase.from('invitations').update({
-      accepted_at: new Date().toISOString(),
-    }).eq('id', invite.id);
 
     // Redirect to dashboard
     router.push('/');
@@ -160,24 +153,20 @@ function JoinForm() {
       return;
     }
 
-    // Add to company
-    const { error: memberErr } = await supabase.from('company_members').insert({
-      company_id: invite.company_id,
-      user_id: user.id,
-      role: invite.role,
-      accepted_at: new Date().toISOString(),
+    // Accept invitation via server function (bypasses RLS)
+    const { data: acceptResult, error: acceptErr } = await supabase.rpc('accept_invitation', {
+      invite_token: token!,
     });
 
-    if (memberErr) {
-      setError('Failed to join: ' + memberErr.message);
+    if (acceptErr) {
+      setError('Failed to join: ' + acceptErr.message);
+      setJoining(false);
+      return;
+    } else if (acceptResult?.error) {
+      setError(acceptResult.error);
       setJoining(false);
       return;
     }
-
-    // Mark invitation accepted
-    await supabase.from('invitations').update({
-      accepted_at: new Date().toISOString(),
-    }).eq('id', invite.id);
 
     router.push('/');
     router.refresh();

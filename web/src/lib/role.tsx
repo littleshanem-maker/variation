@@ -18,10 +18,10 @@ interface RoleContextType {
 }
 
 const RoleContext = createContext<RoleContextType>({
-  role: 'admin',
-  isAdmin: true,
+  role: 'field',
+  isAdmin: false,
   isOffice: false,
-  isField: false,
+  isField: true,
   company: null,
   companyId: null,
   memberships: [],
@@ -114,7 +114,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     [memberships, activeCompanyId]
   );
 
-  const role: UserRole = activeMembership?.role ?? 'admin';
+  const role: UserRole = activeMembership?.role ?? 'field';
   const company: Company | null = activeMembership?.company ?? null;
 
   return (
