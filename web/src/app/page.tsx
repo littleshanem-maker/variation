@@ -200,32 +200,37 @@ export default function Dashboard() {
               No projects yet. Capture your first variation from the mobile app.
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-4">
-              {projects.map(p => {
-                const totalValue = p.variations.reduce((sum, v) => sum + v.estimated_value, 0);
-                const atRisk = p.variations
-                  .filter(v => v.status === 'disputed' || v.status === 'captured')
-                  .reduce((sum, v) => sum + v.estimated_value, 0);
-                return (
-                  <Link
-                    key={p.id}
-                    href={`/project/${p.id}`}
-                    className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] hover:bg-[#F5F3EF] transition-colors duration-[120ms] ease-out group"
-                  >
-                    <div className="font-semibold text-[15px] text-[#1C1C1E] group-hover:text-[#1B365D] transition-colors duration-[120ms]">{p.name}</div>
-                    <div className="text-[13px] text-[#6B7280] mt-0.5">{p.client}</div>
-                    <div className="flex items-center justify-between mt-4">
-                      <span className="text-[13px] text-[#9CA3AF]">{p.variations.length} variations</span>
-                      <span className="text-[15px] font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(totalValue)}</span>
-                    </div>
-                    {atRisk > 0 && (
-                      <div className="mt-3 px-3 py-1.5 bg-[#C8943E]/5 border border-[#C8943E]/15 rounded text-[12px] text-[#C8943E] font-medium tabular-nums">
-                        ⚠ At Risk: {formatCurrency(atRisk)}
-                      </div>
-                    )}
-                  </Link>
-                );
-              })}
+            <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-[#E5E7EB]">
+                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Project</th>
+                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Client</th>
+                    <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Variations</th>
+                    <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Value</th>
+                    <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">At Risk</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {projects.map((p, i) => {
+                    const totalValue = p.variations.reduce((sum, v) => sum + v.estimated_value, 0);
+                    const atRisk = p.variations
+                      .filter(v => v.status === 'disputed' || v.status === 'captured')
+                      .reduce((sum, v) => sum + v.estimated_value, 0);
+                    return (
+                      <Link key={p.id} href={`/project/${p.id}`} className="contents">
+                        <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === projects.length - 1 ? 'border-b-0' : ''}`}>
+                          <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{p.name}</td>
+                          <td className="px-5 py-2.5 text-[13px] text-[#6B7280]">{p.client}</td>
+                          <td className="px-5 py-2.5 text-[13px] text-[#6B7280] text-right tabular-nums">{p.variations.length}</td>
+                          <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums">{formatCurrency(totalValue)}</td>
+                          <td className="px-5 py-2.5 text-[13px] text-right tabular-nums">{atRisk > 0 ? <span className="text-[#C8943E] font-medium">{formatCurrency(atRisk)}</span> : <span className="text-[#D1D5DB]">—</span>}</td>
+                        </tr>
+                      </Link>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
         </div>
