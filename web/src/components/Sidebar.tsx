@@ -2,16 +2,28 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useRole } from '@/lib/role';
+import type { UserRole } from '@/lib/types';
 
-const nav = [
+interface NavItem {
+  label: string;
+  href: string;
+  roles?: UserRole[]; // if undefined, visible to all
+}
+
+const nav: NavItem[] = [
   { label: 'Dashboard', href: '/' },
-  { label: 'Variation Register', href: '/variations' },
-  { label: 'Archived Projects', href: '/archived' },
+  { label: 'Variation Register', href: '/variations', roles: ['admin', 'office'] },
+  { label: 'Archived Projects', href: '/archived', roles: ['admin', 'office'] },
+  { label: 'Team', href: '/team', roles: ['admin'] },
   { label: 'Settings', href: '/settings' },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { role, company } = useRole();
+
+  const visibleNav = nav.filter(item => !item.roles || item.roles.includes(role));
 
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-[240px] bg-[#1B365D] text-white flex flex-col z-50">
@@ -20,9 +32,12 @@ export default function Sidebar() {
           <div className="w-8 h-8 bg-white/10 rounded-md flex items-center justify-center text-sm font-semibold tracking-tight">VC</div>
           <span className="font-semibold text-[15px] tracking-tight">Variation Capture</span>
         </div>
+        {company && (
+          <div className="mt-2 text-[11px] text-white/40 truncate">{company.name}</div>
+        )}
       </div>
       <nav className="flex-1 px-3 pt-2 space-y-0.5">
-        {nav.map((item) => {
+        {visibleNav.map((item) => {
           const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
           return (
             <Link
@@ -40,8 +55,8 @@ export default function Sidebar() {
           );
         })}
       </nav>
-      <div className="px-6 py-5 text-[11px] text-white/30">
-        Pipeline Consulting Pty Ltd
+      <div className="px-6 py-4">
+        <div className="text-[11px] text-white/40 capitalize">{role} access</div>
       </div>
     </aside>
   );

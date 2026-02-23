@@ -8,6 +8,7 @@ import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getStatusConfig } from '@/lib/utils';
 import { printRegister } from '@/lib/print';
+import { useRole } from '@/lib/role';
 import type { Project, Variation } from '@/lib/types';
 
 interface StatusSummary {
@@ -27,6 +28,7 @@ export default function Dashboard() {
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectClient, setNewProjectClient] = useState('');
   const [creatingProject, setCreatingProject] = useState(false);
+  const { isField, isAdmin, isOffice, companyId, userId } = useRole();
 
   useEffect(() => {
     loadData();
@@ -82,7 +84,8 @@ export default function Dashboard() {
 
     const { error } = await supabase.from('projects').insert({
       id: crypto.randomUUID(),
-      user_id: session.user.id,
+      created_by: session.user.id,
+      company_id: companyId,
       name: newProjectName.trim(),
       client: newProjectClient.trim(),
       reference: '',
@@ -160,14 +163,14 @@ export default function Dashboard() {
 
   return (
     <AppShell>
-      <TopBar title="Dashboard" onPrint={handlePrint} printLabel="Print / Export" />
+      <TopBar title="Dashboard" onPrint={isField ? undefined : handlePrint} printLabel="Print / Export" />
       <div className="p-8 space-y-8">
         {/* Status Summary Boxes */}
-        <div className="grid grid-cols-6 gap-4">
+        <div className={`grid ${isField ? 'grid-cols-3' : 'grid-cols-6'} gap-4`}>
           {summaries.map(s => (
             <div key={s.status} className={`bg-white rounded-md border border-[#E5E7EB] border-t-[3px] ${s.border} p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]`}>
               <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-2">{s.label}</div>
-              <div className="text-xl font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(s.total)}</div>
+              {!isField && <div className="text-xl font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(s.total)}</div>}
               <div className="text-[13px] text-[#6B7280] mt-1">
                 {s.count} {s.count === 1 ? 'variation' : 'variations'}
               </div>
@@ -185,12 +188,14 @@ export default function Dashboard() {
         <div>
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-lg font-semibold text-[#1C1C1E]">Projects</h2>
-            <button
-              onClick={() => setShowNewProject(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
-            >
-              + New Project
-            </button>
+            {!isField && (
+              <button
+                onClick={() => setShowNewProject(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+              >
+                + New Project
+              </button>
+            )}
           </div>
           {projects.length === 0 ? (
             <div className="bg-white rounded-md border border-[#E5E7EB] p-12 text-center text-[#9CA3AF] text-sm">
@@ -204,8 +209,8 @@ export default function Dashboard() {
                     <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Project</th>
                     <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Client</th>
                     <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Variations</th>
-                    <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Value</th>
-                    <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">At Risk</th>
+                    {!isField && <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Value</th>}
+                    {!isField && <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">At Risk</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -220,8 +225,8 @@ export default function Dashboard() {
                           <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{p.name}</td>
                           <td className="px-5 py-2.5 text-[13px] text-[#6B7280]">{p.client}</td>
                           <td className="px-5 py-2.5 text-[13px] text-[#6B7280] text-right tabular-nums">{p.variations.length}</td>
-                          <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums">{formatCurrency(totalValue)}</td>
-                          <td className="px-5 py-2.5 text-[13px] text-right tabular-nums">{atRisk > 0 ? <span className="text-[#C8943E] font-medium">{formatCurrency(atRisk)}</span> : <span className="text-[#D1D5DB]">—</span>}</td>
+                          {!isField && <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums">{formatCurrency(totalValue)}</td>}
+                          {!isField && <td className="px-5 py-2.5 text-[13px] text-right tabular-nums">{atRisk > 0 ? <span className="text-[#C8943E] font-medium">{formatCurrency(atRisk)}</span> : <span className="text-[#D1D5DB]">—</span>}</td>}
                         </tr>
                       </Link>
                     );
@@ -250,7 +255,7 @@ export default function Dashboard() {
                     <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Title</th>
                     <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Project</th>
                     <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Status</th>
-                    <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Value</th>
+                    {!isField && <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Value</th>}
                     <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Captured</th>
                   </tr>
                 </thead>
@@ -261,7 +266,7 @@ export default function Dashboard() {
                         <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{v.title}</td>
                         <td className="px-5 py-2.5 text-[13px] text-[#6B7280]">{v.project_name}</td>
                         <td className="px-5 py-2.5"><StatusBadge status={v.status} /></td>
-                        <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums">{formatCurrency(v.estimated_value)}</td>
+                        {!isField && <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums">{formatCurrency(v.estimated_value)}</td>}
                         <td className="px-5 py-2.5 text-[13px] text-[#6B7280] text-right">{formatDate(v.captured_at)}</td>
                       </tr>
                     </Link>

@@ -9,6 +9,7 @@ import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { printProjectRegister } from '@/lib/print';
+import { useRole } from '@/lib/role';
 import type { Project, Variation } from '@/lib/types';
 
 type SortKey = 'sequence_number' | 'title' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at';
@@ -35,6 +36,7 @@ export default function ProjectDetail() {
   const [deleting, setDeleting] = useState(false);
   const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
   const [archiving, setArchiving] = useState(false);
+  const { isField, isAdmin, isOffice, companyId } = useRole();
 
   useEffect(() => {
     loadProject();
@@ -175,28 +177,32 @@ export default function ProjectDetail() {
 
   return (
     <AppShell>
-      <TopBar title={project.name} onPrint={handlePrint} printLabel="Print Register" />
+      <TopBar title={project.name} onPrint={isField ? undefined : handlePrint} printLabel="Print Register" />
       <div className="p-8 space-y-6">
         <div>
           <Link href="/" className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">← Back to Dashboard</Link>
           <div className="flex items-center justify-between mt-3">
             <div>
               <h2 className="text-xl font-semibold text-[#1C1C1E]">{project.name}</h2>
-              <p className="text-[13px] text-[#6B7280] mt-1">{project.client} · {variations.length} variations · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value</p>
+              <p className="text-[13px] text-[#6B7280] mt-1">{project.client} · {variations.length} variations{!isField && <> · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value</>}</p>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms]"
-              >
-                Delete Project
-              </button>
-              <button
-                onClick={() => setShowArchiveConfirm(true)}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms]"
-              >
-                Archive Project
-              </button>
+              {isAdmin && (
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms]"
+                >
+                  Delete Project
+                </button>
+              )}
+              {!isField && (
+                <button
+                  onClick={() => setShowArchiveConfirm(true)}
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms]"
+                >
+                  Archive Project
+                </button>
+              )}
               <button
                 onClick={() => setShowNewVariation(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
@@ -220,7 +226,7 @@ export default function ProjectDetail() {
                   <SortHeader label="Title" field="title" />
                   <SortHeader label="Status" field="status" />
                   <SortHeader label="Instruction Source" field="instruction_source" />
-                  <SortHeader label="Value" field="estimated_value" align="right" />
+                  {!isField && <SortHeader label="Value" field="estimated_value" align="right" />}
                   <SortHeader label="Captured" field="captured_at" align="right" />
                 </tr>
               </thead>
@@ -232,7 +238,7 @@ export default function ProjectDetail() {
                       <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{v.title}</td>
                       <td className="px-5 py-2.5"><StatusBadge status={v.status} /></td>
                       <td className="px-5 py-2.5 text-[13px] text-[#6B7280] capitalize">{v.instruction_source?.replace(/_/g, ' ')}</td>
-                      <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums">{formatCurrency(v.estimated_value)}</td>
+                      {!isField && <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums">{formatCurrency(v.estimated_value)}</td>}
                       <td className="px-5 py-2.5 text-[13px] text-[#6B7280] text-right">{formatDate(v.captured_at)}</td>
                     </tr>
                   </Link>
@@ -295,18 +301,20 @@ export default function ProjectDetail() {
                     />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Estimated Value ($)</label>
-                  <input
-                    type="number"
-                    value={newValue}
-                    onChange={e => setNewValue(e.target.value)}
-                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
-                    placeholder="0.00"
-                    step="0.01"
-                    min="0"
-                  />
-                </div>
+                {!isField && (
+                  <div>
+                    <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Estimated Value ($)</label>
+                    <input
+                      type="number"
+                      value={newValue}
+                      onChange={e => setNewValue(e.target.value)}
+                      className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                      placeholder="0.00"
+                      step="0.01"
+                      min="0"
+                    />
+                  </div>
+                )}
                 <div>
                   <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Attachments</label>
                   <div

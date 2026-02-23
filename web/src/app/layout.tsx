@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Variation Capture — Office (v2)",
-  description: "Desktop variation register for construction contractors",
+  title: "Variation Capture",
+  description: "Variation register for construction contractors",
 };
 
 export default function RootLayout({
@@ -14,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased bg-gray-50 text-gray-900">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

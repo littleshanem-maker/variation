@@ -9,6 +9,7 @@ import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { printVariation } from '@/lib/print';
+import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document } from '@/lib/types';
 
 const EDITABLE_STATUSES = ['captured', 'submitted'];
@@ -28,6 +29,7 @@ export default function VariationDetail() {
   const [loading, setLoading] = useState(true);
 
   // Delete state
+  const { isField, isAdmin, isOffice } = useRole();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -167,7 +169,7 @@ export default function VariationDetail() {
       const urls: Record<string, string> = {};
       for (const photo of ph) {
         const { data } = await supabase.storage.from('evidence').createSignedUrl(
-          `${proj.user_id}/photos/${photo.id}.jpg`, 3600
+          `${proj.created_by}/photos/${photo.id}.jpg`, 3600
         );
         if (data?.signedUrl) urls[photo.id] = data.signedUrl;
       }
@@ -199,15 +201,15 @@ export default function VariationDetail() {
     );
   }
 
-  const canEdit = EDITABLE_STATUSES.includes(variation.status);
-  const canDelete = DELETABLE_STATUSES.includes(variation.status);
+  const canEdit = !isField && EDITABLE_STATUSES.includes(variation.status);
+  const canDelete = !isField && DELETABLE_STATUSES.includes(variation.status);
 
   const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none";
   const labelClass = "block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1";
 
   return (
     <AppShell>
-      <TopBar title={`Variation #${variation.sequence_number}`} onPrint={handlePrint} printLabel="Print Variation" />
+      <TopBar title={`Variation #${variation.sequence_number}`} onPrint={isField ? undefined : handlePrint} printLabel="Print Variation" />
       <div className="p-8 space-y-5 max-w-4xl">
         <div className="flex items-center justify-between">
           <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">
@@ -308,7 +310,7 @@ export default function VariationDetail() {
                   <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(variation.estimated_value)}</div>
+                  {!isField && <div className="text-2xl font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(variation.estimated_value)}</div>}
                   <div className="mt-2"><StatusBadge status={variation.status} /></div>
                 </div>
               </div>

@@ -9,6 +9,7 @@ import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getStatusConfig } from '@/lib/utils';
 import { printRegister } from '@/lib/print';
+import { useRole } from '@/lib/role';
 import type { Variation, Project } from '@/lib/types';
 
 type SortKey = 'sequence_number' | 'title' | 'project_name' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at';
@@ -23,6 +24,7 @@ function VariationsList() {
   const [sortKey, setSortKey] = useState<SortKey>('captured_at');
   const [sortAsc, setSortAsc] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>(initialStatus);
+  const { isField } = useRole();
 
   useEffect(() => {
     loadData();
