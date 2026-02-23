@@ -105,7 +105,7 @@ export default function Dashboard() {
   if (loading) {
     return (
       <AppShell>
-        <TopBar title="Variation Register" />
+        <TopBar title="Dashboard" />
         <div className="flex items-center justify-center h-96">
           <div className="text-[#9CA3AF] text-sm">Loading...</div>
         </div>
@@ -127,7 +127,7 @@ export default function Dashboard() {
   if (error) {
     return (
       <AppShell>
-        <TopBar title="Variation Register" />
+        <TopBar title="Dashboard" />
         <div className="flex items-center justify-center h-96">
           <p className="text-[#B25B4E] text-sm">Error: {error}</p>
         </div>
@@ -160,7 +160,7 @@ export default function Dashboard() {
 
   return (
     <AppShell>
-      <TopBar title="Variation Register" onPrint={handlePrint} printLabel="Print / Export" />
+      <TopBar title="Dashboard" onPrint={handlePrint} printLabel="Print / Export" />
       <div className="p-8 space-y-8">
         {/* Status Summary Boxes */}
         <div className="grid grid-cols-6 gap-4">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
@@ -12,9 +12,11 @@ import { printVariation } from '@/lib/print';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document } from '@/lib/types';
 
 const EDITABLE_STATUSES = ['captured', 'submitted'];
+const DELETABLE_STATUSES = ['captured', 'submitted'];
 
 export default function VariationDetail() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [variation, setVariation] = useState<Variation | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [photos, setPhotos] = useState<PhotoEvidence[]>([]);
@@ -24,6 +26,10 @@ export default function VariationDetail() {
   const [docUrls, setDocUrls] = useState<Record<string, string>>({});
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+
+  // Delete state
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Edit state
   const [editing, setEditing] = useState(false);
@@ -114,6 +120,19 @@ export default function VariationDetail() {
     setSaving(false);
   }
 
+  async function handleDelete() {
+    if (!variation || !project) return;
+    setDeleting(true);
+    const supabase = createClient();
+    const { error } = await supabase.from('variations').delete().eq('id', variation.id);
+    if (!error) {
+      router.push(`/project/${project.id}`);
+    } else {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  }
+
   async function loadVariation() {
     const supabase = createClient();
     const { data: v } = await supabase.from('variations').select('*').eq('id', id).single();
@@ -181,6 +200,7 @@ export default function VariationDetail() {
   }
 
   const canEdit = EDITABLE_STATUSES.includes(variation.status);
+  const canDelete = DELETABLE_STATUSES.includes(variation.status);
 
   const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none";
   const labelClass = "block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1";
@@ -193,13 +213,25 @@ export default function VariationDetail() {
           <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">
             ← Back to {project.name}
           </Link>
-          {canEdit && !editing && (
-            <button
-              onClick={startEditing}
-              className="px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
-            >
-              Edit Variation
-            </button>
+          {!editing && (
+            <div className="flex items-center gap-2">
+              {canDelete && (
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms]"
+                >
+                  Delete Variation
+                </button>
+              )}
+              {canEdit && (
+                <button
+                  onClick={startEditing}
+                  className="px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+                >
+                  Edit Variation
+                </button>
+              )}
+            </div>
           )}
           {editing && (
             <div className="flex gap-2">
