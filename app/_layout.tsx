@@ -14,6 +14,8 @@ import { getDatabase } from '../src/db/schema';
 import { seedDatabase } from '../src/db/seedData';
 import { colors } from '../src/theme';
 import { AppModeProvider } from '../src/contexts/AppModeContext';
+import { syncPendingChanges, startConnectivityMonitoring } from '../src/services/sync';
+import { config } from '../src/config';
 
 export default function RootLayout() {
   const [isReady, setIsReady] = useState(false);
@@ -32,6 +34,27 @@ export default function RootLayout() {
     }
     init();
   }, []);
+
+  // Auto-sync: on app start, on connectivity change, and every 30s
+  useEffect(() => {
+    if (!isReady || !config.supabase.enabled) return;
+
+    // Sync immediately on app start
+    syncPendingChanges().catch(console.error);
+
+    // Monitor connectivity (triggers sync when coming online)
+    const stopMonitoring = startConnectivityMonitoring();
+
+    // Periodic sync every 30s
+    const interval = setInterval(() => {
+      syncPendingChanges().catch(console.error);
+    }, config.app.syncIntervalMs);
+
+    return () => {
+      stopMonitoring();
+      clearInterval(interval);
+    };
+  }, [isReady]);
 
   if (!isReady) {
     return (
