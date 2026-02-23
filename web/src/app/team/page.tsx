@@ -39,6 +39,8 @@ export default function TeamPage() {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<UserRole>('field');
   const [sending, setSending] = useState(false);
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!isAdmin) {
@@ -94,19 +96,20 @@ export default function TeamPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setSending(false); return; }
 
-    const { error } = await supabase.from('invitations').insert({
+    const { data: inviteData, error } = await supabase.from('invitations').insert({
       company_id: companyId,
       email: inviteEmail.trim().toLowerCase(),
       role: inviteRole,
       invited_by: user.id,
-    });
+    }).select('token').single();
 
     if (error) {
       console.error('Invite failed:', error);
       alert('Failed to send invitation: ' + error.message);
-    } else {
+    } else if (inviteData) {
+      const link = `${window.location.origin}/join?token=${inviteData.token}`;
+      setInviteLink(link);
       setInviteEmail('');
-      setShowInvite(false);
       loadTeam();
     }
     setSending(false);
@@ -245,50 +248,88 @@ export default function TeamPage() {
         )}
 
         {/* Invite Modal */}
-        {showInvite && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowInvite(false)}>
+        {(showInvite || inviteLink) && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => { setShowInvite(false); setInviteLink(null); setCopied(false); }}>
             <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
-              <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Invite Team Member</h3>
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Email Address</label>
-                  <input
-                    type="email"
-                    value={inviteEmail}
-                    onChange={e => setInviteEmail(e.target.value)}
-                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
-                    placeholder="john@example.com"
-                    autoFocus
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Role</label>
-                  <select
-                    value={inviteRole}
-                    onChange={e => setInviteRole(e.target.value as UserRole)}
-                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white"
-                  >
-                    <option value="field">Field — capture variations only, no pricing</option>
-                    <option value="office">Office — full register, reports, pricing</option>
-                    <option value="admin">Admin — everything + team management</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 mt-5">
-                <button
-                  onClick={() => setShowInvite(false)}
-                  className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms]"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleInvite}
-                  disabled={sending || !inviteEmail.trim()}
-                  className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
-                >
-                  {sending ? 'Sending...' : 'Send Invitation'}
-                </button>
-              </div>
+              {inviteLink ? (
+                /* Show invite link after creation */
+                <>
+                  <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Invitation Created ✓</h3>
+                  <p className="text-[13px] text-[#6B7280] mb-4">Share this link with your team member. It expires in 7 days.</p>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={inviteLink}
+                      readOnly
+                      className="flex-1 px-3 py-2 text-[13px] border border-[#E5E7EB] rounded-md bg-[#F8F8F6] text-[#1C1C1E] font-mono"
+                      onClick={e => (e.target as HTMLInputElement).select()}
+                    />
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(inviteLink);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      }}
+                      className="px-3 py-2 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] whitespace-nowrap"
+                    >
+                      {copied ? '✓ Copied' : 'Copy Link'}
+                    </button>
+                  </div>
+                  <div className="flex justify-end mt-5">
+                    <button
+                      onClick={() => { setInviteLink(null); setCopied(false); setShowInvite(false); }}
+                      className="px-4 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms]"
+                    >
+                      Done
+                    </button>
+                  </div>
+                </>
+              ) : (
+                /* Invite form */
+                <>
+                  <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Invite Team Member</h3>
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Email Address</label>
+                      <input
+                        type="email"
+                        value={inviteEmail}
+                        onChange={e => setInviteEmail(e.target.value)}
+                        className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                        placeholder="john@example.com"
+                        autoFocus
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Role</label>
+                      <select
+                        value={inviteRole}
+                        onChange={e => setInviteRole(e.target.value as UserRole)}
+                        className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white"
+                      >
+                        <option value="field">Field — capture variations only, no pricing</option>
+                        <option value="office">Office — full register, reports, pricing</option>
+                        <option value="admin">Admin — everything + team management</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-2 mt-5">
+                    <button
+                      onClick={() => setShowInvite(false)}
+                      className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms]"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleInvite}
+                      disabled={sending || !inviteEmail.trim()}
+                      className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
+                    >
+                      {sending ? 'Creating...' : 'Create Invitation'}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
