@@ -49,6 +49,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     }
 
     setUserId(session.user.id);
+    console.log('[Role] Fetching memberships for user:', session.user.id);
 
     // First fetch memberships
     const { data: memberData, error: memberError } = await supabase
@@ -57,24 +58,29 @@ export function RoleProvider({ children }: { children: ReactNode }) {
       .eq('user_id', session.user.id)
       .eq('is_active', true);
 
+    console.log('[Role] Memberships result:', { memberData, memberError });
+
     if (memberError) {
-      console.error('Failed to fetch memberships:', memberError);
+      console.error('[Role] Failed to fetch memberships:', memberError);
       setIsLoading(false);
       return;
     }
 
     if (!memberData || memberData.length === 0) {
-      console.warn('No company memberships found for user');
+      console.warn('[Role] No company memberships found for user');
       setIsLoading(false);
       return;
     }
 
     // Then fetch company details for those memberships
     const companyIds = [...new Set(memberData.map(m => m.company_id))];
-    const { data: companyData } = await supabase
+    console.log('[Role] Fetching companies:', companyIds);
+    const { data: companyData, error: companyError } = await supabase
       .from('companies')
       .select('id, name, abn, address, phone, logo_url, created_at, updated_at')
       .in('id', companyIds);
+
+    console.log('[Role] Companies result:', { companyData, companyError });
 
     const companyMap = new Map((companyData || []).map((c: any) => [c.id, c]));
 
@@ -89,9 +95,11 @@ export function RoleProvider({ children }: { children: ReactNode }) {
       company: companyMap.get(m.company_id) || undefined,
     }));
 
+    console.log('[Role] Mapped memberships:', mapped);
     setMemberships(mapped);
     if (mapped.length > 0) {
       setActiveCompanyId(mapped[0].company_id);
+      console.log('[Role] Set active company:', mapped[0].company_id);
     }
     setIsLoading(false);
   }
