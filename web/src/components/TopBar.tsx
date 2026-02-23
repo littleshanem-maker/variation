@@ -1,10 +1,22 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 
 export default function TopBar({ title, onPrint, printLabel = 'Print' }: { title: string; onPrint?: () => void; printLabel?: string }) {
   const router = useRouter();
+  const [companyName, setCompanyName] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadCompany() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      const name = user?.user_metadata?.company_name;
+      if (name) setCompanyName(name);
+    }
+    loadCompany();
+  }, []);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -13,13 +25,15 @@ export default function TopBar({ title, onPrint, printLabel = 'Print' }: { title
     router.refresh();
   }
 
+  const displayTitle = companyName || title;
+
   return (
     <header className="h-14 border-b border-[#E5E7EB] bg-white flex items-center justify-between px-8">
       <div className="flex items-center gap-3">
         <div className="w-6 h-6 bg-[#1B365D] rounded-md flex items-center justify-center">
           <span className="text-white text-[10px] font-bold tracking-tight">LS</span>
         </div>
-        <h1 className="text-lg font-semibold text-[#1C1C1E]">{title}</h1>
+        <h1 className="text-lg font-semibold text-[#1C1C1E]">{displayTitle}</h1>
       </div>
       <div className="flex items-center gap-3">
         {onPrint && (
