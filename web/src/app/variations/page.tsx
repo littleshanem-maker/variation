@@ -8,6 +8,7 @@ import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getStatusConfig } from '@/lib/utils';
+import { printRegister } from '@/lib/print';
 import type { Variation, Project } from '@/lib/types';
 
 type SortKey = 'sequence_number' | 'title' | 'project_name' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at';
@@ -17,6 +18,7 @@ function VariationsList() {
   const initialStatus = searchParams.get('status') || 'all';
 
   const [variations, setVariations] = useState<(Variation & { project_name: string })[]>([]);
+  const [rawProjects, setRawProjects] = useState<(Project & { variations: Variation[] })[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortKey, setSortKey] = useState<SortKey>('captured_at');
   const [sortAsc, setSortAsc] = useState(false);
@@ -34,7 +36,7 @@ function VariationsList() {
   async function loadData() {
     const supabase = createClient();
     
-    const { data: projects } = await supabase.from('projects').select('id, name');
+    const { data: projects } = await supabase.from('projects').select('*');
     const projectMap = new Map(projects?.map(p => [p.id, p.name]));
 
     const { data: vars } = await supabase
@@ -48,6 +50,12 @@ function VariationsList() {
         project_name: projectMap.get(v.project_id) || 'Unknown Project'
       }));
       setVariations(enriched);
+
+      const projectsWithVars = (projects || []).map(p => ({
+        ...p,
+        variations: vars.filter(v => v.project_id === p.id),
+      }));
+      setRawProjects(projectsWithVars);
     }
     setLoading(false);
   }
@@ -81,9 +89,16 @@ function VariationsList() {
     </th>
   );
 
+  function handlePrint() {
+    printRegister(rawProjects);
+  }
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Loading...</div>
+      <>
+        <TopBar title="Variation Register" />
+        <div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Loading...</div>
+      </>
     );
   }
 
@@ -98,6 +113,8 @@ function VariationsList() {
   ];
 
   return (
+    <>
+    <TopBar title="Variation Register" onPrint={handlePrint} printLabel="Print / Export" />
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
@@ -169,14 +186,14 @@ function VariationsList() {
         </div>
       )}
     </div>
+    </>
   );
 }
 
 export default function VariationsPage() {
   return (
     <AppShell>
-      <TopBar title="Variation Register" />
-      <Suspense fallback={<div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Loading...</div>}>
+      <Suspense fallback={<><TopBar title="Variation Register" /><div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Loading...</div></>}>
         <VariationsList />
       </Suspense>
     </AppShell>
