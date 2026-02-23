@@ -58,26 +58,13 @@ export default function TeamPage() {
     if (!companyId) return;
     const supabase = createClient();
 
-    // Fetch members with user info
-    const { data: memberData } = await supabase
-      .from('company_members')
-      .select('id, user_id, role, is_active, invited_at, accepted_at')
-      .eq('company_id', companyId)
-      .order('invited_at');
+    // Fetch members with emails via RPC
+    const { data: memberData } = await supabase.rpc('get_company_members', {
+      p_company_id: companyId,
+    });
 
     if (memberData) {
-      // Get emails for each user
-      const enriched: TeamMember[] = [];
-      for (const m of memberData) {
-        // We can't directly query auth.users from client, so we use the member data
-        // In production you'd have a profiles table — for now show user_id
-        enriched.push({
-          ...m,
-          email: m.user_id.slice(0, 8) + '...', // placeholder
-          full_name: null,
-        });
-      }
-      setMembers(enriched);
+      setMembers(memberData as TeamMember[]);
     }
 
     // Fetch pending invitations
@@ -187,8 +174,9 @@ export default function TeamPage() {
               <tbody>
                 {members.filter(m => m.is_active).map((m, i) => (
                   <tr key={m.id} className={`h-[44px] border-b border-[#F0F0EE] ${i === members.filter(x => x.is_active).length - 1 ? 'border-b-0' : ''}`}>
-                    <td className="px-5 py-2.5 text-[14px] text-[#1C1C1E]">
-                      {m.email}
+                    <td className="px-5 py-2.5">
+                      <div className="text-[14px] text-[#1C1C1E]">{m.email}</div>
+                      {m.full_name && <div className="text-[12px] text-[#9CA3AF]">{m.full_name}</div>}
                     </td>
                     <td className="px-5 py-2.5">
                       <select
