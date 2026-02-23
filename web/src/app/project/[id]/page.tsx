@@ -20,6 +20,13 @@ export default function ProjectDetail() {
   const [loading, setLoading] = useState(true);
   const [sortKey, setSortKey] = useState<SortKey>('sequence_number');
   const [sortAsc, setSortAsc] = useState(true);
+  const [showNewVariation, setShowNewVariation] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [newSource, setNewSource] = useState('verbal');
+  const [newInstructedBy, setNewInstructedBy] = useState('');
+  const [newValue, setNewValue] = useState('');
+  const [creatingVariation, setCreatingVariation] = useState(false);
 
   useEffect(() => {
     loadProject();
@@ -38,6 +45,38 @@ export default function ProjectDetail() {
     if (project) {
       printProjectRegister(project, variations);
     }
+  }
+
+  async function handleCreateVariation() {
+    if (!newTitle.trim()) return;
+    setCreatingVariation(true);
+    const supabase = createClient();
+    const nextSeq = variations.length > 0 ? Math.max(...variations.map(v => v.sequence_number)) + 1 : 1;
+    const valueCents = Math.round(parseFloat(newValue || '0') * 100);
+
+    const { error } = await supabase.from('variations').insert({
+      id: crypto.randomUUID(),
+      project_id: id,
+      sequence_number: nextSeq,
+      title: newTitle.trim(),
+      description: newDescription.trim(),
+      instruction_source: newSource,
+      instructed_by: newInstructedBy.trim() || null,
+      estimated_value: valueCents,
+      status: 'captured',
+      captured_at: new Date().toISOString(),
+    });
+
+    if (!error) {
+      setNewTitle('');
+      setNewDescription('');
+      setNewSource('verbal');
+      setNewInstructedBy('');
+      setNewValue('');
+      setShowNewVariation(false);
+      loadProject();
+    }
+    setCreatingVariation(false);
   }
 
   function handleSort(key: SortKey) {
@@ -85,8 +124,18 @@ export default function ProjectDetail() {
       <div className="p-8 space-y-6">
         <div>
           <Link href="/" className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">← Back to Dashboard</Link>
-          <h2 className="text-xl font-semibold text-[#1C1C1E] mt-3">{project.name}</h2>
-          <p className="text-[13px] text-[#6B7280] mt-1">{project.client} · {variations.length} variations · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value</p>
+          <div className="flex items-center justify-between mt-3">
+            <div>
+              <h2 className="text-xl font-semibold text-[#1C1C1E]">{project.name}</h2>
+              <p className="text-[13px] text-[#6B7280] mt-1">{project.client} · {variations.length} variations · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value</p>
+            </div>
+            <button
+              onClick={() => setShowNewVariation(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+            >
+              + New Variation
+            </button>
+          </div>
         </div>
 
         {variations.length === 0 ? (
@@ -121,6 +170,91 @@ export default function ProjectDetail() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+        {/* New Variation Modal */}
+        {showNewVariation && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowNewVariation(false)}>
+            <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-lg" onClick={e => e.stopPropagation()}>
+              <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">New Variation</h3>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Title</label>
+                  <input
+                    type="text"
+                    value={newTitle}
+                    onChange={e => setNewTitle(e.target.value)}
+                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                    placeholder="e.g. Additional fire dampers — Level 3"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Description</label>
+                  <textarea
+                    value={newDescription}
+                    onChange={e => setNewDescription(e.target.value)}
+                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none resize-none"
+                    rows={3}
+                    placeholder="Describe the scope change..."
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Instruction Source</label>
+                    <select
+                      value={newSource}
+                      onChange={e => setNewSource(e.target.value)}
+                      className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white"
+                    >
+                      <option value="verbal">Verbal</option>
+                      <option value="email">Email</option>
+                      <option value="site_instruction">Site Instruction</option>
+                      <option value="drawing_revision">Drawing Revision</option>
+                      <option value="rfi">RFI</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Instructed By</label>
+                    <input
+                      type="text"
+                      value={newInstructedBy}
+                      onChange={e => setNewInstructedBy(e.target.value)}
+                      className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                      placeholder="e.g. John Smith"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Estimated Value ($)</label>
+                  <input
+                    type="number"
+                    value={newValue}
+                    onChange={e => setNewValue(e.target.value)}
+                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                    placeholder="0.00"
+                    step="0.01"
+                    min="0"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-5">
+                <button
+                  onClick={() => setShowNewVariation(false)}
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms]"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleCreateVariation}
+                  disabled={creatingVariation || !newTitle.trim()}
+                  className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
+                >
+                  {creatingVariation ? 'Creating...' : 'Create Variation'}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
