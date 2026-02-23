@@ -102,7 +102,7 @@ function VariationsList() {
       <div className="flex items-center justify-between">
         <div>
           <Link href="/" className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">← Back to Dashboard</Link>
-          <h2 className="text-xl font-semibold text-[#1C1C1E] mt-3">All Variations</h2>
+          <h2 className="text-xl font-semibold text-[#1C1C1E] mt-3">Variation Register</h2>
           <p className="text-[13px] text-[#6B7280] mt-1">
             {filtered.length} variations · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value
           </p>
@@ -175,7 +175,7 @@ function VariationsList() {
 export default function VariationsPage() {
   return (
     <AppShell>
-      <TopBar title="Variations" />
+      <TopBar title="Variation Register" />
       <Suspense fallback={<div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Loading...</div>}>
         <VariationsList />
       </Suspense>

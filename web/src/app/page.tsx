@@ -163,7 +163,7 @@ export default function Dashboard() {
 
   return (
     <AppShell>
-      <TopBar title="Variation Register" onPrint={handlePrint} />
+      <TopBar title="Variation Register" onPrint={handlePrint} printLabel="Print / Export" />
       <div className="p-8 space-y-8">
         {/* Status Summary Boxes */}
         <div className="grid grid-cols-6 gap-4">

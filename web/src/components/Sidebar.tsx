@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 const nav = [
   { label: 'Dashboard', href: '/' },
+  { label: 'Variation Register', href: '/variations' },
   { label: 'Settings', href: '/settings' },
 ];
 
