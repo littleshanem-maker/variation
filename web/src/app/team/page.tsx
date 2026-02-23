@@ -23,6 +23,7 @@ interface PendingInvite {
   id: string;
   email: string;
   role: UserRole;
+  token: string;
   expires_at: string;
   created_at: string;
 }
@@ -79,7 +80,7 @@ export default function TeamPage() {
     // Fetch pending invitations
     const { data: inviteData } = await supabase
       .from('invitations')
-      .select('id, email, role, expires_at, created_at')
+      .select('id, email, role, token, expires_at, created_at')
       .eq('company_id', companyId)
       .is('accepted_at', null)
       .order('created_at', { ascending: false });
@@ -223,27 +224,39 @@ export default function TeamPage() {
             </div>
             <table className="w-full">
               <tbody>
-                {invites.map((inv, i) => (
-                  <tr key={inv.id} className={`h-[44px] border-b border-[#F0F0EE] ${i === invites.length - 1 ? 'border-b-0' : ''}`}>
-                    <td className="px-5 py-2.5 text-[14px] text-[#1C1C1E]">{inv.email}</td>
-                    <td className="px-5 py-2.5">
-                      <span className={`inline-block px-2.5 py-1 text-[12px] font-medium rounded-full capitalize ${roleBadgeColors[inv.role]}`}>
-                        {inv.role}
-                      </span>
-                    </td>
-                    <td className="px-5 py-2.5 text-[13px] text-[#9CA3AF]">
-                      Expires {new Date(inv.expires_at).toLocaleDateString()}
-                    </td>
-                    <td className="px-5 py-2.5 text-right">
-                      <button
-                        onClick={() => handleRevokeInvite(inv.id)}
-                        className="text-[12px] text-[#9CA3AF] hover:text-[#B25B4E] transition-colors"
-                      >
-                        Revoke
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {invites.map((inv, i) => {
+                  const link = `${window.location.origin}/join?token=${inv.token}`;
+                  return (
+                    <tr key={inv.id} className={`h-[44px] border-b border-[#F0F0EE] ${i === invites.length - 1 ? 'border-b-0' : ''}`}>
+                      <td className="px-5 py-2.5 text-[14px] text-[#1C1C1E]">{inv.email}</td>
+                      <td className="px-5 py-2.5">
+                        <span className={`inline-block px-2.5 py-1 text-[12px] font-medium rounded-full capitalize ${roleBadgeColors[inv.role]}`}>
+                          {inv.role}
+                        </span>
+                      </td>
+                      <td className="px-5 py-2.5 text-[13px] text-[#9CA3AF]">
+                        Expires {new Date(inv.expires_at).toLocaleDateString()}
+                      </td>
+                      <td className="px-5 py-2.5 text-right flex items-center justify-end gap-3">
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(link);
+                            alert('Link copied!');
+                          }}
+                          className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors"
+                        >
+                          Copy Link
+                        </button>
+                        <button
+                          onClick={() => handleRevokeInvite(inv.id)}
+                          className="text-[12px] text-[#9CA3AF] hover:text-[#B25B4E] transition-colors"
+                        >
+                          Revoke
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
