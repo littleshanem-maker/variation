@@ -38,6 +38,22 @@ export function RoleProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchMembership();
+
+    // Re-fetch when auth state changes (login/logout)
+    const supabase = createClient();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      console.log('[Role] Auth state changed:', event);
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        fetchMembership();
+      } else if (event === 'SIGNED_OUT') {
+        setMemberships([]);
+        setActiveCompanyId(null);
+        setUserId(null);
+        setIsLoading(false);
+      }
+    });
+
+    return () => { subscription.unsubscribe(); };
   }, []);
 
   async function fetchMembership() {
