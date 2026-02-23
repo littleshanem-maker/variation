@@ -30,7 +30,7 @@ interface PendingInvite {
 
 export default function TeamPage() {
   const router = useRouter();
-  const { isAdmin, companyId, company } = useRole();
+  const { isAdmin, companyId, company, isLoading: roleLoading } = useRole();
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [invites, setInvites] = useState<PendingInvite[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,12 +44,15 @@ export default function TeamPage() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    if (roleLoading) return;
     if (!isAdmin) {
       router.push('/');
       return;
     }
-    loadTeam();
-  }, [isAdmin, companyId]);
+    if (companyId) {
+      loadTeam();
+    }
+  }, [roleLoading, isAdmin, companyId]);
 
   async function loadTeam() {
     if (!companyId) return;
