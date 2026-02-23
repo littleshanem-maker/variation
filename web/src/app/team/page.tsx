@@ -96,18 +96,20 @@ export default function TeamPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setSending(false); return; }
 
-    const { data: inviteData, error } = await supabase.from('invitations').insert({
+    const token = crypto.randomUUID();
+    const { error } = await supabase.from('invitations').insert({
       company_id: companyId,
       email: inviteEmail.trim().toLowerCase(),
       role: inviteRole,
       invited_by: user.id,
-    }).select('token').single();
+      token,
+    });
 
     if (error) {
       console.error('Invite failed:', error);
       alert('Failed to send invitation: ' + error.message);
-    } else if (inviteData) {
-      const link = `${window.location.origin}/join?token=${inviteData.token}`;
+    } else {
+      const link = `${window.location.origin}/join?token=${token}`;
       setInviteLink(link);
       setInviteEmail('');
       loadTeam();
