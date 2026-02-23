@@ -140,6 +140,46 @@ export interface VariationDetail extends Variation {
 }
 
 // ============================================================
+// ROLES & MULTI-TENANCY
+// ============================================================
+
+export type UserRole = 'admin' | 'office' | 'field';
+
+export interface Company {
+  id: string;
+  name: string;
+  abn?: string;
+  address?: string;
+  phone?: string;
+  logoUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CompanyMembership {
+  id: string;
+  companyId: string;
+  userId: string;
+  role: UserRole;
+  isActive: boolean;
+  invitedAt: string;
+  acceptedAt?: string;
+  company?: Company;
+}
+
+export interface Invitation {
+  id: string;
+  companyId: string;
+  email: string;
+  role: UserRole;
+  token: string;
+  expiresAt: string;
+  acceptedAt?: string;
+  createdAt: string;
+  company?: Company;
+}
+
+// ============================================================
 // AUTH
 // ============================================================
 
@@ -147,8 +187,9 @@ export interface UserProfile {
   id: string;
   email: string;
   fullName?: string;
-  company?: string;
-  role?: string;
+  memberships: CompanyMembership[];
+  activeCompanyId?: string;
+  activeRole?: UserRole;
   createdAt: string;
 }
 

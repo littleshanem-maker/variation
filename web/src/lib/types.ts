@@ -1,6 +1,51 @@
+// ============================================================
+// ROLES & MULTI-TENANCY
+// ============================================================
+
+export type UserRole = 'admin' | 'office' | 'field';
+
+export interface Company {
+  id: string;
+  name: string;
+  abn?: string;
+  address?: string;
+  phone?: string;
+  logo_url?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CompanyMembership {
+  id: string;
+  company_id: string;
+  user_id: string;
+  role: UserRole;
+  is_active: boolean;
+  invited_at: string;
+  accepted_at?: string;
+  company?: Company;
+}
+
+export interface Invitation {
+  id: string;
+  company_id: string;
+  email: string;
+  role: UserRole;
+  token: string;
+  expires_at: string;
+  accepted_at?: string;
+  created_at: string;
+  company?: Company;
+}
+
+// ============================================================
+// CORE ENTITIES
+// ============================================================
+
 export interface Project {
   id: string;
-  user_id: string;
+  company_id: string;
+  created_by: string;
   name: string;
   client: string;
   reference: string;
