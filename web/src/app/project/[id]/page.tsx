@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
@@ -15,6 +15,7 @@ type SortKey = 'sequence_number' | 'title' | 'status' | 'instruction_source' | '
 
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const [project, setProject] = useState<Project | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +29,12 @@ export default function ProjectDetail() {
   const [newValue, setNewValue] = useState('');
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [creatingVariation, setCreatingVariation] = useState(false);
+
+  // Delete/Archive state
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
+  const [archiving, setArchiving] = useState(false);
 
   useEffect(() => {
     loadProject();
@@ -101,6 +108,32 @@ export default function ProjectDetail() {
     setCreatingVariation(false);
   }
 
+  async function handleDeleteProject() {
+    if (!project) return;
+    setDeleting(true);
+    const supabase = createClient();
+    const { error } = await supabase.from('projects').delete().eq('id', project.id);
+    if (!error) {
+      router.push('/');
+    } else {
+      setDeleting(false);
+      setShowDeleteConfirm(false);
+    }
+  }
+
+  async function handleArchiveProject() {
+    if (!project) return;
+    setArchiving(true);
+    const supabase = createClient();
+    const { error } = await supabase.from('projects').update({ is_active: false }).eq('id', project.id);
+    if (!error) {
+      router.push('/');
+    } else {
+      setArchiving(false);
+      setShowArchiveConfirm(false);
+    }
+  }
+
   function handleSort(key: SortKey) {
     if (sortKey === key) { setSortAsc(!sortAsc); }
     else { setSortKey(key); setSortAsc(true); }
@@ -151,12 +184,26 @@ export default function ProjectDetail() {
               <h2 className="text-xl font-semibold text-[#1C1C1E]">{project.name}</h2>
               <p className="text-[13px] text-[#6B7280] mt-1">{project.client} · {variations.length} variations · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value</p>
             </div>
-            <button
-              onClick={() => setShowNewVariation(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
-            >
-              + New Variation
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms]"
+              >
+                Delete Project
+              </button>
+              <button
+                onClick={() => setShowArchiveConfirm(true)}
+                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms]"
+              >
+                Archive Project
+              </button>
+              <button
+                onClick={() => setShowNewVariation(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+              >
+                + New Variation
+              </button>
+            </div>
           </div>
         </div>
 
@@ -318,6 +365,72 @@ export default function ProjectDetail() {
           </div>
         )}
       </div>
+
+      {/* Delete Project Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Delete Project</h3>
+            <p className="text-[14px] text-[#6B7280] mb-1">
+              Are you sure you want to delete <span className="font-medium text-[#1C1C1E]">{project.name}</span>?
+            </p>
+            {variations.length > 0 ? (
+              <p className="text-[13px] text-[#B25B4E] mb-5">
+                This will also permanently delete all <span className="font-semibold">{variations.length} variation{variations.length !== 1 ? 's' : ''}</span> and their associated data. This cannot be undone.
+              </p>
+            ) : (
+              <p className="text-[13px] text-[#9CA3AF] mb-5">This cannot be undone.</p>
+            )}
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={deleting}
+                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms] disabled:opacity-40"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteProject}
+                disabled={deleting}
+                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#B25B4E] rounded-md hover:bg-[#9E4D41] disabled:opacity-40 transition-colors duration-[120ms]"
+              >
+                {deleting ? 'Deleting...' : 'Delete Project'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Archive Project Confirmation Modal */}
+      {showArchiveConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowArchiveConfirm(false)}>
+          <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Archive Project</h3>
+            <p className="text-[14px] text-[#6B7280] mb-1">
+              Archive <span className="font-medium text-[#1C1C1E]">{project.name}</span>?
+            </p>
+            <p className="text-[13px] text-[#9CA3AF] mb-5">
+              The project and its {variations.length} variation{variations.length !== 1 ? 's' : ''} will be hidden from the dashboard. You can unarchive at any time from the Archived Projects page.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowArchiveConfirm(false)}
+                disabled={archiving}
+                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms] disabled:opacity-40"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleArchiveProject}
+                disabled={archiving}
+                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#6B7280] rounded-md hover:bg-[#4B5563] disabled:opacity-40 transition-colors duration-[120ms]"
+              >
+                {archiving ? 'Archiving...' : 'Archive Project'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }

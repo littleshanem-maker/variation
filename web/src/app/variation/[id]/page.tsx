@@ -507,6 +507,35 @@ export default function VariationDetail() {
           </div>
         )}
       </div>
+
+      {/* Delete Variation Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Delete Variation</h3>
+            <p className="text-[14px] text-[#6B7280] mb-1">
+              Are you sure you want to delete <span className="font-medium text-[#1C1C1E]">Variation #{variation.sequence_number}: {variation.title}</span>?
+            </p>
+            <p className="text-[13px] text-[#9CA3AF] mb-5">This will permanently delete the variation and all associated photos, voice notes, and documents. This cannot be undone.</p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                disabled={deleting}
+                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms] disabled:opacity-40"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#B25B4E] rounded-md hover:bg-[#9E4D41] disabled:opacity-40 transition-colors duration-[120ms]"
+              >
+                {deleting ? 'Deleting...' : 'Delete Variation'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }
