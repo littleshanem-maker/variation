@@ -127,6 +127,40 @@ export async function deleteProject(id: string): Promise<void> {
   await db.runAsync('DELETE FROM projects WHERE id = ?', id);
 }
 
+export async function archiveProject(id: string): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync("UPDATE projects SET is_active = 0, sync_status = 'pending' WHERE id = ?", id);
+}
+
+export async function unarchiveProject(id: string): Promise<void> {
+  const db = await getDatabase();
+  await db.runAsync("UPDATE projects SET is_active = 1, sync_status = 'pending' WHERE id = ?", id);
+}
+
+export async function getArchivedProjects(): Promise<ProjectSummary[]> {
+  const db = await getDatabase();
+  const rows = await db.getAllAsync<{
+    id: string; name: string; client: string; reference: string;
+    is_active: number; variation_count: number; total_value: number;
+  }>(`
+    SELECT p.*, 
+      (SELECT COUNT(*) FROM variations v WHERE v.project_id = p.id) as variation_count,
+      (SELECT COALESCE(SUM(v.estimated_value), 0) FROM variations v WHERE v.project_id = p.id) as total_value
+    FROM projects p
+    WHERE p.is_active = 0
+    ORDER BY p.name ASC
+  `);
+  return rows.map(row => ({
+    id: row.id,
+    name: row.name,
+    client: row.client,
+    reference: row.reference,
+    isActive: false,
+    variationCount: row.variation_count,
+    totalValue: row.total_value,
+  }));
+}
+
 export async function getNextVariationSequence(projectId: string): Promise<number> {
   const db = await getDatabase();
   const result = await db.getFirstAsync<{ max_seq: number | null }>(

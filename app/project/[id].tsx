@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter, useFocusEffect, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { getProjectById, deleteProject } from '../../src/db/projectRepository';
+import { getProjectById, deleteProject, archiveProject } from '../../src/db/projectRepository';
 import { getVariationsForProject, getVariationDetail } from '../../src/db/variationRepository';
 import { Project, Variation, VariationStatus, VariationDetail } from '../../src/types/domain';
 import { spacing, borderRadius, typography, getStatusColor, getStatusLabel } from '../../src/theme';
@@ -112,6 +112,17 @@ export default function ProjectDetailScreen() {
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Delete', style: 'destructive', onPress: async () => { await deleteProject(id!); router.back(); } },
+      ],
+    );
+  };
+
+  const handleArchiveProject = () => {
+    Alert.alert(
+      'Archive Project',
+      `Archive "${project?.name}"? It will be hidden from your project list but can be restored later.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Archive', onPress: async () => { await archiveProject(id!); router.back(); } },
       ],
     );
   };
@@ -365,6 +376,11 @@ export default function ProjectDetailScreen() {
             <Pressable style={styles.menuItem} onPress={() => { setShowMenu(false); handleExportPDF(); }}>
               <Ionicons name="download-outline" size={20} color={colors.text} />
               <Text style={styles.menuItemText}>{exporting ? 'Exporting...' : 'Export All as PDF'}</Text>
+            </Pressable>
+            <View style={styles.menuDivider} />
+            <Pressable style={styles.menuItem} onPress={() => { setShowMenu(false); handleArchiveProject(); }}>
+              <Ionicons name="archive-outline" size={20} color={colors.textMuted} />
+              <Text style={[styles.menuItemText, { color: colors.textMuted }]}>Archive Project</Text>
             </Pressable>
             <View style={styles.menuDivider} />
             <Pressable style={styles.menuItem} onPress={() => { setShowMenu(false); handleDeleteProject(); }}>
