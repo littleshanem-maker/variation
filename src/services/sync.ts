@@ -265,7 +265,7 @@ export async function syncPendingChanges(): Promise<SyncResult> {
           sp.id, sp.name, sp.client, sp.reference ?? '',
           sp.address, sp.latitude, sp.longitude,
           sp.contract_type, sp.is_active ? 1 : 0,
-          sp.created_at, sp.updated_at, sp.remote_id ?? null
+          sp.created_at, sp.updated_at, null
         );
         pulled++;
       }
@@ -281,11 +281,11 @@ export async function syncPendingChanges(): Promise<SyncResult> {
     } else if (serverVariations) {
       for (const sv of serverVariations) {
         const local = await db.getFirstAsync<any>(
-          'SELECT id, updated_at, sync_status FROM variations WHERE id = ?',
+          'SELECT id, sync_status FROM variations WHERE id = ?',
           sv.id
         );
         if (local?.sync_status === 'pending') continue;
-        if (local && local.updated_at >= sv.updated_at) continue;
+        if (local) continue; // Already synced — server wins on new records only
         await db.runAsync(
           `INSERT OR REPLACE INTO variations
             (id, project_id, sequence_number, title, description,
@@ -299,7 +299,7 @@ export async function syncPendingChanges(): Promise<SyncResult> {
           sv.reference_doc ?? null, sv.estimated_value ?? 0, sv.status,
           sv.captured_at, sv.latitude ?? null, sv.longitude ?? null,
           sv.location_accuracy ?? null, sv.evidence_hash ?? null,
-          sv.notes ?? null, sv.remote_id ?? null,
+          sv.notes ?? null, null,
           sv.ai_description ?? null, sv.ai_transcription ?? null
         );
         pulled++;
