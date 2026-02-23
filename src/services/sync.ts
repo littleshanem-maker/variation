@@ -235,8 +235,164 @@ export async function syncPendingChanges(): Promise<SyncResult> {
     }
 
     // ---- PULL: Server → Local ----
-    // For Phase 2 MVP, pull is simplified — full bi-directional sync
-    // would use Supabase Realtime subscriptions
+    // Fetch server records and upsert locally.
+    // Skip any local record that has sync_status = 'pending' (not yet pushed).
+    // Use server updated_at (or captured_at for immutable records) to avoid
+    // overwriting newer local data with stale server data.
+
+    // 1. Pull projects
+    const { data: serverProjects, error: projPullErr } = await supabase
+      .from('projects')
+      .select('*')
+      .eq('user_id', userId);
+    if (projPullErr) {
+      console.error('[Sync] Pull projects error:', projPullErr);
+    } else if (serverProjects) {
+      for (const sp of serverProjects) {
+        const local = await db.getFirstAsync<any>(
+          'SELECT id, updated_at, sync_status FROM projects WHERE id = ?',
+          sp.id
+        );
+        // Skip if local record is pending (hasn't been pushed yet)
+        if (local?.sync_status === 'pending') continue;
+        // Skip if local is newer or same age
+        if (local && local.updated_at >= sp.updated_at) continue;
+        await db.runAsync(
+          `INSERT OR REPLACE INTO projects
+            (id, name, client, reference, address, latitude, longitude,
+             contract_type, is_active, created_at, updated_at, sync_status, remote_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?)`,
+          sp.id, sp.name, sp.client, sp.reference ?? '',
+          sp.address, sp.latitude, sp.longitude,
+          sp.contract_type, sp.is_active ? 1 : 0,
+          sp.created_at, sp.updated_at, sp.remote_id ?? null
+        );
+        pulled++;
+      }
+    }
+
+    // 2. Pull variations
+    const { data: serverVariations, error: varPullErr } = await supabase
+      .from('variations')
+      .select('*')
+      .in('project_id', (serverProjects ?? []).map((p: any) => p.id));
+    if (varPullErr) {
+      console.error('[Sync] Pull variations error:', varPullErr);
+    } else if (serverVariations) {
+      for (const sv of serverVariations) {
+        const local = await db.getFirstAsync<any>(
+          'SELECT id, updated_at, sync_status FROM variations WHERE id = ?',
+          sv.id
+        );
+        if (local?.sync_status === 'pending') continue;
+        if (local && local.updated_at >= sv.updated_at) continue;
+        await db.runAsync(
+          `INSERT OR REPLACE INTO variations
+            (id, project_id, sequence_number, title, description,
+             instruction_source, instructed_by, reference_doc,
+             estimated_value, status, captured_at, latitude, longitude,
+             location_accuracy, evidence_hash, notes, sync_status,
+             remote_id, ai_description, ai_transcription)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?)`,
+          sv.id, sv.project_id, sv.sequence_number, sv.title,
+          sv.description ?? '', sv.instruction_source, sv.instructed_by ?? null,
+          sv.reference_doc ?? null, sv.estimated_value ?? 0, sv.status,
+          sv.captured_at, sv.latitude ?? null, sv.longitude ?? null,
+          sv.location_accuracy ?? null, sv.evidence_hash ?? null,
+          sv.notes ?? null, sv.remote_id ?? null,
+          sv.ai_description ?? null, sv.ai_transcription ?? null
+        );
+        pulled++;
+      }
+    }
+
+    // 3. Pull photo_evidence (immutable after capture — use captured_at)
+    const serverVariationIds = (serverVariations ?? []).map((v: any) => v.id);
+    if (serverVariationIds.length > 0) {
+      const { data: serverPhotos, error: photoPullErr } = await supabase
+        .from('photo_evidence')
+        .select('*')
+        .in('variation_id', serverVariationIds);
+      if (photoPullErr) {
+        console.error('[Sync] Pull photos error:', photoPullErr);
+      } else if (serverPhotos) {
+        for (const sp of serverPhotos) {
+          const local = await db.getFirstAsync<any>(
+            'SELECT id, sync_status FROM photo_evidence WHERE id = ?',
+            sp.id
+          );
+          if (local?.sync_status === 'pending') continue;
+          if (local) continue; // Already have it and it's synced — no updates on photos
+          await db.runAsync(
+            `INSERT OR IGNORE INTO photo_evidence
+              (id, variation_id, local_uri, remote_uri, sha256_hash,
+               latitude, longitude, width, height, captured_at, sync_status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced')`,
+            sp.id, sp.variation_id,
+            sp.local_uri ?? '', sp.remote_uri ?? null,
+            sp.sha256_hash ?? '', sp.latitude ?? null, sp.longitude ?? null,
+            sp.width ?? null, sp.height ?? null, sp.captured_at
+          );
+          pulled++;
+        }
+      }
+
+      // 4. Pull voice_notes
+      const { data: serverVoice, error: voicePullErr } = await supabase
+        .from('voice_notes')
+        .select('*')
+        .in('variation_id', serverVariationIds);
+      if (voicePullErr) {
+        console.error('[Sync] Pull voice_notes error:', voicePullErr);
+      } else if (serverVoice) {
+        for (const sv of serverVoice) {
+          const local = await db.getFirstAsync<any>(
+            'SELECT id, sync_status FROM voice_notes WHERE id = ?',
+            sv.id
+          );
+          if (local?.sync_status === 'pending') continue;
+          if (local) continue; // Voice notes are immutable after capture
+          await db.runAsync(
+            `INSERT OR IGNORE INTO voice_notes
+              (id, variation_id, local_uri, remote_uri, duration_seconds,
+               transcription, transcription_status, sha256_hash,
+               captured_at, sync_status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced')`,
+            sv.id, sv.variation_id,
+            sv.local_uri ?? '', sv.remote_uri ?? null,
+            sv.duration_seconds ?? 0, sv.transcription ?? null,
+            sv.transcription_status ?? 'none', sv.sha256_hash ?? null,
+            sv.captured_at
+          );
+          pulled++;
+        }
+      }
+
+      // 5. Pull status_changes (append-only, no sync_status column)
+      const { data: serverStatusChanges, error: scPullErr } = await supabase
+        .from('status_changes')
+        .select('*')
+        .in('variation_id', serverVariationIds);
+      if (scPullErr) {
+        console.error('[Sync] Pull status_changes error:', scPullErr);
+      } else if (serverStatusChanges) {
+        for (const sc of serverStatusChanges) {
+          const local = await db.getFirstAsync<any>(
+            'SELECT id FROM status_changes WHERE id = ?',
+            sc.id
+          );
+          if (local) continue; // Already have it
+          await db.runAsync(
+            `INSERT OR IGNORE INTO status_changes
+              (id, variation_id, from_status, to_status, changed_at, changed_by, notes)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            sc.id, sc.variation_id, sc.from_status ?? null,
+            sc.to_status, sc.changed_at, sc.changed_by ?? null, sc.notes ?? null
+          );
+          pulled++;
+        }
+      }
+    }
 
     return { success: true, pushed, pulled };
   } catch (error) {
