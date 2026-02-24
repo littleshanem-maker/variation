@@ -4,6 +4,7 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
+    "start:ts": "REACT_NATIVE_PACKAGER_HOSTNAME=100.83.212.14 expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
