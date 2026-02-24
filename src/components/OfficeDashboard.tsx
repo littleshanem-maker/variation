@@ -112,7 +112,7 @@ function DesktopDashboard({
             <View style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' }}>
               <Ionicons name="document-text" size={18} color="#fff" />
             </View>
-            <Text style={{ fontSize: 15, fontWeight: '800', color: colors.text }}>Variation Capture</Text>
+            <Text style={{ fontSize: 15, fontWeight: '800', color: colors.text }}>Variation Shield</Text>
           </View>
 
           {/* Nav Items */}

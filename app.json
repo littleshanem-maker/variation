@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Variation Capture",
-    "slug": "variation-capture",
+    "name": "Variation Shield",
+    "slug": "variation-shield",
     "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,12 +14,12 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.pipelineconsulting.variationcapture",
+      "bundleIdentifier": "com.pipelineconsulting.variationshield",
       "infoPlist": {
-        "NSCameraUsageDescription": "Variation Capture needs camera access to photograph site evidence.",
-        "NSMicrophoneUsageDescription": "Variation Capture needs microphone access to record voice memos.",
-        "NSLocationWhenInUseUsageDescription": "Variation Capture needs location access to GPS-stamp evidence.",
-        "NSPhotoLibraryUsageDescription": "Variation Capture needs photo library access to attach existing photos as evidence."
+        "NSCameraUsageDescription": "Variation Shield needs camera access to photograph site evidence.",
+        "NSMicrophoneUsageDescription": "Variation Shield needs microphone access to record voice memos.",
+        "NSLocationWhenInUseUsageDescription": "Variation Shield needs location access to GPS-stamp evidence.",
+        "NSPhotoLibraryUsageDescription": "Variation Shield needs photo library access to attach existing photos as evidence."
       }
     },
     "android": {
@@ -27,7 +27,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F5F2ED"
       },
-      "package": "com.pipelineconsulting.variationcapture",
+      "package": "com.pipelineconsulting.variationshield",
       "permissions": [
         "CAMERA",
         "RECORD_AUDIO",
@@ -48,23 +48,23 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow Variation Capture to access your camera to photograph site evidence."
+          "cameraPermission": "Allow Variation Shield to access your camera to photograph site evidence."
         }
       ],
       [
         "expo-av",
         {
-          "microphonePermission": "Allow Variation Capture to access your microphone to record voice memos."
+          "microphonePermission": "Allow Variation Shield to access your microphone to record voice memos."
         }
       ],
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Allow Variation Capture to access your location to GPS-stamp evidence."
+          "locationWhenInUsePermission": "Allow Variation Shield to access your location to GPS-stamp evidence."
         }
       ]
     ],
-    "scheme": "variationcapture",
+    "scheme": "variationshield",
     "extra": {
       "eas": {
         "projectId": "your-eas-project-id"

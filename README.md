@@ -1,8 +1,8 @@
-# Variation Capture v2.0
+# Variation Shield v2.0
 
 **Mobile app for construction contractors to capture scope changes in 60 seconds.**
 
-Built for Victorian subcontractors who lose revenue when verbal directions, site instructions, and latent conditions aren't documented properly. Variation Capture creates an immutable evidence chain — GPS-stamped, timestamped, SHA-256 hashed — that makes claims defensible in contract disputes.
+Built for Victorian subcontractors who lose revenue when verbal directions, site instructions, and latent conditions aren't documented properly. Variation Shield creates an immutable evidence chain — GPS-stamped, timestamped, SHA-256 hashed — that makes claims defensible in contract disputes.
 
 ## Quick Start
 

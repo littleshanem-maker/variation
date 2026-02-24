@@ -217,7 +217,7 @@ export function printRegister(projects: ProjectWithVariations[]) {
   const html = `
     <div class="doc-header">
       <div>
-        <div class="brand">Variation Capture</div>
+        <div class="brand">Variation Shield</div>
         <div class="doc-title">Variation Register</div>
       </div>
       <div class="doc-meta">

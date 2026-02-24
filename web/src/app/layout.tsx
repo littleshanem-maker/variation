@@ -3,7 +3,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Variation Capture",
+  title: "Variation Shield",
   description: "Variation register for construction contractors",
 };
 

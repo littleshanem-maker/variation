@@ -1,4 +1,4 @@
-# Demo Setup — Variation Capture
+# Demo Setup — Variation Shield
 
 ## Prerequisites
 - Expo Go installed on your iPhone

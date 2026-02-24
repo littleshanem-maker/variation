@@ -30,7 +30,7 @@ export default function Sidebar() {
       <div className="px-6 py-6">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-white/10 rounded-md flex items-center justify-center text-sm font-semibold tracking-tight">VC</div>
-          <span className="font-semibold text-[15px] tracking-tight">Variation Capture</span>
+          <span className="font-semibold text-[15px] tracking-tight">Variation Shield</span>
         </div>
         {company && (
           <div className="mt-2 text-[11px] text-white/40 truncate">{company.name}</div>

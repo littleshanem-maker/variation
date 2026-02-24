@@ -2,7 +2,7 @@
 
 ## Overview
 
-Transform Variation Capture from single-user to multi-tenant with company-scoped, role-based access.
+Transform Variation Shield from single-user to multi-tenant with company-scoped, role-based access.
 
 ## Roles
 

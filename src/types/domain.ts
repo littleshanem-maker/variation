@@ -1,7 +1,7 @@
 /**
  * Domain Types
  *
- * Core data model for Variation Capture.
+ * Core data model for Variation Shield.
  * All monetary values stored in cents to avoid floating-point issues.
  */
 

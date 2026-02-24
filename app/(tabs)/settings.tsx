@@ -333,7 +333,7 @@ export default function SettingsScreen() {
       </View>
 
       <Text style={styles.footer}>
-        Variation Capture {'\u00B7'} Pipeline Consulting Pty Ltd{'\n'}
+        Variation Shield {'\u00B7'} Pipeline Consulting Pty Ltd{'\n'}
         Built for Victorian construction contractors
       </Text>
 

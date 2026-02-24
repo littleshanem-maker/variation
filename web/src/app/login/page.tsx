@@ -60,7 +60,7 @@ export default function LoginPage() {
             Welcome back
           </h1>
           <p className="text-sm mt-1.5" style={{ color: '#6B7280' }}>
-            Sign in to Variation Capture
+            Sign in to Variation Shield
           </p>
         </div>
 

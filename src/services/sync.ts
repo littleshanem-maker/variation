@@ -86,6 +86,11 @@ export async function syncPendingChanges(): Promise<SyncResult> {
     const userId = session?.user?.id ?? null;
     console.log('[Sync] User ID:', userId ?? 'NOT AUTHENTICATED');
 
+    // Skip sync if not authenticated — RLS will block all queries anyway
+    if (!userId) {
+      return { success: false, message: 'Not authenticated — sync skipped', pushed: 0, pulled: 0 };
+    }
+
     // ---- PUSH: Local → Server ----
 
     // 1. Sync pending projects
@@ -96,7 +101,6 @@ export async function syncPendingChanges(): Promise<SyncResult> {
       try {
         const { error } = await supabase.from('projects').upsert({
           id: project.id,
-          user_id: userId,
           name: project.name,
           client: project.client,
           reference: project.reference,
@@ -243,8 +247,7 @@ export async function syncPendingChanges(): Promise<SyncResult> {
     // 1. Pull projects
     const { data: serverProjects, error: projPullErr } = await supabase
       .from('projects')
-      .select('*')
-      .eq('user_id', userId);
+      .select('*');
     if (projPullErr) {
       console.error('[Sync] Pull projects error:', projPullErr);
     } else if (serverProjects) {
