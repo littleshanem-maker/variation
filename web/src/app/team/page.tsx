@@ -65,8 +65,6 @@ export default function TeamPage() {
       .eq('company_id', companyId)
       .order('invited_at');
 
-    console.log('[Team] members:', { memberData, memberErr });
-
     if (memberData && memberData.length > 0) {
       // Fetch emails via RPC
       const userIds = memberData.map(m => m.user_id);
