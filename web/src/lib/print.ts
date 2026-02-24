@@ -248,7 +248,7 @@ export function printRegister(projects: ProjectWithVariations[]) {
     ${projectSections}
 
     <div class="footer">
-      <div>Pipeline Consulting Pty Ltd</div>
+      <div>Leveraged Systems</div>
       <div>Page <span class="page-number"></span></div>
     </div>
   `;
@@ -308,7 +308,7 @@ export function printProjectRegister(project: Project, variations: Variation[]) 
     </table>
 
     <div class="footer">
-      <div>Pipeline Consulting Pty Ltd</div>
+      <div>Leveraged Systems</div>
       <div>${escapeHtml(project.name)}</div>
     </div>
   `;
@@ -397,7 +397,7 @@ export function printVariation(
     ${photoGrid}
 
     <div class="footer">
-      <div>Pipeline Consulting Pty Ltd</div>
+      <div>Leveraged Systems</div>
       <div>Ref: ${variation.evidence_hash?.substring(0,8) || ''}</div>
     </div>
   `;

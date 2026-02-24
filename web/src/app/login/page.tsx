@@ -168,7 +168,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-xs mt-10" style={{ color: '#C4C9D0' }}>
-          Leveraged Systems · Pipeline Consulting Pty Ltd
+          Leveraged Systems · Leveraged Systems
         </p>
       </div>
     </div>

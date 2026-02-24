@@ -131,7 +131,7 @@ export default function SettingsPage() {
         <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">About</h3>
           <p className="text-[13px] text-[#6B7280]">Variation Capture · <span className="capitalize">{role}</span> Access</p>
-          <p className="text-[13px] text-[#9CA3AF] mt-0.5">Version 2.1.0 · Pipeline Consulting Pty Ltd</p>
+          <p className="text-[13px] text-[#9CA3AF] mt-0.5">Version 2.1.0 · Leveraged Systems</p>
         </div>
       </div>
     </AppShell>
