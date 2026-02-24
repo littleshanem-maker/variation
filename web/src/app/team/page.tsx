@@ -130,13 +130,21 @@ export default function TeamPage() {
 
   async function handleRemoveMember(memberId: string) {
     const supabase = createClient();
-    await supabase.from('company_members').update({ is_active: false }).eq('id', memberId);
+    const { error } = await supabase.from('company_members').update({ is_active: false }).eq('id', memberId);
+    if (error) {
+      console.error('Remove member failed:', error);
+      alert('Failed to remove member: ' + error.message);
+    }
     loadTeam();
   }
 
   async function handleChangeRole(memberId: string, newRole: UserRole) {
     const supabase = createClient();
-    await supabase.from('company_members').update({ role: newRole }).eq('id', memberId);
+    const { error } = await supabase.from('company_members').update({ role: newRole }).eq('id', memberId);
+    if (error) {
+      console.error('Change role failed:', error);
+      alert('Failed to change role: ' + error.message);
+    }
     loadTeam();
   }
 
