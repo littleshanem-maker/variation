@@ -203,7 +203,7 @@ export default function Dashboard() {
           </div>
           {projects.length === 0 ? (
             <div className="bg-white rounded-md border border-[#E5E7EB] p-12 text-center text-[#9CA3AF] text-sm">
-              No projects yet. Capture your first variation from the mobile app.
+              No projects yet. Click <strong>+ New Project</strong> above to get started.
             </div>
           ) : (
             <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
