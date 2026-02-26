@@ -38,7 +38,8 @@ function VariationsList() {
   async function loadData() {
     const supabase = createClient();
     
-    const { data: projects } = await supabase.from('projects').select('*');
+    const { data: projects } = await supabase.from('projects').select('*').eq('is_active', true);
+    const activeProjectIds = new Set(projects?.map(p => p.id) || []);
     const projectMap = new Map(projects?.map(p => [p.id, p.name]));
 
     const { data: vars } = await supabase
@@ -47,7 +48,8 @@ function VariationsList() {
       .order('captured_at', { ascending: false });
 
     if (vars) {
-      const enriched = vars.map(v => ({
+      const activeVars = vars.filter(v => activeProjectIds.has(v.project_id));
+      const enriched = activeVars.map(v => ({
         ...v,
         project_name: projectMap.get(v.project_id) || 'Unknown Project'
       }));
@@ -55,7 +57,7 @@ function VariationsList() {
 
       const projectsWithVars = (projects || []).map(p => ({
         ...p,
-        variations: vars.filter(v => v.project_id === p.id),
+        variations: activeVars.filter(v => v.project_id === p.id),
       }));
       setRawProjects(projectsWithVars);
     }

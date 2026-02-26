@@ -60,7 +60,8 @@ export default function Dashboard() {
 
     if (vErr) { setError(vErr.message); setLoading(false); return; }
 
-    const allVariations = variationsData || [];
+    const activeProjectIds = new Set((projectsData || []).map((p: Project) => p.id));
+    const allVariations = (variationsData || []).filter((v: Variation) => activeProjectIds.has(v.project_id));
     setAllVariationsRaw(allVariations);
     const allProjects = (projectsData || []).map((p: Project) => ({
       ...p,
