@@ -234,6 +234,7 @@ export function printRegister(projects: ProjectWithVariations[]) {
   const allVariations = projects.flatMap(p => p.variations);
   const totalValue = allVariations.reduce((s, v) => s + v.estimated_value, 0);
   const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
+  const logoUrl = `${window.location.origin}/variation-shield-logo.jpg`;
 
   const projectSections = projects.map(p => {
     if (p.variations.length === 0) return '';
@@ -276,7 +277,10 @@ export function printRegister(projects: ProjectWithVariations[]) {
   const html = `
     <div class="doc-header">
       <div>
-        <div class="brand">Variation Shield</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <img src="${logoUrl}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;" />
+          <div class="brand">Variation Shield</div>
+        </div>
         <div class="doc-title">Variation Register</div>
       </div>
       <div class="doc-meta">
@@ -307,7 +311,10 @@ export function printRegister(projects: ProjectWithVariations[]) {
     ${projectSections}
 
     <div class="footer">
-      <div>Leveraged Systems</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <img src="${logoUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;" />
+        <span>Variation Shield</span>
+      </div>
       <div>Page <span class="page-number"></span></div>
     </div>
   `;
@@ -321,6 +328,7 @@ export function printRegister(projects: ProjectWithVariations[]) {
 export function printProjectRegister(project: Project, variations: Variation[]) {
   const totalValue = variations.reduce((s, v) => s + v.estimated_value, 0);
   const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
+  const logoUrl = `${window.location.origin}/variation-shield-logo.jpg`;
 
   const rows = variations.map(v => `
     <tr>
@@ -336,7 +344,10 @@ export function printProjectRegister(project: Project, variations: Variation[]) 
   const html = `
     <div class="doc-header">
       <div>
-        <div class="brand">Variation Register</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <img src="${logoUrl}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;" />
+          <div class="brand">Variation Shield</div>
+        </div>
         <div class="doc-title">${escapeHtml(project.name)}</div>
         <div style="font-size:11pt; color:#6B7280; margin-top:4px;">${escapeHtml(project.client)}</div>
       </div>
@@ -367,7 +378,10 @@ export function printProjectRegister(project: Project, variations: Variation[]) 
     </table>
 
     <div class="footer">
-      <div>Leveraged Systems</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <img src="${logoUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;" />
+        <span>Variation Shield</span>
+      </div>
       <div>${escapeHtml(project.name)}</div>
     </div>
   `;
@@ -387,6 +401,7 @@ export function printVariation(
   const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
   const status = getStatusConfig(variation.status).label;
   const varNumber = getVariationNumber(variation);
+  const logoUrl = `${window.location.origin}/variation-shield-logo.jpg`;
   
   const photoGrid = photos.length > 0 ? `
     <div class="avoid-break">
@@ -451,7 +466,10 @@ export function printVariation(
   const html = `
     <div class="doc-header">
       <div>
-        <div class="brand">Variation Instruction</div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <img src="${logoUrl}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;" />
+          <div class="brand">Variation Shield</div>
+        </div>
         <div class="doc-title">${escapeHtml(varNumber)}: ${escapeHtml(variation.title)}</div>
       </div>
       <div class="doc-meta">
@@ -509,7 +527,10 @@ export function printVariation(
     ${clientResponseSection}
 
     <div class="footer">
-      <div>Leveraged Systems · Variation Shield</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <img src="${logoUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;" />
+        <span>Variation Shield</span>
+      </div>
       <div>${escapeHtml(varNumber)} · Ref: ${variation.evidence_hash?.substring(0,8) || ''}</div>
     </div>
   `;
