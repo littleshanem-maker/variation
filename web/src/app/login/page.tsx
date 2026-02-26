@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase';
 
 export default function LoginPage() {
@@ -53,9 +54,7 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-sm mx-auto px-6">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: '#1B365D' }}>
-            <span className="text-white text-sm font-bold tracking-tight">VC</span>
-          </div>
+          <Image src="/variation-shield-logo.jpg" alt="Variation Shield" width={64} height={64} className="rounded-xl mb-5 object-cover" />
           <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#1C1C1E' }}>
             Welcome back
           </h1>

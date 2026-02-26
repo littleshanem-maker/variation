@@ -29,7 +29,7 @@ export default function VariationDetail() {
   const [loading, setLoading] = useState(true);
 
   // Status advancement state
-  const { isField, isAdmin, isOffice } = useRole();
+  const { isField, isAdmin, isOffice, company } = useRole();
   const [advancingStatus, setAdvancingStatus] = useState(false);
 
   // Delete state
@@ -207,7 +207,7 @@ export default function VariationDetail() {
 
   function handlePrint() {
     if (variation && project) {
-      printVariation(variation, project, photos, photoUrls);
+      printVariation(variation, project, photos, photoUrls, company?.name || '');
     }
   }
 

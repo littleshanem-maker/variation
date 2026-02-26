@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { createClient } from '@/lib/supabase';
 
 export default function TopBar({ title, onPrint, printLabel = 'Print' }: { title: string; onPrint?: () => void; printLabel?: string }) {
@@ -31,13 +30,6 @@ export default function TopBar({ title, onPrint, printLabel = 'Print' }: { title
   return (
     <header className="h-14 border-b border-[#E5E7EB] bg-white flex items-center justify-between px-8">
       <div className="flex items-center gap-3">
-        <Image
-          src="/variation-shield-logo.jpg"
-          alt="Variation Shield"
-          width={28}
-          height={28}
-          className="rounded-md"
-        />
         <h1 className="text-lg font-semibold text-[#1C1C1E]">{displayTitle}</h1>
       </div>
       <div className="flex items-center gap-3">

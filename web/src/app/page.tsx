@@ -21,6 +21,7 @@ interface StatusSummary {
 
 export default function Dashboard() {
   const [projects, setProjects] = useState<(Project & { variations: Variation[] })[]>([]);
+  const [allVariationsRaw, setAllVariationsRaw] = useState<Variation[]>([]);
   const [recentVariations, setRecentVariations] = useState<(Variation & { project_name: string })[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +61,7 @@ export default function Dashboard() {
     if (vErr) { setError(vErr.message); setLoading(false); return; }
 
     const allVariations = variationsData || [];
+    setAllVariationsRaw(allVariations);
     const allProjects = (projectsData || []).map((p: Project) => ({
       ...p,
       variations: allVariations.filter((v: Variation) => v.project_id === p.id),
@@ -142,7 +144,7 @@ export default function Dashboard() {
     );
   }
 
-  const allVariations = projects.flatMap(p => p.variations);
+  const allVariations = allVariationsRaw;
   const statuses = ['draft', 'submitted', 'approved', 'paid', 'disputed'];
   const summaries: StatusSummary[] = statuses.map(s => {
     const config = getStatusConfig(s);

@@ -337,7 +337,8 @@ export function printVariation(
   variation: Variation, 
   project: Project, 
   photos: PhotoEvidence[], 
-  photoUrls: Record<string, string>
+  photoUrls: Record<string, string>,
+  companyName: string = ''
 ) {
   const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
   const status = getStatusConfig(variation.status).label;
@@ -362,10 +363,14 @@ export function printVariation(
     </div>
   ` : '';
 
+  const displayName = variation.requestor_name && !variation.requestor_name.includes('@')
+    ? variation.requestor_name
+    : '—';
+
   const requestorSection = (variation.requestor_name || variation.requestor_email) ? `
     <div class="field-group">
       <div class="field-label">Submitted By</div>
-      <div class="field-value">${escapeHtml(variation.requestor_name || '—')}</div>
+      <div class="field-value">${escapeHtml(displayName)}</div>
       ${variation.requestor_email ? `<div class="field-value text-muted" style="font-weight:400; margin-top:2px; font-size:9pt;">${escapeHtml(variation.requestor_email)}</div>` : ''}
     </div>
   ` : '';
@@ -375,7 +380,7 @@ export function printVariation(
   const html = `
     <div class="doc-header">
       <div>
-        <div class="brand">${escapeHtml(project.client)}</div>
+        <div class="brand">${escapeHtml(companyName || project.name)}</div>
         <div class="doc-title">Variation Form</div>
       </div>
       <div class="doc-meta">
