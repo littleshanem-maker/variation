@@ -146,12 +146,14 @@ export default function Dashboard() {
   const statuses = ['draft', 'submitted', 'approved', 'paid', 'disputed'];
   const summaries: StatusSummary[] = statuses.map(s => {
     const config = getStatusConfig(s);
-    const filtered = allVariations.filter(v => v.status === s);
+    const filtered = s === 'draft'
+      ? allVariations.filter(v => v.status === 'draft' || v.status === 'captured')
+      : allVariations.filter(v => v.status === s);
     return {
       status: s,
       label: config.label,
       count: filtered.length,
-      total: filtered.reduce((sum, v) => sum + v.estimated_value, 0),
+      total: filtered.reduce((sum, v) => sum + (v.estimated_value || 0), 0),
       border: config.border,
     };
   });
@@ -161,7 +163,7 @@ export default function Dashboard() {
     status: 'at_risk',
     label: 'At Risk',
     count: atRiskVariations.length,
-    total: atRiskVariations.reduce((sum, v) => sum + v.estimated_value, 0),
+    total: atRiskVariations.reduce((sum, v) => sum + (v.estimated_value || 0), 0),
     border: 'border-[#C8943E]',
   });
 
@@ -219,10 +221,10 @@ export default function Dashboard() {
                 </thead>
                 <tbody>
                   {projects.map((p, i) => {
-                    const totalValue = p.variations.reduce((sum, v) => sum + v.estimated_value, 0);
+                    const totalValue = p.variations.reduce((sum, v) => sum + (v.estimated_value || 0), 0);
                     const atRisk = p.variations
                       .filter(v => v.status === 'disputed' || v.status === 'draft' || v.status === 'captured')
-                      .reduce((sum, v) => sum + v.estimated_value, 0);
+                      .reduce((sum, v) => sum + (v.estimated_value || 0), 0);
                     return (
                       <Link key={p.id} href={`/project/${p.id}`} className="contents">
                         <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === projects.length - 1 ? 'border-b-0' : ''}`}>

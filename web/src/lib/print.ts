@@ -124,65 +124,6 @@ const GLOBAL_CSS = `
   }
   .photo-caption { font-size: 8pt; color: #6B7280; }
 
-  /* CLIENT RESPONSE SECTION */
-  .client-response {
-    margin-top: 64px;
-    border: 1.5px solid #1C1C1E;
-    border-radius: 4px;
-    padding: 28px 32px 32px;
-    page-break-inside: avoid;
-  }
-  .client-response-title {
-    font-size: 11pt;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #1C1C1E;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #E5E7EB;
-  }
-  .response-options {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-bottom: 32px;
-  }
-  .response-option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 10pt;
-    font-weight: 500;
-    color: #1C1C1E;
-  }
-  .checkbox {
-    width: 18px;
-    height: 18px;
-    border: 1.5px solid #1C1C1E;
-    border-radius: 2px;
-    display: inline-block;
-    flex-shrink: 0;
-  }
-  .signature-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 32px;
-    margin-top: 16px;
-  }
-  .sig-field {
-    border-bottom: 1.5px solid #1C1C1E;
-    padding-bottom: 52px;
-    margin-bottom: 8px;
-  }
-  .sig-label {
-    font-size: 8pt;
-    color: #6B7280;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-top: 8px;
-  }
-
   /* FOOTER */
   .footer { 
     position: fixed; 
@@ -429,48 +370,13 @@ export function printVariation(
     </div>
   ` : '';
 
-  const clientResponseSection = `
-    <div class="client-response avoid-break">
-      <div class="client-response-title">Client Response</div>
-      <div class="response-options">
-        <div class="response-option">
-          <div class="checkbox"></div>
-          Accepted
-        </div>
-        <div class="response-option">
-          <div class="checkbox"></div>
-          Denied
-        </div>
-        <div class="response-option">
-          <div class="checkbox"></div>
-          More Information Required
-        </div>
-      </div>
-      <div class="signature-grid">
-        <div>
-          <div class="sig-field"></div>
-          <div class="sig-label">Client Name</div>
-        </div>
-        <div>
-          <div class="sig-field"></div>
-          <div class="sig-label">Signature</div>
-        </div>
-        <div>
-          <div class="sig-field"></div>
-          <div class="sig-label">Date</div>
-        </div>
-      </div>
-    </div>
-  `;
+
 
   const html = `
     <div class="doc-header">
       <div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-          <img src="${logoUrl}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;" />
-          <div class="brand">Variation Shield</div>
-        </div>
-        <div class="doc-title">${escapeHtml(varNumber)}: ${escapeHtml(variation.title)}</div>
+        <div class="brand">${escapeHtml(project.client)}</div>
+        <div class="doc-title">Variation Form</div>
       </div>
       <div class="doc-meta">
         <div class="meta-row" style="font-size:11pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(varNumber)}</div>
@@ -523,8 +429,6 @@ export function printVariation(
     ` : ''}
 
     ${photoGrid}
-
-    ${clientResponseSection}
 
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">

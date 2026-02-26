@@ -259,7 +259,7 @@ export default function VariationDetail() {
 
   return (
     <AppShell>
-      <TopBar title={getVariationNumber(variation)} onPrint={isField ? undefined : handlePrint} printLabel="Print Variation" />
+      <TopBar title="Variation Shield" onPrint={isField ? undefined : handlePrint} printLabel="Print Variation" />
       <div className="p-8 space-y-5 max-w-4xl">
         <div className="flex items-center justify-between">
           <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">

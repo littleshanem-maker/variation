@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRole } from '@/lib/role';
@@ -29,7 +30,7 @@ export default function Sidebar() {
     <aside className="fixed left-0 top-0 bottom-0 w-[240px] bg-[#1B365D] text-white flex flex-col z-50">
       <div className="px-6 py-6">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white/10 rounded-md flex items-center justify-center text-sm font-semibold tracking-tight">VC</div>
+          <Image src="/variation-shield-logo.jpg" alt="Variation Shield" width={32} height={32} className="rounded-md object-cover" />
           <span className="font-semibold text-[15px] tracking-tight">Variation Shield</span>
         </div>
         {company && (
