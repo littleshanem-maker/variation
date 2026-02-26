@@ -126,10 +126,10 @@ const GLOBAL_CSS = `
 
   /* CLIENT RESPONSE SECTION */
   .client-response {
-    margin-top: 48px;
+    margin-top: 64px;
     border: 1.5px solid #1C1C1E;
     border-radius: 4px;
-    padding: 24px 28px;
+    padding: 28px 32px 32px;
     page-break-inside: avoid;
   }
   .client-response-title {
@@ -144,13 +144,14 @@ const GLOBAL_CSS = `
   }
   .response-options {
     display: flex;
-    gap: 32px;
-    margin-bottom: 28px;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 32px;
   }
   .response-option {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     font-size: 10pt;
     font-weight: 500;
     color: #1C1C1E;
@@ -166,20 +167,20 @@ const GLOBAL_CSS = `
   .signature-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 24px;
-    margin-top: 8px;
+    gap: 32px;
+    margin-top: 16px;
   }
   .sig-field {
-    border-bottom: 1px solid #1C1C1E;
-    padding-bottom: 32px;
-    margin-bottom: 6px;
+    border-bottom: 1.5px solid #1C1C1E;
+    padding-bottom: 52px;
+    margin-bottom: 8px;
   }
   .sig-label {
     font-size: 8pt;
     color: #6B7280;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-top: 6px;
+    margin-top: 8px;
   }
 
   /* FOOTER */

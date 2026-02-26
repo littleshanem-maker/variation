@@ -77,7 +77,11 @@ export default function ProjectDetail() {
         .select('full_name')
         .eq('id', user.id)
         .single();
-      requestorName = profile?.full_name ?? user.email ?? null;
+      requestorName =
+        profile?.full_name ??
+        (user.user_metadata?.full_name as string | undefined) ??
+        (user.user_metadata?.name as string | undefined) ??
+        null;
     }
 
     const { error } = await supabase.from('variations').insert({

@@ -143,7 +143,7 @@ export default function Dashboard() {
   }
 
   const allVariations = projects.flatMap(p => p.variations);
-  const statuses = ['captured', 'submitted', 'approved', 'paid', 'disputed'];
+  const statuses = ['draft', 'submitted', 'approved', 'paid', 'disputed'];
   const summaries: StatusSummary[] = statuses.map(s => {
     const config = getStatusConfig(s);
     const filtered = allVariations.filter(v => v.status === s);
@@ -156,7 +156,7 @@ export default function Dashboard() {
     };
   });
 
-  const atRiskVariations = allVariations.filter(v => v.status === 'disputed' || v.status === 'captured');
+  const atRiskVariations = allVariations.filter(v => v.status === 'disputed' || v.status === 'draft' || v.status === 'captured');
   summaries.push({
     status: 'at_risk',
     label: 'At Risk',
@@ -221,7 +221,7 @@ export default function Dashboard() {
                   {projects.map((p, i) => {
                     const totalValue = p.variations.reduce((sum, v) => sum + v.estimated_value, 0);
                     const atRisk = p.variations
-                      .filter(v => v.status === 'disputed' || v.status === 'captured')
+                      .filter(v => v.status === 'disputed' || v.status === 'draft' || v.status === 'captured')
                       .reduce((sum, v) => sum + v.estimated_value, 0);
                     return (
                       <Link key={p.id} href={`/project/${p.id}`} className="contents">
