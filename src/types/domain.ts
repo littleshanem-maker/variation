@@ -10,9 +10,11 @@
 // ============================================================
 
 export enum VariationStatus {
-  CAPTURED = 'captured',
+  DRAFT = 'draft',
+  CAPTURED = 'captured', // legacy alias for draft — kept for backward compat
   SUBMITTED = 'submitted',
   APPROVED = 'approved',
+  REJECTED = 'rejected',
   DISPUTED = 'disputed',
   PAID = 'paid',
 }
@@ -63,6 +65,7 @@ export interface Variation {
   id: string;
   projectId: string;
   sequenceNumber: number;
+  variationNumber: string; // VAR-001 format, derived from sequenceNumber
   title: string;
   description: string;
   instructionSource: InstructionSource;
@@ -78,6 +81,9 @@ export interface Variation {
   notes?: string;
   syncStatus: SyncStatus;
   remoteId?: string;
+  // Requestor info (who captured/submitted this variation)
+  requestorName?: string;
+  requestorEmail?: string;
   // AI-generated fields
   aiDescription?: string;
   aiTranscription?: string;

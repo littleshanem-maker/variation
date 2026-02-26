@@ -7,7 +7,7 @@ import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatCurrency, formatDate, getVariationNumber, formatVariationNumber } from '@/lib/utils';
 import { printProjectRegister } from '@/lib/print';
 import { useRole } from '@/lib/role';
 import type { Project, Variation } from '@/lib/types';
@@ -65,18 +65,35 @@ export default function ProjectDetail() {
     const nextSeq = variations.length > 0 ? Math.max(...variations.map(v => v.sequence_number)) + 1 : 1;
     const valueCents = Math.round(parseFloat(newValue || '0') * 100);
     const variationId = crypto.randomUUID();
+    const variationNumber = formatVariationNumber(nextSeq);
+
+    // Get requestor info from profile
+    let requestorName: string | null = null;
+    let requestorEmail: string | null = null;
+    if (user) {
+      requestorEmail = user.email ?? null;
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+      requestorName = profile?.full_name ?? user.email ?? null;
+    }
 
     const { error } = await supabase.from('variations').insert({
       id: variationId,
       project_id: id,
       sequence_number: nextSeq,
+      variation_number: variationNumber,
       title: newTitle.trim(),
       description: newDescription.trim(),
       instruction_source: newSource,
       instructed_by: newInstructedBy.trim() || null,
       estimated_value: valueCents,
-      status: 'captured',
+      status: 'draft',
       captured_at: new Date().toISOString(),
+      requestor_name: requestorName,
+      requestor_email: requestorEmail,
     });
 
     if (!error && newFiles.length > 0 && user) {
@@ -222,7 +239,7 @@ export default function ProjectDetail() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#E5E7EB]">
-                  <SortHeader label="#" field="sequence_number" />
+                  <SortHeader label="Var No." field="sequence_number" />
                   <SortHeader label="Title" field="title" />
                   <SortHeader label="Status" field="status" />
                   <SortHeader label="Instruction Source" field="instruction_source" />
@@ -234,7 +251,7 @@ export default function ProjectDetail() {
                 {sorted.map((v, i) => (
                   <Link key={v.id} href={`/variation/${v.id}`} className="contents">
                     <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
-                      <td className="px-5 py-2.5 text-[13px] text-[#9CA3AF] tabular-nums">{v.sequence_number}</td>
+                      <td className="px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums">{getVariationNumber(v)}</td>
                       <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{v.title}</td>
                       <td className="px-5 py-2.5"><StatusBadge status={v.status} /></td>
                       <td className="px-5 py-2.5 text-[13px] text-[#6B7280] capitalize">{v.instruction_source?.replace(/_/g, ' ')}</td>

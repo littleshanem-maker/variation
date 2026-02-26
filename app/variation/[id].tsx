@@ -39,10 +39,12 @@ import { openAttachment, getFileIcon, formatFileSize, pickAttachment } from '../
 
 // Status transition rules
 const NEXT_STATUS: Record<string, VariationStatus[]> = {
-  captured: [VariationStatus.SUBMITTED, VariationStatus.DISPUTED],
-  submitted: [VariationStatus.APPROVED, VariationStatus.DISPUTED],
-  approved: [VariationStatus.PAID, VariationStatus.DISPUTED],
-  disputed: [VariationStatus.SUBMITTED, VariationStatus.APPROVED],
+  draft: [VariationStatus.SUBMITTED],
+  captured: [VariationStatus.SUBMITTED], // legacy alias for draft
+  submitted: [VariationStatus.APPROVED, VariationStatus.REJECTED, VariationStatus.DISPUTED],
+  approved: [],
+  rejected: [],
+  disputed: [],
   paid: [],
 };
 
@@ -465,6 +467,7 @@ export default function VariationDetailScreen() {
                   ]}
                 >
                   {s === VariationStatus.DISPUTED ? 'Dispute'
+                    : s === VariationStatus.REJECTED ? 'Reject'
                     : (isField && s === VariationStatus.SUBMITTED) ? 'Submit'
                     : `Mark ${getStatusLabel(s)}`}
                 </Text>
@@ -539,9 +542,12 @@ export default function VariationDetailScreen() {
             </View>
           ) : (
             <View style={styles.detailGrid}>
+              <DetailRow label="Variation No." value={variation.variationNumber} />
               <DetailRow label="Captured" value={formatDateTime(variation.capturedAt)} />
               <DetailRow label="Source" value={capitalize(variation.instructionSource)} />
               {variation.instructedBy && <DetailRow label="Instructed By" value={variation.instructedBy} />}
+              {variation.requestorName && <DetailRow label="Requestor" value={variation.requestorName} />}
+              {variation.requestorEmail && <DetailRow label="Requestor Email" value={variation.requestorEmail} />}
               {variation.referenceDoc && <DetailRow label="Reference" value={variation.referenceDoc} />}
               {variation.latitude && (
                 <DetailRow label="GPS" value={formatCoordinates(variation.latitude, variation.longitude!)} />

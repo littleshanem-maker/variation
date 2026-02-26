@@ -22,7 +22,15 @@ export function formatDate(dateStr: string): string {
 
 /** Status display config — desaturated, sophisticated tones */
 export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; dot: string }> = {
+  draft: {
+    label: 'Draft',
+    color: 'text-[#6B7280]',
+    bg: 'bg-[#F3F4F6]',
+    border: 'border-[#9CA3AF]',
+    dot: 'bg-[#9CA3AF]',
+  },
   captured: {
+    // Legacy alias for draft — backward compat
     label: 'Draft',
     color: 'text-[#6B7280]',
     bg: 'bg-[#F3F4F6]',
@@ -43,6 +51,13 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
     border: 'border-[#4A7C6F]',
     dot: 'bg-[#4A7C6F]',
   },
+  rejected: {
+    label: 'Rejected',
+    color: 'text-[#5B3A7C]',
+    bg: 'bg-[#F5F0FA]',
+    border: 'border-[#7C5BA0]',
+    dot: 'bg-[#7C5BA0]',
+  },
   paid: {
     label: 'Paid',
     color: 'text-[#1C1C1E]',
@@ -58,6 +73,16 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
     dot: 'bg-[#B25B4E]',
   },
 };
+
+/** Format sequence number as VAR-001 */
+export function formatVariationNumber(sequenceNumber: number): string {
+  return `VAR-${String(sequenceNumber).padStart(3, '0')}`;
+}
+
+/** Get variation number, falling back to sequence number if variation_number not set */
+export function getVariationNumber(variation: { variation_number?: string; sequence_number: number }): string {
+  return variation.variation_number ?? formatVariationNumber(variation.sequence_number);
+}
 
 export function getStatusConfig(status: string) {
   return STATUS_CONFIG[status] || STATUS_CONFIG.captured;

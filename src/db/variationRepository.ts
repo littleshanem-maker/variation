@@ -34,44 +34,51 @@ export interface CreateVariationInput {
   longitude?: number;
   locationAccuracy?: number;
   notes?: string;
+  requestorName?: string;
+  requestorEmail?: string;
 }
 
 export async function createVariation(input: CreateVariationInput): Promise<Variation> {
   const db = await getDatabase();
   const now = nowISO();
   const id = generateId();
+  const variationNumber = `VAR-${String(input.sequenceNumber).padStart(3, '0')}`;
 
   const variation: Variation = {
     id,
     projectId: input.projectId,
     sequenceNumber: input.sequenceNumber,
+    variationNumber,
     title: input.title,
     description: input.description,
     instructionSource: input.instructionSource,
     instructedBy: input.instructedBy,
     referenceDoc: input.referenceDoc,
     estimatedValue: input.estimatedValue,
-    status: VariationStatus.CAPTURED,
+    status: VariationStatus.DRAFT,
     capturedAt: now,
     latitude: input.latitude,
     longitude: input.longitude,
     locationAccuracy: input.locationAccuracy,
     notes: input.notes,
+    requestorName: input.requestorName,
+    requestorEmail: input.requestorEmail,
     syncStatus: SyncStatus.PENDING,
   };
 
   await db.runAsync(
-    `INSERT INTO variations (id, project_id, sequence_number, title, description, instruction_source, instructed_by, reference_doc, estimated_value, status, captured_at, latitude, longitude, location_accuracy, notes, sync_status)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    id, input.projectId, input.sequenceNumber, input.title, input.description,
+    `INSERT INTO variations (id, project_id, sequence_number, variation_number, title, description, instruction_source, instructed_by, reference_doc, estimated_value, status, captured_at, latitude, longitude, location_accuracy, notes, requestor_name, requestor_email, sync_status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    id, input.projectId, input.sequenceNumber, variationNumber, input.title, input.description,
     input.instructionSource, input.instructedBy ?? null, input.referenceDoc ?? null,
-    input.estimatedValue, VariationStatus.CAPTURED, now,
+    input.estimatedValue, VariationStatus.DRAFT, now,
     input.latitude ?? null, input.longitude ?? null, input.locationAccuracy ?? null,
-    input.notes ?? null, SyncStatus.PENDING,
+    input.notes ?? null, input.requestorName ?? null, input.requestorEmail ?? null,
+    SyncStatus.PENDING,
   );
 
   // Record initial status
-  await addStatusChange(id, null, VariationStatus.CAPTURED);
+  await addStatusChange(id, null, VariationStatus.DRAFT);
 
   return variation;
 }
@@ -364,10 +371,12 @@ export async function getPendingSyncCount(): Promise<number> {
 // ============================================================
 
 function mapVariationRow(row: any): Variation {
+  const seqNum = row.sequence_number as number;
   return {
     id: row.id,
     projectId: row.project_id,
-    sequenceNumber: row.sequence_number,
+    sequenceNumber: seqNum,
+    variationNumber: row.variation_number ?? `VAR-${String(seqNum).padStart(3, '0')}`,
     title: row.title,
     description: row.description,
     instructionSource: row.instruction_source as InstructionSource,
@@ -381,6 +390,8 @@ function mapVariationRow(row: any): Variation {
     locationAccuracy: row.location_accuracy ?? undefined,
     evidenceHash: row.evidence_hash ?? undefined,
     notes: row.notes ?? undefined,
+    requestorName: row.requestor_name ?? undefined,
+    requestorEmail: row.requestor_email ?? undefined,
     syncStatus: row.sync_status as SyncStatus,
     remoteId: row.remote_id ?? undefined,
     aiDescription: row.ai_description ?? undefined,

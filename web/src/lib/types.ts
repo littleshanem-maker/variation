@@ -62,6 +62,7 @@ export interface Variation {
   id: string;
   project_id: string;
   sequence_number: number;
+  variation_number?: string; // VAR-001 format, derived from sequence_number if not stored
   title: string;
   description: string;
   instruction_source: string;
@@ -74,6 +75,8 @@ export interface Variation {
   longitude?: number;
   evidence_hash?: string;
   notes?: string;
+  requestor_name?: string;
+  requestor_email?: string;
   ai_description?: string;
   ai_transcription?: string;
   created_at: string;

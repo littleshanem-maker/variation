@@ -18,6 +18,7 @@ import { spacing, borderRadius, typography, touchTargets } from '../../src/theme
 import { useThemeColors, useAppMode } from '../../src/contexts/AppModeContext';
 import { getNextVariationSequence } from '../../src/db/projectRepository';
 import { createVariation, addPhotoEvidence, addVoiceNote, updateEvidenceHash } from '../../src/db/variationRepository';
+import { getCurrentUser } from '../../src/services/auth';
 import { InstructionSource } from '../../src/types/domain';
 import { generateId, nowISO, formatDuration, parseInputToCents } from '../../src/utils/helpers';
 import { hashFile, computeCombinedEvidenceHash } from '../../src/services/evidenceChain';
@@ -123,6 +124,10 @@ export default function CaptureScreen() {
     try {
       const location = await getCurrentLocation();
       const seq = await getNextVariationSequence(projectId!);
+      // Get requestor info from authenticated user
+      const currentUser = await getCurrentUser().catch(() => null);
+      const requestorName = currentUser?.fullName || currentUser?.email || undefined;
+      const requestorEmail = currentUser?.email || undefined;
       const variation = await createVariation({
         projectId: projectId!, sequenceNumber: seq, title: title.trim(),
         description: description.trim(), instructionSource: source,
@@ -131,6 +136,8 @@ export default function CaptureScreen() {
         estimatedValue: parseInputToCents(estimatedValue),
         latitude: location?.latitude, longitude: location?.longitude, locationAccuracy: location?.accuracy,
         notes: notes.trim() || undefined,
+        requestorName,
+        requestorEmail,
       });
       const photoHashes: string[] = [];
       for (const photo of photos) {

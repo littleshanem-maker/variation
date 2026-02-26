@@ -7,13 +7,13 @@ import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatCurrency, formatDate, getVariationNumber } from '@/lib/utils';
 import { printVariation } from '@/lib/print';
 import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document } from '@/lib/types';
 
-const EDITABLE_STATUSES = ['captured', 'submitted'];
-const DELETABLE_STATUSES = ['captured', 'submitted'];
+const EDITABLE_STATUSES = ['draft', 'captured', 'submitted'];
+const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
 
 export default function VariationDetail() {
   const { id } = useParams<{ id: string }>();
@@ -28,8 +28,11 @@ export default function VariationDetail() {
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
 
-  // Delete state
+  // Status advancement state
   const { isField, isAdmin, isOffice } = useRole();
+  const [advancingStatus, setAdvancingStatus] = useState(false);
+
+  // Delete state
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -135,6 +138,29 @@ export default function VariationDetail() {
     }
   }
 
+  async function handleAdvanceStatus(newStatus: string) {
+    if (!variation) return;
+    setAdvancingStatus(true);
+    const supabase = createClient();
+    const oldStatus = variation.status;
+    const { error } = await supabase.from('variations').update({ status: newStatus }).eq('id', variation.id);
+    if (!error) {
+      // Log the status change
+      const { data: { user } } = await supabase.auth.getUser();
+      const changedBy = user?.email ?? 'Office';
+      await supabase.from('status_changes').insert({
+        id: crypto.randomUUID(),
+        variation_id: variation.id,
+        from_status: oldStatus,
+        to_status: newStatus,
+        changed_at: new Date().toISOString(),
+        changed_by: changedBy,
+      });
+      await loadVariation();
+    }
+    setAdvancingStatus(false);
+  }
+
   async function loadVariation() {
     const supabase = createClient();
     const { data: v } = await supabase.from('variations').select('*').eq('id', id).single();
@@ -207,9 +233,33 @@ export default function VariationDetail() {
   const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none";
   const labelClass = "block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1";
 
+  // Determine which status actions are available
+  const STATUS_TRANSITIONS: Record<string, string[]> = {
+    draft:     ['submitted'],
+    captured:  ['submitted'], // legacy alias
+    submitted: ['approved', 'rejected', 'disputed'],
+    approved:  [],
+    rejected:  [],
+    disputed:  [],
+    paid:      [],
+  };
+  const STATUS_ACTION_LABELS: Record<string, string> = {
+    submitted: 'Submit for Approval',
+    approved:  'Approve',
+    rejected:  'Reject',
+    disputed:  'Mark Disputed',
+  };
+  const STATUS_ACTION_STYLES: Record<string, string> = {
+    submitted: 'text-[#92722E] border-[#C8943E] hover:bg-[#FDF8ED]',
+    approved:  'text-[#3D6B5E] border-[#4A7C6F] hover:bg-[#F0F7F4]',
+    rejected:  'text-[#5B3A7C] border-[#7C5BA0] hover:bg-[#F5F0FA]',
+    disputed:  'text-[#9A4A3E] border-[#B25B4E] hover:bg-[#FDF2F0]',
+  };
+  const nextStatuses = STATUS_TRANSITIONS[variation.status] ?? [];
+
   return (
     <AppShell>
-      <TopBar title={`Variation #${variation.sequence_number}`} onPrint={isField ? undefined : handlePrint} printLabel="Print Variation" />
+      <TopBar title={getVariationNumber(variation)} onPrint={isField ? undefined : handlePrint} printLabel="Print Variation" />
       <div className="p-8 space-y-5 max-w-4xl">
         <div className="flex items-center justify-between">
           <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">
@@ -217,12 +267,23 @@ export default function VariationDetail() {
           </Link>
           {!editing && (
             <div className="flex items-center gap-2">
+              {/* Status advancement buttons */}
+              {!isField && nextStatuses.map(nextStatus => (
+                <button
+                  key={nextStatus}
+                  onClick={() => handleAdvanceStatus(nextStatus)}
+                  disabled={advancingStatus}
+                  className={`px-3 py-1.5 text-[13px] font-medium border rounded-md transition-colors duration-[120ms] disabled:opacity-40 ${STATUS_ACTION_STYLES[nextStatus] || 'text-[#6B7280] border-[#E5E7EB] hover:bg-[#F5F3EF]'}`}
+                >
+                  {advancingStatus ? '…' : (STATUS_ACTION_LABELS[nextStatus] ?? `→ ${nextStatus}`)}
+                </button>
+              ))}
               {canDelete && (
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
                   className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms]"
                 >
-                  Delete Variation
+                  Delete
                 </button>
               )}
               {canEdit && (
@@ -230,7 +291,7 @@ export default function VariationDetail() {
                   onClick={startEditing}
                   className="px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
                 >
-                  Edit Variation
+                  Edit
                 </button>
               )}
             </div>
@@ -273,9 +334,10 @@ export default function VariationDetail() {
                   <div>
                     <label className={labelClass}>Status</label>
                     <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className={inputClass + " bg-white"}>
-                      <option value="captured">Draft</option>
+                      <option value="draft">Draft</option>
                       <option value="submitted">Submitted</option>
                       <option value="approved">Approved</option>
+                      <option value="rejected">Rejected</option>
                       <option value="disputed">Disputed</option>
                       <option value="paid">Paid</option>
                     </select>
@@ -306,6 +368,7 @@ export default function VariationDetail() {
             <>
               <div className="flex items-start justify-between">
                 <div>
+                  <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1">{getVariationNumber(variation)}</div>
                   <h2 className="text-xl font-semibold text-[#1C1C1E]">{variation.title}</h2>
                   <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
                 </div>
@@ -328,6 +391,15 @@ export default function VariationDetail() {
                   <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Captured</div>
                   <div className="text-[14px] text-[#1C1C1E] mt-1">{formatDate(variation.captured_at)}</div>
                 </div>
+                {(variation.requestor_name || variation.requestor_email) && (
+                  <div>
+                    <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Submitted By</div>
+                    <div className="text-[14px] text-[#1C1C1E] mt-1">{variation.requestor_name || '—'}</div>
+                    {variation.requestor_email && (
+                      <div className="text-[12px] text-[#6B7280] mt-0.5">{variation.requestor_email}</div>
+                    )}
+                  </div>
+                )}
                 {variation.reference_doc && (
                   <div>
                     <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Reference Document</div>

@@ -19,6 +19,7 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
   await db.execAsync('PRAGMA foreign_keys = ON;');
 
   await createTables(db);
+  await runMigrations(db);
   return db;
 }
 
@@ -51,19 +52,22 @@ async function createTables(database: SQLite.SQLiteDatabase): Promise<void> {
       id TEXT PRIMARY KEY,
       project_id TEXT NOT NULL,
       sequence_number INTEGER NOT NULL,
+      variation_number TEXT,
       title TEXT NOT NULL,
       description TEXT NOT NULL DEFAULT '',
       instruction_source TEXT NOT NULL,
       instructed_by TEXT,
       reference_doc TEXT,
       estimated_value INTEGER NOT NULL DEFAULT 0,
-      status TEXT NOT NULL DEFAULT 'captured',
+      status TEXT NOT NULL DEFAULT 'draft',
       captured_at TEXT NOT NULL,
       latitude REAL,
       longitude REAL,
       location_accuracy REAL,
       evidence_hash TEXT,
       notes TEXT,
+      requestor_name TEXT,
+      requestor_email TEXT,
       sync_status TEXT NOT NULL DEFAULT 'pending',
       remote_id TEXT,
       ai_description TEXT,
@@ -132,6 +136,38 @@ async function createTables(database: SQLite.SQLiteDatabase): Promise<void> {
     CREATE INDEX IF NOT EXISTS idx_sync_projects ON projects(sync_status);
     CREATE INDEX IF NOT EXISTS idx_sync_variations ON variations(sync_status);
     CREATE INDEX IF NOT EXISTS idx_attachments_variation ON attachments(variation_id);
+  `);
+}
+
+/**
+ * Run incremental migrations for existing databases.
+ * Uses try/catch since SQLite doesn't support ADD COLUMN IF NOT EXISTS
+ * in all versions bundled with expo-sqlite.
+ */
+async function runMigrations(database: SQLite.SQLiteDatabase): Promise<void> {
+  const addColumn = async (table: string, column: string, type: string) => {
+    try {
+      await database.execAsync(`ALTER TABLE ${table} ADD COLUMN ${column} ${type}`);
+    } catch {
+      // Column already exists — safe to ignore
+    }
+  };
+
+  // Migration 011: variation workflow fields
+  await addColumn('variations', 'variation_number', 'TEXT');
+  await addColumn('variations', 'requestor_name', 'TEXT');
+  await addColumn('variations', 'requestor_email', 'TEXT');
+
+  // Backfill variation_number for existing records that don't have one
+  await database.execAsync(`
+    UPDATE variations
+    SET variation_number = 'VAR-' || printf('%03d', sequence_number)
+    WHERE variation_number IS NULL
+  `);
+
+  // Migrate legacy 'captured' status to 'draft'
+  await database.execAsync(`
+    UPDATE variations SET status = 'draft' WHERE status = 'captured'
   `);
 }
 

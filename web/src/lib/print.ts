@@ -1,4 +1,4 @@
-import { formatCurrency, formatDate, getStatusConfig } from './utils';
+import { formatCurrency, formatDate, getStatusConfig, getVariationNumber } from './utils';
 import type { Project, Variation, PhotoEvidence } from './types';
 
 interface ProjectWithVariations extends Project {
@@ -124,6 +124,64 @@ const GLOBAL_CSS = `
   }
   .photo-caption { font-size: 8pt; color: #6B7280; }
 
+  /* CLIENT RESPONSE SECTION */
+  .client-response {
+    margin-top: 48px;
+    border: 1.5px solid #1C1C1E;
+    border-radius: 4px;
+    padding: 24px 28px;
+    page-break-inside: avoid;
+  }
+  .client-response-title {
+    font-size: 11pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #1C1C1E;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #E5E7EB;
+  }
+  .response-options {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 28px;
+  }
+  .response-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10pt;
+    font-weight: 500;
+    color: #1C1C1E;
+  }
+  .checkbox {
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid #1C1C1E;
+    border-radius: 2px;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .signature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    margin-top: 8px;
+  }
+  .sig-field {
+    border-bottom: 1px solid #1C1C1E;
+    padding-bottom: 32px;
+    margin-bottom: 6px;
+  }
+  .sig-label {
+    font-size: 8pt;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 6px;
+  }
+
   /* FOOTER */
   .footer { 
     position: fixed; 
@@ -182,7 +240,7 @@ export function printRegister(projects: ProjectWithVariations[]) {
     
     const rows = p.variations.map(v => `
       <tr>
-        <td class="tabular-nums text-muted">#${v.sequence_number}</td>
+        <td class="tabular-nums font-medium" style="color:#1B365D; font-family:monospace;">${getVariationNumber(v)}</td>
         <td class="font-medium">${escapeHtml(v.title)}</td>
         <td>${getStatusConfig(v.status).label}</td>
         <td class="text-muted capitalize">${v.instruction_source?.replace(/_/g, ' ') || '—'}</td>
@@ -200,7 +258,7 @@ export function printRegister(projects: ProjectWithVariations[]) {
         <table>
           <thead>
             <tr>
-              <th style="width:50px">ID</th>
+              <th style="width:80px">Var No.</th>
               <th>Description</th>
               <th style="width:100px">Status</th>
               <th style="width:100px">Source</th>
@@ -265,7 +323,7 @@ export function printProjectRegister(project: Project, variations: Variation[]) 
 
   const rows = variations.map(v => `
     <tr>
-      <td class="tabular-nums text-muted">#${v.sequence_number}</td>
+      <td class="tabular-nums font-medium" style="color:#1B365D; font-family:monospace;">${getVariationNumber(v)}</td>
       <td class="font-medium">${escapeHtml(v.title)}</td>
       <td>${getStatusConfig(v.status).label}</td>
       <td class="text-muted capitalize">${v.instruction_source?.replace(/_/g, ' ') || '—'}</td>
@@ -290,7 +348,7 @@ export function printProjectRegister(project: Project, variations: Variation[]) 
     <table>
       <thead>
         <tr>
-          <th style="width:50px">ID</th>
+          <th style="width:80px">Var No.</th>
           <th>Description</th>
           <th style="width:100px">Status</th>
           <th style="width:100px">Source</th>
@@ -327,6 +385,7 @@ export function printVariation(
 ) {
   const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
   const status = getStatusConfig(variation.status).label;
+  const varNumber = getVariationNumber(variation);
   
   const photoGrid = photos.length > 0 ? `
     <div class="avoid-break">
@@ -346,13 +405,56 @@ export function printVariation(
     </div>
   ` : '';
 
+  const requestorSection = (variation.requestor_name || variation.requestor_email) ? `
+    <div class="field-group">
+      <div class="field-label">Submitted By</div>
+      <div class="field-value">${escapeHtml(variation.requestor_name || '—')}</div>
+      ${variation.requestor_email ? `<div class="field-value text-muted" style="font-weight:400; margin-top:2px; font-size:9pt;">${escapeHtml(variation.requestor_email)}</div>` : ''}
+    </div>
+  ` : '';
+
+  const clientResponseSection = `
+    <div class="client-response avoid-break">
+      <div class="client-response-title">Client Response</div>
+      <div class="response-options">
+        <div class="response-option">
+          <div class="checkbox"></div>
+          Accepted
+        </div>
+        <div class="response-option">
+          <div class="checkbox"></div>
+          Denied
+        </div>
+        <div class="response-option">
+          <div class="checkbox"></div>
+          More Information Required
+        </div>
+      </div>
+      <div class="signature-grid">
+        <div>
+          <div class="sig-field"></div>
+          <div class="sig-label">Client Name</div>
+        </div>
+        <div>
+          <div class="sig-field"></div>
+          <div class="sig-label">Signature</div>
+        </div>
+        <div>
+          <div class="sig-field"></div>
+          <div class="sig-label">Date</div>
+        </div>
+      </div>
+    </div>
+  `;
+
   const html = `
     <div class="doc-header">
       <div>
         <div class="brand">Variation Instruction</div>
-        <div class="doc-title">#${variation.sequence_number}: ${escapeHtml(variation.title)}</div>
+        <div class="doc-title">${escapeHtml(varNumber)}: ${escapeHtml(variation.title)}</div>
       </div>
       <div class="doc-meta">
+        <div class="meta-row" style="font-size:11pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(varNumber)}</div>
         <div class="meta-row">Date: ${formatDate(variation.captured_at)}</div>
         <div class="meta-row">Status: <strong>${status}</strong></div>
       </div>
@@ -369,6 +471,7 @@ export function printVariation(
           <div class="field-label">Instruction Source</div>
           <div class="field-value capitalize">${variation.instruction_source?.replace(/_/g, ' ') || '—'}</div>
         </div>
+        ${requestorSection}
       </div>
       <div>
         <div class="field-group">
@@ -379,6 +482,12 @@ export function printVariation(
           <div class="field-label">Instructed By</div>
           <div class="field-value">${escapeHtml(variation.instructed_by || '—')}</div>
         </div>
+        ${variation.reference_doc ? `
+        <div class="field-group">
+          <div class="field-label">Reference Document</div>
+          <div class="field-value">${escapeHtml(variation.reference_doc)}</div>
+        </div>
+        ` : ''}
       </div>
     </div>
 
@@ -396,11 +505,13 @@ export function printVariation(
 
     ${photoGrid}
 
+    ${clientResponseSection}
+
     <div class="footer">
-      <div>Leveraged Systems</div>
-      <div>Ref: ${variation.evidence_hash?.substring(0,8) || ''}</div>
+      <div>Leveraged Systems · Variation Shield</div>
+      <div>${escapeHtml(varNumber)} · Ref: ${variation.evidence_hash?.substring(0,8) || ''}</div>
     </div>
   `;
 
-  openHtml(html, `Variation ${variation.sequence_number} - ${variation.title}`);
+  openHtml(html, `${varNumber} - ${variation.title}`);
 }

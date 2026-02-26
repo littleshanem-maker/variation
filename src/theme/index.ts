@@ -45,9 +45,11 @@ export const fieldColors = {
 
   // Variation status — sage green, warm amber, clay red, cool gray
   status: {
-    captured: '#9CA3AF',
+    draft: '#9CA3AF',
+    captured: '#9CA3AF', // legacy alias for draft
     submitted: '#C8943E',
     approved: '#4A7C6F',
+    rejected: '#7C5BA0',
     disputed: '#B25B4E',
     paid: '#18181B',
   },
@@ -88,9 +90,11 @@ export const officeColors = {
 
   // Variation status
   status: {
-    captured: '#9CA3AF',
+    draft: '#9CA3AF',
+    captured: '#9CA3AF', // legacy alias for draft
     submitted: '#C8943E',
     approved: '#4A7C6F',
+    rejected: '#7C5BA0',
     disputed: '#B25B4E',
     paid: '#1C1C1E',
   },
@@ -240,9 +244,11 @@ export function getStatusColor(status: string): string {
 
 export function getStatusLabel(status: string): string {
   const labels: Record<string, string> = {
-    captured: 'Draft',
+    draft: 'Draft',
+    captured: 'Draft', // legacy alias
     submitted: 'Submitted',
     approved: 'Approved',
+    rejected: 'Rejected',
     disputed: 'Disputed',
     paid: 'Paid',
   };
@@ -252,9 +258,11 @@ export function getStatusLabel(status: string): string {
 /** Status background colours for pills */
 export function getStatusBg(status: string): string {
   const bgs: Record<string, string> = {
-    captured: '#F3F4F6',
+    draft: '#F3F4F6',
+    captured: '#F3F4F6', // legacy alias
     submitted: '#FDF8ED',
     approved: '#F0F7F4',
+    rejected: '#F5F0FA',
     disputed: '#FDF2F0',
     paid: '#F3F4F6',
   };
@@ -264,9 +272,11 @@ export function getStatusBg(status: string): string {
 /** Status text colours for pills */
 export function getStatusTextColor(status: string): string {
   const textColors: Record<string, string> = {
-    captured: '#6B7280',
+    draft: '#6B7280',
+    captured: '#6B7280', // legacy alias
     submitted: '#92722E',
     approved: '#3D6B5E',
+    rejected: '#5B3A7C',
     disputed: '#9A4A3E',
     paid: '#18181B',
   };
