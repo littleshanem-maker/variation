@@ -67,13 +67,13 @@ export default function SettingsPage() {
   return (
     <AppShell>
       <TopBar title="Settings" />
-      <div className="p-8 max-w-lg space-y-5">
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+      <div className="p-4 md:p-8 max-w-lg space-y-4 md:space-y-5">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Account</h3>
           {email && (
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div>
-                <div className="text-[14px] font-medium text-[#1C1C1E]">{email}</div>
+                <div className="text-[14px] font-medium text-[#1C1C1E] break-all">{email}</div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className={`inline-block px-2 py-0.5 text-[11px] font-medium rounded-full capitalize ${roleBadgeColors[role] || ''}`}>
                     {role}
@@ -83,7 +83,7 @@ export default function SettingsPage() {
               </div>
               <button
                 onClick={handleSignOut}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] bg-[#B25B4E]/5 border border-[#B25B4E]/15 rounded-md hover:bg-[#B25B4E]/10 transition-colors duration-[120ms] ease-out"
+                className="sm:flex-shrink-0 px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] bg-[#B25B4E]/5 border border-[#B25B4E]/15 rounded-md hover:bg-[#B25B4E]/10 transition-colors duration-[120ms] ease-out"
               >
                 Sign Out
               </button>
@@ -92,7 +92,7 @@ export default function SettingsPage() {
         </div>
 
         {isAdmin && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Company Settings</h3>
             <div className="space-y-3">
               <div>
@@ -128,7 +128,7 @@ export default function SettingsPage() {
           </div>
         )}
 
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">About</h3>
           <p className="text-[13px] text-[#6B7280]">Variation Shield · <span className="capitalize">{role}</span> Access</p>
           <p className="text-[13px] text-[#9CA3AF] mt-0.5">Version 2.1.0 · Leveraged Systems</p>

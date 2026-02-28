@@ -38,7 +38,6 @@ function NewNoticeForm() {
         .order('name');
       setProjects(projs || []);
 
-      // Pre-fill user info
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setIssuedByEmail(user.email || '');
@@ -64,7 +63,6 @@ function NewNoticeForm() {
 
     const supabase = createClient();
 
-    // Calculate next sequence number for this project
     const { data: existing } = await supabase
       .from('variation_notices')
       .select('sequence_number')
@@ -109,12 +107,12 @@ function NewNoticeForm() {
 
   const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none";
   const labelClass = "block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1";
-  const toggleBase = "relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 cursor-pointer";
+  const toggleBase = "relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors duration-200 cursor-pointer";
 
   return (
     <AppShell>
       <TopBar title="New Variation Notice" />
-      <div className="p-8 space-y-5 max-w-2xl">
+      <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-2xl">
         <div>
           <Link
             href={preselectedProjectId ? `/project/${preselectedProjectId}` : '/'}
@@ -126,7 +124,7 @@ function NewNoticeForm() {
           <p className="text-[13px] text-[#6B7280] mt-1">Issue a formal notice of a variation event. A full Variation Request can be linked later.</p>
         </div>
 
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-4">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-4">
           {/* Project */}
           <div>
             <label className={labelClass}>Project *</label>
@@ -166,7 +164,7 @@ function NewNoticeForm() {
           </div>
 
           {/* Implications row */}
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-4 md:gap-6">
             <div>
               <label className={labelClass}>Cost Implication</label>
               <div className="flex items-center gap-3 mt-1">
@@ -197,7 +195,6 @@ function NewNoticeForm() {
             </div>
           </div>
 
-          {/* Estimated Days — only shown when time flag is on */}
           {timeFlag && (
             <div>
               <label className={labelClass}>Estimated Days</label>
@@ -225,7 +222,7 @@ function NewNoticeForm() {
           </div>
 
           {/* Issued By */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Issued By Name</label>
               <input
@@ -250,18 +247,18 @@ function NewNoticeForm() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <button
             onClick={() => handleSave(false)}
             disabled={saving || !projectId || !eventDescription.trim()}
-            className="px-4 py-2 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] disabled:opacity-40 transition-colors duration-[120ms]"
+            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] disabled:opacity-40 transition-colors duration-[120ms] text-center"
           >
             {saving ? 'Saving...' : 'Save as Draft'}
           </button>
           <button
             onClick={() => handleSave(true)}
             disabled={saving || !projectId || !eventDescription.trim()}
-            className="px-4 py-2 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] text-center"
           >
             {saving ? 'Saving...' : 'Issue Immediately'}
           </button>

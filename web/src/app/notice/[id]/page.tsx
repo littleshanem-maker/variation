@@ -22,7 +22,6 @@ export default function NoticeDetail() {
   const [linkedVariation, setLinkedVariation] = useState<Variation | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Action states
   const [advancing, setAdvancing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -47,7 +46,6 @@ export default function NoticeDetail() {
       .single();
     setProject(proj);
 
-    // Find any variation linked to this notice
     const { data: vars } = await supabase
       .from('variations')
       .select('*')
@@ -126,19 +124,18 @@ export default function NoticeDetail() {
   const canCreateVR = !isField && notice.status === 'issued' && !linkedVariation;
   const canDelete = !isField && notice.status === 'draft';
 
-  const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none";
   const labelClass = "block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1";
 
   return (
     <AppShell>
       <TopBar title="Variation Shield" onPrint={isField ? undefined : handlePrint} printLabel="Print Notice" />
-      <div className="p-8 space-y-5 max-w-4xl">
+      <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-4xl">
         {/* Back + Actions */}
-        <div className="flex items-center justify-between">
-          <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">
+        <div className="flex flex-wrap items-start gap-2">
+          <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms] mr-auto">
             ← Back to {project.name}
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {canIssue && (
               <button
                 onClick={handleIssue}
@@ -177,25 +174,25 @@ export default function NoticeDetail() {
         </div>
 
         {/* Header Card */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <div className="flex items-start justify-between">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
               <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1">{notice.notice_number}</div>
               <h2 className="text-xl font-semibold text-[#1C1C1E]">Variation Notice</h2>
               <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
             </div>
-            <div className="text-right">
+            <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0">
               <StatusBadge status={notice.status} />
               {notice.issued_at && (
-                <div className="text-[12px] text-[#9CA3AF] mt-2">Issued {formatDate(notice.issued_at)}</div>
+                <div className="text-[12px] text-[#9CA3AF] sm:mt-2">Issued {formatDate(notice.issued_at)}</div>
               )}
               {notice.acknowledged_at && (
-                <div className="text-[12px] text-[#9CA3AF] mt-1">Acknowledged {formatDate(notice.acknowledged_at)}</div>
+                <div className="text-[12px] text-[#9CA3AF] sm:mt-1">Acknowledged {formatDate(notice.acknowledged_at)}</div>
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-6 mt-6 pt-5 border-t border-[#F0F0EE]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-5 pt-4 md:pt-5 border-t border-[#F0F0EE]">
             <div>
               <div className={labelClass}>Event Date</div>
               <div className="text-[14px] text-[#1C1C1E]">{new Date(notice.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
@@ -219,15 +216,15 @@ export default function NoticeDetail() {
         </div>
 
         {/* Event Description */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Description of Event</h3>
           <p className="text-[14px] text-[#1C1C1E] leading-relaxed whitespace-pre-wrap">{notice.event_description}</p>
         </div>
 
         {/* Implications Card */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Implications</h3>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-4 md:gap-6">
             <div>
               <div className={labelClass}>Cost Implication</div>
               <div className={`text-[14px] font-medium ${notice.cost_flag ? 'text-[#92722E]' : 'text-[#6B7280]'}`}>
@@ -250,7 +247,7 @@ export default function NoticeDetail() {
         </div>
 
         {/* Linked Variation Request */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Linked Variation Request</h3>
           {linkedVariation ? (
             <Link
@@ -263,7 +260,7 @@ export default function NoticeDetail() {
                 </div>
                 <div className="text-[14px] font-medium text-[#1C1C1E] mt-0.5">{linkedVariation.title}</div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-shrink-0">
                 <StatusBadge status={linkedVariation.status} />
                 <span className="text-[12px] text-[#1B365D] font-medium">View →</span>
               </div>
@@ -286,8 +283,8 @@ export default function NoticeDetail() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Delete Notice</h3>
             <p className="text-[14px] text-[#6B7280] mb-1">
               Are you sure you want to delete <span className="font-medium text-[#1C1C1E]">{notice.notice_number}</span>?

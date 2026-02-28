@@ -29,15 +29,12 @@ export default function VariationDetail() {
   const [linkedNotice, setLinkedNotice] = useState<VariationNotice | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Status advancement state
   const { isField, isAdmin, isOffice, company } = useRole();
   const [advancingStatus, setAdvancingStatus] = useState(false);
 
-  // Delete state
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  // Edit state
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editTitle, setEditTitle] = useState('');
@@ -84,7 +81,6 @@ export default function VariationDetail() {
       reference_doc: editReferenceDoc.trim() || null,
     }).eq('id', variation.id);
 
-    // Log status change if changed
     if (!error && editStatus !== oldStatus) {
       await supabase.from('status_changes').insert({
         id: crypto.randomUUID(),
@@ -96,7 +92,6 @@ export default function VariationDetail() {
       });
     }
 
-    // Upload new files
     if (!error && newFiles.length > 0) {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
@@ -146,7 +141,6 @@ export default function VariationDetail() {
     const oldStatus = variation.status;
     const { error } = await supabase.from('variations').update({ status: newStatus }).eq('id', variation.id);
     if (!error) {
-      // Log the status change
       const { data: { user } } = await supabase.auth.getUser();
       const changedBy = user?.email ?? 'Office';
       await supabase.from('status_changes').insert({
@@ -183,7 +177,6 @@ export default function VariationDetail() {
     const { data: docs } = await supabase.from('documents').select('*').eq('variation_id', id).order('uploaded_at');
     setDocuments(docs || []);
 
-    // Load linked notice if present
     if (v.notice_id) {
       const { data: noticeData } = await supabase.from('variation_notices').select('*').eq('id', v.notice_id).single();
       setLinkedNotice(noticeData ?? null);
@@ -242,10 +235,9 @@ export default function VariationDetail() {
   const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none";
   const labelClass = "block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1";
 
-  // Determine which status actions are available
   const STATUS_TRANSITIONS: Record<string, string[]> = {
     draft:     ['submitted'],
-    captured:  ['submitted'], // legacy alias
+    captured:  ['submitted'],
     submitted: ['approved', 'rejected', 'disputed'],
     approved:  [],
     rejected:  [],
@@ -269,14 +261,14 @@ export default function VariationDetail() {
   return (
     <AppShell>
       <TopBar title="Variation Shield" onPrint={isField ? undefined : handlePrint} printLabel="Print Variation" />
-      <div className="p-8 space-y-5 max-w-4xl">
-        <div className="flex items-center justify-between">
-          <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">
+      <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-4xl">
+        {/* Back + Actions */}
+        <div className="flex flex-wrap items-start gap-2">
+          <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms] mr-auto">
             ← Back to {project.name}
           </Link>
           {!editing && (
-            <div className="flex items-center gap-2">
-              {/* Status advancement buttons */}
+            <div className="flex flex-wrap items-center gap-2">
               {!isField && nextStatuses.map(nextStatus => (
                 <button
                   key={nextStatus}
@@ -326,7 +318,7 @@ export default function VariationDetail() {
 
         {/* Linked Variation Notice Banner */}
         {linkedNotice && (
-          <div className="flex items-center gap-3 px-4 py-3 bg-[#FDF8ED] border border-[#C8943E]/30 rounded-md text-[13px]">
+          <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-[#FDF8ED] border border-[#C8943E]/30 rounded-md text-[13px]">
             <span className="font-mono font-bold text-[#1B365D]">{linkedNotice.notice_number}</span>
             <span className="text-[#6B7280]">—</span>
             {linkedNotice.issued_at
@@ -340,69 +332,67 @@ export default function VariationDetail() {
         )}
 
         {/* Header Card */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           {editing ? (
-            <>
-              <div className="space-y-4">
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <label className={labelClass}>Title</label>
-                    <input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)} className={inputClass} />
-                  </div>
-                  <div className="w-48">
-                    <label className={labelClass}>Estimated Value ($)</label>
-                    <input type="number" value={editValue} onChange={e => setEditValue(e.target.value)} className={inputClass} step="0.01" min="0" />
-                  </div>
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                  <label className={labelClass}>Title</label>
+                  <input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)} className={inputClass} />
                 </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className={labelClass}>Status</label>
-                    <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className={inputClass + " bg-white"}>
-                      <option value="draft">Draft</option>
-                      <option value="submitted">Submitted</option>
-                      <option value="approved">Approved</option>
-                      <option value="rejected">Rejected</option>
-                      <option value="disputed">Disputed</option>
-                      <option value="paid">Paid</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className={labelClass}>Instruction Source</label>
-                    <select value={editSource} onChange={e => setEditSource(e.target.value)} className={inputClass + " bg-white"}>
-                      <option value="verbal">Verbal</option>
-                      <option value="email">Email</option>
-                      <option value="site_instruction">Site Instruction</option>
-                      <option value="drawing_revision">Drawing Revision</option>
-                      <option value="rfi">RFI</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className={labelClass}>Instructed By</label>
-                    <input type="text" value={editInstructedBy} onChange={e => setEditInstructedBy(e.target.value)} className={inputClass} />
-                  </div>
-                </div>
-                <div>
-                  <label className={labelClass}>Reference Document</label>
-                  <input type="text" value={editReferenceDoc} onChange={e => setEditReferenceDoc(e.target.value)} className={inputClass} placeholder="e.g. RFI-042, Rev C drawings" />
+                <div className="sm:w-48">
+                  <label className={labelClass}>Estimated Value ($)</label>
+                  <input type="number" value={editValue} onChange={e => setEditValue(e.target.value)} className={inputClass} step="0.01" min="0" />
                 </div>
               </div>
-            </>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className={labelClass}>Status</label>
+                  <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className={inputClass + " bg-white"}>
+                    <option value="draft">Draft</option>
+                    <option value="submitted">Submitted</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="disputed">Disputed</option>
+                    <option value="paid">Paid</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Instruction Source</label>
+                  <select value={editSource} onChange={e => setEditSource(e.target.value)} className={inputClass + " bg-white"}>
+                    <option value="verbal">Verbal</option>
+                    <option value="email">Email</option>
+                    <option value="site_instruction">Site Instruction</option>
+                    <option value="drawing_revision">Drawing Revision</option>
+                    <option value="rfi">RFI</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={labelClass}>Instructed By</label>
+                  <input type="text" value={editInstructedBy} onChange={e => setEditInstructedBy(e.target.value)} className={inputClass} />
+                </div>
+              </div>
+              <div>
+                <label className={labelClass}>Reference Document</label>
+                <input type="text" value={editReferenceDoc} onChange={e => setEditReferenceDoc(e.target.value)} className={inputClass} placeholder="e.g. RFI-042, Rev C drawings" />
+              </div>
+            </div>
           ) : (
             <>
-              <div className="flex items-start justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div>
                   <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1">{getVariationNumber(variation)}</div>
                   <h2 className="text-xl font-semibold text-[#1C1C1E]">{variation.title}</h2>
                   <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
                 </div>
-                <div className="text-right">
+                <div className="sm:text-right flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0">
                   {!isField && <div className="text-2xl font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(variation.estimated_value)}</div>}
-                  <div className="mt-2"><StatusBadge status={variation.status} /></div>
+                  <div className="sm:mt-2"><StatusBadge status={variation.status} /></div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-6 mt-6 pt-5 border-t border-[#F0F0EE]">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-5 pt-4 md:pt-5 border-t border-[#F0F0EE]">
                 <div>
                   <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Instruction Source</div>
                   <div className="text-[14px] text-[#1C1C1E] mt-1 capitalize">{variation.instruction_source?.replace(/_/g, ' ')}</div>
@@ -431,7 +421,7 @@ export default function VariationDetail() {
                   </div>
                 )}
                 {variation.evidence_hash && (
-                  <div className="col-span-2">
+                  <div className="sm:col-span-2">
                     <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Evidence Hash</div>
                     <div className="text-[11px] text-[#9CA3AF] mt-1 font-mono break-all">{variation.evidence_hash}</div>
                   </div>
@@ -442,7 +432,7 @@ export default function VariationDetail() {
         </div>
 
         {/* Description */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Description</h3>
           {editing ? (
             <textarea
@@ -468,7 +458,7 @@ export default function VariationDetail() {
         </div>
 
         {/* Notes */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Notes</h3>
           {editing ? (
             <textarea
@@ -485,7 +475,7 @@ export default function VariationDetail() {
 
         {/* Documents */}
         {(documents.length > 0 || editing) && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Documents {documents.length > 0 && `(${documents.length})`}</h3>
             <div className="space-y-2">
               {documents.map(doc => (
@@ -501,7 +491,7 @@ export default function VariationDetail() {
                     <div className="text-[14px] font-medium text-[#1C1C1E] truncate">{doc.file_name}</div>
                     <div className="text-[12px] text-[#9CA3AF]">{(doc.file_size / 1024).toFixed(0)} KB</div>
                   </div>
-                  <span className="text-[12px] text-[#1B365D] font-medium">Download ↓</span>
+                  <span className="text-[12px] text-[#1B365D] font-medium flex-shrink-0">Download ↓</span>
                 </a>
               ))}
             </div>
@@ -549,9 +539,9 @@ export default function VariationDetail() {
 
         {/* Photos */}
         {photos.length > 0 && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Photo Evidence ({photos.length})</h3>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {photos.map(photo => (
                 <div key={photo.id} className="aspect-square bg-[#F8F8F6] rounded-md overflow-hidden border border-[#E5E7EB]">
                   {photoUrls[photo.id] ? (
@@ -567,7 +557,7 @@ export default function VariationDetail() {
 
         {/* Voice Notes */}
         {voiceNotes.length > 0 && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Voice Notes ({voiceNotes.length})</h3>
             <div className="space-y-2">
               {voiceNotes.map(vn => (
@@ -587,12 +577,12 @@ export default function VariationDetail() {
 
         {/* Status History */}
         {statusHistory.length > 0 && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Status History</h3>
             <div className="space-y-2.5">
               {statusHistory.map(sc => (
-                <div key={sc.id} className="flex items-center gap-4 text-[13px]">
-                  <div className="text-[#9CA3AF] w-28 tabular-nums">{formatDate(sc.changed_at)}</div>
+                <div key={sc.id} className="flex flex-wrap items-center gap-2 md:gap-4 text-[13px]">
+                  <div className="text-[#9CA3AF] tabular-nums text-[12px]">{formatDate(sc.changed_at)}</div>
                   <div className="flex items-center gap-2">
                     {sc.from_status && <StatusBadge status={sc.from_status} />}
                     {sc.from_status && <span className="text-[#9CA3AF]">→</span>}
@@ -608,8 +598,8 @@ export default function VariationDetail() {
 
       {/* Delete Variation Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Delete Variation</h3>
             <p className="text-[14px] text-[#6B7280] mb-1">
               Are you sure you want to delete <span className="font-medium text-[#1C1C1E]">Variation #{variation.sequence_number}: {variation.title}</span>?

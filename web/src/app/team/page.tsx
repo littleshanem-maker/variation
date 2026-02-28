@@ -35,7 +35,6 @@ export default function TeamPage() {
   const [invites, setInvites] = useState<PendingInvite[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Invite form
   const [showInvite, setShowInvite] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<UserRole>('field');
@@ -58,15 +57,13 @@ export default function TeamPage() {
     if (!companyId) return;
     const supabase = createClient();
 
-    // Fetch members
-    const { data: memberData, error: memberErr } = await supabase
+    const { data: memberData } = await supabase
       .from('company_members')
       .select('id, company_id, user_id, role, is_active, invited_at, accepted_at')
       .eq('company_id', companyId)
       .order('invited_at');
 
     if (memberData && memberData.length > 0) {
-      // Fetch emails via RPC
       const userIds = memberData.map(m => m.user_id);
       const { data: emailData } = await supabase.rpc('get_user_emails', { user_ids: userIds });
       const emailMap: Record<string, { email: string; full_name: string | null }> = {};
@@ -87,7 +84,6 @@ export default function TeamPage() {
       setMembers(enriched);
     }
 
-    // Fetch pending invitations
     const { data: inviteData } = await supabase
       .from('invitations')
       .select('id, email, role, token, expires_at, created_at')
@@ -163,9 +159,9 @@ export default function TeamPage() {
   return (
     <AppShell>
       <TopBar title="Team Management" />
-      <div className="p-8 max-w-3xl space-y-6">
+      <div className="p-4 md:p-8 max-w-3xl space-y-5 md:space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-xl font-semibold text-[#1C1C1E]">Team</h2>
             <p className="text-[13px] text-[#6B7280] mt-1">{company?.name} · {members.filter(m => m.is_active).length} active members</p>
@@ -180,7 +176,7 @@ export default function TeamPage() {
 
         {/* Active Members */}
         <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
-          <div className="px-5 py-3 border-b border-[#E5E7EB]">
+          <div className="px-4 md:px-5 py-3 border-b border-[#E5E7EB]">
             <h3 className="text-[13px] font-semibold text-[#1C1C1E]">Active Members</h3>
           </div>
           {loading ? (
@@ -188,103 +184,90 @@ export default function TeamPage() {
           ) : members.filter(m => m.is_active).length === 0 ? (
             <div className="p-8 text-center text-[#9CA3AF] text-sm">No team members yet.</div>
           ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[#E5E7EB]">
-                  <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-2">User</th>
-                  <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-2">Role</th>
-                  <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-2">Joined</th>
-                  <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-2">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {members.filter(m => m.is_active).map((m, i) => (
-                  <tr key={m.id} className={`h-[44px] border-b border-[#F0F0EE] ${i === members.filter(x => x.is_active).length - 1 ? 'border-b-0' : ''}`}>
-                    <td className="px-5 py-2.5">
-                      <div className="text-[14px] text-[#1C1C1E]">{m.email}</div>
-                      {m.full_name && <div className="text-[12px] text-[#9CA3AF]">{m.full_name}</div>}
-                    </td>
-                    <td className="px-5 py-2.5">
-                      <select
-                        value={m.role}
-                        onChange={e => handleChangeRole(m.id, e.target.value as UserRole)}
-                        className={`text-[12px] font-medium rounded-full px-2.5 py-1 border-0 cursor-pointer ${roleBadgeColors[m.role]}`}
-                      >
-                        <option value="admin">Admin</option>
-                        <option value="office">Office</option>
-                        <option value="field">Field</option>
-                      </select>
-                    </td>
-                    <td className="px-5 py-2.5 text-[13px] text-[#6B7280]">
+            <div className="divide-y divide-[#F0F0EE]">
+              {members.filter(m => m.is_active).map(m => (
+                <div key={m.id} className="px-4 md:px-5 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-[14px] text-[#1C1C1E] truncate">{m.email}</div>
+                    {m.full_name && <div className="text-[12px] text-[#9CA3AF]">{m.full_name}</div>}
+                  </div>
+                  <div className="flex items-center gap-3 flex-shrink-0">
+                    <select
+                      value={m.role}
+                      onChange={e => handleChangeRole(m.id, e.target.value as UserRole)}
+                      className={`text-[12px] font-medium rounded-full px-2.5 py-1 border-0 cursor-pointer ${roleBadgeColors[m.role]}`}
+                    >
+                      <option value="admin">Admin</option>
+                      <option value="office">Office</option>
+                      <option value="field">Field</option>
+                    </select>
+                    <span className="text-[13px] text-[#9CA3AF] hidden sm:inline">
                       {m.accepted_at ? new Date(m.accepted_at).toLocaleDateString() : 'Pending'}
-                    </td>
-                    <td className="px-5 py-2.5 text-right">
-                      <button
-                        onClick={() => handleRemoveMember(m.id)}
-                        className="text-[12px] text-[#9CA3AF] hover:text-[#B25B4E] transition-colors"
-                      >
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </span>
+                    <button
+                      onClick={() => handleRemoveMember(m.id)}
+                      className="text-[12px] text-[#9CA3AF] hover:text-[#B25B4E] transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
         {/* Pending Invitations */}
         {invites.length > 0 && (
           <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
-            <div className="px-5 py-3 border-b border-[#E5E7EB]">
+            <div className="px-4 md:px-5 py-3 border-b border-[#E5E7EB]">
               <h3 className="text-[13px] font-semibold text-[#1C1C1E]">Pending Invitations</h3>
             </div>
-            <table className="w-full">
-              <tbody>
-                {invites.map((inv, i) => {
-                  const link = `${window.location.origin}/join?token=${inv.token}`;
-                  return (
-                    <tr key={inv.id} className={`h-[44px] border-b border-[#F0F0EE] ${i === invites.length - 1 ? 'border-b-0' : ''}`}>
-                      <td className="px-5 py-2.5 text-[14px] text-[#1C1C1E]">{inv.email}</td>
-                      <td className="px-5 py-2.5">
-                        <span className={`inline-block px-2.5 py-1 text-[12px] font-medium rounded-full capitalize ${roleBadgeColors[inv.role]}`}>
+            <div className="divide-y divide-[#F0F0EE]">
+              {invites.map(inv => {
+                const link = `${window.location.origin}/join?token=${inv.token}`;
+                return (
+                  <div key={inv.id} className="px-4 md:px-5 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[14px] text-[#1C1C1E] truncate">{inv.email}</div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className={`inline-block px-2.5 py-0.5 text-[11px] font-medium rounded-full capitalize ${roleBadgeColors[inv.role]}`}>
                           {inv.role}
                         </span>
-                      </td>
-                      <td className="px-5 py-2.5 text-[13px] text-[#9CA3AF]">
-                        Expires {new Date(inv.expires_at).toLocaleDateString()}
-                      </td>
-                      <td className="px-5 py-2.5 text-right flex items-center justify-end gap-3">
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(link);
-                            alert('Link copied!');
-                          }}
-                          className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors"
-                        >
-                          Copy Link
-                        </button>
-                        <button
-                          onClick={() => handleRevokeInvite(inv.id)}
-                          className="text-[12px] text-[#9CA3AF] hover:text-[#B25B4E] transition-colors"
-                        >
-                          Revoke
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        <span className="text-[12px] text-[#9CA3AF]">
+                          Expires {new Date(inv.expires_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(link);
+                          alert('Link copied!');
+                        }}
+                        className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors"
+                      >
+                        Copy Link
+                      </button>
+                      <button
+                        onClick={() => handleRevokeInvite(inv.id)}
+                        className="text-[12px] text-[#9CA3AF] hover:text-[#B25B4E] transition-colors"
+                      >
+                        Revoke
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
         {/* Invite Modal */}
         {(showInvite || inviteLink) && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => { setShowInvite(false); setInviteLink(null); setCopied(false); }}>
-            <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => { setShowInvite(false); setInviteLink(null); setCopied(false); }}>
+            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
               {inviteLink ? (
-                /* Show invite link after creation */
                 <>
                   <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Invitation Created ✓</h3>
                   <p className="text-[13px] text-[#6B7280] mb-4">Share this link with your team member. It expires in 7 days.</p>
@@ -293,7 +276,7 @@ export default function TeamPage() {
                       type="text"
                       value={inviteLink}
                       readOnly
-                      className="flex-1 px-3 py-2 text-[13px] border border-[#E5E7EB] rounded-md bg-[#F8F8F6] text-[#1C1C1E] font-mono"
+                      className="flex-1 min-w-0 px-3 py-2 text-[13px] border border-[#E5E7EB] rounded-md bg-[#F8F8F6] text-[#1C1C1E] font-mono"
                       onClick={e => (e.target as HTMLInputElement).select()}
                     />
                     <button
@@ -302,9 +285,9 @@ export default function TeamPage() {
                         setCopied(true);
                         setTimeout(() => setCopied(false), 2000);
                       }}
-                      className="px-3 py-2 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] whitespace-nowrap"
+                      className="flex-shrink-0 px-3 py-2 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] whitespace-nowrap"
                     >
-                      {copied ? '✓ Copied' : 'Copy Link'}
+                      {copied ? '✓ Copied' : 'Copy'}
                     </button>
                   </div>
                   <div className="flex justify-end mt-5">
@@ -317,7 +300,6 @@ export default function TeamPage() {
                   </div>
                 </>
               ) : (
-                /* Invite form */
                 <>
                   <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Invite Team Member</h3>
                   <div className="space-y-3">

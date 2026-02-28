@@ -85,7 +85,6 @@ function ProjectDetailContent() {
     const variationId = crypto.randomUUID();
     const variationNumber = formatVariationNumber(nextSeq);
 
-    // Get requestor info from profile
     let requestorName: string | null = null;
     let requestorEmail: string | null = null;
     if (user) {
@@ -201,9 +200,9 @@ function ProjectDetailContent() {
     return sortAsc ? cmp : -cmp;
   });
 
-  const SortHeader = ({ label, field, align }: { label: string; field: SortKey; align?: 'right' }) => (
+  const SortHeader = ({ label, field, align, className = '' }: { label: string; field: SortKey; align?: 'right'; className?: string }) => (
     <th
-      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3 cursor-pointer hover:text-[#6B7280] select-none transition-colors duration-[120ms]`}
+      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 cursor-pointer hover:text-[#6B7280] select-none transition-colors duration-[120ms] ${className}`}
       onClick={() => handleSort(field)}
     >
       {label} {sortKey === field ? (sortAsc ? '↑' : '↓') : ''}
@@ -231,46 +230,45 @@ function ProjectDetailContent() {
   return (
     <AppShell>
       <TopBar title={project.name} onPrint={isField ? undefined : handlePrint} printLabel="Print Register" />
-      <div className="p-8 space-y-6">
+      <div className="p-4 md:p-8 space-y-5 md:space-y-6">
         <div>
           <Link href="/" className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">← Back to Dashboard</Link>
-          <div className="flex items-center justify-between mt-3">
-            <div>
-              <h2 className="text-xl font-semibold text-[#1C1C1E]">{project.name}</h2>
-              <p className="text-[13px] text-[#6B7280] mt-1">{project.client} · {variations.length} variations{!isField && <> · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value</>}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              {isAdmin && (
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms]"
-                >
-                  Delete Project
-                </button>
-              )}
-              {!isField && (
-                <button
-                  onClick={() => setShowArchiveConfirm(true)}
-                  className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms]"
-                >
-                  Archive Project
-                </button>
-              )}
-              {!isField && (
-                <Link
-                  href={`/notice/new?projectId=${project.id}`}
-                  className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms]"
-                >
-                  + New Variation Notice
-                </Link>
-              )}
+          <div className="mt-3">
+            <h2 className="text-xl font-semibold text-[#1C1C1E]">{project.name}</h2>
+            <p className="text-[13px] text-[#6B7280] mt-1">{project.client} · {variations.length} variations{!isField && <> · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value</>}</p>
+          </div>
+          {/* Action buttons — wrap on mobile */}
+          <div className="flex flex-wrap items-center gap-2 mt-3">
+            {isAdmin && (
               <button
-                onClick={() => setShowNewVariation(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+                onClick={() => setShowDeleteConfirm(true)}
+                className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms]"
               >
-                + New Variation
+                Delete Project
               </button>
-            </div>
+            )}
+            {!isField && (
+              <button
+                onClick={() => setShowArchiveConfirm(true)}
+                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms]"
+              >
+                Archive Project
+              </button>
+            )}
+            {!isField && (
+              <Link
+                href={`/notice/new?projectId=${project.id}`}
+                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms]"
+              >
+                + New Variation Notice
+              </Link>
+            )}
+            <button
+              onClick={() => setShowNewVariation(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+            >
+              + New Variation
+            </button>
           </div>
         </div>
 
@@ -278,7 +276,7 @@ function ProjectDetailContent() {
         {isAdmin && (
           <div className="bg-white rounded-md border border-[#E5E7EB] p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex-1 mr-4">
                 <div className="text-[14px] font-medium text-[#1C1C1E]">Require Variation Notice</div>
                 <div className="text-[12px] text-[#9CA3AF] mt-0.5">Enable for Tier 1 contracts that require formal notice of variation events</div>
               </div>
@@ -286,7 +284,7 @@ function ProjectDetailContent() {
                 type="button"
                 onClick={handleToggleNoticeRequired}
                 disabled={togglingNoticeRequired}
-                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 cursor-pointer disabled:opacity-40 ${project.notice_required ? 'bg-[#1B365D]' : 'bg-[#D1D5DB]'}`}
+                className={`relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors duration-200 cursor-pointer disabled:opacity-40 ${project.notice_required ? 'bg-[#1B365D]' : 'bg-[#D1D5DB]'}`}
                 aria-checked={project.notice_required}
               >
                 <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-200 ${project.notice_required ? 'translate-x-4' : 'translate-x-0.5'}`} />
@@ -300,37 +298,39 @@ function ProjectDetailContent() {
           <div>
             <h3 className="text-[13px] font-semibold text-[#6B7280] uppercase tracking-[0.04em] mb-2">Variation Notices</h3>
             <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-[#E5E7EB]">
-                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Notice No.</th>
-                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Event Description</th>
-                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Event Date</th>
-                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Status</th>
-                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Linked VR</th>
-                    <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {notices.map((n, i) => {
-                    const linkedVar = variations.find(v => v.notice_id === n.id);
-                    return (
-                      <Link key={n.id} href={`/notice/${n.id}`} className="contents">
-                        <tr className={`h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === notices.length - 1 ? 'border-b-0' : ''}`}>
-                          <td className="px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D]">{n.notice_number}</td>
-                          <td className="px-5 py-2.5 text-[14px] text-[#1C1C1E]">{n.event_description.length > 60 ? n.event_description.substring(0, 60) + '…' : n.event_description}</td>
-                          <td className="px-5 py-2.5 text-[13px] text-[#6B7280]">{new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
-                          <td className="px-5 py-2.5"><StatusBadge status={n.status} /></td>
-                          <td className="px-5 py-2.5 text-[13px] font-mono text-[#1B365D]">
-                            {linkedVar ? (linkedVar.variation_number ?? `VAR-${String(linkedVar.sequence_number).padStart(3, '0')}`) : '—'}
-                          </td>
-                          <td className="px-5 py-2.5 text-right text-[12px] text-[#1B365D] font-medium">View →</td>
-                        </tr>
-                      </Link>
-                    );
-                  })}
-                </tbody>
-              </table>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[540px]">
+                  <thead>
+                    <tr className="border-b border-[#E5E7EB]">
+                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Notice No.</th>
+                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Description</th>
+                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden sm:table-cell">Event Date</th>
+                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Status</th>
+                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden md:table-cell">Linked VR</th>
+                      <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {notices.map((n, i) => {
+                      const linkedVar = variations.find(v => v.notice_id === n.id);
+                      return (
+                        <Link key={n.id} href={`/notice/${n.id}`} className="contents">
+                          <tr className={`h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === notices.length - 1 ? 'border-b-0' : ''}`}>
+                            <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D]">{n.notice_number}</td>
+                            <td className="px-4 md:px-5 py-2.5 text-[14px] text-[#1C1C1E]">{n.event_description.length > 40 ? n.event_description.substring(0, 40) + '…' : n.event_description}</td>
+                            <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] hidden sm:table-cell">{new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                            <td className="px-4 md:px-5 py-2.5"><StatusBadge status={n.status} /></td>
+                            <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono text-[#1B365D] hidden md:table-cell">
+                              {linkedVar ? (linkedVar.variation_number ?? `VAR-${String(linkedVar.sequence_number).padStart(3, '0')}`) : '—'}
+                            </td>
+                            <td className="px-4 md:px-5 py-2.5 text-right text-[12px] text-[#1B365D] font-medium">View →</td>
+                          </tr>
+                        </Link>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         )}
@@ -341,38 +341,41 @@ function ProjectDetailContent() {
           </div>
         ) : (
           <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-[#E5E7EB]">
-                  <SortHeader label="Var No." field="sequence_number" />
-                  <SortHeader label="Title" field="title" />
-                  <SortHeader label="Status" field="status" />
-                  <SortHeader label="Instruction Source" field="instruction_source" />
-                  {!isField && <SortHeader label="Value" field="estimated_value" align="right" />}
-                  <SortHeader label="Captured" field="captured_at" align="right" />
-                </tr>
-              </thead>
-              <tbody>
-                {sorted.map((v, i) => (
-                  <Link key={v.id} href={`/variation/${v.id}`} className="contents">
-                    <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
-                      <td className="px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums">{getVariationNumber(v)}</td>
-                      <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{v.title}</td>
-                      <td className="px-5 py-2.5"><StatusBadge status={v.status} /></td>
-                      <td className="px-5 py-2.5 text-[13px] text-[#6B7280] capitalize">{v.instruction_source?.replace(/_/g, ' ')}</td>
-                      {!isField && <td className="px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums">{formatCurrency(v.estimated_value)}</td>}
-                      <td className="px-5 py-2.5 text-[13px] text-[#6B7280] text-right">{formatDate(v.captured_at)}</td>
-                    </tr>
-                  </Link>
-                ))}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[480px]">
+                <thead>
+                  <tr className="border-b border-[#E5E7EB]">
+                    <SortHeader label="Var No." field="sequence_number" />
+                    <SortHeader label="Title" field="title" />
+                    <SortHeader label="Status" field="status" />
+                    <SortHeader label="Source" field="instruction_source" className="hidden md:table-cell" />
+                    {!isField && <SortHeader label="Value" field="estimated_value" align="right" className="hidden sm:table-cell" />}
+                    <SortHeader label="Captured" field="captured_at" align="right" className="hidden sm:table-cell" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.map((v, i) => (
+                    <Link key={v.id} href={`/variation/${v.id}`} className="contents">
+                      <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
+                        <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums">{getVariationNumber(v)}</td>
+                        <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{v.title}</td>
+                        <td className="px-4 md:px-5 py-2.5"><StatusBadge status={v.status} /></td>
+                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] capitalize hidden md:table-cell">{v.instruction_source?.replace(/_/g, ' ')}</td>
+                        {!isField && <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell">{formatCurrency(v.estimated_value)}</td>}
+                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right hidden sm:table-cell">{formatDate(v.captured_at)}</td>
+                      </tr>
+                    </Link>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
+
         {/* New Variation Modal */}
         {showNewVariation && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowNewVariation(false)}>
-            <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-lg" onClick={e => e.stopPropagation()}>
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowNewVariation(false)}>
+            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
               <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">New Variation</h3>
               {project.notice_required && (
                 <div className="mb-4 flex items-start gap-2 px-3 py-2.5 bg-[#FDF8ED] border border-[#C8943E]/30 rounded-md text-[13px]">
@@ -407,7 +410,7 @@ function ProjectDetailContent() {
                     placeholder="Describe the scope change..."
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Instruction Source</label>
                     <select
@@ -448,7 +451,6 @@ function ProjectDetailContent() {
                     />
                   </div>
                 )}
-                {/* Link to Variation Notice */}
                 {(() => {
                   const unlinkableNotices = notices.filter(n => n.status === 'issued' && !variations.some(v => v.notice_id === n.id));
                   if (unlinkableNotices.length === 0) return null;
@@ -529,8 +531,8 @@ function ProjectDetailContent() {
 
       {/* Delete Project Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Delete Project</h3>
             <p className="text-[14px] text-[#6B7280] mb-1">
               Are you sure you want to delete <span className="font-medium text-[#1C1C1E]">{project.name}</span>?
@@ -564,8 +566,8 @@ function ProjectDetailContent() {
 
       {/* Archive Project Confirmation Modal */}
       {showArchiveConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowArchiveConfirm(false)}>
-          <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowArchiveConfirm(false)}>
+          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Archive Project</h3>
             <p className="text-[14px] text-[#6B7280] mb-1">
               Archive <span className="font-medium text-[#1C1C1E]">{project.name}</span>?
