@@ -233,7 +233,7 @@ export default function VariationDetail() {
   const canDelete = !isField && DELETABLE_STATUSES.includes(variation.status);
 
   const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none";
-  const labelClass = "block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1";
+  const labelClass = "block text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF] mb-1";
 
   const STATUS_TRANSITIONS: Record<string, string[]> = {
     draft:     ['submitted'],
@@ -332,7 +332,7 @@ export default function VariationDetail() {
         )}
 
         {/* Header Card */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           {editing ? (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-4">
@@ -381,48 +381,48 @@ export default function VariationDetail() {
           ) : (
             <>
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                <div>
+                <div className="min-w-0 flex-1">
                   <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1">{getVariationNumber(variation)}</div>
-                  <h2 className="text-xl font-semibold text-[#1C1C1E]">{variation.title}</h2>
-                  <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
+                  <h2 className="text-[22px] font-bold text-[#1C1C1E] truncate">{variation.title}</h2>
+                  <p className="text-[13px] text-[#6B7280] mt-1 truncate">{project.name} · {project.client}</p>
                 </div>
-                <div className="sm:text-right flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0">
-                  {!isField && <div className="text-2xl font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(variation.estimated_value)}</div>}
+                <div className="sm:text-right flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0 flex-shrink-0">
+                  {!isField && <div className="text-[28px] font-bold text-[#1C1C1E] tabular-nums">{formatCurrency(variation.estimated_value)}</div>}
                   <div className="sm:mt-2"><StatusBadge status={variation.status} /></div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-5 pt-4 md:pt-5 border-t border-[#F0F0EE]">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5 pt-4 border-t border-[#F0F0EE]">
                 <div>
-                  <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Instruction Source</div>
-                  <div className="text-[14px] text-[#1C1C1E] mt-1 capitalize">{variation.instruction_source?.replace(/_/g, ' ')}</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Instruction Source</div>
+                  <div className="text-[15px] text-[#1C1C1E] mt-1 capitalize truncate">{variation.instruction_source?.replace(/_/g, ' ')}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Instructed By</div>
-                  <div className="text-[14px] text-[#1C1C1E] mt-1">{variation.instructed_by || '—'}</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Instructed By</div>
+                  <div className="text-[15px] text-[#1C1C1E] mt-1 truncate">{variation.instructed_by || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Captured</div>
-                  <div className="text-[14px] text-[#1C1C1E] mt-1">{formatDate(variation.captured_at)}</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Captured</div>
+                  <div className="text-[15px] text-[#1C1C1E] mt-1 whitespace-nowrap">{formatDate(variation.captured_at)}</div>
                 </div>
                 {(variation.requestor_name || variation.requestor_email) && (
                   <div>
-                    <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Submitted By</div>
-                    <div className="text-[14px] text-[#1C1C1E] mt-1">{variation.requestor_name || '—'}</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Submitted By</div>
+                    <div className="text-[15px] text-[#1C1C1E] mt-1 truncate">{variation.requestor_name || '—'}</div>
                     {variation.requestor_email && (
-                      <div className="text-[12px] text-[#6B7280] mt-0.5">{variation.requestor_email}</div>
+                      <div className="text-[12px] text-[#6B7280] mt-0.5 truncate">{variation.requestor_email}</div>
                     )}
                   </div>
                 )}
                 {variation.reference_doc && (
                   <div>
-                    <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Reference Document</div>
-                    <div className="text-[14px] text-[#1C1C1E] mt-1">{variation.reference_doc}</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Reference Document</div>
+                    <div className="text-[15px] text-[#1C1C1E] mt-1 truncate">{variation.reference_doc}</div>
                   </div>
                 )}
                 {variation.evidence_hash && (
                   <div className="sm:col-span-2">
-                    <div className="text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em]">Evidence Hash</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Evidence Hash</div>
                     <div className="text-[11px] text-[#9CA3AF] mt-1 font-mono break-all">{variation.evidence_hash}</div>
                   </div>
                 )}
@@ -432,7 +432,7 @@ export default function VariationDetail() {
         </div>
 
         {/* Description */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Description</h3>
           {editing ? (
             <textarea
@@ -458,7 +458,7 @@ export default function VariationDetail() {
         </div>
 
         {/* Notes */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Notes</h3>
           {editing ? (
             <textarea
@@ -475,7 +475,7 @@ export default function VariationDetail() {
 
         {/* Documents */}
         {(documents.length > 0 || editing) && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Documents {documents.length > 0 && `(${documents.length})`}</h3>
             <div className="space-y-2">
               {documents.map(doc => (

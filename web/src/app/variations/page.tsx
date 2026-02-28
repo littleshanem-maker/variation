@@ -175,13 +175,13 @@ function VariationsList() {
                   {sorted.map((v, i) => (
                     <Link key={v.id} href={`/variation/${v.id}`} className="contents">
                       <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
-                        <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums">{getVariationNumber(v)}</td>
-                        <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{v.title}</td>
-                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] hidden md:table-cell">{v.project_name}</td>
+                        <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums whitespace-nowrap">{getVariationNumber(v)}</td>
+                        <td className="px-4 md:px-5 py-2.5 max-w-[200px] overflow-hidden"><div className="truncate text-[14px] font-medium text-[#1C1C1E]">{v.title}</div></td>
+                        <td className="px-4 md:px-5 py-2.5 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-[#6B7280]">{v.project_name}</div></td>
                         <td className="px-4 md:px-5 py-2.5"><StatusBadge status={v.status} /></td>
-                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] capitalize hidden lg:table-cell">{v.instruction_source?.replace(/_/g, ' ')}</td>
-                        <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell">{formatCurrency(v.estimated_value)}</td>
-                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right hidden md:table-cell">{formatDate(v.captured_at)}</td>
+                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] capitalize hidden lg:table-cell whitespace-nowrap">{v.instruction_source?.replace(/_/g, ' ')}</td>
+                        <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
+                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
                       </tr>
                     </Link>
                   ))}

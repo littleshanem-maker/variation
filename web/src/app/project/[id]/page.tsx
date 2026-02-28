@@ -237,38 +237,46 @@ function ProjectDetailContent() {
             <h2 className="text-xl font-semibold text-[#1C1C1E]">{project.name}</h2>
             <p className="text-[13px] text-[#6B7280] mt-1">{project.client} · {variations.length} variations{!isField && <> · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value</>}</p>
           </div>
-          {/* Action buttons — wrap on mobile */}
-          <div className="flex flex-wrap items-center gap-2 mt-3">
-            {isAdmin && (
+          {/* Action buttons */}
+          <div className="space-y-2 mt-3">
+            {/* Primary row — full width on mobile, side by side */}
+            <div className="flex gap-2">
               <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms]"
+                onClick={() => setShowNewVariation(true)}
+                className="flex-1 px-4 py-2.5 text-[13px] font-semibold text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] whitespace-nowrap"
               >
-                Delete Project
+                + New Variation
               </button>
+              {!isField && (
+                <Link
+                  href={`/notice/new?projectId=${project.id}`}
+                  className="flex-1 px-4 py-2.5 text-[13px] font-medium text-center text-[#1B365D] bg-white border border-[#1B365D] rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms] whitespace-nowrap"
+                >
+                  + New Variation Notice
+                </Link>
+              )}
+            </div>
+            {/* Destructive row — right-aligned, text-only style */}
+            {(!isField || isAdmin) && (
+              <div className="flex justify-end gap-3">
+                {!isField && (
+                  <button
+                    onClick={() => setShowArchiveConfirm(true)}
+                    className="px-3 py-1.5 text-[12px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms] whitespace-nowrap"
+                  >
+                    Archive Project
+                  </button>
+                )}
+                {isAdmin && (
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="px-3 py-1.5 text-[12px] font-medium text-[#B25B4E] hover:text-[#9E4D41] transition-colors duration-[120ms] whitespace-nowrap"
+                  >
+                    Delete Project
+                  </button>
+                )}
+              </div>
             )}
-            {!isField && (
-              <button
-                onClick={() => setShowArchiveConfirm(true)}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms]"
-              >
-                Archive Project
-              </button>
-            )}
-            {!isField && (
-              <Link
-                href={`/notice/new?projectId=${project.id}`}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms]"
-              >
-                + New Variation Notice
-              </Link>
-            )}
-            <button
-              onClick={() => setShowNewVariation(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
-            >
-              + New Variation
-            </button>
           </div>
         </div>
 
@@ -316,14 +324,14 @@ function ProjectDetailContent() {
                       return (
                         <Link key={n.id} href={`/notice/${n.id}`} className="contents">
                           <tr className={`h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === notices.length - 1 ? 'border-b-0' : ''}`}>
-                            <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D]">{n.notice_number}</td>
-                            <td className="px-4 md:px-5 py-2.5 text-[14px] text-[#1C1C1E]">{n.event_description.length > 40 ? n.event_description.substring(0, 40) + '…' : n.event_description}</td>
-                            <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] hidden sm:table-cell">{new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                            <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] whitespace-nowrap">{n.notice_number}</td>
+                            <td className="px-4 md:px-5 py-2.5 max-w-[180px] overflow-hidden"><div className="truncate text-[14px] text-[#1C1C1E]">{n.event_description}</div></td>
+                            <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] hidden sm:table-cell whitespace-nowrap">{new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                             <td className="px-4 md:px-5 py-2.5"><StatusBadge status={n.status} /></td>
-                            <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono text-[#1B365D] hidden md:table-cell">
+                            <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono text-[#1B365D] hidden md:table-cell whitespace-nowrap">
                               {linkedVar ? (linkedVar.variation_number ?? `VAR-${String(linkedVar.sequence_number).padStart(3, '0')}`) : '—'}
                             </td>
-                            <td className="px-4 md:px-5 py-2.5 text-right text-[12px] text-[#1B365D] font-medium">View →</td>
+                            <td className="px-4 md:px-5 py-2.5 text-right text-[12px] text-[#1B365D] font-medium whitespace-nowrap">View →</td>
                           </tr>
                         </Link>
                       );
@@ -357,12 +365,12 @@ function ProjectDetailContent() {
                   {sorted.map((v, i) => (
                     <Link key={v.id} href={`/variation/${v.id}`} className="contents">
                       <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
-                        <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums">{getVariationNumber(v)}</td>
-                        <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{v.title}</td>
+                        <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums whitespace-nowrap">{getVariationNumber(v)}</td>
+                        <td className="px-4 md:px-5 py-2.5 max-w-[200px] overflow-hidden"><div className="truncate text-[14px] font-medium text-[#1C1C1E]">{v.title}</div></td>
                         <td className="px-4 md:px-5 py-2.5"><StatusBadge status={v.status} /></td>
-                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] capitalize hidden md:table-cell">{v.instruction_source?.replace(/_/g, ' ')}</td>
-                        {!isField && <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell">{formatCurrency(v.estimated_value)}</td>}
-                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right hidden sm:table-cell">{formatDate(v.captured_at)}</td>
+                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] capitalize hidden md:table-cell whitespace-nowrap">{v.instruction_source?.replace(/_/g, ' ')}</td>
+                        {!isField && <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>}
+                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right hidden sm:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
                       </tr>
                     </Link>
                   ))}
