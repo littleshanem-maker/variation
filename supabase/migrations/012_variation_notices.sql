@@ -51,7 +51,7 @@ CREATE POLICY "Company members can read notices"
   ON public.variation_notices FOR SELECT
   USING (
     company_id IN (
-      SELECT company_id FROM public.company_memberships
+      SELECT company_id FROM public.company_members
       WHERE user_id = auth.uid() AND is_active = true
     )
   );
@@ -61,7 +61,7 @@ CREATE POLICY "Company members can insert notices"
   ON public.variation_notices FOR INSERT
   WITH CHECK (
     company_id IN (
-      SELECT company_id FROM public.company_memberships
+      SELECT company_id FROM public.company_members
       WHERE user_id = auth.uid() AND is_active = true
     )
   );
@@ -71,7 +71,7 @@ CREATE POLICY "Office and admin can update notices"
   ON public.variation_notices FOR UPDATE
   USING (
     company_id IN (
-      SELECT company_id FROM public.company_memberships
+      SELECT company_id FROM public.company_members
       WHERE user_id = auth.uid() AND is_active = true
     )
   );
