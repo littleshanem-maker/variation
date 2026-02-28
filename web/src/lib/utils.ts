@@ -72,11 +72,31 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
     border: 'border-[#B25B4E]',
     dot: 'bg-[#B25B4E]',
   },
+  // Variation Notice statuses
+  issued: {
+    label: 'VN Issued',
+    color: 'text-[#92722E]',
+    bg: 'bg-[#FDF8ED]',
+    border: 'border-[#C8943E]',
+    dot: 'bg-[#C8943E]',
+  },
+  acknowledged: {
+    label: 'VN Acknowledged',
+    color: 'text-[#3D6B5E]',
+    bg: 'bg-[#F0F7F4]',
+    border: 'border-[#4A7C6F]',
+    dot: 'bg-[#4A7C6F]',
+  },
 };
 
 /** Format sequence number as VAR-001 */
 export function formatVariationNumber(sequenceNumber: number): string {
   return `VAR-${String(sequenceNumber).padStart(3, '0')}`;
+}
+
+/** Format sequence number as VN-001 */
+export function formatNoticeNumber(sequenceNumber: number): string {
+  return `VN-${String(sequenceNumber).padStart(3, '0')}`;
 }
 
 /** Get variation number, falling back to sequence number if variation_number not set */

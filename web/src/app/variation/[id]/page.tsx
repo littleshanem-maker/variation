@@ -10,7 +10,7 @@ import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getVariationNumber } from '@/lib/utils';
 import { printVariation } from '@/lib/print';
 import { useRole } from '@/lib/role';
-import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document } from '@/lib/types';
+import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice } from '@/lib/types';
 
 const EDITABLE_STATUSES = ['draft', 'captured', 'submitted'];
 const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
@@ -26,6 +26,7 @@ export default function VariationDetail() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [docUrls, setDocUrls] = useState<Record<string, string>>({});
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
+  const [linkedNotice, setLinkedNotice] = useState<VariationNotice | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Status advancement state
@@ -182,6 +183,14 @@ export default function VariationDetail() {
     const { data: docs } = await supabase.from('documents').select('*').eq('variation_id', id).order('uploaded_at');
     setDocuments(docs || []);
 
+    // Load linked notice if present
+    if (v.notice_id) {
+      const { data: noticeData } = await supabase.from('variation_notices').select('*').eq('id', v.notice_id).single();
+      setLinkedNotice(noticeData ?? null);
+    } else {
+      setLinkedNotice(null);
+    }
+
     if (docs && docs.length > 0) {
       const urls: Record<string, string> = {};
       for (const doc of docs) {
@@ -314,6 +323,21 @@ export default function VariationDetail() {
             </div>
           )}
         </div>
+
+        {/* Linked Variation Notice Banner */}
+        {linkedNotice && (
+          <div className="flex items-center gap-3 px-4 py-3 bg-[#FDF8ED] border border-[#C8943E]/30 rounded-md text-[13px]">
+            <span className="font-mono font-bold text-[#1B365D]">{linkedNotice.notice_number}</span>
+            <span className="text-[#6B7280]">—</span>
+            {linkedNotice.issued_at
+              ? <span className="text-[#92722E]">Issued {new Date(linkedNotice.issued_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+              : <span className="text-[#92722E] capitalize">{linkedNotice.status}</span>
+            }
+            <Link href={`/notice/${linkedNotice.id}`} className="ml-auto text-[#1B365D] font-medium hover:text-[#24466F] transition-colors duration-[120ms]">
+              View Notice →
+            </Link>
+          </div>
+        )}
 
         {/* Header Card */}
         <div className="bg-white rounded-md border border-[#E5E7EB] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">

@@ -54,6 +54,7 @@ export interface Project {
   longitude?: number;
   contract_type?: string;
   is_active: boolean;
+  notice_required?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -79,6 +80,28 @@ export interface Variation {
   requestor_email?: string;
   ai_description?: string;
   ai_transcription?: string;
+  notice_id?: string;  // FK to variation_notices, null if notice skipped
+  created_at: string;
+  updated_at: string;
+}
+
+export interface VariationNotice {
+  id: string;
+  project_id: string;
+  company_id: string;
+  notice_number: string;        // VN-001 format
+  sequence_number: number;
+  event_description: string;
+  event_date: string;           // ISO date string
+  cost_flag: boolean;
+  time_flag: boolean;
+  estimated_days?: number;
+  contract_clause?: string;
+  issued_by_name?: string;
+  issued_by_email?: string;
+  status: 'draft' | 'issued' | 'acknowledged';
+  issued_at?: string;
+  acknowledged_at?: string;
   created_at: string;
   updated_at: string;
 }

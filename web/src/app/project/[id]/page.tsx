@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
@@ -10,18 +10,22 @@ import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getVariationNumber, formatVariationNumber } from '@/lib/utils';
 import { printProjectRegister } from '@/lib/print';
 import { useRole } from '@/lib/role';
-import type { Project, Variation } from '@/lib/types';
+import type { Project, Variation, VariationNotice } from '@/lib/types';
 
 type SortKey = 'sequence_number' | 'title' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at';
 
-export default function ProjectDetail() {
+function ProjectDetailContent() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const prefilledNoticeId = searchParams.get('noticeId');
+  const autoOpenNewVar = searchParams.get('newVariation') === '1';
   const [project, setProject] = useState<Project | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortKey, setSortKey] = useState<SortKey>('sequence_number');
   const [sortAsc, setSortAsc] = useState(true);
+  const [notices, setNotices] = useState<VariationNotice[]>([]);
   const [showNewVariation, setShowNewVariation] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
@@ -29,6 +33,7 @@ export default function ProjectDetail() {
   const [newInstructedBy, setNewInstructedBy] = useState('');
   const [newValue, setNewValue] = useState('');
   const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [newNoticeId, setNewNoticeId] = useState(prefilledNoticeId || '');
   const [creatingVariation, setCreatingVariation] = useState(false);
 
   // Delete/Archive state
@@ -36,18 +41,31 @@ export default function ProjectDetail() {
   const [deleting, setDeleting] = useState(false);
   const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
   const [archiving, setArchiving] = useState(false);
+  const [togglingNoticeRequired, setTogglingNoticeRequired] = useState(false);
   const { isField, isAdmin, isOffice, companyId } = useRole();
 
   useEffect(() => {
     loadProject();
   }, [id]);
 
+  useEffect(() => {
+    if (autoOpenNewVar) {
+      setShowNewVariation(true);
+    }
+  }, [autoOpenNewVar]);
+
   async function loadProject() {
     const supabase = createClient();
     const { data: proj } = await supabase.from('projects').select('*').eq('id', id).single();
     const { data: vars } = await supabase.from('variations').select('*').eq('project_id', id).order('sequence_number');
+    const { data: noticesData } = await supabase
+      .from('variation_notices')
+      .select('*')
+      .eq('project_id', id)
+      .order('sequence_number');
     setProject(proj);
     setVariations(vars || []);
+    setNotices(noticesData || []);
     setLoading(false);
   }
 
@@ -98,6 +116,7 @@ export default function ProjectDetail() {
       captured_at: new Date().toISOString(),
       requestor_name: requestorName,
       requestor_email: requestorEmail,
+      notice_id: newNoticeId || null,
     });
 
     if (!error && newFiles.length > 0 && user) {
@@ -125,6 +144,7 @@ export default function ProjectDetail() {
       setNewInstructedBy('');
       setNewValue('');
       setNewFiles([]);
+      setNewNoticeId('');
       setShowNewVariation(false);
       loadProject();
     }
@@ -142,6 +162,18 @@ export default function ProjectDetail() {
       setDeleting(false);
       setShowDeleteConfirm(false);
     }
+  }
+
+  async function handleToggleNoticeRequired() {
+    if (!project) return;
+    setTogglingNoticeRequired(true);
+    const supabase = createClient();
+    const newValue = !project.notice_required;
+    const { error } = await supabase.from('projects').update({ notice_required: newValue }).eq('id', project.id);
+    if (!error) {
+      setProject({ ...project, notice_required: newValue });
+    }
+    setTogglingNoticeRequired(false);
   }
 
   async function handleArchiveProject() {
@@ -224,6 +256,14 @@ export default function ProjectDetail() {
                   Archive Project
                 </button>
               )}
+              {!isField && (
+                <Link
+                  href={`/notice/new?projectId=${project.id}`}
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms]"
+                >
+                  + New Notice
+                </Link>
+              )}
               <button
                 onClick={() => setShowNewVariation(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] ease-out shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
@@ -233,6 +273,67 @@ export default function ProjectDetail() {
             </div>
           </div>
         </div>
+
+        {/* Project Settings — notice_required toggle (admin only) */}
+        {isAdmin && (
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[14px] font-medium text-[#1C1C1E]">Require Variation Notice</div>
+                <div className="text-[12px] text-[#9CA3AF] mt-0.5">Enable for Tier 1 contracts that require formal notice of variation events</div>
+              </div>
+              <button
+                type="button"
+                onClick={handleToggleNoticeRequired}
+                disabled={togglingNoticeRequired}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors duration-200 cursor-pointer disabled:opacity-40 ${project.notice_required ? 'bg-[#1B365D]' : 'bg-[#D1D5DB]'}`}
+                aria-checked={project.notice_required}
+              >
+                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-200 ${project.notice_required ? 'translate-x-4' : 'translate-x-0.5'}`} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Variation Notices Section */}
+        {notices.length > 0 && (
+          <div>
+            <h3 className="text-[13px] font-semibold text-[#6B7280] uppercase tracking-[0.04em] mb-2">Variation Notices</h3>
+            <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-[#E5E7EB]">
+                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Notice No.</th>
+                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Event Description</th>
+                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Event Date</th>
+                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Status</th>
+                    <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3">Linked VR</th>
+                    <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-5 py-3"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {notices.map((n, i) => {
+                    const linkedVar = variations.find(v => v.notice_id === n.id);
+                    return (
+                      <Link key={n.id} href={`/notice/${n.id}`} className="contents">
+                        <tr className={`h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === notices.length - 1 ? 'border-b-0' : ''}`}>
+                          <td className="px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D]">{n.notice_number}</td>
+                          <td className="px-5 py-2.5 text-[14px] text-[#1C1C1E]">{n.event_description.length > 60 ? n.event_description.substring(0, 60) + '…' : n.event_description}</td>
+                          <td className="px-5 py-2.5 text-[13px] text-[#6B7280]">{new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                          <td className="px-5 py-2.5"><StatusBadge status={n.status} /></td>
+                          <td className="px-5 py-2.5 text-[13px] font-mono text-[#1B365D]">
+                            {linkedVar ? (linkedVar.variation_number ?? `VAR-${String(linkedVar.sequence_number).padStart(3, '0')}`) : '—'}
+                          </td>
+                          <td className="px-5 py-2.5 text-right text-[12px] text-[#1B365D] font-medium">View →</td>
+                        </tr>
+                      </Link>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {variations.length === 0 ? (
           <div className="bg-white rounded-md border border-[#E5E7EB] p-12 text-center text-[#9CA3AF] text-sm">
@@ -273,6 +374,17 @@ export default function ProjectDetail() {
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20" onClick={() => setShowNewVariation(false)}>
             <div className="bg-white rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full max-w-lg" onClick={e => e.stopPropagation()}>
               <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">New Variation</h3>
+              {project.notice_required && (
+                <div className="mb-4 flex items-start gap-2 px-3 py-2.5 bg-[#FDF8ED] border border-[#C8943E]/30 rounded-md text-[13px]">
+                  <span className="text-[#92722E] mt-0.5">⚠</span>
+                  <div>
+                    <span className="text-[#92722E]">This project requires a Variation Notice. Consider issuing a notice before submitting this request.{' '}</span>
+                    <Link href={`/notice/new?projectId=${project.id}`} className="text-[#1B365D] font-medium hover:text-[#24466F] transition-colors" onClick={() => setShowNewVariation(false)}>
+                      Create Notice First →
+                    </Link>
+                  </div>
+                </div>
+              )}
               <div className="space-y-3">
                 <div>
                   <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Title</label>
@@ -336,6 +448,26 @@ export default function ProjectDetail() {
                     />
                   </div>
                 )}
+                {/* Link to Variation Notice */}
+                {(() => {
+                  const unlinkableNotices = notices.filter(n => n.status === 'issued' && !variations.some(v => v.notice_id === n.id));
+                  if (unlinkableNotices.length === 0) return null;
+                  return (
+                    <div>
+                      <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Link to Variation Notice (optional)</label>
+                      <select
+                        value={newNoticeId}
+                        onChange={e => setNewNoticeId(e.target.value)}
+                        className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white"
+                      >
+                        <option value="">None</option>
+                        {unlinkableNotices.map(n => (
+                          <option key={n.id} value={n.id}>{n.notice_number} — {n.event_description.substring(0, 50)}</option>
+                        ))}
+                      </select>
+                    </div>
+                  );
+                })()}
                 <div>
                   <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Attachments</label>
                   <div
@@ -461,5 +593,13 @@ export default function ProjectDetail() {
         </div>
       )}
     </AppShell>
+  );
+}
+
+export default function ProjectDetail() {
+  return (
+    <Suspense fallback={<AppShell><TopBar title="Project" /><div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Loading...</div></AppShell>}>
+      <ProjectDetailContent />
+    </Suspense>
   );
 }

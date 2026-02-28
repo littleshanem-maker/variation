@@ -1,5 +1,5 @@
 import { formatCurrency, formatDate, getStatusConfig, getVariationNumber } from './utils';
-import type { Project, Variation, PhotoEvidence } from './types';
+import type { Project, Variation, PhotoEvidence, VariationNotice } from './types';
 
 interface ProjectWithVariations extends Project {
   variations: Variation[];
@@ -331,7 +331,133 @@ export function printProjectRegister(project: Project, variations: Variation[]) 
 }
 
 // ------------------------------------------------------------------
-// 3. PRINT VARIATION INSTRUCTION (SINGLE ITEM)
+// 3. PRINT VARIATION NOTICE (SINGLE NOTICE)
+// ------------------------------------------------------------------
+export function printNotice(
+  notice: VariationNotice,
+  project: Project,
+  companyName: string = ''
+) {
+  const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
+  const logoUrl = `${window.location.origin}/variation-shield-logo.jpg`;
+
+  const eventDateFormatted = new Date(notice.event_date + 'T00:00:00').toLocaleDateString('en-AU', {
+    day: '2-digit', month: 'long', year: 'numeric',
+  });
+  const issuedFormatted = notice.issued_at
+    ? new Date(notice.issued_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' })
+    : '—';
+
+  const costCheck = notice.cost_flag ? '☑' : '☐';
+  const costClear = notice.cost_flag ? '☐' : '☑';
+  const timeCheck = notice.time_flag ? '☑' : '☐';
+  const timeClear = notice.time_flag ? '☐' : '☑';
+
+  const html = `
+    <div class="doc-header">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+          <img src="${logoUrl}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;" />
+          <div class="brand">${escapeHtml(companyName || 'Variation Shield')}</div>
+        </div>
+        <div class="doc-title">Variation Notice</div>
+      </div>
+      <div class="doc-meta">
+        <div class="meta-row" style="font-size:14pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(notice.notice_number)}</div>
+        <div class="meta-row">Issued: ${issuedFormatted}</div>
+        <div class="meta-row">Status: <strong style="text-transform:capitalize;">${notice.status}</strong></div>
+      </div>
+    </div>
+
+    <div class="detail-grid" style="margin-bottom:24px;">
+      <div>
+        <div class="field-group">
+          <div class="field-label">Project</div>
+          <div class="field-value large">${escapeHtml(project.name)}</div>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Client</div>
+          <div class="field-value">${escapeHtml(project.client)}</div>
+        </div>
+        ${project.reference ? `<div class="field-group"><div class="field-label">Contract Ref</div><div class="field-value">${escapeHtml(project.reference)}</div></div>` : ''}
+      </div>
+      <div>
+        <div class="field-group">
+          <div class="field-label">Event Date</div>
+          <div class="field-value">${eventDateFormatted}</div>
+        </div>
+        ${notice.contract_clause ? `<div class="field-group"><div class="field-label">Contract Clause</div><div class="field-value">${escapeHtml(notice.contract_clause)}</div></div>` : ''}
+        ${notice.issued_by_name ? `<div class="field-group"><div class="field-label">Issued By</div><div class="field-value">${escapeHtml(notice.issued_by_name)}</div>${notice.issued_by_email ? `<div class="field-value text-muted" style="font-weight:400;font-size:9pt;margin-top:2px;">${escapeHtml(notice.issued_by_email)}</div>` : ''}</div>` : ''}
+      </div>
+    </div>
+
+    <div style="margin-bottom:24px; padding:16px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB;">
+      <div style="font-size:9pt; color:#6B7280; margin-bottom:8px;">TO: ${escapeHtml(project.client)}</div>
+      <div style="font-size:10pt; line-height:1.6;">
+        TAKE NOTICE that the undersigned hereby gives notice pursuant to the contract that a variation event has occurred as described below.
+      </div>
+    </div>
+
+    <div class="description-box">
+      <div class="field-label">Description of Event</div>
+      <div class="description-text">${escapeHtml(notice.event_description)}</div>
+    </div>
+
+    <div style="margin-bottom:32px;">
+      <table style="width:auto; border-collapse:collapse;">
+        <tr>
+          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Cost Implication</td>
+          <td style="padding:6px 0; font-size:10pt;">${costCheck} Yes &nbsp;&nbsp; ${costClear} No</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Time Implication</td>
+          <td style="padding:6px 0; font-size:10pt;">${timeCheck} Yes &nbsp;&nbsp; ${timeClear} No</td>
+        </tr>
+        ${notice.time_flag && notice.estimated_days != null ? `
+        <tr>
+          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Estimated Days</td>
+          <td style="padding:6px 0; font-size:10pt;">${notice.estimated_days}</td>
+        </tr>
+        ` : ''}
+        ${notice.contract_clause ? `
+        <tr>
+          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Contract Clause</td>
+          <td style="padding:6px 0; font-size:10pt;">${escapeHtml(notice.contract_clause)}</td>
+        </tr>
+        ` : ''}
+      </table>
+    </div>
+
+    <div style="font-size:10pt; line-height:1.6; margin-bottom:32px;">
+      A formal Variation Request will be submitted in accordance with the contract.
+    </div>
+
+    <div style="display:flex; justify-content:space-between; padding-top:24px; border-top:1px solid #E5E7EB;">
+      <div>
+        <div class="field-label">Issued by</div>
+        <div class="field-value">${escapeHtml(notice.issued_by_name || '—')}</div>
+        ${notice.issued_by_email ? `<div style="font-size:9pt; color:#6B7280; margin-top:2px;">${escapeHtml(notice.issued_by_email)}</div>` : ''}
+      </div>
+      <div style="text-align:right;">
+        <div class="field-label">${escapeHtml(notice.notice_number)}</div>
+        <div class="field-value">${escapeHtml(companyName || 'Variation Shield')}</div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <img src="${logoUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;" />
+        <span>Variation Shield</span>
+      </div>
+      <div>${escapeHtml(notice.notice_number)} · ${escapeHtml(project.name)}</div>
+    </div>
+  `;
+
+  openHtml(html, `${notice.notice_number} - Variation Notice`);
+}
+
+// ------------------------------------------------------------------
+// 4. PRINT VARIATION INSTRUCTION (SINGLE ITEM)
 // ------------------------------------------------------------------
 export function printVariation(
   variation: Variation, 
