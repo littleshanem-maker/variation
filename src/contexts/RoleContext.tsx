@@ -37,7 +37,7 @@ const RoleContext = createContext<RoleContextType>({
   company: null,
   companyId: null,
   memberships: [],
-  colors: officeColors as typeof fieldColors,
+  colors: officeColors as unknown as typeof fieldColors,
   switchCompany: () => {},
   refreshMembership: async () => {},
   isLoading: false,

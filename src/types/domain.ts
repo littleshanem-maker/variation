@@ -126,6 +126,29 @@ export interface StatusChange {
   notes?: string;
 }
 
+export interface VariationNotice {
+  id: string;
+  projectId: string;
+  noticeNumber: string;
+  sequenceNumber: number;
+  eventDescription: string;
+  eventDate: string;
+  costFlag: boolean;
+  timeFlag: boolean;
+  estimatedDays?: number;
+  contractClause?: string;
+  issuedByName?: string;
+  issuedByEmail?: string;
+  status: 'draft' | 'issued' | 'acknowledged';
+  issuedAt?: string;
+  acknowledgedAt?: string;
+  variationId?: string;
+  syncStatus: string;
+  remoteId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // ============================================================
 // VIEW MODELS
 // ============================================================

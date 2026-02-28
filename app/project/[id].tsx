@@ -10,7 +10,8 @@ import { useLocalSearchParams, useRouter, useFocusEffect, Stack } from 'expo-rou
 import { Ionicons } from '@expo/vector-icons';
 import { getProjectById, deleteProject, archiveProject } from '../../src/db/projectRepository';
 import { getVariationsForProject, getVariationDetail } from '../../src/db/variationRepository';
-import { Project, Variation, VariationStatus, VariationDetail } from '../../src/types/domain';
+import { getNoticesForProject } from '../../src/db/noticeRepository';
+import { Project, Variation, VariationNotice, VariationStatus, VariationDetail } from '../../src/types/domain';
 import { spacing, borderRadius, typography, getStatusColor, getStatusLabel } from '../../src/theme';
 import { useThemeColors } from '../../src/contexts/AppModeContext';
 import { formatCurrency, timeAgo, formatVariationId } from '../../src/utils/helpers';
@@ -33,6 +34,7 @@ export default function ProjectDetailScreen() {
   const { isOffice } = useAppMode();
   const [project, setProject] = useState<Project | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
+  const [notices, setNotices] = useState<VariationNotice[]>([]);
   const [statusFilter, setStatusFilter] = useState<VariationStatus | undefined>();
   const [refreshing, setRefreshing] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -48,6 +50,8 @@ export default function ProjectDetailScreen() {
       ? v
       : v.filter(item => item.status === VariationStatus.CAPTURED || item.status === VariationStatus.SUBMITTED);
     setVariations(filtered);
+    const n = await getNoticesForProject(id);
+    setNotices(n);
   }, [id, statusFilter, isOffice]);
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
@@ -194,6 +198,26 @@ export default function ProjectDetailScreen() {
     // Empty
     empty: { alignItems: 'center', paddingTop: 60 },
     emptyText: { fontSize: 14, color: colors.textMuted, marginTop: 12 },
+    // Notices row
+    noticesRow: {
+      paddingHorizontal: spacing.lg, paddingVertical: 10,
+      borderBottomWidth: 1, borderBottomColor: colors.border,
+      backgroundColor: colors.bg,
+    },
+    noticesLabel: { fontSize: 10, fontWeight: '700', color: colors.textMuted, textTransform: 'uppercase' as const, letterSpacing: 0.5, marginBottom: 7 },
+    noticesPills: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+    noticePill: {
+      flexDirection: 'row', alignItems: 'center', gap: 5,
+      paddingHorizontal: 10, paddingVertical: 5, borderRadius: borderRadius.full,
+      backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border,
+    },
+    noticePillText: { fontSize: 12, fontWeight: '700', color: colors.text },
+    newNoticeSmallBtn: {
+      flexDirection: 'row', alignItems: 'center', gap: 3,
+      paddingHorizontal: 10, paddingVertical: 5, borderRadius: borderRadius.full,
+      borderWidth: 1, borderColor: colors.warning ?? '#C8943E',
+    },
+    newNoticeSmallText: { fontSize: 12, fontWeight: '700', color: colors.warning ?? '#C8943E' },
     // Mobile
     iconButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: colors.border },
     menuOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'center', alignItems: 'center' },
@@ -327,7 +351,45 @@ export default function ProjectDetailScreen() {
           <Ionicons name="add" size={15} color="#fff" />
           <Text style={styles.newVarBtnText}>New Variation</Text>
         </Pressable>
+        <Pressable
+          onPress={() => router.push(`/notice/new?projectId=${id}`)}
+          style={({ pressed }) => [
+            styles.newVarBtn,
+            { opacity: pressed ? 0.85 : 1, backgroundColor: colors.warning ?? '#C8943E', marginLeft: 4 },
+          ]}
+        >
+          <Ionicons name="warning-outline" size={15} color="#fff" />
+          <Text style={styles.newVarBtnText}>Notice</Text>
+        </Pressable>
       </View>
+
+      {/* Notices Row */}
+      {notices.length > 0 ? (
+        <View style={styles.noticesRow}>
+          <Text style={styles.noticesLabel}>Notices</Text>
+          <View style={styles.noticesPills}>
+            {notices.map((n) => (
+              <Pressable
+                key={n.id}
+                style={({ pressed }) => [styles.noticePill, { opacity: pressed ? 0.7 : 1 }]}
+                onPress={() => router.push(`/notice/${n.id}`)}
+              >
+                <Text style={styles.noticePillText}>{n.noticeNumber}</Text>
+                <Text style={{ fontSize: 11, color: n.status === 'issued' ? colors.warning ?? '#C8943E' : n.status === 'acknowledged' ? colors.success : colors.textMuted }}>
+                  {n.status === 'issued' ? '✓' : n.status === 'acknowledged' ? '✓✓' : '○'}
+                </Text>
+              </Pressable>
+            ))}
+            <Pressable
+              style={({ pressed }) => [styles.newNoticeSmallBtn, { opacity: pressed ? 0.7 : 1 }]}
+              onPress={() => router.push(`/notice/new?projectId=${id}`)}
+            >
+              <Ionicons name="add" size={13} color={colors.warning ?? '#C8943E'} />
+              <Text style={styles.newNoticeSmallText}>New</Text>
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
 
       {/* Table Header */}
       <View style={styles.tableHeader}>
@@ -356,7 +418,7 @@ export default function ProjectDetailScreen() {
         }
       />
 
-      {/* Field mode: New Variation bottom button */}
+      {/* Field mode: New Variation + New Notice bottom buttons */}
       {!isOffice && (
         <View style={styles.bottomAction}>
           <Pressable
@@ -365,6 +427,16 @@ export default function ProjectDetailScreen() {
           >
             <Ionicons name="add-circle-outline" size={22} color="#fff" />
             <Text style={styles.captureBtnText}>New Variation</Text>
+          </Pressable>
+          <Pressable
+            style={({ pressed }) => [
+              styles.captureBtn,
+              { opacity: pressed ? 0.85 : 1, backgroundColor: colors.warning ?? '#C8943E', marginTop: 10 },
+            ]}
+            onPress={() => router.push(`/notice/new?projectId=${id}`)}
+          >
+            <Ionicons name="warning-outline" size={22} color="#fff" />
+            <Text style={styles.captureBtnText}>New Notice</Text>
           </Pressable>
         </View>
       )}

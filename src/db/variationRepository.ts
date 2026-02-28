@@ -355,7 +355,7 @@ async function addStatusChange(
 
 export async function getPendingSyncCount(): Promise<number> {
   const db = await getDatabase();
-  const tables = ['projects', 'variations', 'photo_evidence', 'voice_notes'];
+  const tables = ['projects', 'variations', 'photo_evidence', 'voice_notes', 'variation_notices'];
   let total = 0;
   for (const table of tables) {
     const result = await db.getFirstAsync<{ count: number }>(

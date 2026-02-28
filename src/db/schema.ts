@@ -136,6 +136,33 @@ async function createTables(database: SQLite.SQLiteDatabase): Promise<void> {
     CREATE INDEX IF NOT EXISTS idx_sync_projects ON projects(sync_status);
     CREATE INDEX IF NOT EXISTS idx_sync_variations ON variations(sync_status);
     CREATE INDEX IF NOT EXISTS idx_attachments_variation ON attachments(variation_id);
+
+    CREATE TABLE IF NOT EXISTS variation_notices (
+      id TEXT PRIMARY KEY,
+      project_id TEXT NOT NULL,
+      notice_number TEXT NOT NULL,
+      sequence_number INTEGER NOT NULL,
+      event_description TEXT NOT NULL,
+      event_date TEXT NOT NULL,
+      cost_flag INTEGER NOT NULL DEFAULT 1,
+      time_flag INTEGER NOT NULL DEFAULT 0,
+      estimated_days INTEGER,
+      contract_clause TEXT,
+      issued_by_name TEXT,
+      issued_by_email TEXT,
+      status TEXT NOT NULL DEFAULT 'draft',
+      issued_at TEXT,
+      acknowledged_at TEXT,
+      variation_id TEXT,
+      sync_status TEXT NOT NULL DEFAULT 'pending',
+      remote_id TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_notices_project ON variation_notices(project_id);
+    CREATE INDEX IF NOT EXISTS idx_notices_sync ON variation_notices(sync_status);
   `);
 }
 

@@ -142,6 +142,7 @@ export async function getArchivedProjects(): Promise<ProjectSummary[]> {
   const rows = await db.getAllAsync<{
     id: string; name: string; client: string; reference: string;
     is_active: number; variation_count: number; total_value: number;
+    created_at: string; updated_at: string; sync_status: string;
   }>(`
     SELECT p.*, 
       (SELECT COUNT(*) FROM variations v WHERE v.project_id = p.id) as variation_count,
@@ -155,9 +156,14 @@ export async function getArchivedProjects(): Promise<ProjectSummary[]> {
     name: row.name,
     client: row.client,
     reference: row.reference,
-    isActive: false,
+    isActive: false as const,
     variationCount: row.variation_count,
+    fieldVariationCount: 0,
     totalValue: row.total_value,
+    atRiskValue: 0,
+    createdAt: row.created_at ?? '',
+    updatedAt: row.updated_at ?? '',
+    syncStatus: (row.sync_status ?? SyncStatus.SYNCED) as SyncStatus,
   }));
 }
 

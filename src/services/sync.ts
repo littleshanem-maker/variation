@@ -199,7 +199,43 @@ export async function syncPendingChanges(): Promise<SyncResult> {
       }
     }
 
-    // 4. Sync pending voice notes
+    // 4. Sync pending variation notices
+    const pendingNotices = await db.getAllAsync<any>(
+      "SELECT * FROM variation_notices WHERE sync_status = 'pending'"
+    );
+    for (const notice of pendingNotices) {
+      try {
+        const { error } = await supabase.from('variation_notices').upsert({
+          id: notice.id,
+          project_id: notice.project_id,
+          notice_number: notice.notice_number,
+          sequence_number: notice.sequence_number,
+          event_description: notice.event_description,
+          event_date: notice.event_date,
+          cost_flag: Boolean(notice.cost_flag),
+          time_flag: Boolean(notice.time_flag),
+          estimated_days: notice.estimated_days,
+          contract_clause: notice.contract_clause,
+          issued_by_name: notice.issued_by_name,
+          issued_by_email: notice.issued_by_email,
+          status: notice.status,
+          issued_at: notice.issued_at,
+          acknowledged_at: notice.acknowledged_at,
+          variation_id: notice.variation_id,
+          created_at: notice.created_at,
+          updated_at: notice.updated_at,
+        }, { onConflict: 'id' });
+
+        if (!error) {
+          await db.runAsync("UPDATE variation_notices SET sync_status = 'synced' WHERE id = ?", notice.id);
+          pushed++;
+        }
+      } catch (e) {
+        console.error('[Sync] Notice push failed:', e);
+      }
+    }
+
+    // 5. Sync pending voice notes
     const pendingVoice = await db.getAllAsync<any>(
       "SELECT * FROM voice_notes WHERE sync_status = 'pending'"
     );
@@ -309,7 +345,43 @@ export async function syncPendingChanges(): Promise<SyncResult> {
       }
     }
 
-    // 3. Pull photo_evidence (immutable after capture — use captured_at)
+    // 3. Pull variation_notices
+    const { data: serverNotices, error: noticesPullErr } = await supabase
+      .from('variation_notices')
+      .select('*')
+      .in('project_id', (serverProjects ?? []).map((p: any) => p.id));
+    if (noticesPullErr) {
+      console.error('[Sync] Pull variation_notices error:', noticesPullErr);
+    } else if (serverNotices) {
+      for (const sn of serverNotices) {
+        const local = await db.getFirstAsync<any>(
+          'SELECT id, sync_status, updated_at FROM variation_notices WHERE id = ?',
+          sn.id
+        );
+        if (local?.sync_status === 'pending') continue;
+        if (local && local.updated_at >= sn.updated_at) continue;
+        await db.runAsync(
+          `INSERT OR REPLACE INTO variation_notices
+            (id, project_id, notice_number, sequence_number,
+             event_description, event_date, cost_flag, time_flag,
+             estimated_days, contract_clause, issued_by_name, issued_by_email,
+             status, issued_at, acknowledged_at, variation_id,
+             sync_status, remote_id, created_at, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?)`,
+          sn.id, sn.project_id, sn.notice_number, sn.sequence_number,
+          sn.event_description, sn.event_date,
+          sn.cost_flag ? 1 : 0, sn.time_flag ? 1 : 0,
+          sn.estimated_days ?? null, sn.contract_clause ?? null,
+          sn.issued_by_name ?? null, sn.issued_by_email ?? null,
+          sn.status, sn.issued_at ?? null, sn.acknowledged_at ?? null,
+          sn.variation_id ?? null, null,
+          sn.created_at, sn.updated_at
+        );
+        pulled++;
+      }
+    }
+
+    // 4. Pull photo_evidence (immutable after capture — use captured_at)
     const serverVariationIds = (serverVariations ?? []).map((v: any) => v.id);
     if (serverVariationIds.length > 0) {
       const { data: serverPhotos, error: photoPullErr } = await supabase
@@ -411,7 +483,7 @@ export async function syncPendingChanges(): Promise<SyncResult> {
 
 export async function getPendingSyncCount(): Promise<number> {
   const db = await getDatabase();
-  const tables = ['projects', 'variations', 'photo_evidence', 'voice_notes'];
+  const tables = ['projects', 'variations', 'photo_evidence', 'voice_notes', 'variation_notices'];
   let total = 0;
   for (const table of tables) {
     const result = await db.getFirstAsync<{ count: number }>(
