@@ -10,10 +10,12 @@ interface NavItem {
   label: string;
   href: string;
   roles?: UserRole[]; // if undefined, visible to all
+  highlight?: boolean; // bold + orange accent (used for Quick Capture for field users)
 }
 
 const nav: NavItem[] = [
   { label: 'Dashboard', href: '/' },
+  { label: '⚡ Quick Capture', href: '/capture', highlight: true },
   { label: 'Variation Register', href: '/variations', roles: ['admin', 'office'] },
   { label: 'Archived Projects', href: '/archived', roles: ['admin', 'office'] },
   { label: 'Team', href: '/team', roles: ['admin'] },
@@ -22,9 +24,17 @@ const nav: NavItem[] = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { role, company } = useRole();
+  const { role, isField, company } = useRole();
 
   const visibleNav = nav.filter(item => !item.roles || item.roles.includes(role));
+
+  // For field users: move Quick Capture to the top
+  const sortedNav = isField
+    ? [
+        ...visibleNav.filter(item => item.href === '/capture'),
+        ...visibleNav.filter(item => item.href !== '/capture'),
+      ]
+    : visibleNav;
 
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-[240px] bg-[#1B365D] text-white flex flex-col z-50">
@@ -38,16 +48,19 @@ export default function Sidebar() {
         )}
       </div>
       <nav className="flex-1 px-3 pt-2 space-y-0.5">
-        {visibleNav.map((item) => {
+        {sortedNav.map((item) => {
           const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+          const isCapture = item.href === '/capture';
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`relative flex items-center px-3 py-2 rounded text-[13px] font-medium transition-colors duration-[120ms] ease-out ${
+              className={`relative flex items-center px-3 py-2 rounded text-[13px] transition-colors duration-[120ms] ease-out ${
                 active
-                  ? 'bg-white/10 text-white'
-                  : 'text-white/60 hover:text-white/90 hover:bg-white/5'
+                  ? 'bg-white/10 text-white font-semibold'
+                  : isCapture
+                  ? 'text-[#D4A853] hover:text-[#E8C47A] hover:bg-white/5 font-semibold'
+                  : 'text-white/60 hover:text-white/90 hover:bg-white/5 font-medium'
               }`}
             >
               {active && <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#D4A853] rounded-r" />}
