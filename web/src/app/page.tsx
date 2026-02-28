@@ -17,6 +17,8 @@ interface StatusSummary {
   count: number;
   total: number;
   border: string;
+  bg: string;
+  color: string;
 }
 
 export default function Dashboard() {
@@ -158,6 +160,8 @@ export default function Dashboard() {
       count: filtered.length,
       total: filtered.reduce((sum, v) => sum + (v.estimated_value || 0), 0),
       border: config.border,
+      bg: config.bg,
+      color: config.color,
     };
   });
 
@@ -168,6 +172,8 @@ export default function Dashboard() {
     count: atRiskVariations.length,
     total: atRiskVariations.reduce((sum, v) => sum + (v.estimated_value || 0), 0),
     border: 'border-[#C8943E]',
+    bg: 'bg-[#FEF3C7]',
+    color: 'text-[#92400E]',
   });
 
   return (
@@ -177,15 +183,24 @@ export default function Dashboard() {
         {/* Status Summary Boxes */}
         <div className={`grid ${isField ? 'grid-cols-3' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6'} gap-3 md:gap-4`}>
           {summaries.map(s => (
-            <div key={s.status} className={`bg-white rounded-md border border-[#E5E7EB] border-t-[3px] ${s.border} p-4 md:p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]`}>
-              <div className="text-[10px] md:text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-2">{s.label}</div>
-              {!isField && <div className="text-base md:text-xl font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(s.total)}</div>}
-              <div className="text-[12px] md:text-[13px] text-[#6B7280] mt-1">
+            <div
+              key={s.status}
+              className={`rounded-md border border-t-[3px] ${s.border} ${s.bg} p-4 shadow-[0_1px_2px_rgba(0,0,0,0.06)]`}
+            >
+              <div className="text-[10px] font-semibold uppercase tracking-widest text-current opacity-60 mb-2">
+                {s.label}
+              </div>
+              {!isField && (
+                <div className={`text-xl font-bold tabular-nums ${s.color}`}>
+                  {formatCurrency(s.total)}
+                </div>
+              )}
+              <div className="text-[12px] text-current opacity-60 mt-0.5">
                 {s.count} {s.count === 1 ? 'var' : 'vars'}
               </div>
-              <Link 
+              <Link
                 href={`/variations?status=${s.status}`}
-                className="text-[11px] md:text-[12px] text-[#1B365D] hover:text-[#24466F] mt-2 md:mt-3 font-medium transition-colors duration-[120ms] ease-out inline-block"
+                className={`text-[11px] font-semibold mt-3 inline-block ${s.color} opacity-80 hover:opacity-100`}
               >
                 View →
               </Link>
@@ -211,40 +226,70 @@ export default function Dashboard() {
               No projects yet. Click <strong>+ New Project</strong> above to get started.
             </div>
           ) : (
-            <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[480px]">
-                  <thead>
-                    <tr className="border-b border-[#E5E7EB]">
-                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Project</th>
-                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Client</th>
-                      <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Vars</th>
-                      {!isField && <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Value</th>}
-                      {!isField && <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden md:table-cell">At Risk</th>}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {projects.map((p, i) => {
-                      const totalValue = p.variations.reduce((sum, v) => sum + (v.estimated_value || 0), 0);
-                      const atRisk = p.variations
-                        .filter(v => v.status === 'disputed' || v.status === 'draft' || v.status === 'captured')
-                        .reduce((sum, v) => sum + (v.estimated_value || 0), 0);
-                      return (
-                        <Link key={p.id} href={`/project/${p.id}`} className="contents">
-                          <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === projects.length - 1 ? 'border-b-0' : ''}`}>
-                            <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{p.name}</td>
-                            <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280]">{p.client}</td>
-                            <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right tabular-nums">{p.variations.length}</td>
-                            {!isField && <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums">{formatCurrency(totalValue)}</td>}
-                            {!isField && <td className="px-4 md:px-5 py-2.5 text-[13px] text-right tabular-nums hidden md:table-cell">{atRisk > 0 ? <span className="text-[#C8943E] font-medium">{formatCurrency(atRisk)}</span> : <span className="text-[#D1D5DB]">—</span>}</td>}
-                          </tr>
-                        </Link>
-                      );
-                    })}
-                  </tbody>
-                </table>
+            <>
+              {/* Mobile card list */}
+              <div className="md:hidden space-y-2">
+                {projects.map(p => {
+                  const totalValue = p.variations.reduce((sum, v) => sum + (v.estimated_value || 0), 0);
+                  const atRisk = p.variations
+                    .filter(v => v.status === 'disputed' || v.status === 'draft' || v.status === 'captured')
+                    .reduce((sum, v) => sum + (v.estimated_value || 0), 0);
+                  return (
+                    <Link key={p.id} href={`/project/${p.id}`}>
+                      <div className="bg-white rounded-md border border-[#E5E7EB] px-4 py-3 flex items-center justify-between hover:bg-[#F5F3EF] transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+                        <div className="min-w-0 mr-3">
+                          <div className="text-[14px] font-semibold text-[#1C1C1E] truncate">{p.name}</div>
+                          <div className="text-[12px] text-[#6B7280] mt-0.5 truncate">{p.client}</div>
+                        </div>
+                        <div className="flex-shrink-0 text-right">
+                          <div className="text-[14px] font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(totalValue)}</div>
+                          <div className="text-[12px] text-[#6B7280] tabular-nums mt-0.5">{p.variations.length} vars</div>
+                          {atRisk > 0 && (
+                            <div className="text-[11px] text-[#C8943E] font-medium tabular-nums">{formatCurrency(atRisk)} at risk</div>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
-            </div>
+
+              {/* Desktop table — unchanged */}
+              <div className="hidden md:block bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[480px]">
+                    <thead>
+                      <tr className="border-b border-[#E5E7EB]">
+                        <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Project</th>
+                        <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Client</th>
+                        <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Vars</th>
+                        {!isField && <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Value</th>}
+                        {!isField && <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden md:table-cell">At Risk</th>}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {projects.map((p, i) => {
+                        const totalValue = p.variations.reduce((sum, v) => sum + (v.estimated_value || 0), 0);
+                        const atRisk = p.variations
+                          .filter(v => v.status === 'disputed' || v.status === 'draft' || v.status === 'captured')
+                          .reduce((sum, v) => sum + (v.estimated_value || 0), 0);
+                        return (
+                          <Link key={p.id} href={`/project/${p.id}`} className="contents">
+                            <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === projects.length - 1 ? 'border-b-0' : ''}`}>
+                              <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{p.name}</td>
+                              <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280]">{p.client}</td>
+                              <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right tabular-nums">{p.variations.length}</td>
+                              {!isField && <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums">{formatCurrency(totalValue)}</td>}
+                              {!isField && <td className="px-4 md:px-5 py-2.5 text-[13px] text-right tabular-nums hidden md:table-cell">{atRisk > 0 ? <span className="text-[#C8943E] font-medium">{formatCurrency(atRisk)}</span> : <span className="text-[#D1D5DB]">—</span>}</td>}
+                            </tr>
+                          </Link>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
           )}
         </div>
 
@@ -259,34 +304,57 @@ export default function Dashboard() {
               No variations captured yet.
             </div>
           ) : (
-            <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[480px]">
-                  <thead>
-                    <tr className="border-b border-[#E5E7EB]">
-                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Title</th>
-                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden md:table-cell">Project</th>
-                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Status</th>
-                      {!isField && <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden md:table-cell">Value</th>}
-                      <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden sm:table-cell">Captured</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentVariations.map((v, i) => (
-                      <Link key={v.id} href={`/variation/${v.id}`} className="contents">
-                        <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === recentVariations.length - 1 ? 'border-b-0' : ''}`}>
-                          <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{v.title}</td>
-                          <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] hidden md:table-cell">{v.project_name}</td>
-                          <td className="px-4 md:px-5 py-2.5"><StatusBadge status={v.status} /></td>
-                          {!isField && <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden md:table-cell">{formatCurrency(v.estimated_value)}</td>}
-                          <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right hidden sm:table-cell">{formatDate(v.captured_at)}</td>
-                        </tr>
-                      </Link>
-                    ))}
-                  </tbody>
-                </table>
+            <>
+              {/* Mobile activity list */}
+              <div className="md:hidden divide-y divide-[#F0F0EE] bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+                {recentVariations.map(v => (
+                  <Link key={v.id} href={`/variation/${v.id}`}>
+                    <div className="px-4 py-3 flex items-center justify-between hover:bg-[#F5F3EF] transition-colors">
+                      <div className="min-w-0 mr-3">
+                        <div className="text-[14px] font-medium text-[#1C1C1E] truncate">{v.title}</div>
+                        <div className="text-[12px] text-[#6B7280] mt-0.5 truncate">{v.project_name}</div>
+                      </div>
+                      <div className="flex-shrink-0 text-right">
+                        <StatusBadge status={v.status} />
+                        {!isField && (
+                          <div className="text-[12px] text-[#6B7280] tabular-nums mt-1">{formatCurrency(v.estimated_value)}</div>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
               </div>
-            </div>
+
+              {/* Desktop table — unchanged */}
+              <div className="hidden md:block bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[480px]">
+                    <thead>
+                      <tr className="border-b border-[#E5E7EB]">
+                        <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Title</th>
+                        <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden md:table-cell">Project</th>
+                        <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Status</th>
+                        {!isField && <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden md:table-cell">Value</th>}
+                        <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden sm:table-cell">Captured</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recentVariations.map((v, i) => (
+                        <Link key={v.id} href={`/variation/${v.id}`} className="contents">
+                          <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === recentVariations.length - 1 ? 'border-b-0' : ''}`}>
+                            <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E]">{v.title}</td>
+                            <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] hidden md:table-cell">{v.project_name}</td>
+                            <td className="px-4 md:px-5 py-2.5"><StatusBadge status={v.status} /></td>
+                            {!isField && <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden md:table-cell">{formatCurrency(v.estimated_value)}</td>}
+                            <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right hidden sm:table-cell">{formatDate(v.captured_at)}</td>
+                          </tr>
+                        </Link>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
           )}
         </div>
 
