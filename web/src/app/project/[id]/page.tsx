@@ -261,7 +261,7 @@ function ProjectDetailContent() {
                   href={`/notice/new?projectId=${project.id}`}
                   className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms]"
                 >
-                  + New Notice
+                  + New Variation Notice
                 </Link>
               )}
               <button
