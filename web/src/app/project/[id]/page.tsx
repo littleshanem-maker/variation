@@ -316,22 +316,35 @@ function ProjectDetailContent() {
 
             {/* Mobile cards — md:hidden */}
             <div className="md:hidden divide-y divide-[#F0F0EE] bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
-              {notices.map(n => (
-                <Link key={n.id} href={`/notice/${n.id}`}>
-                  <div className="px-4 py-3 hover:bg-[#F5F3EF] transition-colors">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0 flex-1">
-                        <div className="text-[12px] font-mono font-bold text-[#1B365D]">{n.notice_number}</div>
-                        <div className="text-[14px] text-[#1C1C1E] mt-1 leading-snug">{n.event_description}</div>
-                        <div className="text-[12px] text-[#9CA3AF] mt-1">
-                          {new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
+              {notices.map(n => {
+                const linkedVar = variations.find(v => v.notice_id === n.id);
+                const varLabel = linkedVar
+                  ? (linkedVar.variation_number ?? `VAR-${String(linkedVar.sequence_number).padStart(3, '0')}`)
+                  : null;
+                return (
+                  <Link key={n.id} href={`/notice/${n.id}`}>
+                    <div className="px-4 py-3 hover:bg-[#F5F3EF] transition-colors">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[12px] font-mono font-bold text-[#1B365D]">{n.notice_number}</div>
+                          <div className="text-[14px] text-[#1C1C1E] mt-1 leading-snug">{n.event_description}</div>
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <span className="text-[12px] text-[#9CA3AF]">
+                              {new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            </span>
+                            {varLabel && (
+                              <span className="text-[11px] font-mono font-semibold text-[#4A7C6F] bg-[#F0F7F4] px-1.5 py-0.5 rounded">
+                                → {varLabel}
+                              </span>
+                            )}
+                          </div>
                         </div>
+                        <StatusBadge status={n.status} />
                       </div>
-                      <StatusBadge status={n.status} />
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Desktop table — hidden md:block */}
@@ -372,6 +385,8 @@ function ProjectDetailContent() {
             </div>
           </div>
         )}
+
+        <h3 className="text-[13px] font-semibold text-[#6B7280] uppercase tracking-[0.04em] mb-2">Variation Requests</h3>
 
         {variations.length === 0 ? (
           <div className="bg-white rounded-md border border-[#E5E7EB] p-12 text-center text-[#9CA3AF] text-sm">
