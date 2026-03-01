@@ -9,7 +9,7 @@ import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatDate } from '@/lib/utils';
 import { printNotice } from '@/lib/print';
-import { generateNoticeMailto } from '@/lib/email';
+import { generateNoticeEmailCover } from '@/lib/email';
 import { useRole } from '@/lib/role';
 import type { VariationNotice, Project, Variation } from '@/lib/types';
 
@@ -26,6 +26,7 @@ export default function NoticeDetail() {
   const [advancing, setAdvancing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showEmailPanel, setShowEmailPanel] = useState(false);
 
   useEffect(() => { loadNotice(); }, [id]);
 
@@ -104,11 +105,6 @@ export default function NoticeDetail() {
     }
   }
 
-  function handleEmail() {
-    const url = generateNoticeMailto(notice!, project!, company?.name || '');
-    window.location.href = url;
-  }
-
   if (loading) {
     return (
       <AppShell><TopBar title="Variation Notice" />
@@ -138,8 +134,14 @@ export default function NoticeDetail() {
       <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-4xl">
         {/* Back + Actions */}
         <div className="flex flex-wrap items-start gap-2">
-          <Link href={`/project/${project.id}`} className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms] mr-auto">
-            ← Back to {project.name}
+          <Link
+            href={`/project/${project.id}`}
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors py-2 -my-2 mr-auto group"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="group-hover:-translate-x-0.5 transition-transform">
+              <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Back to {project.name}
           </Link>
           <div className="flex flex-wrap items-center gap-2">
             {canIssue && (
@@ -177,13 +179,44 @@ export default function NoticeDetail() {
               </button>
             )}
             <button
-              onClick={handleEmail}
+              onClick={() => setShowEmailPanel(!showEmailPanel)}
               className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/30 rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms]"
             >
               📧 Send by Email
             </button>
           </div>
         </div>
+
+        {/* Email Panel */}
+        {showEmailPanel && (
+          <div className="mt-3 p-4 bg-[#F0F4FA] border border-[#1B365D]/15 rounded-md space-y-3">
+            <p className="text-[13px] font-medium text-[#1B365D]">Send by Email</p>
+            <p className="text-[12px] text-[#6B7280]">Step 1: Download the PDF. Step 2: Open email — attach the PDF and send.</p>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <button
+                onClick={() => handlePrint()}
+                className="flex-1 px-4 py-2.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors text-center"
+              >
+                1. Download PDF
+              </button>
+              <button
+                onClick={() => {
+                  window.location.href = generateNoticeEmailCover(notice!, project!);
+                  setShowEmailPanel(false);
+                }}
+                className="flex-1 px-4 py-2.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D] rounded-md hover:bg-[#EBF0FA] transition-colors text-center"
+              >
+                2. Open Email
+              </button>
+            </div>
+            <button
+              onClick={() => setShowEmailPanel(false)}
+              className="text-[12px] text-[#9CA3AF] hover:text-[#6B7280] transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        )}
 
         {/* Header Card */}
         <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">

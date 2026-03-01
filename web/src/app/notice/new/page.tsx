@@ -116,9 +116,12 @@ function NewNoticeForm() {
         <div>
           <Link
             href={preselectedProjectId ? `/project/${preselectedProjectId}` : '/'}
-            className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors py-2 -my-2 group"
           >
-            ← {preselectedProjectId ? 'Back to Project' : 'Back to Dashboard'}
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="group-hover:-translate-x-0.5 transition-transform">
+              <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            {preselectedProjectId ? 'Back to Project' : 'Back to Dashboard'}
           </Link>
           <h2 className="text-xl font-semibold text-[#1C1C1E] mt-3">New Variation Notice</h2>
           <p className="text-[13px] text-[#6B7280] mt-1">Issue a formal notice of a variation event. A full Variation Request can be linked later.</p>

@@ -28,7 +28,7 @@ export default function TopBar({ title, onPrint, printLabel = 'Print' }: { title
   const displayTitle = companyName || title;
 
   return (
-    <header className="h-12 md:h-14 border-b border-[#E5E7EB] bg-white flex items-center justify-between px-4 md:px-8">
+    <header className="hidden md:flex h-14 border-b border-[#E5E7EB] bg-white items-center justify-between px-8">
       <div className="flex items-center gap-3 min-w-0">
         <h1 className="text-base md:text-lg font-semibold text-[#1C1C1E] truncate">{displayTitle}</h1>
       </div>
