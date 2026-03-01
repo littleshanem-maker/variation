@@ -123,10 +123,10 @@ function VariationsList() {
         <div>
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors py-2 -my-2 group"
+            className="flex items-center gap-2 w-full bg-white border border-[#E5E7EB] rounded-md px-4 py-3 text-[14px] font-semibold text-[#1B365D] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="group-hover:-translate-x-0.5 transition-transform">
-              <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="flex-shrink-0">
+              <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Back to Dashboard
           </Link>

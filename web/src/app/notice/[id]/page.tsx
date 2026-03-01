@@ -214,15 +214,15 @@ export default function NoticeDetail() {
       <TopBar title="Variation Shield" onPrint={isField ? undefined : handlePrint} printLabel="Print Notice" />
       <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-4xl">
         {/* Back + Actions */}
-        <div className="flex flex-wrap items-start gap-2">
+        <div className="space-y-3">
           <Link
             href={`/project/${project.id}`}
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors py-2 -my-2 mr-auto group"
+            className="flex items-center gap-2 w-full bg-white border border-[#E5E7EB] rounded-md px-4 py-3 text-[14px] font-semibold text-[#1B365D] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)] truncate"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="group-hover:-translate-x-0.5 transition-transform">
-              <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="flex-shrink-0">
+              <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            Back to {project.name}
+            <span className="truncate">Back to {project.name}</span>
           </Link>
           <div className="flex flex-wrap items-center gap-2">
             {canIssue && (

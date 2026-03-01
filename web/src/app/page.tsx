@@ -183,9 +183,10 @@ export default function Dashboard() {
         {/* Status Summary Boxes */}
         <div className={`grid ${isField ? 'grid-cols-3' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6'} gap-3 md:gap-4`}>
           {summaries.map(s => (
-            <div
+            <Link
               key={s.status}
-              className={`rounded-md border border-t-[3px] ${s.border} ${s.bg} p-4 shadow-[0_1px_2px_rgba(0,0,0,0.06)]`}
+              href={`/variations?status=${s.status}`}
+              className={`rounded-md border border-t-[3px] ${s.border} ${s.bg} p-4 shadow-[0_1px_2px_rgba(0,0,0,0.06)] block hover:brightness-95 transition-all duration-[120ms] active:scale-[0.98]`}
             >
               <div className="text-[10px] font-semibold uppercase tracking-widest text-current opacity-60 mb-2">
                 {s.label}
@@ -198,13 +199,7 @@ export default function Dashboard() {
               <div className="text-[12px] text-current opacity-60 mt-0.5">
                 {s.count} {s.count === 1 ? 'var' : 'vars'}
               </div>
-              <Link
-                href={`/variations?status=${s.status}`}
-                className={`text-[11px] font-semibold mt-3 inline-block ${s.color} opacity-80 hover:opacity-100`}
-              >
-                View →
-              </Link>
-            </div>
+            </Link>
           ))}
         </div>
 

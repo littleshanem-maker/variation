@@ -234,10 +234,10 @@ function ProjectDetailContent() {
         <div>
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors py-2 -my-2 group"
+            className="flex items-center gap-2 w-full bg-white border border-[#E5E7EB] rounded-md px-4 py-3 text-[14px] font-semibold text-[#1B365D] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="group-hover:-translate-x-0.5 transition-transform">
-              <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+              <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Back to Dashboard
           </Link>
@@ -395,10 +395,10 @@ function ProjectDetailContent() {
         ) : (
           <>
             {/* Mobile cards — md:hidden */}
-            <div className="md:hidden divide-y divide-[#F0F0EE] bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
-              {sorted.map(v => (
+            <div className="md:hidden rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+              {sorted.map((v, i) => (
                 <Link key={v.id} href={`/variation/${v.id}`}>
-                  <div className="px-4 py-3 hover:bg-[#F5F3EF] transition-colors">
+                  <div className={`px-4 py-3 border-b border-[#F0F0EE] last:border-b-0 hover:bg-[#EEF2F8] active:bg-[#E8EFF8] transition-colors ${i % 2 === 0 ? 'bg-white' : 'bg-[#F8F8F6]'}`}>
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
                         <div className="text-[12px] font-mono font-bold text-[#1B365D]">{getVariationNumber(v)}</div>
