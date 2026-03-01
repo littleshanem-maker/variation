@@ -188,7 +188,7 @@ export default function TeamPage() {
               {members.filter(m => m.is_active).map(m => (
                 <div key={m.id} className="px-4 md:px-5 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <div className="text-[14px] text-[#1C1C1E] truncate">{m.email}</div>
+                    <div className="text-[14px] text-[#1C1C1E] break-all">{m.email}</div>
                     {m.full_name && <div className="text-[12px] text-[#9CA3AF]">{m.full_name}</div>}
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
@@ -229,7 +229,7 @@ export default function TeamPage() {
                 return (
                   <div key={inv.id} className="px-4 md:px-5 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <div className="text-[14px] text-[#1C1C1E] truncate">{inv.email}</div>
+                      <div className="text-[14px] text-[#1C1C1E] break-all">{inv.email}</div>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className={`inline-block px-2.5 py-0.5 text-[11px] font-medium rounded-full capitalize ${roleBadgeColors[inv.role]}`}>
                           {inv.role}

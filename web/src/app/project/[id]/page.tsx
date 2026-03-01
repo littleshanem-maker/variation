@@ -313,7 +313,29 @@ function ProjectDetailContent() {
         {notices.length > 0 && (
           <div>
             <h3 className="text-[13px] font-semibold text-[#6B7280] uppercase tracking-[0.04em] mb-2">Variation Notices</h3>
-            <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+
+            {/* Mobile cards — md:hidden */}
+            <div className="md:hidden divide-y divide-[#F0F0EE] bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+              {notices.map(n => (
+                <Link key={n.id} href={`/notice/${n.id}`}>
+                  <div className="px-4 py-3 hover:bg-[#F5F3EF] transition-colors">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[12px] font-mono font-bold text-[#1B365D]">{n.notice_number}</div>
+                        <div className="text-[14px] text-[#1C1C1E] mt-1 leading-snug">{n.event_description}</div>
+                        <div className="text-[12px] text-[#9CA3AF] mt-1">
+                          {new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
+                        </div>
+                      </div>
+                      <StatusBadge status={n.status} />
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Desktop table — hidden md:block */}
+            <div className="hidden md:block bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[540px]">
                   <thead>
@@ -333,7 +355,7 @@ function ProjectDetailContent() {
                         <Link key={n.id} href={`/notice/${n.id}`} className="contents">
                           <tr className={`h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === notices.length - 1 ? 'border-b-0' : ''}`}>
                             <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] whitespace-nowrap">{n.notice_number}</td>
-                            <td className="px-4 md:px-5 py-2.5 max-w-[180px] overflow-hidden"><div className="truncate text-[14px] text-[#1C1C1E]">{n.event_description}</div></td>
+                            <td className="px-4 md:px-5 py-2.5 max-w-[180px] overflow-hidden"><div className="text-[14px] text-[#1C1C1E]">{n.event_description}</div></td>
                             <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] hidden sm:table-cell whitespace-nowrap">{new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                             <td className="px-4 md:px-5 py-2.5"><StatusBadge status={n.status} /></td>
                             <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono text-[#1B365D] hidden md:table-cell whitespace-nowrap">
@@ -356,36 +378,61 @@ function ProjectDetailContent() {
             No variations captured for this project yet.
           </div>
         ) : (
-          <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[480px]">
-                <thead>
-                  <tr className="border-b border-[#E5E7EB]">
-                    <SortHeader label="Var No." field="sequence_number" />
-                    <SortHeader label="Title" field="title" />
-                    <SortHeader label="Status" field="status" />
-                    <SortHeader label="Source" field="instruction_source" className="hidden md:table-cell" />
-                    {!isField && <SortHeader label="Value" field="estimated_value" align="right" className="hidden sm:table-cell" />}
-                    <SortHeader label="Captured" field="captured_at" align="right" className="hidden sm:table-cell" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {sorted.map((v, i) => (
-                    <Link key={v.id} href={`/variation/${v.id}`} className="contents">
-                      <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
-                        <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums whitespace-nowrap">{getVariationNumber(v)}</td>
-                        <td className="px-4 md:px-5 py-2.5 max-w-[200px] overflow-hidden"><div className="truncate text-[14px] font-medium text-[#1C1C1E]">{v.title}</div></td>
-                        <td className="px-4 md:px-5 py-2.5"><StatusBadge status={v.status} /></td>
-                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] capitalize hidden md:table-cell whitespace-nowrap">{v.instruction_source?.replace(/_/g, ' ')}</td>
-                        {!isField && <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>}
-                        <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right hidden sm:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
-                      </tr>
-                    </Link>
-                  ))}
-                </tbody>
-              </table>
+          <>
+            {/* Mobile cards — md:hidden */}
+            <div className="md:hidden divide-y divide-[#F0F0EE] bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+              {sorted.map(v => (
+                <Link key={v.id} href={`/variation/${v.id}`}>
+                  <div className="px-4 py-3 hover:bg-[#F5F3EF] transition-colors">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <div className="text-[12px] font-mono font-bold text-[#1B365D]">{getVariationNumber(v)}</div>
+                        <div className="text-[14px] font-medium text-[#1C1C1E] mt-0.5 truncate">{v.title}</div>
+                      </div>
+                      <div className="flex-shrink-0 text-right">
+                        <StatusBadge status={v.status} />
+                        {!isField && (
+                          <div className="text-[13px] font-medium text-[#1C1C1E] tabular-nums mt-1">{formatCurrency(v.estimated_value)}</div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </div>
-          </div>
+
+            {/* Desktop table — hidden md:block */}
+            <div className="hidden md:block bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[480px]">
+                  <thead>
+                    <tr className="border-b border-[#E5E7EB]">
+                      <SortHeader label="Var No." field="sequence_number" />
+                      <SortHeader label="Title" field="title" />
+                      <SortHeader label="Status" field="status" />
+                      <SortHeader label="Source" field="instruction_source" className="hidden md:table-cell" />
+                      {!isField && <SortHeader label="Value" field="estimated_value" align="right" className="hidden sm:table-cell" />}
+                      <SortHeader label="Captured" field="captured_at" align="right" className="hidden sm:table-cell" />
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sorted.map((v, i) => (
+                      <Link key={v.id} href={`/variation/${v.id}`} className="contents">
+                        <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
+                          <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums whitespace-nowrap">{getVariationNumber(v)}</td>
+                          <td className="px-4 md:px-5 py-2.5 max-w-[200px] overflow-hidden"><div className="truncate text-[14px] font-medium text-[#1C1C1E]">{v.title}</div></td>
+                          <td className="px-4 md:px-5 py-2.5"><StatusBadge status={v.status} /></td>
+                          <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] capitalize hidden md:table-cell whitespace-nowrap">{v.instruction_source?.replace(/_/g, ' ')}</td>
+                          {!isField && <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>}
+                          <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right hidden sm:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
+                        </tr>
+                      </Link>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         )}
 
         {/* New Variation Modal */}

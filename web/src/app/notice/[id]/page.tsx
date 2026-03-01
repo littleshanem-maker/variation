@@ -148,7 +148,7 @@ export default function NoticeDetail() {
               <button
                 onClick={handleIssue}
                 disabled={advancing}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#92722E] border border-[#C8943E] rounded-md hover:bg-[#FDF8ED] transition-colors duration-[120ms] disabled:opacity-40"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#92722E] border border-[#C8943E] rounded-md hover:bg-[#FDF8ED] transition-colors duration-[120ms] disabled:opacity-40 whitespace-nowrap"
               >
                 {advancing ? '…' : 'Issue Notice'}
               </button>
@@ -157,7 +157,7 @@ export default function NoticeDetail() {
               <button
                 onClick={handleAcknowledge}
                 disabled={advancing}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#3D6B5E] border border-[#4A7C6F] rounded-md hover:bg-[#F0F7F4] transition-colors duration-[120ms] disabled:opacity-40"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#3D6B5E] border border-[#4A7C6F] rounded-md hover:bg-[#F0F7F4] transition-colors duration-[120ms] disabled:opacity-40 whitespace-nowrap"
               >
                 {advancing ? '…' : 'Mark Acknowledged'}
               </button>
@@ -165,7 +165,7 @@ export default function NoticeDetail() {
             {canCreateVR && (
               <Link
                 href={`/project/${project.id}?noticeId=${notice.id}&newVariation=1`}
-                className="px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+                className="px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] whitespace-nowrap"
               >
                 Create Variation Request
               </Link>
@@ -173,14 +173,14 @@ export default function NoticeDetail() {
             {canDelete && (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms]"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms] whitespace-nowrap"
               >
                 Delete
               </button>
             )}
             <button
               onClick={() => setShowEmailPanel(!showEmailPanel)}
-              className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/30 rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms]"
+              className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/30 rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms] whitespace-nowrap"
             >
               📧 Send by Email
             </button>
@@ -247,7 +247,7 @@ export default function NoticeDetail() {
                 <div className={labelClass}>Issued By</div>
                 <div className="text-[14px] text-[#1C1C1E]">{notice.issued_by_name}</div>
                 {notice.issued_by_email && (
-                  <div className="text-[12px] text-[#6B7280] mt-0.5">{notice.issued_by_email}</div>
+                  <div className="text-[12px] text-[#6B7280] mt-0.5 break-all">{notice.issued_by_email}</div>
                 )}
               </div>
             )}

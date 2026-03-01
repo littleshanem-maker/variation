@@ -75,7 +75,7 @@ export default function SettingsPage() {
           {email && (
             <div className="flex flex-col gap-3">
               <div className="min-w-0">
-                <div className="text-[15px] font-medium text-[#1C1C1E] truncate">{email}</div>
+                <div className="text-[15px] font-medium text-[#1C1C1E] break-all">{email}</div>
                 <div className="flex items-center gap-2 mt-1.5">
                   <span className={`inline-block px-2.5 py-1 text-[12px] font-medium rounded-full capitalize ${roleBadgeColors[role] || ''}`}>
                     {role}

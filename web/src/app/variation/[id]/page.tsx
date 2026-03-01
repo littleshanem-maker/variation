@@ -455,7 +455,7 @@ export default function VariationDetail() {
                     <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Submitted By</div>
                     <div className="text-[15px] text-[#1C1C1E] mt-1 truncate">{variation.requestor_name || '—'}</div>
                     {variation.requestor_email && (
-                      <div className="text-[12px] text-[#6B7280] mt-0.5 truncate">{variation.requestor_email}</div>
+                      <div className="text-[12px] text-[#6B7280] mt-0.5 break-all">{variation.requestor_email}</div>
                     )}
                   </div>
                 )}

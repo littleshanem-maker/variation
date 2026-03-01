@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface MobileTopBarProps {
   onMenuOpen: () => void;
@@ -21,7 +22,7 @@ export default function MobileTopBar({ onMenuOpen }: MobileTopBarProps) {
         </svg>
       </button>
 
-      <div className="flex items-center gap-2">
+      <Link href="/" className="flex items-center gap-2">
         <Image
           src="/variation-shield-logo.jpg"
           alt="Variation Shield"
@@ -29,8 +30,8 @@ export default function MobileTopBar({ onMenuOpen }: MobileTopBarProps) {
           height={26}
           className="rounded object-cover"
         />
-        <span className="font-semibold text-[15px] tracking-tight">Variation Shield</span>
-      </div>
+        <span className="font-semibold text-[15px] tracking-tight text-white">Variation Shield</span>
+      </Link>
 
       {/* Spacer to balance the hamburger */}
       <div className="w-9" aria-hidden="true" />

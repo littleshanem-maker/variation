@@ -179,7 +179,7 @@ export default function Dashboard() {
   return (
     <AppShell>
       <TopBar title="Dashboard" onPrint={isField ? undefined : handlePrint} printLabel="Print / Export" />
-      <div className="p-4 md:p-8 space-y-6 md:space-y-8">
+      <div className="p-4 md:p-8 space-y-6 md:space-y-8 pb-24 md:pb-8">
         {/* Status Summary Boxes */}
         <div className={`grid ${isField ? 'grid-cols-3' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6'} gap-3 md:gap-4`}>
           {summaries.map(s => (

@@ -24,7 +24,7 @@ export function formatDate(dateStr: string): string {
 export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; dot: string }> = {
   draft: {
     label: 'Draft',
-    color: 'text-[#6B7280]',
+    color: 'text-[#374151]',
     bg: 'bg-[#F3F4F6]',
     border: 'border-[#9CA3AF]',
     dot: 'bg-[#9CA3AF]',
@@ -32,7 +32,7 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
   captured: {
     // Legacy alias for draft — backward compat
     label: 'Draft',
-    color: 'text-[#6B7280]',
+    color: 'text-[#374151]',
     bg: 'bg-[#F3F4F6]',
     border: 'border-[#9CA3AF]',
     dot: 'bg-[#9CA3AF]',
