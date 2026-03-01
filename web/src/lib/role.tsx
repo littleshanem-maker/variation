@@ -15,6 +15,7 @@ interface RoleContextType {
   isLoading: boolean;
   userId: string | null;
   switchCompany: (companyId: string) => void;
+  refreshCompany: () => Promise<void>;
 }
 
 const RoleContext = createContext<RoleContextType>({
@@ -28,6 +29,7 @@ const RoleContext = createContext<RoleContextType>({
   isLoading: true,
   userId: null,
   switchCompany: () => {},
+  refreshCompany: async () => {},
 });
 
 export function RoleProvider({ children }: { children: ReactNode }) {
@@ -129,6 +131,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
       isLoading,
       userId,
       switchCompany: setActiveCompanyId,
+      refreshCompany: fetchMembership,
     }}>
       {children}
     </RoleContext.Provider>

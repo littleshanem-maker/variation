@@ -14,7 +14,7 @@ export default function SettingsPage() {
   const [savingCompany, setSavingCompany] = useState(false);
   const [companySaved, setCompanySaved] = useState(false);
   const router = useRouter();
-  const { role, company, isAdmin, companyId, isLoading: roleLoading } = useRole();
+  const { role, company, isAdmin, companyId, isLoading: roleLoading, refreshCompany } = useRole();
 
   useEffect(() => {
     async function load() {
@@ -54,6 +54,7 @@ export default function SettingsPage() {
     } else {
       setCompanySaved(true);
       setTimeout(() => setCompanySaved(false), 2000);
+      await refreshCompany();
     }
     setSavingCompany(false);
   }
