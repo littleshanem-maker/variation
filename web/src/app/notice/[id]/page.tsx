@@ -23,6 +23,7 @@ export default function NoticeDetail() {
   const [project, setProject] = useState<Project | null>(null);
   const [linkedVariation, setLinkedVariation] = useState<Variation | null>(null);
   const [loading, setLoading] = useState(true);
+  const [sender, setSender] = useState<{ name: string; email: string }>({ name: '', email: '' });
 
   const [advancing, setAdvancing] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -33,6 +34,15 @@ export default function NoticeDetail() {
 
   async function loadNotice() {
     const supabase = createClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setSender({
+        name: user.user_metadata?.full_name || user.user_metadata?.name || '',
+        email: user.email || '',
+      });
+    }
+
     const { data: n } = await supabase
       .from('variation_notices')
       .select('*')
@@ -102,7 +112,7 @@ export default function NoticeDetail() {
 
   function handlePrint() {
     if (notice && project) {
-      printNotice(notice, project, company?.name || '');
+      printNotice(notice, project, company?.name || '', sender);
     }
   }
 
@@ -110,7 +120,7 @@ export default function NoticeDetail() {
     if (!notice || !project) return;
     setSendingEmail(true);
     try {
-      const { html, css } = getNoticeHtmlForPdf(notice, project, company?.name || '');
+      const { html, css } = getNoticeHtmlForPdf(notice, project, company?.name || '', sender);
       const blob = await htmlToPdfBlob(html, css);
       const { subject, body, filename } = getNoticeEmailMeta(notice, project);
       await shareOrDownloadPdf(blob, filename, subject, body);

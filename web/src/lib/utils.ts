@@ -4,6 +4,34 @@ export function formatCurrency(cents: number): string {
   return '$' + dollars.toLocaleString('en-AU');
 }
 
+/** Format a date string for legal/PDF documents — explicit, unambiguous timestamp */
+export function formatDocDate(dateStr: string | null | undefined): string {
+  if (!dateStr) return '—';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '—';
+  return date.toLocaleString('en-AU', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+    timeZoneName: 'short',
+  });
+}
+
+/** Format a date-only field for PDFs (no time component) */
+export function formatDocDateOnly(dateStr: string | null | undefined): string {
+  if (!dateStr) return '—';
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString('en-AU', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  });
+}
+
 /** Format a date string as relative or absolute */
 export function formatDate(dateStr: string): string {
   const date = new Date(dateStr);

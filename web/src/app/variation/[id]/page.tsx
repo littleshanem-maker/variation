@@ -33,6 +33,7 @@ export default function VariationDetail() {
 
   const { isField, isAdmin, isOffice, company } = useRole();
   const [advancingStatus, setAdvancingStatus] = useState(false);
+  const [sender, setSender] = useState<{ name: string; email: string }>({ name: '', email: '' });
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -161,6 +162,15 @@ export default function VariationDetail() {
 
   async function loadVariation() {
     const supabase = createClient();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setSender({
+        name: user.user_metadata?.full_name || user.user_metadata?.name || '',
+        email: user.email || '',
+      });
+    }
+
     const { data: v } = await supabase.from('variations').select('*').eq('id', id).single();
     if (!v) { setLoading(false); return; }
     setVariation(v);
@@ -212,7 +222,7 @@ export default function VariationDetail() {
 
   function handlePrint() {
     if (variation && project) {
-      printVariation(variation, project, photos, photoUrls, company?.name || '');
+      printVariation(variation, project, photos, photoUrls, company?.name || '', sender);
     }
   }
 
@@ -220,7 +230,7 @@ export default function VariationDetail() {
     if (!variation || !project) return;
     setSendingEmail(true);
     try {
-      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '');
+      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender);
       const blob = await htmlToPdfBlob(html, css);
       const { subject, body, filename } = getVariationEmailMeta(variation, project);
       await shareOrDownloadPdf(blob, filename, subject, body);

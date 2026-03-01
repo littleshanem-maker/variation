@@ -1,4 +1,4 @@
-import { formatCurrency, formatDate, getStatusConfig, getVariationNumber } from './utils';
+import { formatCurrency, formatDate, formatDocDate, formatDocDateOnly, getStatusConfig, getVariationNumber } from './utils';
 import type { Project, Variation, PhotoEvidence, VariationNotice } from './types';
 
 interface ProjectWithVariations extends Project {
@@ -336,16 +336,13 @@ export function printProjectRegister(project: Project, variations: Variation[]) 
 function buildNoticeHtml(
   notice: VariationNotice,
   project: Project,
-  companyName: string
+  companyName: string,
+  sender: { name: string; email: string }
 ): string {
   const logoUrl = `${window.location.origin}/variation-shield-logo.jpg`;
 
-  const eventDateFormatted = new Date(notice.event_date + 'T00:00:00').toLocaleDateString('en-AU', {
-    day: '2-digit', month: 'long', year: 'numeric',
-  });
-  const issuedFormatted = notice.issued_at
-    ? new Date(notice.issued_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' })
-    : '—';
+  const eventDateFormatted = formatDocDateOnly(notice.event_date + 'T00:00:00');
+  const issuedFormatted = notice.issued_at ? formatDocDate(notice.issued_at) : '—';
 
   const costCheck = notice.cost_flag ? '☑' : '☐';
   const costClear = notice.cost_flag ? '☐' : '☑';
@@ -443,6 +440,44 @@ function buildNoticeHtml(
       </div>
     </div>
 
+    <div style="margin-top:32px; padding-top:20px; border-top:2px solid #E5E7EB;">
+      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9CA3AF; margin-bottom:12px;">Document Information</div>
+      <table style="width:100%; border-collapse:collapse; font-size:9pt;">
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; width:160px; vertical-align:top;">Notice Number</td>
+          <td style="padding:4px 0; font-weight:600; color:#1C1C1E;">${notice.notice_number}</td>
+          <td style="padding:4px 0; color:#6B7280; width:160px; vertical-align:top;">Created</td>
+          <td style="padding:4px 0; color:#1C1C1E;">${formatDocDate(notice.created_at)}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Status</td>
+          <td style="padding:4px 0; font-weight:600; color:#1C1C1E; text-transform:capitalize;">${notice.status}</td>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Issued</td>
+          <td style="padding:4px 0; color:#1C1C1E;">${notice.issued_at ? formatDocDate(notice.issued_at) : '—'}</td>
+        </tr>
+        ${notice.acknowledged_at ? `
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Acknowledged</td>
+          <td style="padding:4px 0; color:#1C1C1E;" colspan="3">${formatDocDate(notice.acknowledged_at)}</td>
+        </tr>
+        ` : ''}
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Sent By</td>
+          <td style="padding:4px 0; font-weight:600; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.name || notice.issued_by_name || '—')}</td>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Account</td>
+          <td style="padding:4px 0; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.email || notice.issued_by_email || '—')}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Company</td>
+          <td style="padding:4px 0; color:#1C1C1E;" colspan="3">${escapeHtml(companyName || '—')}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Generated</td>
+          <td style="padding:4px 0; color:#1C1C1E;" colspan="3">${formatDocDate(new Date().toISOString())}</td>
+        </tr>
+      </table>
+    </div>
+
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
         <img src="${logoUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;" />
@@ -459,9 +494,10 @@ function buildNoticeHtml(
 export function printNotice(
   notice: VariationNotice,
   project: Project,
-  companyName: string = ''
+  companyName: string = '',
+  sender: { name: string; email: string } = { name: '', email: '' }
 ) {
-  const html = buildNoticeHtml(notice, project, companyName);
+  const html = buildNoticeHtml(notice, project, companyName, sender);
   openHtml(html, `${notice.notice_number} - Variation Notice`);
 }
 
@@ -471,10 +507,11 @@ export function printNotice(
 export function getNoticeHtmlForPdf(
   notice: VariationNotice,
   project: Project,
-  companyName: string
+  companyName: string,
+  sender: { name: string; email: string }
 ): { html: string; css: string } {
   return {
-    html: buildNoticeHtml(notice, project, companyName),
+    html: buildNoticeHtml(notice, project, companyName, sender),
     css: GLOBAL_CSS,
   };
 }
@@ -487,7 +524,8 @@ function buildVariationHtml(
   project: Project,
   photos: PhotoEvidence[],
   photoUrls: Record<string, string>,
-  companyName: string
+  companyName: string,
+  sender: { name: string; email: string }
 ): string {
   const status = getStatusConfig(variation.status).label;
   const varNumber = getVariationNumber(variation);
@@ -531,7 +569,7 @@ function buildVariationHtml(
       </div>
       <div class="doc-meta">
         <div class="meta-row" style="font-size:11pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(varNumber)}</div>
-        <div class="meta-row">Date: ${formatDate(variation.captured_at)}</div>
+        <div class="meta-row">Date: ${formatDocDate(variation.captured_at)}</div>
         <div class="meta-row">Status: <strong>${status}</strong></div>
       </div>
     </div>
@@ -579,6 +617,44 @@ function buildVariationHtml(
       </div>
     ` : ''}
 
+    <div style="margin-top:32px; padding-top:20px; border-top:2px solid #E5E7EB; margin-bottom:32px;">
+      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9CA3AF; margin-bottom:12px;">Document Information</div>
+      <table style="width:100%; border-collapse:collapse; font-size:9pt;">
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; width:160px; vertical-align:top;">Variation No.</td>
+          <td style="padding:4px 0; font-weight:600; color:#1C1C1E;">${escapeHtml(varNumber)}</td>
+          <td style="padding:4px 0; color:#6B7280; width:160px; vertical-align:top;">Captured</td>
+          <td style="padding:4px 0; color:#1C1C1E;">${formatDocDate(variation.captured_at)}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Status</td>
+          <td style="padding:4px 0; font-weight:600; color:#1C1C1E;">${escapeHtml(status)}</td>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Last Updated</td>
+          <td style="padding:4px 0; color:#1C1C1E;">${formatDocDate(variation.updated_at)}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Submitted By</td>
+          <td style="padding:4px 0; font-weight:600; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.name || variation.requestor_name || '—')}</td>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Account</td>
+          <td style="padding:4px 0; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.email || variation.requestor_email || '—')}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Company</td>
+          <td style="padding:4px 0; color:#1C1C1E;" colspan="3">${escapeHtml(companyName || '—')}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Generated</td>
+          <td style="padding:4px 0; color:#1C1C1E;" colspan="3">${formatDocDate(new Date().toISOString())}</td>
+        </tr>
+        ${variation.evidence_hash ? `
+        <tr>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Document Ref</td>
+          <td style="padding:4px 0; font-family:monospace; font-size:8pt; color:#6B7280;" colspan="3">${variation.evidence_hash.substring(0, 16)}...</td>
+        </tr>
+        ` : ''}
+      </table>
+    </div>
+
     ${photoGrid}
 
     <div class="footer">
@@ -595,14 +671,15 @@ function buildVariationHtml(
 // 4. PRINT VARIATION INSTRUCTION (SINGLE ITEM)
 // ------------------------------------------------------------------
 export function printVariation(
-  variation: Variation, 
-  project: Project, 
-  photos: PhotoEvidence[], 
+  variation: Variation,
+  project: Project,
+  photos: PhotoEvidence[],
   photoUrls: Record<string, string>,
-  companyName: string = ''
+  companyName: string = '',
+  sender: { name: string; email: string } = { name: '', email: '' }
 ) {
   const varNumber = getVariationNumber(variation);
-  const html = buildVariationHtml(variation, project, photos, photoUrls, companyName);
+  const html = buildVariationHtml(variation, project, photos, photoUrls, companyName, sender);
   openHtml(html, `${varNumber} - ${variation.title}`);
 }
 
@@ -614,10 +691,11 @@ export function getVariationHtmlForPdf(
   project: Project,
   photos: PhotoEvidence[],
   photoUrls: Record<string, string>,
-  companyName: string
+  companyName: string,
+  sender: { name: string; email: string }
 ): { html: string; css: string } {
   return {
-    html: buildVariationHtml(variation, project, photos, photoUrls, companyName),
+    html: buildVariationHtml(variation, project, photos, photoUrls, companyName, sender),
     css: GLOBAL_CSS,
   };
 }
