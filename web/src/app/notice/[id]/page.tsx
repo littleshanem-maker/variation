@@ -136,7 +136,7 @@ export default function NoticeDetail() {
     const { error } = await supabase.from('variations').insert({
       id: varId,
       project_id: notice.project_id,
-      company_id: notice.company_id,
+
       sequence_number: nextSeq,
       title: autoTitle,
       description: notice.event_description,
