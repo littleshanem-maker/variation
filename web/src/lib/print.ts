@@ -331,14 +331,13 @@ export function printProjectRegister(project: Project, variations: Variation[]) 
 }
 
 // ------------------------------------------------------------------
-// 3. PRINT VARIATION NOTICE (SINGLE NOTICE)
+// 3a. BUILDER: VARIATION NOTICE HTML
 // ------------------------------------------------------------------
-export function printNotice(
+function buildNoticeHtml(
   notice: VariationNotice,
   project: Project,
-  companyName: string = ''
-) {
-  const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
+  companyName: string
+): string {
   const logoUrl = `${window.location.origin}/variation-shield-logo.jpg`;
 
   const eventDateFormatted = new Date(notice.event_date + 'T00:00:00').toLocaleDateString('en-AU', {
@@ -353,7 +352,7 @@ export function printNotice(
   const timeCheck = notice.time_flag ? '☑' : '☐';
   const timeClear = notice.time_flag ? '☐' : '☑';
 
-  const html = `
+  return `
     <div class="doc-header">
       <div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
@@ -452,25 +451,48 @@ export function printNotice(
       <div>${escapeHtml(notice.notice_number)} · ${escapeHtml(project.name)}</div>
     </div>
   `;
+}
 
+// ------------------------------------------------------------------
+// 3. PRINT VARIATION NOTICE (SINGLE NOTICE)
+// ------------------------------------------------------------------
+export function printNotice(
+  notice: VariationNotice,
+  project: Project,
+  companyName: string = ''
+) {
+  const html = buildNoticeHtml(notice, project, companyName);
   openHtml(html, `${notice.notice_number} - Variation Notice`);
 }
 
 // ------------------------------------------------------------------
-// 4. PRINT VARIATION INSTRUCTION (SINGLE ITEM)
+// 3b. GET NOTICE HTML FOR PDF EXPORT
 // ------------------------------------------------------------------
-export function printVariation(
-  variation: Variation, 
-  project: Project, 
-  photos: PhotoEvidence[], 
+export function getNoticeHtmlForPdf(
+  notice: VariationNotice,
+  project: Project,
+  companyName: string
+): { html: string; css: string } {
+  return {
+    html: buildNoticeHtml(notice, project, companyName),
+    css: GLOBAL_CSS,
+  };
+}
+
+// ------------------------------------------------------------------
+// 4a. BUILDER: VARIATION HTML
+// ------------------------------------------------------------------
+function buildVariationHtml(
+  variation: Variation,
+  project: Project,
+  photos: PhotoEvidence[],
   photoUrls: Record<string, string>,
-  companyName: string = ''
-) {
-  const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
+  companyName: string
+): string {
   const status = getStatusConfig(variation.status).label;
   const varNumber = getVariationNumber(variation);
   const logoUrl = `${window.location.origin}/variation-shield-logo.jpg`;
-  
+
   const photoGrid = photos.length > 0 ? `
     <div class="avoid-break">
       <h3 style="font-size:11pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:16px; border-bottom:1px solid #E5E7EB; padding-bottom:8px;">Photographic Evidence</h3>
@@ -501,9 +523,7 @@ export function printVariation(
     </div>
   ` : '';
 
-
-
-  const html = `
+  return `
     <div class="doc-header">
       <div>
         <div class="brand">${escapeHtml(companyName || project.name)}</div>
@@ -569,6 +589,35 @@ export function printVariation(
       <div>${escapeHtml(varNumber)} · Ref: ${variation.evidence_hash?.substring(0,8) || ''}</div>
     </div>
   `;
+}
 
+// ------------------------------------------------------------------
+// 4. PRINT VARIATION INSTRUCTION (SINGLE ITEM)
+// ------------------------------------------------------------------
+export function printVariation(
+  variation: Variation, 
+  project: Project, 
+  photos: PhotoEvidence[], 
+  photoUrls: Record<string, string>,
+  companyName: string = ''
+) {
+  const varNumber = getVariationNumber(variation);
+  const html = buildVariationHtml(variation, project, photos, photoUrls, companyName);
   openHtml(html, `${varNumber} - ${variation.title}`);
+}
+
+// ------------------------------------------------------------------
+// 4b. GET VARIATION HTML FOR PDF EXPORT
+// ------------------------------------------------------------------
+export function getVariationHtmlForPdf(
+  variation: Variation,
+  project: Project,
+  photos: PhotoEvidence[],
+  photoUrls: Record<string, string>,
+  companyName: string
+): { html: string; css: string } {
+  return {
+    html: buildVariationHtml(variation, project, photos, photoUrls, companyName),
+    css: GLOBAL_CSS,
+  };
 }

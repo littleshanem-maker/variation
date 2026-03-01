@@ -8,8 +8,9 @@ import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getVariationNumber } from '@/lib/utils';
-import { printVariation } from '@/lib/print';
-import { generateVariationEmailCover } from '@/lib/email';
+import { printVariation, getVariationHtmlForPdf } from '@/lib/print';
+import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
+import { getVariationEmailMeta } from '@/lib/email';
 import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice } from '@/lib/types';
 
@@ -35,7 +36,7 @@ export default function VariationDetail() {
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [showEmailPanel, setShowEmailPanel] = useState(false);
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -215,6 +216,21 @@ export default function VariationDetail() {
     }
   }
 
+  async function handleSendEmail() {
+    if (!variation || !project) return;
+    setSendingEmail(true);
+    try {
+      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '');
+      const blob = await htmlToPdfBlob(html, css);
+      const { subject, body, filename } = getVariationEmailMeta(variation, project);
+      await shareOrDownloadPdf(blob, filename, subject, body);
+    } catch (err) {
+      console.error('Email send failed:', err);
+    } finally {
+      setSendingEmail(false);
+    }
+  }
+
   if (loading) {
     return (
       <AppShell><TopBar title="Variation" />
@@ -304,10 +320,11 @@ export default function VariationDetail() {
                 </button>
               )}
               <button
-                onClick={() => setShowEmailPanel(!showEmailPanel)}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/30 rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms]"
+                onClick={handleSendEmail}
+                disabled={sendingEmail}
+                className="px-3 py-2.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/30 rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms] disabled:opacity-50 whitespace-nowrap"
               >
-                📧 Send by Email
+                {sendingEmail ? 'Preparing...' : '📧 Send by Email'}
               </button>
             </div>
           )}
@@ -329,37 +346,6 @@ export default function VariationDetail() {
             </div>
           )}
         </div>
-
-        {/* Email Panel */}
-        {showEmailPanel && (
-          <div className="mt-3 p-4 bg-[#F0F4FA] border border-[#1B365D]/15 rounded-md space-y-3">
-            <p className="text-[13px] font-medium text-[#1B365D]">Send by Email</p>
-            <p className="text-[12px] text-[#6B7280]">Step 1: Download the PDF. Step 2: Open email — attach the PDF and send.</p>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <button
-                onClick={() => handlePrint()}
-                className="flex-1 px-4 py-2.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors text-center"
-              >
-                1. Download PDF
-              </button>
-              <button
-                onClick={() => {
-                  window.location.href = generateVariationEmailCover(variation!, project!);
-                  setShowEmailPanel(false);
-                }}
-                className="flex-1 px-4 py-2.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D] rounded-md hover:bg-[#EBF0FA] transition-colors text-center"
-              >
-                2. Open Email
-              </button>
-            </div>
-            <button
-              onClick={() => setShowEmailPanel(false)}
-              className="text-[12px] text-[#9CA3AF] hover:text-[#6B7280] transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        )}
 
         {/* Linked Variation Notice Banner */}
         {linkedNotice && (
