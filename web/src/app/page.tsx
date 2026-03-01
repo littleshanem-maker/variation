@@ -411,8 +411,8 @@ export default function Dashboard() {
         <Link
           href="/capture"
           className="fixed bottom-6 right-6 z-40 flex items-center justify-center w-14 h-14 bg-[#E85D1A] hover:bg-[#C94E14] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-150"
-          title="Quick Capture ⚡"
-          aria-label="Quick Capture"
+          title="Quick Notice ⚡"
+          aria-label="Quick Notice"
         >
           <span className="text-2xl">⚡</span>
         </Link>

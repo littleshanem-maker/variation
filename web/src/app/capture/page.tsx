@@ -142,7 +142,7 @@ export default function CapturePage() {
 
       const variationId = crypto.randomUUID();
       const variationNumber = formatVariationNumber(nextSeq);
-      const autoTitle = 'Field capture: ' + description.trim().slice(0, 65);
+      const autoTitle = 'Variation Notice: ' + description.trim().slice(0, 65);
 
       const { error: insertError } = await supabase.from('variations').insert({
         id: variationId,
@@ -225,7 +225,7 @@ export default function CapturePage() {
             <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
               <div className="text-4xl mb-3">✓</div>
               <h2 className="text-xl font-semibold text-green-800 mb-1">
-                Variation captured
+                Variation Notice captured
               </h2>
               <p className="text-3xl font-bold text-green-900 mb-1">{result.variationNumber}</p>
               <p className="text-sm text-green-700 mb-6">{result.projectName}</p>
@@ -246,7 +246,7 @@ export default function CapturePage() {
                   onClick={handleCaptureAnother}
                   className="w-full bg-[#E85D1A] hover:bg-[#C94E14] text-white font-semibold py-4 px-6 rounded-xl text-base transition-colors"
                 >
-                  Capture Another
+                  Capture Another Notice
                 </button>
               </div>
             </div>
@@ -270,14 +270,14 @@ export default function CapturePage() {
           {/* Context note for non-field users */}
           {!roleLoading && !isField && (
             <div className="mb-4 px-4 py-2.5 bg-[#FDF8ED] border border-[#C8943E]/40 rounded-lg text-xs text-[#92722E]">
-              Quick capture mode — for the full register,{' '}
+              Quick notice mode — for the full register,{' '}
               <Link href="/" className="underline">go to Dashboard</Link>.
             </div>
           )}
 
           <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
             <h1 className="text-lg font-semibold text-[#1C1C1E] mb-5">
-              Capture a Variation
+              Capture a Variation Notice
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -427,7 +427,7 @@ export default function CapturePage() {
                     Capturing…
                   </>
                 ) : (
-                  'CAPTURE VARIATION →'
+                  'CAPTURE NOTICE →'
                 )}
               </button>
             </form>
@@ -452,7 +452,7 @@ function CaptureHeader() {
         height={28}
         className="rounded-md object-cover"
       />
-      <span className="font-semibold text-[15px] tracking-tight">Variation Capture</span>
+      <span className="font-semibold text-[15px] tracking-tight">Quick Notice</span>
       <span className="ml-auto text-white/40 text-xs">⚡ Quick mode</span>
     </header>
   );

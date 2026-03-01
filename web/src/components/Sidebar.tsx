@@ -15,7 +15,7 @@ interface NavItem {
 
 const nav: NavItem[] = [
   { label: 'Dashboard', href: '/' },
-  { label: '⚡ Quick Capture', href: '/capture', highlight: true },
+  { label: '⚡ Quick Notice', href: '/capture', highlight: true },
   { label: 'Variation Register', href: '/variations', roles: ['admin', 'office'] },
   { label: 'Archived Projects', href: '/archived', roles: ['admin', 'office'] },
   { label: 'Team', href: '/team', roles: ['admin'] },
