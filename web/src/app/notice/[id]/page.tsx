@@ -26,6 +26,7 @@ export default function NoticeDetail() {
   const [sender, setSender] = useState<{ name: string; email: string }>({ name: '', email: '' });
 
   const [advancing, setAdvancing] = useState(false);
+  const [converting, setConverting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [sendingEmail, setSendingEmail] = useState(false);
@@ -108,6 +109,60 @@ export default function NoticeDetail() {
       setDeleting(false);
       setShowDeleteConfirm(false);
     }
+  }
+
+  async function handleConvertToVar() {
+    if (!notice || !project) return;
+    setConverting(true);
+
+    const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { setConverting(false); return; }
+
+    // Get next VAR sequence number for this project
+    const { data: existing } = await supabase
+      .from('variations')
+      .select('sequence_number')
+      .eq('project_id', notice.project_id)
+      .order('sequence_number', { ascending: false })
+      .limit(1);
+
+    const nextSeq = existing && existing.length > 0 ? existing[0].sequence_number + 1 : 1;
+
+    // Auto-generate title from event description (first 80 chars)
+    const autoTitle = notice.event_description.slice(0, 80);
+
+    const varId = crypto.randomUUID();
+    const { error } = await supabase.from('variations').insert({
+      id: varId,
+      project_id: notice.project_id,
+      company_id: notice.company_id,
+      sequence_number: nextSeq,
+      title: autoTitle,
+      description: notice.event_description,
+      instruction_source: 'written',
+      instructed_by: notice.issued_by_name || null,
+      estimated_value: 0,
+      status: 'draft',
+      captured_at: notice.event_date
+        ? new Date(notice.event_date + 'T00:00:00').toISOString()
+        : new Date().toISOString(),
+      requestor_name: notice.issued_by_name || null,
+      requestor_email: notice.issued_by_email || session.user.email,
+      notice_id: notice.id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
+
+    if (error) {
+      console.error('Convert to VAR failed:', error);
+      alert('Failed to create Variation Request: ' + error.message);
+      setConverting(false);
+      return;
+    }
+
+    // Navigate to the new variation
+    router.push(`/variation/${varId}`);
   }
 
   function handlePrint() {
@@ -307,15 +362,16 @@ export default function NoticeDetail() {
               </div>
             </Link>
           ) : (
-            <div className="text-[14px] text-[#9CA3AF]">
-              No Variation Request has been created from this notice yet.
+            <div className="space-y-3">
+              <p className="text-[14px] text-[#6B7280]">No Variation Request has been raised from this notice yet.</p>
               {canCreateVR && (
-                <Link
-                  href={`/project/${project.id}?noticeId=${notice.id}&newVariation=1`}
-                  className="ml-2 text-[#1B365D] font-medium hover:text-[#24466F] transition-colors"
+                <button
+                  onClick={handleConvertToVar}
+                  disabled={converting}
+                  className="w-full py-3 px-4 bg-[#1B365D] hover:bg-[#24466F] disabled:opacity-50 text-white text-[14px] font-semibold rounded-md transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
                 >
-                  Create one →
-                </Link>
+                  {converting ? 'Creating...' : 'Convert to Variation Request →'}
+                </button>
               )}
             </div>
           )}

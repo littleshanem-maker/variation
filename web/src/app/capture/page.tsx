@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
-import { formatVariationNumber } from '@/lib/utils';
 import type { Project } from '@/lib/types';
 
 interface CaptureResult {
@@ -127,69 +126,55 @@ export default function CapturePage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      // Get next sequence number for this project
-      const { data: existingVars } = await supabase
-        .from('variations')
+      // Get next VN sequence number for this project
+      const { data: existing } = await supabase
+        .from('variation_notices')
         .select('sequence_number')
         .eq('project_id', selectedProjectId)
         .order('sequence_number', { ascending: false })
         .limit(1);
 
-      const nextSeq =
-        existingVars && existingVars.length > 0
-          ? existingVars[0].sequence_number + 1
-          : 1;
+      const nextSeq = existing && existing.length > 0 ? existing[0].sequence_number + 1 : 1;
+      const noticeNumber = `VN-${String(nextSeq).padStart(3, '0')}`;
 
-      const variationId = crypto.randomUUID();
-      const variationNumber = formatVariationNumber(nextSeq);
-      const autoTitle = 'Variation Notice: ' + description.trim().slice(0, 65);
+      // Parse occurredAt to extract date only (event_date is date-only field)
+      const eventDate = occurredAt
+        ? new Date(occurredAt).toISOString().split('T')[0]
+        : new Date().toISOString().split('T')[0];
 
-      const { error: insertError } = await supabase.from('variations').insert({
-        id: variationId,
+      const noticeId = crypto.randomUUID();
+      const { error: insertError } = await supabase.from('variation_notices').insert({
+        id: noticeId,
         project_id: selectedProjectId,
+        company_id: companyId,
         sequence_number: nextSeq,
-        variation_number: variationNumber,
-        title: autoTitle,
-        description: description.trim(),
-        instruction_source: 'verbal',
-        instructed_by: instructedBy.trim() || null,
-        estimated_value: 0,
-        status: 'captured',
-        captured_at: occurredAt ? new Date(occurredAt).toISOString() : new Date().toISOString(),
-        requestor_name: requestorName.trim() || null,
-        requestor_email: user.email ?? null,
+        notice_number: noticeNumber,
+        event_description: description.trim(),
+        event_date: eventDate,
+        cost_flag: true,
+        time_flag: false,
+        issued_by_name: requestorName.trim() || null,
+        issued_by_email: user.email || null,
+        status: 'draft',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       });
 
-      if (insertError) throw new Error(insertError.message);
-
-      // Upload photo if attached
-      if (photoFile) {
-        try {
-          const photoId = crypto.randomUUID();
-          const storagePath = `${user.id}/photos/${photoId}.jpg`;
-
-          await supabase.storage
-            .from('evidence')
-            .upload(storagePath, photoFile, { contentType: photoFile.type, upsert: true });
-
-          // Insert photo_evidence row (storage path not stored in row — path is derived from photo.id)
-          await supabase.from('photo_evidence').insert({
-            id: photoId,
-            variation_id: variationId,
-            captured_at: new Date().toISOString(),
-          });
-        } catch {
-          // Photo upload failure is non-fatal — variation is already saved
-          console.warn('Photo upload failed, variation saved without photo');
-        }
+      if (insertError) {
+        setError('Failed to save: ' + insertError.message);
+        setSubmitting(false);
+        return;
       }
+
+      // Photo evidence attaches to variations, not notices — skip photo upload here.
+      // Photo can be added after converting this notice to a Variation Request.
 
       // Get project name for confirmation
       const project = projects.find((p) => p.id === selectedProjectId);
 
       setResult({
-        variationId,
-        variationNumber,
+        variationId: noticeId,       // holds notice ID
+        variationNumber: noticeNumber, // holds VN-001 format
         projectName: project?.name ?? 'Your project',
         capturedAt: new Date().toISOString(),
       });
@@ -237,10 +222,10 @@ export default function CapturePage() {
               </p>
               <div className="flex flex-col gap-3">
                 <Link
-                  href={`/variation/${result.variationId}`}
+                  href={`/notice/${result.variationId}`}
                   className="block w-full border border-green-300 text-green-800 font-medium py-3 px-4 rounded-lg text-sm hover:bg-green-100 transition-colors"
                 >
-                  View it →
+                  View Notice →
                 </Link>
                 <button
                   onClick={handleCaptureAnother}
