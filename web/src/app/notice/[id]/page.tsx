@@ -9,6 +9,7 @@ import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatDate } from '@/lib/utils';
 import { printNotice } from '@/lib/print';
+import { generateNoticeMailto } from '@/lib/email';
 import { useRole } from '@/lib/role';
 import type { VariationNotice, Project, Variation } from '@/lib/types';
 
@@ -103,6 +104,11 @@ export default function NoticeDetail() {
     }
   }
 
+  function handleEmail() {
+    const url = generateNoticeMailto(notice!, project!, company?.name || '');
+    window.location.href = url;
+  }
+
   if (loading) {
     return (
       <AppShell><TopBar title="Variation Notice" />
@@ -170,6 +176,12 @@ export default function NoticeDetail() {
                 Delete
               </button>
             )}
+            <button
+              onClick={handleEmail}
+              className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/30 rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms]"
+            >
+              📧 Send by Email
+            </button>
           </div>
         </div>
 

@@ -9,6 +9,7 @@ import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getVariationNumber } from '@/lib/utils';
 import { printVariation } from '@/lib/print';
+import { generateVariationMailto } from '@/lib/email';
 import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice } from '@/lib/types';
 
@@ -213,6 +214,11 @@ export default function VariationDetail() {
     }
   }
 
+  function handleEmail() {
+    const url = generateVariationMailto(variation!, project!, company?.name || '');
+    window.location.href = url;
+  }
+
   if (loading) {
     return (
       <AppShell><TopBar title="Variation" />
@@ -295,6 +301,12 @@ export default function VariationDetail() {
                   Edit
                 </button>
               )}
+              <button
+                onClick={handleEmail}
+                className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/30 rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms]"
+              >
+                📧 Send by Email
+              </button>
             </div>
           )}
           {editing && (
