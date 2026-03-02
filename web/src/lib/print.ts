@@ -572,7 +572,6 @@ function buildVariationHtml(
         <div class="meta-row" style="font-size:11pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(varNumber)}</div>
         <div class="meta-row">Date: ${formatDocDate(variation.captured_at)}</div>
         <div class="meta-row">Status: <strong>${status}</strong></div>
-        ${linkedNotice ? `<div class="meta-row" style="margin-top:4px;">Variation Notice: <strong>${escapeHtml(linkedNotice.notice_number)}</strong>${linkedNotice.issued_at ? ` (Issued ${formatDocDate(linkedNotice.issued_at)})` : ''}</div>` : ''}
       </div>
     </div>
 

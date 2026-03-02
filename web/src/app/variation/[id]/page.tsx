@@ -38,6 +38,7 @@ export default function VariationDetail() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [revisingMode, setRevisingMode] = useState(false);
   const [revisions, setRevisions] = useState<Variation[]>([]);
   const [sendingEmail, setSendingEmail] = useState(false);
@@ -78,6 +79,7 @@ export default function VariationDetail() {
 
     // Revise mode: insert a new revision row instead of updating the current one
     if (revisingMode) {
+      setSaveError(null);
       const nextRev = Math.max(...revisions.map(r => r.revision_number ?? 0)) + 1;
       const { data: newVar, error: insertError } = await supabase
         .from('variations')
@@ -98,12 +100,28 @@ export default function VariationDetail() {
         })
         .select()
         .single();
-      setSaving(false);
-      if (!insertError && newVar) {
-        setRevisingMode(false);
-        setEditing(false);
-        router.push(`/variation/${newVar.id}`);
+
+      if (insertError || !newVar) {
+        setSaveError('Could not save revision. The database may need a migration — ask your admin to run migration 014.');
+        setSaving(false);
+        return;
       }
+
+      // Log revision creation in status history of the new variation
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from('status_changes').insert({
+        id: crypto.randomUUID(),
+        variation_id: newVar.id,
+        from_status: null,
+        to_status: 'draft',
+        changed_at: new Date().toISOString(),
+        changed_by: `Revision ${nextRev} created by ${user?.email ?? 'Office'}`,
+      });
+
+      setSaving(false);
+      setRevisingMode(false);
+      setEditing(false);
+      router.push(`/project/${variation.project_id}`);
       return;
     }
 
@@ -408,8 +426,11 @@ export default function VariationDetail() {
           )}
           {editing && (
             <div className="flex gap-2">
+              {saveError && (
+                <p className="text-[13px] text-[#B25B4E] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 self-center">{saveError}</p>
+              )}
               <button
-                onClick={() => { setEditing(false); setRevisingMode(false); setNewFiles([]); }}
+                onClick={() => { setEditing(false); setRevisingMode(false); setNewFiles([]); setSaveError(null); }}
                 className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors"
               >
                 Cancel
