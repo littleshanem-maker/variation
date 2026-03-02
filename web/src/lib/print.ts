@@ -526,7 +526,8 @@ function buildVariationHtml(
   photoUrls: Record<string, string>,
   companyName: string,
   sender: { name: string; email: string },
-  linkedNotice?: VariationNotice | null
+  linkedNotice?: VariationNotice | null,
+  revisions?: Variation[]
 ): string {
   const status = getStatusConfig(variation.status).label;
   const varNumber = getVariationNumber(variation);
@@ -660,6 +661,29 @@ function buildVariationHtml(
           <td style="padding:4px 0; font-family:monospace; font-size:8pt; color:#6B7280;" colspan="3">${variation.evidence_hash.substring(0, 16)}...</td>
         </tr>
         ` : ''}
+        ${revisions && revisions.length > 1 ? `
+        <tr>
+          <td colspan="4" style="padding-top:14px; padding-bottom:6px;">
+            <div style="font-size:8pt; color:#6B7280; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; border-top:1px solid #E5E7EB; padding-top:12px;">Revision History</div>
+            <table style="width:100%; border-collapse:collapse; font-size:9pt;">
+              <tr>
+                <th style="text-align:left; color:#6B7280; font-weight:500; padding-bottom:4px; width:180px;">Variation No.</th>
+                <th style="text-align:left; color:#6B7280; font-weight:500; padding-bottom:4px; width:160px;">Date</th>
+                <th style="text-align:left; color:#6B7280; font-weight:500; padding-bottom:4px;">Status</th>
+              </tr>
+              ${revisions.map(r => {
+                const revNum = getVariationNumber(r);
+                const isCurrent = r.id === variation.id;
+                return `<tr style="${isCurrent ? 'font-weight:600;' : ''}">
+                  <td style="padding:3px 0; color:#1C1C1E; font-family:monospace;">${escapeHtml(revNum)}${isCurrent ? ' ◀' : ''}</td>
+                  <td style="padding:3px 0; color:#6B7280;">${formatDocDate(r.captured_at)}</td>
+                  <td style="padding:3px 0; color:#1C1C1E; text-transform:capitalize;">${escapeHtml(r.status)}</td>
+                </tr>`;
+              }).join('')}
+            </table>
+          </td>
+        </tr>
+        ` : ''}
       </table>
     </div>
 
@@ -685,10 +709,11 @@ export function printVariation(
   photoUrls: Record<string, string>,
   companyName: string = '',
   sender: { name: string; email: string } = { name: '', email: '' },
-  linkedNotice?: VariationNotice | null
+  linkedNotice?: VariationNotice | null,
+  revisions?: Variation[]
 ) {
   const varNumber = getVariationNumber(variation);
-  const html = buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice);
+  const html = buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice, revisions);
   openHtml(html, `${varNumber} - ${variation.title}`);
 }
 
@@ -702,10 +727,11 @@ export function getVariationHtmlForPdf(
   photoUrls: Record<string, string>,
   companyName: string,
   sender: { name: string; email: string },
-  linkedNotice?: VariationNotice | null
+  linkedNotice?: VariationNotice | null,
+  revisions?: Variation[]
 ): { html: string; css: string } {
   return {
-    html: buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice),
+    html: buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice, revisions),
     css: GLOBAL_CSS,
   };
 }
