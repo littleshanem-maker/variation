@@ -22,7 +22,7 @@ export default function MobileTopBar({ onMenuOpen }: MobileTopBarProps) {
         </svg>
       </button>
 
-      <Link href="/" className="flex items-center gap-2">
+      <Link href="/" className="flex items-center gap-2 text-white">
         <Image
           src="/variation-shield-logo.jpg"
           alt="Variation Shield"
