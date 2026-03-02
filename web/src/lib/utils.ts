@@ -128,13 +128,11 @@ export function formatNoticeNumber(sequenceNumber: number): string {
 }
 
 /** Get variation number, falling back to sequence number if variation_number not set.
- *  Rev N suffix only shown when revision_number > 0 AND status is not draft
- *  (revision number doesn't count until the variation is submitted). */
+ *  Always shows Rev N suffix when revision_number > 0, regardless of status. */
 export function getVariationNumber(variation: { variation_number?: string; sequence_number: number; revision_number?: number; status?: string }): string {
   const base = variation.variation_number ?? formatVariationNumber(variation.sequence_number);
   const rev = variation.revision_number ?? 0;
-  const isDraft = !variation.status || variation.status === 'draft';
-  return rev > 0 && !isDraft ? `${base} Rev ${rev}` : base;
+  return rev > 0 ? `${base} Rev ${rev}` : base;
 }
 
 export function getStatusConfig(status: string) {

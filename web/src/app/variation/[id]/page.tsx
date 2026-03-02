@@ -525,7 +525,7 @@ export default function VariationDetail() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider">{getVariationNumber(variation)}</div>
-                    {(variation.revision_number ?? 0) > 0 && variation.status !== 'draft' && (
+                    {(variation.revision_number ?? 0) > 0 && (
                       <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">
                         Rev {variation.revision_number}
                       </span>
