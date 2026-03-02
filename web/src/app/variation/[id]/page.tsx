@@ -92,6 +92,7 @@ export default function VariationDetail() {
       const { data: newVar, error: insertError } = await supabase
         .from('variations')
         .insert({
+          id: crypto.randomUUID(),
           project_id: variation.project_id,
           sequence_number: variation.sequence_number,
           revision_number: nextRev,
