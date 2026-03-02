@@ -80,7 +80,15 @@ export default function VariationDetail() {
     // Revise mode: insert a new revision row instead of updating the current one
     if (revisingMode) {
       setSaveError(null);
-      const nextRev = Math.max(...revisions.map(r => r.revision_number ?? 0)) + 1;
+      // Re-fetch revisions fresh in case the page was loaded before migration 014 ran
+      const supabaseForRevisions = createClient();
+      const { data: freshRevisions } = await supabaseForRevisions
+        .from('variations')
+        .select('revision_number')
+        .eq('project_id', variation.project_id)
+        .eq('sequence_number', variation.sequence_number);
+      const revNums = (freshRevisions ?? []).map(r => (r as { revision_number?: number }).revision_number ?? 0);
+      const nextRev = revNums.length > 0 ? Math.max(...revNums) + 1 : 1;
       const { data: newVar, error: insertError } = await supabase
         .from('variations')
         .insert({
@@ -102,7 +110,7 @@ export default function VariationDetail() {
         .single();
 
       if (insertError || !newVar) {
-        setSaveError('Could not save revision. The database may need a migration — ask your admin to run migration 014.');
+        setSaveError(`Save revision failed: ${insertError?.message ?? 'unknown error'}`);
         setSaving(false);
         return;
       }
