@@ -37,6 +37,9 @@ export default function VariationDetail() {
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [revisions, setRevisions] = useState<Variation[]>([]);
   const [sendingEmail, setSendingEmail] = useState(false);
 
   const [editing, setEditing] = useState(false);
@@ -128,13 +131,47 @@ export default function VariationDetail() {
   async function handleDelete() {
     if (!variation || !project) return;
     setDeleting(true);
+    setDeleteError(null);
     const supabase = createClient();
     const { error } = await supabase.from('variations').delete().eq('id', variation.id);
     if (!error) {
       router.push(`/project/${project.id}`);
     } else {
       setDeleting(false);
-      setShowDeleteConfirm(false);
+      setDeleteError('Delete failed. You may not have permission, or the variation could not be removed.');
+    }
+  }
+
+  async function handleCreateRevision() {
+    if (!variation || !project) return;
+    setCreating(true);
+    const supabase = createClient();
+
+    const nextRev = Math.max(...revisions.map(r => r.revision_number ?? 0)) + 1;
+
+    const { data: newVar, error } = await supabase
+      .from('variations')
+      .insert({
+        project_id: variation.project_id,
+        sequence_number: variation.sequence_number,
+        revision_number: nextRev,
+        parent_id: variation.id,
+        title: variation.title,
+        description: variation.description,
+        instruction_source: variation.instruction_source,
+        instructed_by: variation.instructed_by ?? null,
+        reference_doc: variation.reference_doc ?? null,
+        estimated_value: variation.estimated_value,
+        notes: variation.notes ?? null,
+        status: 'draft',
+        captured_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    setCreating(false);
+    if (!error && newVar) {
+      router.push(`/variation/${newVar.id}`);
     }
   }
 
@@ -177,6 +214,14 @@ export default function VariationDetail() {
 
     const { data: proj } = await supabase.from('projects').select('*').eq('id', v.project_id).single();
     setProject(proj);
+
+    const { data: revData } = await supabase
+      .from('variations')
+      .select('*')
+      .eq('project_id', v.project_id)
+      .eq('sequence_number', v.sequence_number)
+      .order('revision_number', { ascending: true });
+    setRevisions(revData ?? []);
 
     const { data: ph } = await supabase.from('photo_evidence').select('*').eq('variation_id', id).order('captured_at');
     setPhotos(ph || []);
@@ -222,7 +267,7 @@ export default function VariationDetail() {
 
   function handlePrint() {
     if (variation && project) {
-      printVariation(variation, project, photos, photoUrls, company?.name || '', sender);
+      printVariation(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice);
     }
   }
 
@@ -230,7 +275,7 @@ export default function VariationDetail() {
     if (!variation || !project) return;
     setSendingEmail(true);
     try {
-      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender);
+      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice);
       const blob = await htmlToPdfBlob(html, css);
       const { subject, body, filename } = getVariationEmailMeta(variation, project);
       await shareOrDownloadPdf(blob, filename, subject, body);
@@ -259,6 +304,7 @@ export default function VariationDetail() {
 
   const canEdit = !isField && EDITABLE_STATUSES.includes(variation.status);
   const canDelete = !isField && DELETABLE_STATUSES.includes(variation.status);
+  const canRevise = !isField && ['submitted', 'approved', 'disputed'].includes(variation.status);
 
   const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none";
   const labelClass = "block text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF] mb-1";
@@ -275,7 +321,7 @@ export default function VariationDetail() {
   const STATUS_ACTION_LABELS: Record<string, string> = {
     submitted: 'Submit for Approval',
     approved:  'Approve',
-    rejected:  'Reject',
+    rejected:  'Mark Rejected',
     disputed:  'Mark Disputed',
   };
   const STATUS_ACTION_STYLES: Record<string, string> = {
@@ -288,7 +334,7 @@ export default function VariationDetail() {
 
   return (
     <AppShell>
-      <TopBar title="Variation Shield" onPrint={isField ? undefined : handlePrint} printLabel="Print Variation" />
+      <TopBar title="Variation Detail" onPrint={isField ? undefined : handlePrint} printLabel="Print Variation" />
       <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-4xl">
         {/* Back + Actions */}
         <div className="space-y-3">
@@ -319,6 +365,15 @@ export default function VariationDetail() {
                   className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms]"
                 >
                   Delete
+                </button>
+              )}
+              {canRevise && (
+                <button
+                  onClick={handleCreateRevision}
+                  disabled={creating}
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/40 rounded-md hover:bg-[#F0F4FA] hover:border-[#1B365D] transition-colors duration-[120ms] disabled:opacity-40"
+                >
+                  {creating ? 'Creating…' : '↩ Revise'}
                 </button>
               )}
               {canEdit && (
@@ -423,7 +478,14 @@ export default function VariationDetail() {
             <>
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1">{getVariationNumber(variation)}</div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider">{getVariationNumber(variation)}</div>
+                    {(variation.revision_number ?? 0) > 0 && (
+                      <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">
+                        Rev {variation.revision_number}
+                      </span>
+                    )}
+                  </div>
                   <h2 className="text-[22px] font-bold text-[#1C1C1E] truncate">{variation.title}</h2>
                   <p className="text-[13px] text-[#6B7280] mt-1 truncate">{project.name} · {project.client}</p>
                 </div>
@@ -635,6 +697,28 @@ export default function VariationDetail() {
             </div>
           </div>
         )}
+        {/* Revision History */}
+        {revisions.length > 1 && (
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Revision History</h3>
+            <div className="space-y-1">
+              {revisions.map(r => (
+                <Link
+                  key={r.id}
+                  href={`/variation/${r.id}`}
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ${
+                    r.id === variation.id
+                      ? 'bg-[#EEF3FB] font-semibold text-[#1B365D] pointer-events-none'
+                      : 'hover:bg-[#F8F8F6] text-[#1C1C1E]'
+                  }`}
+                >
+                  <span className="font-mono">{getVariationNumber(r)}</span>
+                  <StatusBadge status={r.status} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Delete Variation Confirmation Modal */}
@@ -646,9 +730,12 @@ export default function VariationDetail() {
               Are you sure you want to delete <span className="font-medium text-[#1C1C1E]">Variation #{variation.sequence_number}: {variation.title}</span>?
             </p>
             <p className="text-[13px] text-[#9CA3AF] mb-5">This will permanently delete the variation and all associated photos, voice notes, and documents. This cannot be undone.</p>
+            {deleteError && (
+              <p className="text-[13px] text-[#B25B4E] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 mb-4">{deleteError}</p>
+            )}
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => setShowDeleteConfirm(false)}
+                onClick={() => { setShowDeleteConfirm(false); setDeleteError(null); }}
                 disabled={deleting}
                 className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms] disabled:opacity-40"
               >

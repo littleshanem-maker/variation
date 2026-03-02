@@ -29,6 +29,7 @@ export default function NoticeDetail() {
   const [converting, setConverting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const [sendingEmail, setSendingEmail] = useState(false);
 
   useEffect(() => { loadNotice(); }, [id]);
@@ -101,13 +102,14 @@ export default function NoticeDetail() {
   async function handleDelete() {
     if (!notice || !project) return;
     setDeleting(true);
+    setDeleteError(null);
     const supabase = createClient();
     const { error } = await supabase.from('variation_notices').delete().eq('id', notice.id);
     if (!error) {
       router.push(`/project/${project.id}`);
     } else {
       setDeleting(false);
-      setShowDeleteConfirm(false);
+      setDeleteError('Delete failed. You may not have permission, or the notice could not be removed.');
     }
   }
 
@@ -205,13 +207,13 @@ export default function NoticeDetail() {
   const canIssue = !isField && notice.status === 'draft';
   const canAcknowledge = !isField && notice.status === 'issued';
   const canCreateVR = !isField && notice.status === 'issued' && !linkedVariation;
-  const canDelete = !isField && notice.status === 'draft';
+  const canDelete = !isField && !linkedVariation;
 
   const labelClass = "block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1";
 
   return (
     <AppShell>
-      <TopBar title="Variation Shield" onPrint={isField ? undefined : handlePrint} printLabel="Print Notice" />
+      <TopBar title="Variation Notice" onPrint={isField ? undefined : handlePrint} printLabel="Print Notice" />
       <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-4xl">
         {/* Back + Actions */}
         <div className="space-y-3">
@@ -386,10 +388,19 @@ export default function NoticeDetail() {
             <p className="text-[14px] text-[#6B7280] mb-1">
               Are you sure you want to delete <span className="font-medium text-[#1C1C1E]">{notice.notice_number}</span>?
             </p>
-            <p className="text-[13px] text-[#9CA3AF] mb-5">This cannot be undone.</p>
+            {notice.status !== 'draft' ? (
+              <p className="text-[13px] text-[#C8943E] bg-[#FEF3C7] border border-[#FDE68A] rounded-md px-3 py-2 mb-4">
+                This notice has been <strong>{notice.status}</strong>. Deleting it will permanently remove it from your records — ensure the client has been notified separately if needed.
+              </p>
+            ) : (
+              <p className="text-[13px] text-[#9CA3AF] mb-5">This cannot be undone.</p>
+            )}
+            {deleteError && (
+              <p className="text-[13px] text-[#B25B4E] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 mb-4">{deleteError}</p>
+            )}
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => setShowDeleteConfirm(false)}
+                onClick={() => { setShowDeleteConfirm(false); setDeleteError(null); }}
                 disabled={deleting}
                 className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms] disabled:opacity-40"
               >

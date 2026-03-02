@@ -81,6 +81,8 @@ export interface Variation {
   ai_description?: string;
   ai_transcription?: string;
   notice_id?: string;  // FK to variation_notices, null if notice skipped
+  revision_number?: number; // 0 = original, 1 = Rev 1, 2 = Rev 2 etc.
+  parent_id?: string;       // FK to parent variation, null for originals
   created_at: string;
   updated_at: string;
 }

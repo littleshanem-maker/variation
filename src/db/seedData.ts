@@ -1,7 +1,7 @@
 /**
  * Seed Data
  *
- * 3 realistic Victorian construction projects with 13 variations.
+ * 3 realistic Australian construction projects with 13 variations.
  */
 
 import { getDatabase, resetDatabase } from './schema';
@@ -25,7 +25,7 @@ async function insertSeedData(): Promise<void> {
 
   const projects = [
     { id: generateId(), name: 'Westgate Tunnel - Section 4B', client: 'CPBJH JV', reference: 'WGT-4B-2025', contractType: 'lump_sum', lat: -37.8224, lng: 144.8866 },
-    { id: generateId(), name: 'Metro Crossing - Parkville', client: 'Rail Projects Victoria', reference: 'MC-PKV-2025', contractType: 'schedule_of_rates', lat: -37.7840, lng: 144.9560 },
+    { id: generateId(), name: 'Metro Crossing - Parkville', client: 'Rail Projects Australia', reference: 'MC-PKV-2025', contractType: 'schedule_of_rates', lat: -37.7840, lng: 144.9560 },
     { id: generateId(), name: 'Northern Hospital - Mechanical', client: 'Lendlease', reference: 'NH-MECH-2025', contractType: 'design_and_construct', lat: -37.7367, lng: 145.0136 },
   ];
 

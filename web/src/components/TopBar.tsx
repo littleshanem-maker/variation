@@ -25,12 +25,13 @@ export default function TopBar({ title, onPrint, printLabel = 'Print' }: { title
     router.refresh();
   }
 
-  const displayTitle = companyName || title;
-
   return (
-    <header className="hidden md:flex h-14 border-b border-[#E5E7EB] bg-white items-center justify-between px-8">
-      <div className="flex items-center gap-3 min-w-0">
-        <h1 className="text-base md:text-lg font-semibold text-[#1C1C1E] truncate">{displayTitle}</h1>
+    <header className="hidden md:flex h-14 border-b border-[#D1D5DB] bg-white items-center justify-between px-8 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+      <div className="flex items-center gap-2.5 min-w-0">
+        <h1 className="text-[15px] font-bold text-[#0F172A] truncate">{title}</h1>
+        {companyName && (
+          <span className="hidden lg:block text-[13px] text-[#9CA3AF] truncate">— {companyName}</span>
+        )}
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
         {onPrint && (

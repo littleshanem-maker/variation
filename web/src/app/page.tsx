@@ -188,11 +188,11 @@ export default function Dashboard() {
               href={`/variations?status=${s.status}`}
               className={`rounded-md border border-t-[3px] ${s.border} ${s.bg} p-4 shadow-[0_1px_2px_rgba(0,0,0,0.06)] block hover:brightness-95 transition-all duration-[120ms] active:scale-[0.98]`}
             >
-              <div className="text-[10px] font-semibold uppercase tracking-widest text-current opacity-60 mb-2">
+              <div className="text-[12px] font-bold uppercase tracking-[0.06em] text-current opacity-70 mb-1.5">
                 {s.label}
               </div>
               {!isField && (
-                <div className={`text-xl font-bold tabular-nums ${s.color}`}>
+                <div className={`text-[22px] font-extrabold tabular-nums leading-tight ${s.color}`}>
                   {formatCurrency(s.total)}
                 </div>
               )}

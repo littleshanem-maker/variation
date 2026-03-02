@@ -127,9 +127,11 @@ export function formatNoticeNumber(sequenceNumber: number): string {
   return `VN-${String(sequenceNumber).padStart(3, '0')}`;
 }
 
-/** Get variation number, falling back to sequence number if variation_number not set */
-export function getVariationNumber(variation: { variation_number?: string; sequence_number: number }): string {
-  return variation.variation_number ?? formatVariationNumber(variation.sequence_number);
+/** Get variation number, falling back to sequence number if variation_number not set. Includes revision suffix. */
+export function getVariationNumber(variation: { variation_number?: string; sequence_number: number; revision_number?: number }): string {
+  const base = variation.variation_number ?? formatVariationNumber(variation.sequence_number);
+  const rev = variation.revision_number ?? 0;
+  return rev > 0 ? `${base} Rev ${rev}` : base;
 }
 
 export function getStatusConfig(status: string) {

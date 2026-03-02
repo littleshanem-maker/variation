@@ -525,7 +525,8 @@ function buildVariationHtml(
   photos: PhotoEvidence[],
   photoUrls: Record<string, string>,
   companyName: string,
-  sender: { name: string; email: string }
+  sender: { name: string; email: string },
+  linkedNotice?: VariationNotice | null
 ): string {
   const status = getStatusConfig(variation.status).label;
   const varNumber = getVariationNumber(variation);
@@ -565,12 +566,13 @@ function buildVariationHtml(
     <div class="doc-header">
       <div>
         <div class="brand">${escapeHtml(companyName || project.name)}</div>
-        <div class="doc-title">Variation Form</div>
+        <div class="doc-title">Variation Request</div>
       </div>
       <div class="doc-meta">
         <div class="meta-row" style="font-size:11pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(varNumber)}</div>
         <div class="meta-row">Date: ${formatDocDate(variation.captured_at)}</div>
         <div class="meta-row">Status: <strong>${status}</strong></div>
+        ${linkedNotice ? `<div class="meta-row" style="margin-top:4px;">Variation Notice: <strong>${escapeHtml(linkedNotice.notice_number)}</strong>${linkedNotice.issued_at ? ` (Issued ${formatDocDate(linkedNotice.issued_at)})` : ''}</div>` : ''}
       </div>
     </div>
 
@@ -600,6 +602,13 @@ function buildVariationHtml(
         <div class="field-group">
           <div class="field-label">Reference Document</div>
           <div class="field-value">${escapeHtml(variation.reference_doc)}</div>
+        </div>
+        ` : ''}
+        ${linkedNotice ? `
+        <div class="field-group">
+          <div class="field-label">Variation Notice</div>
+          <div class="field-value" style="font-family:monospace;">${escapeHtml(linkedNotice.notice_number)}</div>
+          <div class="field-value text-muted" style="font-weight:400; margin-top:2px; font-size:9pt;">${linkedNotice.issued_at ? `Issued ${formatDocDate(linkedNotice.issued_at)}` : `Status: ${linkedNotice.status}`}</div>
         </div>
         ` : ''}
       </div>
@@ -676,10 +685,11 @@ export function printVariation(
   photos: PhotoEvidence[],
   photoUrls: Record<string, string>,
   companyName: string = '',
-  sender: { name: string; email: string } = { name: '', email: '' }
+  sender: { name: string; email: string } = { name: '', email: '' },
+  linkedNotice?: VariationNotice | null
 ) {
   const varNumber = getVariationNumber(variation);
-  const html = buildVariationHtml(variation, project, photos, photoUrls, companyName, sender);
+  const html = buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice);
   openHtml(html, `${varNumber} - ${variation.title}`);
 }
 
@@ -692,10 +702,11 @@ export function getVariationHtmlForPdf(
   photos: PhotoEvidence[],
   photoUrls: Record<string, string>,
   companyName: string,
-  sender: { name: string; email: string }
+  sender: { name: string; email: string },
+  linkedNotice?: VariationNotice | null
 ): { html: string; css: string } {
   return {
-    html: buildVariationHtml(variation, project, photos, photoUrls, companyName, sender),
+    html: buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice),
     css: GLOBAL_CSS,
   };
 }
