@@ -14,7 +14,7 @@ import { getVariationEmailMeta } from '@/lib/email';
 import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice } from '@/lib/types';
 
-const EDITABLE_STATUSES = ['draft', 'captured', 'submitted'];
+const EDITABLE_STATUSES = ['draft', 'captured'];
 const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
 
 export default function VariationDetail() {
@@ -38,7 +38,7 @@ export default function VariationDetail() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
+  const [revisingMode, setRevisingMode] = useState(false);
   const [revisions, setRevisions] = useState<Variation[]>([]);
   const [sendingEmail, setSendingEmail] = useState(false);
 
@@ -75,6 +75,38 @@ export default function VariationDetail() {
     setSaving(true);
     const supabase = createClient();
     const valueCents = Math.round(parseFloat(editValue || '0') * 100);
+
+    // Revise mode: insert a new revision row instead of updating the current one
+    if (revisingMode) {
+      const nextRev = Math.max(...revisions.map(r => r.revision_number ?? 0)) + 1;
+      const { data: newVar, error: insertError } = await supabase
+        .from('variations')
+        .insert({
+          project_id: variation.project_id,
+          sequence_number: variation.sequence_number,
+          revision_number: nextRev,
+          parent_id: variation.id,
+          title: editTitle.trim(),
+          description: editDescription.trim(),
+          instruction_source: editSource,
+          instructed_by: editInstructedBy.trim() || null,
+          reference_doc: editReferenceDoc.trim() || null,
+          estimated_value: valueCents,
+          notes: editNotes.trim() || null,
+          status: 'draft',
+          captured_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
+      setSaving(false);
+      if (!insertError && newVar) {
+        setRevisingMode(false);
+        setEditing(false);
+        router.push(`/variation/${newVar.id}`);
+      }
+      return;
+    }
+
     const oldStatus = variation.status;
 
     const { error } = await supabase.from('variations').update({
@@ -142,37 +174,19 @@ export default function VariationDetail() {
     }
   }
 
-  async function handleCreateRevision() {
-    if (!variation || !project) return;
-    setCreating(true);
-    const supabase = createClient();
-
-    const nextRev = Math.max(...revisions.map(r => r.revision_number ?? 0)) + 1;
-
-    const { data: newVar, error } = await supabase
-      .from('variations')
-      .insert({
-        project_id: variation.project_id,
-        sequence_number: variation.sequence_number,
-        revision_number: nextRev,
-        parent_id: variation.id,
-        title: variation.title,
-        description: variation.description,
-        instruction_source: variation.instruction_source,
-        instructed_by: variation.instructed_by ?? null,
-        reference_doc: variation.reference_doc ?? null,
-        estimated_value: variation.estimated_value,
-        notes: variation.notes ?? null,
-        status: 'draft',
-        captured_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
-
-    setCreating(false);
-    if (!error && newVar) {
-      router.push(`/variation/${newVar.id}`);
-    }
+  function startRevising() {
+    if (!variation) return;
+    // Pre-fill edit fields with current variation values
+    setEditTitle(variation.title);
+    setEditDescription(variation.description || variation.ai_description || '');
+    setEditSource(variation.instruction_source || 'verbal');
+    setEditInstructedBy(variation.instructed_by || '');
+    setEditValue((variation.estimated_value / 100).toFixed(2));
+    setEditNotes(variation.notes || '');
+    setEditReferenceDoc(variation.reference_doc || '');
+    setNewFiles([]);
+    setRevisingMode(true);
+    setEditing(true);
   }
 
   async function handleAdvanceStatus(newStatus: string) {
@@ -367,13 +381,12 @@ export default function VariationDetail() {
                   Delete
                 </button>
               )}
-              {canRevise && (
+              {canRevise && !editing && (
                 <button
-                  onClick={handleCreateRevision}
-                  disabled={creating}
-                  className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/40 rounded-md hover:bg-[#F0F4FA] hover:border-[#1B365D] transition-colors duration-[120ms] disabled:opacity-40"
+                  onClick={startRevising}
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/40 rounded-md hover:bg-[#F0F4FA] hover:border-[#1B365D] transition-colors duration-[120ms]"
                 >
-                  {creating ? 'Creating…' : '↩ Revise'}
+                  ↩ Revise
                 </button>
               )}
               {canEdit && (
@@ -396,7 +409,7 @@ export default function VariationDetail() {
           {editing && (
             <div className="flex gap-2">
               <button
-                onClick={() => { setEditing(false); setNewFiles([]); }}
+                onClick={() => { setEditing(false); setRevisingMode(false); setNewFiles([]); }}
                 className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors"
               >
                 Cancel
@@ -406,7 +419,7 @@ export default function VariationDetail() {
                 disabled={saving || !editTitle.trim()}
                 className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
               >
-                {saving ? 'Saving...' : 'Save Changes'}
+                {saving ? 'Saving...' : revisingMode ? 'Save Revision' : 'Save Changes'}
               </button>
             </div>
           )}
@@ -442,17 +455,19 @@ export default function VariationDetail() {
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div>
-                  <label className={labelClass}>Status</label>
-                  <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className={inputClass + " bg-white"}>
-                    <option value="draft">Draft</option>
-                    <option value="submitted">Submitted</option>
-                    <option value="approved">Approved</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="disputed">Disputed</option>
-                    <option value="paid">Paid</option>
-                  </select>
-                </div>
+                {!revisingMode && (
+                  <div>
+                    <label className={labelClass}>Status</label>
+                    <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className={inputClass + " bg-white"}>
+                      <option value="draft">Draft</option>
+                      <option value="submitted">Submitted</option>
+                      <option value="approved">Approved</option>
+                      <option value="rejected">Rejected</option>
+                      <option value="disputed">Disputed</option>
+                      <option value="paid">Paid</option>
+                    </select>
+                  </div>
+                )}
                 <div>
                   <label className={labelClass}>Instruction Source</label>
                   <select value={editSource} onChange={e => setEditSource(e.target.value)} className={inputClass + " bg-white"}>
@@ -480,7 +495,7 @@ export default function VariationDetail() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider">{getVariationNumber(variation)}</div>
-                    {(variation.revision_number ?? 0) > 0 && (
+                    {(variation.revision_number ?? 0) > 0 && variation.status !== 'draft' && (
                       <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">
                         Rev {variation.revision_number}
                       </span>
