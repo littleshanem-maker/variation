@@ -11,6 +11,7 @@ import { formatCurrency, formatDate, getStatusConfig, getVariationNumber } from 
 import { printRegister } from '@/lib/print';
 import { useRole } from '@/lib/role';
 import type { Variation, Project } from '@/lib/types';
+import * as XLSX from 'xlsx';
 
 type SortKey = 'sequence_number' | 'title' | 'project_name' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at';
 
@@ -102,6 +103,44 @@ function VariationsList() {
     printRegister(rawProjects);
   }
 
+  function handleExportExcel() {
+    const rows = sorted.map(v => ({
+      'Var No.': getVariationNumber(v),
+      'Title': v.title,
+      'Project': v.project_name,
+      'Status': v.status.charAt(0).toUpperCase() + v.status.slice(1),
+      'Source': v.instruction_source?.replace(/_/g, ' ') || '',
+      'Value (AUD)': (v.estimated_value || 0) / 100,
+      'Captured': v.captured_at ? new Date(v.captured_at).toLocaleDateString('en-AU') : '',
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rows);
+
+    // Column widths
+    ws['!cols'] = [
+      { wch: 10 }, { wch: 40 }, { wch: 30 }, { wch: 12 },
+      { wch: 20 }, { wch: 14 }, { wch: 14 },
+    ];
+
+    // Format Value column as currency
+    const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+    for (let r = 1; r <= range.e.r; r++) {
+      const cell = ws[XLSX.utils.encode_cell({ r, c: 5 })];
+      if (cell) cell.z = '"$"#,##0.00';
+    }
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Variation Register');
+
+    const projectLabel = filterProject !== 'all'
+      ? rawProjects.find(p => p.id === filterProject)?.name?.replace(/\s+/g, '-') || 'Project'
+      : 'All-Projects';
+    const statusLabel = filterStatus !== 'all' ? `-${filterStatus}` : '';
+    const filename = `Variation-Register-${projectLabel}${statusLabel}-${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+    XLSX.writeFile(wb, filename);
+  }
+
   if (loading) {
     return (
       <>
@@ -178,6 +217,17 @@ function VariationsList() {
               <option key={p.id} value={p.id}>{p.name}</option>
             ))}
           </select>
+
+          {/* Export to Excel */}
+          <button
+            onClick={handleExportExcel}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#166534] bg-[#F0FDF4] border border-[#BBF7D0] rounded-md hover:bg-[#DCFCE7] transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)] whitespace-nowrap"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Export Excel
+          </button>
         </div>
 
         {sorted.length === 0 ? (
