@@ -114,6 +114,7 @@ function VariationsList() {
       'Source': v.instruction_source?.replace(/_/g, ' ') || '',
       'Value (AUD)': (v.estimated_value || 0) / 100,
       'Captured': v.captured_at ? new Date(v.captured_at).toLocaleDateString('en-AU') : '',
+      'Due Date': v.response_due_date ? new Date(v.response_due_date + 'T00:00:00').toLocaleDateString('en-AU') : '',
     }));
 
     const ws = XLSX.utils.json_to_sheet(rows);
@@ -121,7 +122,7 @@ function VariationsList() {
     // Column widths
     ws['!cols'] = [
       { wch: 10 }, { wch: 40 }, { wch: 30 }, { wch: 12 },
-      { wch: 20 }, { wch: 14 }, { wch: 14 },
+      { wch: 20 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
     ];
 
     // Format Value column as currency
@@ -315,6 +316,7 @@ function VariationsList() {
                       <SortHeader label="Source" field="instruction_source" className="hidden lg:table-cell" />
                       <SortHeader label="Value" field="estimated_value" align="right" className="hidden sm:table-cell" />
                       <SortHeader label="Captured" field="captured_at" align="right" className="hidden md:table-cell" />
+                      <th className="px-4 md:px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-[#9CA3AF] whitespace-nowrap hidden lg:table-cell">Due Date</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -328,6 +330,20 @@ function VariationsList() {
                           <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] capitalize hidden lg:table-cell whitespace-nowrap">{v.instruction_source?.replace(/_/g, ' ')}</td>
                           <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
                           <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
+                          <td className="px-4 md:px-5 py-2.5 text-right hidden lg:table-cell whitespace-nowrap">
+                            {v.response_due_date ? (() => {
+                              const due = new Date(v.response_due_date + 'T00:00:00');
+                              const today = new Date(); today.setHours(0,0,0,0);
+                              const daysLeft = Math.ceil((due.getTime() - today.getTime()) / 86400000);
+                              const overdue = daysLeft < 0;
+                              const dueSoon = daysLeft >= 0 && daysLeft <= 3;
+                              return (
+                                <span className={`text-[13px] font-medium ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#6B7280]'}`}>
+                                  {due.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                </span>
+                              );
+                            })() : <span className="text-[13px] text-[#D1D5DB]">—</span>}
+                          </td>
                         </tr>
                       </Link>
                     ))}
