@@ -53,6 +53,7 @@ export interface Project {
   latitude?: number;
   longitude?: number;
   contract_type?: string;
+  contract_number?: string;
   is_active: boolean;
   notice_required?: boolean;
   created_at: string;
@@ -83,7 +84,10 @@ export interface Variation {
   notice_id?: string;  // FK to variation_notices, null if notice skipped
   revision_number?: number; // 0 = original, 1 = Rev 1, 2 = Rev 2 etc.
   parent_id?: string;       // FK to parent variation, null for originals
-  response_due_date?: string; // ISO date (YYYY-MM-DD) — user-set response deadline
+  response_due_date?: string;   // ISO date (YYYY-MM-DD) — user-set response deadline
+  claim_type?: 'cost' | 'time' | 'cost_and_time';
+  eot_days_claimed?: number;
+  basis_of_valuation?: 'agreement' | 'contract_rates' | 'daywork' | 'reasonable_rates';
   created_at: string;
   updated_at: string;
 }
@@ -105,6 +109,7 @@ export interface VariationNotice {
   status: 'draft' | 'issued' | 'acknowledged';
   issued_at?: string;
   acknowledged_at?: string;
+  response_due_date?: string; // ISO date (YYYY-MM-DD)
   created_at: string;
   updated_at: string;
 }

@@ -356,12 +356,12 @@ export default function Dashboard() {
                 >
                   ⚡ Quick Notice
                 </Link>
-                {/* Quick Variation */}
+                {/* Quick Request */}
                 <Link
-                  href="/notice/new"
+                  href="/variation/new"
                   className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-white bg-[#1B365D] hover:bg-[#24466F] rounded-md transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
                 >
-                  + Quick Variation
+                  + Quick Request
                 </Link>
                 {!isField && (
                   <button

@@ -26,6 +26,7 @@ export default function CapturePage() {
   const [description, setDescription] = useState('');
   const [instructedBy, setInstructedBy] = useState('');
   const [occurredAt, setOccurredAt] = useState('');
+  const [responseDueDate, setResponseDueDate] = useState('');
   const [requestorName, setRequestorName] = useState('');
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -155,6 +156,7 @@ export default function CapturePage() {
         time_flag: false,
         issued_by_name: requestorName.trim() || null,
         issued_by_email: user.email || null,
+        response_due_date: responseDueDate || null,
         status: 'draft',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -189,6 +191,7 @@ export default function CapturePage() {
     setResult(null);
     setDescription('');
     setInstructedBy('');
+    setResponseDueDate('');
     setPhotoFile(null);
     setPhotoPreview(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -334,6 +337,19 @@ export default function CapturePage() {
                   type="datetime-local"
                   value={occurredAt}
                   onChange={(e) => setOccurredAt(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
+                />
+              </div>
+
+              {/* Response Due Date */}
+              <div>
+                <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                  Response due date <span className="text-[#9CA3AF] font-normal">(optional)</span>
+                </label>
+                <input
+                  type="date"
+                  value={responseDueDate}
+                  onChange={(e) => setResponseDueDate(e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
                 />
               </div>
