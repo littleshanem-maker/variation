@@ -264,6 +264,89 @@ export function printRegister(projects: ProjectWithVariations[]) {
 }
 
 // ------------------------------------------------------------------
+// 1b. GET FILTERED REGISTER HTML FOR PDF EXPORT
+// ------------------------------------------------------------------
+export function getFilteredRegisterHtml(
+  variations: (Variation & { project_name: string })[],
+  label: string   // e.g. "All Projects" or "Northern Hospital — Submitted"
+): { html: string; css: string } {
+  const totalValue = variations.reduce((s, v) => s + (v.estimated_value || 0), 0);
+  const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
+
+  const rows = variations.map(v => `
+    <tr>
+      <td class="tabular-nums font-medium" style="color:#1B365D; font-family:monospace;">${getVariationNumber(v)}</td>
+      <td class="font-medium">${escapeHtml(v.title)}</td>
+      <td class="text-muted">${escapeHtml(v.project_name)}</td>
+      <td>${getStatusConfig(v.status).label}</td>
+      <td class="text-muted capitalize">${v.instruction_source?.replace(/_/g, ' ') || '—'}</td>
+      <td class="text-right tabular-nums">${formatDate(v.captured_at)}</td>
+      <td class="text-right tabular-nums font-medium">${formatCurrency(v.estimated_value)}</td>
+    </tr>
+  `).join('');
+
+  const approvedValue = variations.filter(v => ['approved', 'paid'].includes(v.status)).reduce((s, v) => s + (v.estimated_value || 0), 0);
+  const pendingValue  = variations.filter(v => ['submitted', 'captured', 'draft'].includes(v.status)).reduce((s, v) => s + (v.estimated_value || 0), 0);
+  const disputedValue = variations.filter(v => v.status === 'disputed').reduce((s, v) => s + (v.estimated_value || 0), 0);
+
+  const html = `
+    <div class="doc-header">
+      <div>
+        <div class="brand">Variation Shield</div>
+        <div class="doc-title">Variation Register</div>
+        <div style="font-size:10pt; color:#6B7280; margin-top:4px;">${escapeHtml(label)}</div>
+      </div>
+      <div class="doc-meta">
+        <div class="meta-row">Generated: ${now}</div>
+        <div class="meta-row">${variations.length} variation${variations.length !== 1 ? 's' : ''}</div>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-label">Total Value</div>
+        <div class="summary-value">${formatCurrency(totalValue)}</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Approved / Paid</div>
+        <div class="summary-value">${formatCurrency(approvedValue)}</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Pending</div>
+        <div class="summary-value">${formatCurrency(pendingValue)}</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-label">Disputed</div>
+        <div class="summary-value">${formatCurrency(disputedValue)}</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:80px">Var No.</th>
+          <th>Title</th>
+          <th style="width:140px">Project</th>
+          <th style="width:90px">Status</th>
+          <th style="width:100px">Source</th>
+          <th style="width:90px; text-align:right">Date</th>
+          <th style="width:110px; text-align:right">Value</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+      <tfoot>
+        <tr class="total-row">
+          <td colspan="6" class="text-right">Total</td>
+          <td class="text-right tabular-nums">${formatCurrency(totalValue)}</td>
+        </tr>
+      </tfoot>
+    </table>
+  `;
+
+  return { html, css: GLOBAL_CSS };
+}
+
+// ------------------------------------------------------------------
 // 2. PRINT PROJECT REGISTER (SINGLE PROJECT)
 // ------------------------------------------------------------------
 export function printProjectRegister(project: Project, variations: Variation[]) {

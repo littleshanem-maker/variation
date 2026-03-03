@@ -8,7 +8,8 @@ import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getStatusConfig, getVariationNumber } from '@/lib/utils';
-import { printRegister } from '@/lib/print';
+import { printRegister, getFilteredRegisterHtml } from '@/lib/print';
+import { htmlToPdfBlob } from '@/lib/pdf';
 import { useRole } from '@/lib/role';
 import type { Variation, Project } from '@/lib/types';
 import * as XLSX from 'xlsx';
@@ -26,6 +27,7 @@ function VariationsList() {
   const [sortAsc, setSortAsc] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>(initialStatus);
   const [filterProject, setFilterProject] = useState<string>('all');
+  const [exportingPdf, setExportingPdf] = useState(false);
   const { isField } = useRole();
 
   useEffect(() => {
@@ -141,6 +143,36 @@ function VariationsList() {
     XLSX.writeFile(wb, filename);
   }
 
+  async function handleExportPdf() {
+    setExportingPdf(true);
+    try {
+      const projectName = filterProject !== 'all'
+        ? rawProjects.find(p => p.id === filterProject)?.name || 'Project'
+        : 'All Projects';
+      const statusLabel = filterStatus !== 'all'
+        ? ` — ${filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)}`
+        : '';
+      const label = `${projectName}${statusLabel}`;
+
+      const { html, css } = getFilteredRegisterHtml(sorted, label);
+      const blob = await htmlToPdfBlob(html, css);
+
+      const projectSlug = projectName.replace(/\s+/g, '-');
+      const filename = `Variation-Register-${projectSlug}${filterStatus !== 'all' ? `-${filterStatus}` : ''}-${new Date().toISOString().slice(0, 10)}.pdf`;
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } finally {
+      setExportingPdf(false);
+    }
+  }
+
   if (loading) {
     return (
       <>
@@ -227,6 +259,19 @@ function VariationsList() {
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
             Export Excel
+          </button>
+
+          {/* Export to PDF */}
+          <button
+            onClick={handleExportPdf}
+            disabled={exportingPdf}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#991B1B] bg-[#FEF2F2] border border-[#FECACA] rounded-md hover:bg-[#FEE2E2] transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)] whitespace-nowrap disabled:opacity-50 disabled:cursor-wait"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+            </svg>
+            {exportingPdf ? 'Generating…' : 'Export PDF'}
           </button>
         </div>
 
