@@ -14,7 +14,7 @@ import { useRole } from '@/lib/role';
 import type { Variation, Project } from '@/lib/types';
 import * as XLSX from 'xlsx';
 
-type SortKey = 'sequence_number' | 'title' | 'project_name' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at';
+type SortKey = 'sequence_number' | 'title' | 'project_name' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at' | 'response_due_date';
 
 function VariationsList() {
   const searchParams = useSearchParams();
@@ -316,7 +316,7 @@ function VariationsList() {
                       <SortHeader label="Source" field="instruction_source" className="hidden lg:table-cell" />
                       <SortHeader label="Value" field="estimated_value" align="right" className="hidden sm:table-cell" />
                       <SortHeader label="Captured" field="captured_at" align="right" className="hidden md:table-cell" />
-                      <th className="px-4 md:px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wider text-[#9CA3AF] whitespace-nowrap hidden lg:table-cell">Due Date</th>
+                      <SortHeader label="Due Date" field="response_due_date" align="right" className="hidden lg:table-cell" />
                     </tr>
                   </thead>
                   <tbody>
