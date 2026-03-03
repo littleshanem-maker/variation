@@ -320,11 +320,11 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* ── Main Body: 60/40 split ── */}
-        <div className="flex flex-col md:flex-row gap-6">
+        {/* ── Main Body: stacked ── */}
+        <div className="flex flex-col gap-6">
 
-          {/* Left 60%: Project Financial Health */}
-          <div className="w-full md:w-[60%]">
+          {/* Project Financial Health — full width */}
+          <div className="w-full">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-[16px] font-bold text-[#1C1C1E]">Project Financial Health (Visual)</h2>
               {!isField && (
@@ -437,8 +437,8 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* Right 40%: Urgent Attention Feed */}
-          <div className="w-full md:w-[40%]">
+          {/* Urgent Attention Feed — full width, below bar chart */}
+          <div className="w-full">
             <div className="flex items-center gap-2 mb-4">
               <h2 className="text-[16px] font-bold text-[#1C1C1E]">Urgent Attention Feed</h2>
               {urgentItems.length > 0 && (

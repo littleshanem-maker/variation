@@ -24,6 +24,7 @@ function VariationsList() {
   const [sortKey, setSortKey] = useState<SortKey>('captured_at');
   const [sortAsc, setSortAsc] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>(initialStatus);
+  const [filterProject, setFilterProject] = useState<string>('all');
   const { isField } = useRole();
 
   useEffect(() => {
@@ -69,10 +70,14 @@ function VariationsList() {
   }
 
   const filtered = variations.filter(v => {
-    if (filterStatus === 'all') return true;
-    if (filterStatus === 'at_risk') return v.status === 'disputed' || v.status === 'draft' || v.status === 'captured';
-    if (filterStatus === 'draft') return v.status === 'draft' || v.status === 'captured';
-    return v.status === filterStatus;
+    const statusMatch = (() => {
+      if (filterStatus === 'all') return true;
+      if (filterStatus === 'at_risk') return v.status === 'disputed' || v.status === 'draft' || v.status === 'captured';
+      if (filterStatus === 'draft') return v.status === 'draft' || v.status === 'captured';
+      return v.status === filterStatus;
+    })();
+    const projectMatch = filterProject === 'all' || v.project_id === filterProject;
+    return statusMatch && projectMatch;
   });
 
   const sorted = [...filtered].sort((a, b) => {
@@ -136,28 +141,43 @@ function VariationsList() {
           </p>
         </div>
 
-        {/* Filter Tabs — horizontally scrollable on mobile */}
-        <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-          <div className="flex bg-[#F0F0EE] p-1 rounded-md w-max md:w-auto">
-            {statuses.map(s => (
-              <button
-                key={s.value}
-                onClick={() => {
-                  setFilterStatus(s.value);
-                  const url = new URL(window.location.href);
-                  url.searchParams.set('status', s.value);
-                  window.history.pushState({}, '', url);
-                }}
-                className={`px-3 py-1.5 text-[13px] font-medium rounded-sm transition-all duration-[120ms] whitespace-nowrap ${
-                  filterStatus === s.value 
-                    ? 'bg-white text-[#1C1C1E] shadow-sm' 
-                    : 'text-[#6B7280] hover:text-[#1C1C1E]'
-                }`}
-              >
-                {s.label}
-              </button>
-            ))}
+        {/* Filters row */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          {/* Status tabs — horizontally scrollable on mobile */}
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <div className="flex bg-[#F0F0EE] p-1 rounded-md w-max">
+              {statuses.map(s => (
+                <button
+                  key={s.value}
+                  onClick={() => {
+                    setFilterStatus(s.value);
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('status', s.value);
+                    window.history.pushState({}, '', url);
+                  }}
+                  className={`px-3 py-1.5 text-[13px] font-medium rounded-sm transition-all duration-[120ms] whitespace-nowrap ${
+                    filterStatus === s.value
+                      ? 'bg-white text-[#1C1C1E] shadow-sm'
+                      : 'text-[#6B7280] hover:text-[#1C1C1E]'
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
           </div>
+
+          {/* Project filter dropdown */}
+          <select
+            value={filterProject}
+            onChange={e => setFilterProject(e.target.value)}
+            className="px-3 py-1.5 text-[13px] border border-[#E5E7EB] rounded-md bg-white text-[#374151] focus:outline-none focus:ring-1 focus:ring-[#1B365D] shadow-[0_1px_2px_rgba(0,0,0,0.04)] w-full sm:w-auto"
+          >
+            <option value="all">All Projects</option>
+            {rawProjects.map(p => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
         </div>
 
         {sorted.length === 0 ? (
