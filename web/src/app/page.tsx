@@ -377,15 +377,26 @@ export default function Dashboard() {
                       const dispPct   = p.totalValue > 0 ? (p.disputed  / p.totalValue) * 100 : 0;
                       const otherPct  = p.totalValue > 0 ? (p.other     / p.totalValue) * 100 : 0;
                       return (
-                        <div key={p.id} className="flex items-center gap-3">
-                          <Link
-                            href={`/project/${p.id}`}
-                            className="w-[160px] flex-shrink-0 text-[13px] font-medium text-[#1C1C1E] truncate hover:text-[#1B365D] transition-colors leading-tight"
-                            title={p.name}
-                          >
-                            {p.name}
-                          </Link>
-                          <div className="flex-1 h-8 bg-[#F3F4F6] rounded overflow-hidden">
+                        <div key={p.id} className="space-y-1">
+                          {/* Project name — full width, no truncation */}
+                          <div className="flex items-baseline justify-between gap-4">
+                            <Link
+                              href={`/project/${p.id}`}
+                              className="text-[13px] font-semibold text-[#1C1C1E] hover:text-[#1B365D] transition-colors leading-tight"
+                            >
+                              {p.name}
+                            </Link>
+                            {!isField && (
+                              <div className="flex-shrink-0 text-right">
+                                <span className="text-[13px] font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(p.totalValue)}</span>
+                                {p.disputed > 0 && (
+                                  <span className="ml-2 text-[11px] text-[#991B1B] font-medium tabular-nums">{formatCurrency(p.disputed)} disputed</span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          {/* Bar — full width */}
+                          <div className="w-full h-7 bg-[#F3F4F6] rounded overflow-hidden">
                             <div style={{ width: `${barW}%` }} className="flex h-full">
                               {paidPct > 0 && (
                                 <div style={{ width: `${paidPct}%` }} className="bg-[#3B82F6] h-full"
@@ -405,14 +416,6 @@ export default function Dashboard() {
                               )}
                             </div>
                           </div>
-                          {!isField && (
-                            <div className="w-[100px] flex-shrink-0 text-right">
-                              <div className="text-[13px] font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(p.totalValue)}</div>
-                              {p.disputed > 0 && (
-                                <div className="text-[11px] text-[#991B1B] font-medium tabular-nums">{formatCurrency(p.disputed)}</div>
-                              )}
-                            </div>
-                          )}
                         </div>
                       );
                     })
