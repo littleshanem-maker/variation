@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 
-export default function TopBar({ title, onPrint, printLabel = 'Print' }: { title: string; onPrint?: () => void; printLabel?: string }) {
+export default function TopBar({ title }: { title: string }) {
   const router = useRouter();
   const [companyName, setCompanyName] = useState<string | null>(null);
 
@@ -34,14 +34,6 @@ export default function TopBar({ title, onPrint, printLabel = 'Print' }: { title
         )}
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        {onPrint && (
-          <button
-            onClick={onPrint}
-            className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-[13px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms] ease-out"
-          >
-            {printLabel}
-          </button>
-        )}
         <button
           onClick={handleLogout}
           className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] hover:text-[#1C1C1E] transition-colors duration-[120ms] ease-out"

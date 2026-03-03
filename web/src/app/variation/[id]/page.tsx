@@ -375,7 +375,7 @@ export default function VariationDetail() {
 
   return (
     <AppShell>
-      <TopBar title="Variation Detail" onPrint={isField ? undefined : handlePrint} printLabel="Print Variation" />
+      <TopBar title="Variation Detail" />
       <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-4xl">
         {/* Back + Actions */}
         <div className="space-y-3">

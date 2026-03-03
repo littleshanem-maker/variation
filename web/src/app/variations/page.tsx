@@ -194,7 +194,7 @@ function VariationsList() {
 
   return (
     <>
-      <TopBar title="Variation Register" onPrint={handlePrint} printLabel="Print / Export" />
+      <TopBar title="Variation Register" />
       <div className="p-4 md:p-8 space-y-5 md:space-y-6">
         <div>
           <Link

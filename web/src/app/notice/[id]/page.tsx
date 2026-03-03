@@ -213,7 +213,7 @@ export default function NoticeDetail() {
 
   return (
     <AppShell>
-      <TopBar title="Variation Notice" onPrint={isField ? undefined : handlePrint} printLabel="Print Notice" />
+      <TopBar title="Variation Notice" />
       <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-4xl">
         {/* Back + Actions */}
         <div className="space-y-3">

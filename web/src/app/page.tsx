@@ -232,8 +232,6 @@ export default function Dashboard() {
     <AppShell>
       <TopBar
         title="Executive Risk Overview"
-        onPrint={isField ? undefined : () => printRegister(projects)}
-        printLabel="Print / Export"
       />
 
       <div className="p-4 md:p-8 space-y-6 pb-24 md:pb-8">

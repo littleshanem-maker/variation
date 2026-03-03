@@ -229,7 +229,7 @@ function ProjectDetailContent() {
 
   return (
     <AppShell>
-      <TopBar title={project.name} onPrint={isField ? undefined : handlePrint} printLabel="Print Register" />
+      <TopBar title={project.name} />
       <div className="p-4 md:p-8 space-y-5 md:space-y-6">
         <div>
           <Link
