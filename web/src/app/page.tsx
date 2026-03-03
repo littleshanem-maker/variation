@@ -148,7 +148,7 @@ export default function Dashboard() {
   }, [projects, filterProject, filterDateRange]);
 
   // ── Urgent Attention Feed ─────────────────────────────────────────────────────
-  type AlertKind = 'high-value' | 'disputed';
+  type AlertKind = 'high-value' | 'disputed' | 'overdue';
   type UrgentItem = {
     id: string; variationId: string; title: string; projectName: string;
     value: number; daysOld: number; kind: AlertKind; extra?: string;
@@ -156,9 +156,30 @@ export default function Dashboard() {
 
   const urgentItems: UrgentItem[] = useMemo(() => {
     const items: UrgentItem[] = [];
+    const seen = new Set<string>();
+
+    // Overdue — response_due_date has passed
+    for (const v of filteredVariations.filter(v => v.response_due_date)) {
+      const due = new Date(v.response_due_date! + 'T00:00:00');
+      if (due < new Date() && !['approved','paid'].includes(v.status)) {
+        const proj = projects.find(p => p.id === v.project_id);
+        const daysOverdue = Math.ceil((Date.now() - due.getTime()) / 86400000);
+        items.push({
+          id: `od-${v.id}`, variationId: v.id,
+          title: v.title,
+          projectName: proj?.name || 'Unknown',
+          value: v.estimated_value || 0,
+          daysOld: daysSince(v.captured_at),
+          kind: 'overdue',
+          extra: `${daysOverdue}d overdue`,
+        });
+        seen.add(v.id);
+      }
+    }
 
     // High-value submitted >7 days
     for (const v of submittedVars) {
+      if (seen.has(v.id)) continue;
       const daysOld = daysSince(v.captured_at);
       if (daysOld > 7 || (v.estimated_value || 0) > 1_000_000) {
         const proj = projects.find(p => p.id === v.project_id);
@@ -171,6 +192,7 @@ export default function Dashboard() {
           kind: 'high-value',
           extra: daysOld > 7 ? `>10 days` : undefined,
         });
+        seen.add(v.id);
       }
     }
 
@@ -195,10 +217,11 @@ export default function Dashboard() {
       });
     }
 
-    // Sort: disputed first, then high-value by value desc
+    // Sort: overdue first, then disputed, then high-value by value desc
+    const kindOrder: Record<string, number> = { overdue: 0, disputed: 1, 'high-value': 2 };
     return items.sort((a, b) => {
-      if (a.kind === 'disputed' && b.kind !== 'disputed') return -1;
-      if (b.kind === 'disputed' && a.kind !== 'disputed') return 1;
+      const kDiff = (kindOrder[a.kind] ?? 3) - (kindOrder[b.kind] ?? 3);
+      if (kDiff !== 0) return kDiff;
       return b.value - a.value;
     });
   }, [filteredVariations, submittedVars, projects]);
@@ -479,21 +502,29 @@ export default function Dashboard() {
                         <div className="flex items-start gap-3">
                           {/* Icon */}
                           <div className="flex-shrink-0 mt-0.5 text-[18px]">
-                            {item.kind === 'high-value' ? '⚠️' : '🔴'}
+                            {item.kind === 'overdue' ? '🔴' : item.kind === 'high-value' ? '⚠️' : '🔴'}
                           </div>
                           {/* Content */}
                           <div className="flex-1 min-w-0">
                             <div className="text-[13px] text-[#1C1C1E] leading-snug">
                               <span className="font-bold">
-                                {item.kind === 'high-value' ? 'High Value Alert: ' : 'Dispute Escalation: '}
+                                {item.kind === 'overdue' ? 'Response Overdue: '
+                                  : item.kind === 'high-value' ? 'High Value Alert: '
+                                  : 'Dispute Escalation: '}
                               </span>
-                              {item.kind === 'high-value'
+                              {item.kind === 'overdue'
+                                ? `${item.projectName} — "${item.title}" response is ${item.extra}`
+                                : item.kind === 'high-value'
                                 ? `${item.projectName} variation (${formatCurrency(item.value)}) has been 'Submitted' for >${item.daysOld} days`
                                 : `${item.extra} at ${item.projectName} marked 'Disputed'`
                               }
                             </div>
                             <div className="mt-2">
-                              {item.kind === 'disputed' ? (
+                              {item.kind === 'overdue' ? (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#DC2626] text-white uppercase tracking-wide">
+                                  Overdue
+                                </span>
+                              ) : item.kind === 'disputed' ? (
                                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#DC2626] text-white uppercase tracking-wide">
                                   Disputed
                                 </span>

@@ -53,6 +53,7 @@ export default function VariationDetail() {
   const [editStatus, setEditStatus] = useState('');
   const [editNotes, setEditNotes] = useState('');
   const [editReferenceDoc, setEditReferenceDoc] = useState('');
+  const [editDueDate, setEditDueDate] = useState('');
   const [newFiles, setNewFiles] = useState<File[]>([]);
 
   useEffect(() => { loadVariation(); }, [id]);
@@ -67,6 +68,7 @@ export default function VariationDetail() {
     setEditStatus(variation.status);
     setEditNotes(variation.notes || '');
     setEditReferenceDoc(variation.reference_doc || '');
+    setEditDueDate(variation.response_due_date || '');
     setNewFiles([]);
     setEditing(true);
   }
@@ -104,6 +106,7 @@ export default function VariationDetail() {
           reference_doc: editReferenceDoc.trim() || null,
           estimated_value: valueCents,
           notes: editNotes.trim() || null,
+          response_due_date: editDueDate || null,
           status: 'draft',
           captured_at: new Date().toISOString(),
         })
@@ -145,6 +148,7 @@ export default function VariationDetail() {
       status: editStatus,
       notes: editNotes.trim() || null,
       reference_doc: editReferenceDoc.trim() || null,
+      response_due_date: editDueDate || null,
     }).eq('id', variation.id);
 
     if (!error && editStatus !== oldStatus) {
@@ -211,6 +215,7 @@ export default function VariationDetail() {
     setEditValue((variation.estimated_value / 100).toFixed(2));
     setEditNotes(variation.notes || '');
     setEditReferenceDoc(variation.reference_doc || '');
+    setEditDueDate(variation.response_due_date || '');
     setNewFiles([]);
     setRevisingMode(true);
     setEditing(true);
@@ -518,6 +523,11 @@ export default function VariationDetail() {
                 <label className={labelClass}>Reference Document</label>
                 <input type="text" value={editReferenceDoc} onChange={e => setEditReferenceDoc(e.target.value)} className={inputClass} placeholder="e.g. RFI-042, Rev C drawings" />
               </div>
+              <div>
+                <label className={labelClass}>Response Due Date</label>
+                <input type="date" value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className={inputClass} />
+                <p className="text-[11px] text-[#9CA3AF] mt-1">Date by which a response to this variation is required</p>
+              </div>
             </div>
           ) : (
             <>
@@ -568,6 +578,24 @@ export default function VariationDetail() {
                     <div className="text-[15px] text-[#1C1C1E] mt-1 truncate">{variation.reference_doc}</div>
                   </div>
                 )}
+                {variation.response_due_date && (() => {
+                  const due = new Date(variation.response_due_date + 'T00:00:00');
+                  const today = new Date(); today.setHours(0,0,0,0);
+                  const daysLeft = Math.ceil((due.getTime() - today.getTime()) / 86400000);
+                  const overdue = daysLeft < 0;
+                  const dueSoon = daysLeft >= 0 && daysLeft <= 3;
+                  return (
+                    <div>
+                      <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Response Due</div>
+                      <div className={`text-[15px] font-semibold mt-1 ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#1C1C1E]'}`}>
+                        {due.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
+                      </div>
+                      <div className={`text-[12px] mt-0.5 ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#6B7280]'}`}>
+                        {overdue ? `${Math.abs(daysLeft)}d overdue` : daysLeft === 0 ? 'Due today' : `${daysLeft}d remaining`}
+                      </div>
+                    </div>
+                  );
+                })()}
                 {variation.evidence_hash && (
                   <div className="sm:col-span-2">
                     <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Evidence Hash</div>

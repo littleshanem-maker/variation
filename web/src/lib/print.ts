@@ -472,8 +472,11 @@ function buildNoticeHtml(
 
     <div style="margin-bottom:24px; padding:16px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB;">
       <div style="font-size:9pt; color:#6B7280; margin-bottom:8px;">TO: ${escapeHtml(project.client)}</div>
-      <div style="font-size:10pt; line-height:1.6;">
-        TAKE NOTICE that the undersigned hereby gives notice pursuant to the contract that a variation event has occurred as described below.
+      <div style="font-size:10pt; line-height:1.6; margin-bottom:10px;">
+        TAKE NOTICE that pursuant to Clause 36 of AS 4000–1997 <em>(General Conditions of Contract)</em> or Clause 40 of AS 2124–1992 <em>(General Conditions of Contract)</em>, as applicable, the Contractor hereby gives notice that the following event constitutes a Variation to the Contract and claims an adjustment to the Contract Sum and/or time for Practical Completion accordingly.
+      </div>
+      <div style="font-size:9pt; color:#6B7280; line-height:1.5;">
+        The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
       </div>
     </div>
 
@@ -677,6 +680,12 @@ function buildVariationHtml(
           <div class="field-label">Estimated Value</div>
           <div class="field-value large tabular-nums">${formatCurrency(variation.estimated_value)}</div>
         </div>
+        ${variation.response_due_date ? `
+        <div class="field-group">
+          <div class="field-label">Response Due</div>
+          <div class="field-value" style="color:${new Date(variation.response_due_date + 'T00:00:00') < new Date() ? '#DC2626' : '#1C1C1E'};">${formatDocDateOnly(variation.response_due_date + 'T00:00:00')}</div>
+        </div>
+        ` : ''}
         <div class="field-group">
           <div class="field-label">Instructed By</div>
           <div class="field-value">${escapeHtml(variation.instructed_by || '—')}</div>
