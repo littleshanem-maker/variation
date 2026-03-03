@@ -40,20 +40,26 @@ export async function htmlToPdfBlob(htmlContent: string, cssContent: string): Pr
 
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * pageWidth) / canvas.width;
+    const margin = 15; // mm — matches @page CSS margin
+    const usableWidth = pageWidth - margin * 2;
+    const usableHeight = pageHeight - margin * 2;
+
+    const imgWidth = usableWidth;
+    const imgHeight = (canvas.height * usableWidth) / canvas.width;
 
     let heightLeft = imgHeight;
-    let position = 0;
+    let yOffset = 0;
 
-    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
+    // First page — image starts at (margin, margin)
+    pdf.addImage(imgData, 'JPEG', margin, margin, imgWidth, imgHeight);
+    heightLeft -= usableHeight;
 
+    // Subsequent pages — shift image up so correct slice shows in the content area
     while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
+      yOffset += usableHeight;
       pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      pdf.addImage(imgData, 'JPEG', margin, margin - yOffset, imgWidth, imgHeight);
+      heightLeft -= usableHeight;
     }
 
     return pdf.output('blob');
