@@ -15,7 +15,6 @@ interface NavItem {
 
 const nav: NavItem[] = [
   { label: 'Dashboard', href: '/' },
-  { label: '⚡ Quick Notice', href: '/capture', highlight: true },
   { label: 'Variation Register', href: '/variations', roles: ['admin', 'office'] },
   { label: 'Archived Projects', href: '/archived', roles: ['admin', 'office'] },
   { label: 'Team', href: '/team', roles: ['admin'] },
@@ -35,13 +34,7 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
 
   const visibleNav = nav.filter(item => !item.roles || item.roles.includes(role));
 
-  // For field users: move Quick Capture to the top
-  const sortedNav = isField
-    ? [
-        ...visibleNav.filter(item => item.href === '/capture'),
-        ...visibleNav.filter(item => item.href !== '/capture'),
-      ]
-    : visibleNav;
+  const sortedNav = visibleNav;
 
   return (
     <>
@@ -75,7 +68,6 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
         <nav className="flex-1 px-3 pt-2 space-y-0.5">
           {sortedNav.map((item) => {
             const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-            const isCapture = item.href === '/capture';
             return (
               <Link
                 key={item.href}
@@ -84,8 +76,6 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
                 className={`relative flex items-center px-3 py-2 rounded text-[13px] transition-colors duration-[120ms] ease-out ${
                   active
                     ? 'bg-white/10 text-white font-semibold'
-                    : isCapture
-                    ? 'text-[#D4A853] hover:text-[#E8C47A] hover:bg-white/5 font-semibold'
                     : 'text-white/60 hover:text-white/90 hover:bg-white/5 font-medium'
                 }`}
               >

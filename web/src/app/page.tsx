@@ -325,16 +325,32 @@ export default function Dashboard() {
 
           {/* Project Financial Health — full width */}
           <div className="w-full">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
               <h2 className="text-[16px] font-bold text-[#1C1C1E]">Project Financial Health (Visual)</h2>
-              {!isField && (
-                <button
-                  onClick={() => setShowNewProject(true)}
-                  className="flex items-center gap-1 px-3 py-1.5 text-[12px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+              <div className="flex items-center gap-2">
+                {/* Quick Notice */}
+                <Link
+                  href="/capture"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-white bg-[#E85D1A] hover:bg-[#C94E14] rounded-md transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
                 >
-                  + New Project
-                </button>
-              )}
+                  ⚡ Quick Notice
+                </Link>
+                {/* Quick Variation */}
+                <Link
+                  href="/notice/new"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-white bg-[#1B365D] hover:bg-[#24466F] rounded-md transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
+                >
+                  + Quick Variation
+                </Link>
+                {!isField && (
+                  <button
+                    onClick={() => setShowNewProject(true)}
+                    className="flex items-center gap-1 px-3 py-1.5 text-[12px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                  >
+                    + New Project
+                  </button>
+                )}
+              </div>
             </div>
 
             {projects.length === 0 ? (
@@ -533,15 +549,7 @@ export default function Dashboard() {
 
       </div>
 
-      {/* ── FAB: Blue ⚡ ── */}
-      <Link
-        href="/capture"
-        className="fixed bottom-6 right-6 z-40 flex items-center justify-center w-14 h-14 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-150"
-        title="Quick Notice"
-        aria-label="Quick Notice"
-      >
-        <span className="text-2xl">⚡</span>
-      </Link>
+
 
     </AppShell>
   );
