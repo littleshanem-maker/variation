@@ -169,7 +169,7 @@ export default function NoticeDetail() {
 
   function handlePrint() {
     if (notice && project) {
-      printNotice(notice, project, company?.name || '', sender);
+      printNotice(notice, project, company?.name || '', sender, { logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard });
     }
   }
 
@@ -177,7 +177,7 @@ export default function NoticeDetail() {
     if (!notice || !project) return;
     setSendingEmail(true);
     try {
-      const { html, css } = getNoticeHtmlForPdf(notice, project, company?.name || '', sender);
+      const { html, css } = getNoticeHtmlForPdf(notice, project, company?.name || '', sender, { logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard });
       const blob = await htmlToPdfBlob(html, css);
       const { subject, body, filename } = getNoticeEmailMeta(notice, project);
       await shareOrDownloadPdf(blob, filename, subject, body);

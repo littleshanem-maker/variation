@@ -11,6 +11,7 @@ export interface Company {
   address?: string;
   phone?: string;
   logo_url?: string;
+  preferred_standard?: 'AS4000' | 'AS2124' | 'both';
   created_at: string;
   updated_at: string;
 }

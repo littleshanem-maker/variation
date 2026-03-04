@@ -313,7 +313,7 @@ export default function VariationDetail() {
 
   function handlePrint() {
     if (variation && project) {
-      printVariation(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions);
+      printVariation(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, { logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard });
     }
   }
 
@@ -321,7 +321,7 @@ export default function VariationDetail() {
     if (!variation || !project) return;
     setSendingEmail(true);
     try {
-      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions);
+      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, { logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard });
       const blob = await htmlToPdfBlob(html, css);
       const { subject, body, filename } = getVariationEmailMeta(variation, project);
       await shareOrDownloadPdf(blob, filename, subject, body);

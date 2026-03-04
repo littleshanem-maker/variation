@@ -416,13 +416,49 @@ export function printProjectRegister(project: Project, variations: Variation[]) 
 // ------------------------------------------------------------------
 // 3a. BUILDER: VARIATION NOTICE HTML
 // ------------------------------------------------------------------
+type CompanyPrintInfo = {
+  logoUrl?: string;
+  abn?: string;
+  address?: string;
+  phone?: string;
+  preferredStandard?: 'AS4000' | 'AS2124' | 'both';
+};
+
+function getNoticeLanguage(standard?: 'AS4000' | 'AS2124' | 'both'): string {
+  if (standard === 'AS4000') {
+    return `TAKE NOTICE that pursuant to Clause 36 of AS 4000–1997 <em>(General Conditions of Contract)</em>, the Contractor hereby gives notice that the following event constitutes a Variation to the Contract and claims an adjustment to the Contract Sum and/or time for Practical Completion accordingly.`;
+  }
+  if (standard === 'AS2124') {
+    return `TAKE NOTICE that pursuant to Clause 40 of AS 2124–1992 <em>(General Conditions of Contract)</em>, the Contractor hereby gives notice that the following event constitutes a Variation to the Contract and claims an adjustment to the Contract Sum and/or time for Practical Completion accordingly.`;
+  }
+  return `TAKE NOTICE that pursuant to Clause 36 of AS 4000–1997 <em>(General Conditions of Contract)</em> or Clause 40 of AS 2124–1992 <em>(General Conditions of Contract)</em>, as applicable, the Contractor hereby gives notice that the following event constitutes a Variation to the Contract and claims an adjustment to the Contract Sum and/or time for Practical Completion accordingly.`;
+}
+
+function buildCompanyHeader(companyName: string, companyInfo?: CompanyPrintInfo): string {
+  const vsLogoUrl = typeof window !== 'undefined' ? `${window.location.origin}/variation-shield-logo.jpg` : '';
+  const logoSrc = companyInfo?.logoUrl || vsLogoUrl;
+  const logoImg = companyInfo?.logoUrl
+    ? `<img src="${logoSrc}" style="height:48px;width:auto;max-width:120px;object-fit:contain;border-radius:4px;" />`
+    : `<img src="${vsLogoUrl}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;" />`;
+  const nameBlock = companyInfo?.logoUrl
+    ? `<div class="brand" style="font-size:13pt;">${escapeHtml(companyName || 'Variation Shield')}</div>`
+    : `<div class="brand">${escapeHtml(companyName || 'Variation Shield')}</div>`;
+  const meta = [
+    companyInfo?.abn ? `ABN ${escapeHtml(companyInfo.abn)}` : '',
+    companyInfo?.address ? escapeHtml(companyInfo.address) : '',
+    companyInfo?.phone ? escapeHtml(companyInfo.phone) : '',
+  ].filter(Boolean).map(s => `<div style="font-size:8pt;color:#6B7280;margin-top:2px;">${s}</div>`).join('');
+  return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">${logoImg}<div>${nameBlock}${meta}</div></div>`;
+}
+
 function buildNoticeHtml(
   notice: VariationNotice,
   project: Project,
   companyName: string,
-  sender: { name: string; email: string }
+  sender: { name: string; email: string },
+  companyInfo?: CompanyPrintInfo
 ): string {
-  const logoUrl = `${window.location.origin}/variation-shield-logo.jpg`;
+  const logoUrl = companyInfo?.logoUrl || (typeof window !== 'undefined' ? `${window.location.origin}/variation-shield-logo.jpg` : '');
 
   const eventDateFormatted = formatDocDateOnly(notice.event_date + 'T00:00:00');
   const issuedFormatted = notice.issued_at ? formatDocDate(notice.issued_at) : '—';
@@ -435,10 +471,7 @@ function buildNoticeHtml(
   return `
     <div class="doc-header">
       <div>
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-          <img src="${logoUrl}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;" />
-          <div class="brand">${escapeHtml(companyName || 'Variation Shield')}</div>
-        </div>
+        ${buildCompanyHeader(companyName, companyInfo)}
         <div class="doc-title">Variation Notice</div>
       </div>
       <div class="doc-meta">
@@ -473,7 +506,7 @@ function buildNoticeHtml(
     <div style="margin-bottom:24px; padding:16px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB;">
       <div style="font-size:9pt; color:#6B7280; margin-bottom:8px;">TO: ${escapeHtml(project.client)}</div>
       <div style="font-size:10pt; line-height:1.6; margin-bottom:10px;">
-        TAKE NOTICE that pursuant to Clause 36 of AS 4000–1997 <em>(General Conditions of Contract)</em> or Clause 40 of AS 2124–1992 <em>(General Conditions of Contract)</em>, as applicable, the Contractor hereby gives notice that the following event constitutes a Variation to the Contract and claims an adjustment to the Contract Sum and/or time for Practical Completion accordingly.
+        ${getNoticeLanguage(companyInfo?.preferredStandard)}
       </div>
       <div style="font-size:9pt; color:#6B7280; line-height:1.5;">
         The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
@@ -581,9 +614,10 @@ export function printNotice(
   notice: VariationNotice,
   project: Project,
   companyName: string = '',
-  sender: { name: string; email: string } = { name: '', email: '' }
+  sender: { name: string; email: string } = { name: '', email: '' },
+  companyInfo?: CompanyPrintInfo
 ) {
-  const html = buildNoticeHtml(notice, project, companyName, sender);
+  const html = buildNoticeHtml(notice, project, companyName, sender, companyInfo);
   openHtml(html, `${notice.notice_number} - Variation Notice`);
 }
 
@@ -594,10 +628,11 @@ export function getNoticeHtmlForPdf(
   notice: VariationNotice,
   project: Project,
   companyName: string,
-  sender: { name: string; email: string }
+  sender: { name: string; email: string },
+  companyInfo?: CompanyPrintInfo
 ): { html: string; css: string } {
   return {
-    html: buildNoticeHtml(notice, project, companyName, sender),
+    html: buildNoticeHtml(notice, project, companyName, sender, companyInfo),
     css: GLOBAL_CSS,
   };
 }
@@ -613,11 +648,12 @@ function buildVariationHtml(
   companyName: string,
   sender: { name: string; email: string },
   linkedNotice?: VariationNotice | null,
-  revisions?: Variation[]
+  revisions?: Variation[],
+  companyInfo?: CompanyPrintInfo
 ): string {
   const status = getStatusConfig(variation.status).label;
   const varNumber = getVariationNumber(variation);
-  const logoUrl = `${window.location.origin}/variation-shield-logo.jpg`;
+  const logoUrl = companyInfo?.logoUrl || `${window.location.origin}/variation-shield-logo.jpg`;
 
   const photoGrid = photos.length > 0 ? `
     <div class="avoid-break">
@@ -652,7 +688,7 @@ function buildVariationHtml(
   return `
     <div class="doc-header">
       <div>
-        <div class="brand">${escapeHtml(companyName || project.name)}</div>
+        ${buildCompanyHeader(companyName || project.name, companyInfo)}
         <div class="doc-title">Variation Request</div>
       </div>
       <div class="doc-meta">
@@ -664,7 +700,7 @@ function buildVariationHtml(
 
     <div style="margin-bottom:24px; padding:16px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB;">
       <div style="font-size:10pt; line-height:1.6; margin-bottom:10px;">
-        TAKE NOTICE that pursuant to Clause 36 of AS 4000–1997 <em>(General Conditions of Contract)</em> or Clause 40 of AS 2124–1992 <em>(General Conditions of Contract)</em>, as applicable, the Contractor hereby gives notice that the following event constitutes a Variation to the Contract and claims an adjustment to the Contract Sum and/or time for Practical Completion accordingly.
+        ${getNoticeLanguage(companyInfo?.preferredStandard)}
       </div>
       <div style="font-size:9pt; color:#6B7280; line-height:1.5;">
         The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
@@ -811,10 +847,11 @@ export function printVariation(
   companyName: string = '',
   sender: { name: string; email: string } = { name: '', email: '' },
   linkedNotice?: VariationNotice | null,
-  revisions?: Variation[]
+  revisions?: Variation[],
+  companyInfo?: CompanyPrintInfo
 ) {
   const varNumber = getVariationNumber(variation);
-  const html = buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice, revisions);
+  const html = buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice, revisions, companyInfo);
   openHtml(html, `${varNumber} - ${variation.title}`);
 }
 
@@ -829,10 +866,11 @@ export function getVariationHtmlForPdf(
   companyName: string,
   sender: { name: string; email: string },
   linkedNotice?: VariationNotice | null,
-  revisions?: Variation[]
+  revisions?: Variation[],
+  companyInfo?: CompanyPrintInfo
 ): { html: string; css: string } {
   return {
-    html: buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice, revisions),
+    html: buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice, revisions, companyInfo),
     css: GLOBAL_CSS,
   };
 }
