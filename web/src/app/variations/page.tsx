@@ -6,6 +6,7 @@ import Link from 'next/link';
 import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
+import VariationSlideOver from '@/components/VariationSlideOver';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/DropdownMenu';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getStatusConfig, getVariationNumber } from '@/lib/utils';
@@ -31,6 +32,7 @@ function VariationsList() {
   const [filterStatus, setFilterStatus] = useState<string>(initialStatus);
   const [filterProject, setFilterProject] = useState<string>(initialProject);
   const [exportingPdf, setExportingPdf] = useState(false);
+  const [slideOverId, setSlideOverId] = useState<string | null>(null);
   const { isField } = useRole();
 
   useEffect(() => {
@@ -288,21 +290,21 @@ function VariationsList() {
             {/* Mobile cards — md:hidden */}
             <div className="md:hidden divide-y divide-[#F0F0EE] bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
               {sorted.map(v => (
-                <Link key={v.id} href={`/variation/${v.id}`}>
-                  <div className="px-4 py-3 hover:bg-[#F5F3EF] transition-colors">
+                <button key={v.id} className="w-full text-left" onClick={() => setSlideOverId(v.id)}>
+                  <div className="px-4 py-3 hover:bg-slate-50 transition-colors">
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <div className="text-[12px] font-mono font-bold text-[#1B365D]">{getVariationNumber(v)}</div>
-                        <div className="text-[14px] font-medium text-[#1C1C1E] mt-0.5 truncate">{v.title}</div>
-                        <div className="text-[12px] text-[#9CA3AF] mt-0.5 truncate">{v.project_name}</div>
+                        <div className="text-[12px] font-mono font-semibold text-indigo-600">{getVariationNumber(v)}</div>
+                        <div className="text-[14px] font-medium text-slate-800 mt-0.5 truncate">{v.title}</div>
+                        <div className="text-[12px] text-slate-400 mt-0.5 truncate">{v.project_name}</div>
                       </div>
                       <div className="flex-shrink-0 text-right">
                         <StatusBadge status={v.status} />
-                        <div className="text-[13px] font-medium text-[#1C1C1E] tabular-nums mt-1">{formatCurrency(v.estimated_value)}</div>
+                        <div className="text-[13px] font-medium text-slate-700 tabular-nums mt-1">{formatCurrency(v.estimated_value)}</div>
                       </div>
                     </div>
                   </div>
-                </Link>
+                </button>
               ))}
             </div>
 
@@ -325,12 +327,16 @@ function VariationsList() {
                   </thead>
                   <tbody>
                     {sorted.map((v, i) => (
-                      <tr key={v.id} className={`group relative border-b border-[#F0F0EE] hover:bg-slate-50 transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
-                        <td className="px-5 md:px-6 py-3 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums whitespace-nowrap">
-                          <Link href={`/variation/${v.id}`} className="hover:underline">{getVariationNumber(v)}</Link>
+                      <tr
+                        key={v.id}
+                        onClick={() => setSlideOverId(v.id)}
+                        className={`group relative border-b border-[#F0F0EE] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}
+                      >
+                        <td className="px-5 md:px-6 py-3 text-[13px] font-mono font-medium text-indigo-600 tabular-nums whitespace-nowrap">
+                          {getVariationNumber(v)}
                         </td>
                         <td className="px-5 md:px-6 py-3 max-w-[200px] overflow-hidden">
-                          <Link href={`/variation/${v.id}`} className="block truncate text-[14px] font-medium text-[#1C1C1E] hover:text-indigo-600 transition-colors">{v.title}</Link>
+                          <div className="truncate text-[14px] font-medium text-slate-800">{v.title}</div>
                         </td>
                         <td className="px-5 md:px-6 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-slate-500">{v.project_name}</div></td>
                         <td className="px-5 md:px-6 py-3"><StatusBadge status={v.status} /></td>
@@ -352,12 +358,11 @@ function VariationsList() {
                             })() : <span className="text-[13px] text-[#D1D5DB]">—</span>}
                           </td>
                           {/* Ellipsis action menu */}
-                          <td className="px-3 py-3 w-10">
+                          <td className="px-3 py-3 w-10" onClick={e => e.stopPropagation()}>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <button
                                   className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 opacity-0 group-hover:opacity-100 transition-all"
-                                  onClick={e => e.stopPropagation()}
                                 >
                                   <MoreHorizontal size={16} />
                                 </button>
@@ -395,6 +400,14 @@ function VariationsList() {
           </>
         )}
       </div>
+
+      {/* Slide-over — opens when a table row is clicked */}
+      <VariationSlideOver
+        variationId={slideOverId}
+        open={!!slideOverId}
+        onClose={() => setSlideOverId(null)}
+        onStatusChange={loadData}
+      />
     </>
   );
 }

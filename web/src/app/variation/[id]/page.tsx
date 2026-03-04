@@ -1,5 +1,7 @@
 'use client';
 
+'use client';
+
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -13,6 +15,7 @@ import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
 import { getVariationEmailMeta } from '@/lib/email';
 import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice } from '@/lib/types';
+import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight } from 'lucide-react';
 
 const EDITABLE_STATUSES = ['draft', 'captured'];
 const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
@@ -40,6 +43,9 @@ export default function VariationDetail() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [revisingMode, setRevisingMode] = useState(false);
+  // Dispute reason flow
+  const [showDisputeDialog, setShowDisputeDialog] = useState(false);
+  const [disputeReason, setDisputeReason] = useState('');
   const [revisions, setRevisions] = useState<Variation[]>([]);
   const [sendingEmail, setSendingEmail] = useState(false);
 
@@ -351,6 +357,9 @@ export default function VariationDetail() {
   const canEdit = !isField && EDITABLE_STATUSES.includes(variation.status);
   const canDelete = !isField && DELETABLE_STATUSES.includes(variation.status);
   const canRevise = !isField && ['submitted', 'approved', 'disputed'].includes(variation.status);
+  const isSubmitted = variation.status === 'submitted';
+  const isDraft = EDITABLE_STATUSES.includes(variation.status);
+  const isDisputed = variation.status === 'disputed';
 
   const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow";
   const labelClass = "block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1";
@@ -394,48 +403,98 @@ export default function VariationDetail() {
             <span className="truncate">Back to {project.name}</span>
           </Link>
           {!editing && (
-            <div className="flex flex-wrap items-center gap-2">
-              {!isField && nextStatuses.map(nextStatus => (
-                <button
-                  key={nextStatus}
-                  onClick={() => handleAdvanceStatus(nextStatus)}
-                  disabled={advancingStatus}
-                  className={`px-3 py-1.5 text-[13px] font-medium border rounded-lg transition-colors duration-[120ms] disabled:opacity-40 ${STATUS_ACTION_STYLES[nextStatus] || 'text-[#6B7280] border-[#E5E7EB] hover:bg-[#F5F3EF]'}`}
-                >
-                  {advancingStatus ? '…' : (STATUS_ACTION_LABELS[nextStatus] ?? `→ ${nextStatus}`)}
-                </button>
-              ))}
-              {canDelete && (
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="px-3 py-1.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors duration-[120ms]"
-                >
-                  Delete
-                </button>
+            <div className="space-y-3">
+              {/* Step 1 — Draft: primary is Submit */}
+              {isDraft && !isField && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => handleAdvanceStatus('submitted')}
+                    disabled={advancingStatus}
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
+                  >
+                    <Send size={14} />
+                    {advancingStatus ? 'Submitting…' : 'Submit to Client'}
+                  </button>
+                  <button
+                    onClick={startEditing}
+                    className="px-3 py-1.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    Edit
+                  </button>
+                  {canDelete && (
+                    <button
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="px-3 py-1.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
               )}
-              {canRevise && !editing && (
-                <button
-                  onClick={startRevising}
-                  className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-slate-200 rounded-lg hover:bg-[#F0F4FA] hover:border-[#1B365D]/40 transition-colors duration-[120ms]"
-                >
-                  ↩ Revise
-                </button>
+
+              {/* Step 2 — Submitted: locked. Approve / Dispute / Withdraw */}
+              {isSubmitted && !isField && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={() => handleAdvanceStatus('approved')}
+                    disabled={advancingStatus}
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
+                  >
+                    <CheckCircle size={14} /> {advancingStatus ? '…' : 'Approve'}
+                  </button>
+                  <button
+                    onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }}
+                    disabled={advancingStatus}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors"
+                  >
+                    <XCircle size={14} /> Dispute
+                  </button>
+                  <button
+                    onClick={() => handleAdvanceStatus('draft')}
+                    disabled={advancingStatus}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    <RotateCcw size={13} /> Withdraw &amp; Edit
+                  </button>
+                </div>
               )}
-              {canEdit && (
-                <button
-                  onClick={startEditing}
-                  className="px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-lg hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
-                >
-                  Edit
-                </button>
+
+              {/* Step 3 — Disputed: Revise & Resubmit */}
+              {isDisputed && !isField && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={startRevising}
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+                  >
+                    <ArrowUpRight size={14} /> Revise &amp; Resubmit
+                  </button>
+                  <button
+                    onClick={startEditing}
+                    className="px-3 py-1.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    Edit
+                  </button>
+                </div>
               )}
-              <button
-                onClick={handleSendEmail}
-                disabled={sendingEmail}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-slate-200 rounded-lg hover:bg-[#F0F4FA] transition-colors duration-[120ms] disabled:opacity-50 whitespace-nowrap"
-              >
-                {sendingEmail ? 'Preparing...' : '📧 Send by Email'}
-              </button>
+
+              {/* Secondary actions — always shown */}
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={handleSendEmail}
+                  disabled={sendingEmail}
+                  className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
+                >
+                  {sendingEmail ? 'Preparing...' : '📧 Send by Email'}
+                </button>
+                {!isDraft && !isSubmitted && !isDisputed && canRevise && (
+                  <button
+                    onClick={startRevising}
+                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    ↩ Revise
+                  </button>
+                )}
+              </div>
             </div>
           )}
           {editing && (
@@ -472,6 +531,23 @@ export default function VariationDetail() {
             <Link href={`/notice/${linkedNotice.id}`} className="ml-auto text-[#1B365D] font-medium hover:text-[#24466F] transition-colors duration-[120ms]">
               View Notice →
             </Link>
+          </div>
+        )}
+
+        {/* State banners */}
+        {isSubmitted && !editing && (
+          <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-[13px] text-amber-700 font-medium">
+            <Lock size={14} className="flex-shrink-0" />
+            This variation is submitted and locked. Use <span className="font-semibold">Withdraw &amp; Edit</span> to make changes.
+          </div>
+        )}
+        {isDisputed && !editing && variation.notes?.startsWith('DISPUTE REASON:') && (
+          <div className="flex items-start gap-2 px-4 py-3 bg-rose-50 border border-rose-200 rounded-xl text-[13px] text-rose-700">
+            <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
+            <div>
+              <span className="font-semibold">Dispute reason: </span>
+              {variation.notes.replace('DISPUTE REASON: ', '')}
+            </div>
           </div>
         )}
 
@@ -793,6 +869,52 @@ export default function VariationDetail() {
           </div>
         )}
       </div>
+
+      {/* Dispute Reason Dialog */}
+      {showDisputeDialog && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowDisputeDialog(false)}>
+          <div className="bg-white rounded-t-xl sm:rounded-xl border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-2 mb-1">
+              <XCircle size={18} className="text-rose-500 flex-shrink-0" />
+              <h3 className="text-[15px] font-semibold text-slate-900">Dispute Variation</h3>
+            </div>
+            <p className="text-[13px] text-slate-500 mb-4">Provide a reason for the dispute. This will be recorded and visible to the submitter.</p>
+            <textarea
+              value={disputeReason}
+              onChange={e => setDisputeReason(e.target.value)}
+              rows={4}
+              autoFocus
+              placeholder="e.g. This work falls within the original scope as per drawing M-201…"
+              className="w-full px-3 py-2.5 text-[14px] border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:border-rose-400 outline-none resize-none"
+            />
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={() => { setShowDisputeDialog(false); setDisputeReason(''); }}
+                className="px-3 py-1.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  if (!disputeReason.trim()) return;
+                  await handleAdvanceStatus('disputed');
+                  const supabase = createClient();
+                  await supabase.from('variations').update({
+                    notes: `DISPUTE REASON: ${disputeReason.trim()}`
+                  }).eq('id', variation!.id);
+                  setShowDisputeDialog(false);
+                  setDisputeReason('');
+                  loadVariation();
+                }}
+                disabled={!disputeReason.trim() || advancingStatus}
+                className="px-4 py-1.5 text-[13px] font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg disabled:opacity-40 transition-colors"
+              >
+                Confirm Dispute
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete Variation Confirmation Modal */}
       {showDeleteConfirm && (
