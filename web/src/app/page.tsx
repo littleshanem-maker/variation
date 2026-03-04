@@ -61,11 +61,19 @@ export default function Dashboard() {
       .from('variations').select('*').order('captured_at', { ascending: false });
     if (vErr) { setError(vErr.message); setLoading(false); return; }
 
-    const activeProjectIds = new Set((projectsData || []).map((p: Project) => p.id));
+    // Deduplicate projects by ID (guards against duplicate rows from RLS/multi-company edge cases)
+    const seenProjectIds = new Set<string>();
+    const uniqueProjects = (projectsData || []).filter((p: Project) => {
+      if (seenProjectIds.has(p.id)) return false;
+      seenProjectIds.add(p.id);
+      return true;
+    });
+
+    const activeProjectIds = new Set(uniqueProjects.map((p: Project) => p.id));
     const allVariations = (variationsData || []).filter((v: Variation) => activeProjectIds.has(v.project_id));
     setAllVariationsRaw(allVariations);
 
-    setProjects((projectsData || []).map((p: Project) => ({
+    setProjects(uniqueProjects.map((p: Project) => ({
       ...p,
       variations: allVariations.filter((v: Variation) => v.project_id === p.id),
     })));
