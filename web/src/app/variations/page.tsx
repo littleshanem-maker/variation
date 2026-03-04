@@ -94,7 +94,7 @@ function VariationsList() {
 
   const SortHeader = ({ label, field, align, className = '' }: { label: string; field: SortKey; align?: 'right'; className?: string }) => (
     <th
-      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 cursor-pointer hover:text-[#6B7280] select-none transition-colors duration-[120ms] ${className}`}
+      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5 cursor-pointer hover:text-slate-700 select-none transition-colors duration-[120ms] ${className}`}
       onClick={() => handleSort(field)}
     >
       {label} {sortKey === field ? (sortAsc ? '↑' : '↓') : ''}
@@ -308,7 +308,7 @@ function VariationsList() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[480px]">
                   <thead>
-                    <tr className="border-b border-[#E5E7EB]">
+                    <tr className="border-b border-[#E5E7EB] bg-slate-50/60">
                       <SortHeader label="Var No." field="sequence_number" />
                       <SortHeader label="Title" field="title" />
                       <SortHeader label="Project" field="project_name" className="hidden md:table-cell" />
@@ -323,14 +323,14 @@ function VariationsList() {
                     {sorted.map((v, i) => (
                       <Link key={v.id} href={`/variation/${v.id}`} className="contents">
                         <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
-                          <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums whitespace-nowrap">{getVariationNumber(v)}</td>
-                          <td className="px-4 md:px-5 py-2.5 max-w-[200px] overflow-hidden"><div className="truncate text-[14px] font-medium text-[#1C1C1E]">{v.title}</div></td>
-                          <td className="px-4 md:px-5 py-2.5 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-[#6B7280]">{v.project_name}</div></td>
-                          <td className="px-4 md:px-5 py-2.5"><StatusBadge status={v.status} /></td>
-                          <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] capitalize hidden lg:table-cell whitespace-nowrap">{v.instruction_source?.replace(/_/g, ' ')}</td>
-                          <td className="px-4 md:px-5 py-2.5 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
-                          <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
-                          <td className="px-4 md:px-5 py-2.5 text-right hidden lg:table-cell whitespace-nowrap">
+                          <td className="px-5 md:px-6 py-3 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums whitespace-nowrap">{getVariationNumber(v)}</td>
+                          <td className="px-5 md:px-6 py-3 max-w-[200px] overflow-hidden"><div className="truncate text-[14px] font-medium text-[#1C1C1E]">{v.title}</div></td>
+                          <td className="px-5 md:px-6 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-slate-500">{v.project_name}</div></td>
+                          <td className="px-5 md:px-6 py-3"><StatusBadge status={v.status} /></td>
+                          <td className="px-5 md:px-6 py-3 text-[13px] text-slate-500 capitalize hidden lg:table-cell whitespace-nowrap">{v.instruction_source?.replace(/_/g, ' ')}</td>
+                          <td className="px-5 md:px-6 py-3 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
+                          <td className="px-5 md:px-6 py-3 text-[13px] text-slate-500 text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
+                          <td className="px-5 md:px-6 py-3 text-right hidden lg:table-cell whitespace-nowrap">
                             {v.response_due_date ? (() => {
                               const due = new Date(v.response_due_date + 'T00:00:00');
                               const today = new Date(); today.setHours(0,0,0,0);

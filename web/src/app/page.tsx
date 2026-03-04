@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
+import { TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
@@ -348,7 +349,7 @@ export default function Dashboard() {
               </div>
               <div className="flex items-baseline gap-2 leading-none">
                 <span className="text-[34px] font-black tabular-nums text-slate-900">{recoveryRate}%</span>
-                <span className="text-[22px] text-emerald-500 font-bold">↗</span>
+                <TrendingUp size={20} className="text-emerald-500 mb-0.5" strokeWidth={2.5} />
               </div>
               <div className="mt-2 text-[12px] text-[#9CA3AF]">
                 of {formatCurrency(grandTotal)} total variations
@@ -450,22 +451,22 @@ export default function Dashboard() {
                             )}
                           </div>
                           {/* Bar */}
-                          <div className="w-full h-6 bg-slate-100 rounded-lg overflow-hidden mb-4">
-                            <div style={{ width: `${barW}%` }} className="flex h-full">
+                          <div className="w-full h-[18px] bg-slate-100 rounded-md overflow-hidden mb-5">
+                            <div style={{ width: `${barW}%` }} className="flex h-full gap-px">
                               {paidPct > 0 && (
-                                <div style={{ width: `${paidPct}%` }} className="bg-indigo-500 h-full"
+                                <div style={{ width: `${paidPct}%` }} className="bg-indigo-500 h-full min-w-[2px]"
                                   title={`Paid / Approved: ${formatCurrency(p.paid)}`} />
                               )}
                               {subPct > 0 && (
-                                <div style={{ width: `${subPct}%` }} className="bg-amber-400 h-full"
+                                <div style={{ width: `${subPct}%` }} className="bg-amber-400 h-full min-w-[2px]"
                                   title={`Submitted: ${formatCurrency(p.submitted)}`} />
                               )}
                               {dispPct > 0 && (
-                                <div style={{ width: `${dispPct}%` }} className="bg-rose-500 h-full"
+                                <div style={{ width: `${dispPct}%` }} className="bg-rose-500 h-full min-w-[2px]"
                                   title={`Disputed: ${formatCurrency(p.disputed)}`} />
                               )}
                               {otherPct > 0 && (
-                                <div style={{ width: `${otherPct}%` }} className="bg-slate-300 h-full"
+                                <div style={{ width: `${otherPct}%` }} className="bg-slate-300 h-full min-w-[2px]"
                                   title={`Draft: ${formatCurrency(p.other)}`} />
                               )}
                             </div>

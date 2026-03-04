@@ -352,8 +352,8 @@ export default function VariationDetail() {
   const canDelete = !isField && DELETABLE_STATUSES.includes(variation.status);
   const canRevise = !isField && ['submitted', 'approved', 'disputed'].includes(variation.status);
 
-  const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none";
-  const labelClass = "block text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF] mb-1";
+  const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow";
+  const labelClass = "block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1";
 
   const STATUS_TRANSITIONS: Record<string, string[]> = {
     draft:     ['submitted'],
@@ -400,7 +400,7 @@ export default function VariationDetail() {
                   key={nextStatus}
                   onClick={() => handleAdvanceStatus(nextStatus)}
                   disabled={advancingStatus}
-                  className={`px-3 py-1.5 text-[13px] font-medium border rounded-md transition-colors duration-[120ms] disabled:opacity-40 ${STATUS_ACTION_STYLES[nextStatus] || 'text-[#6B7280] border-[#E5E7EB] hover:bg-[#F5F3EF]'}`}
+                  className={`px-3 py-1.5 text-[13px] font-medium border rounded-lg transition-colors duration-[120ms] disabled:opacity-40 ${STATUS_ACTION_STYLES[nextStatus] || 'text-[#6B7280] border-[#E5E7EB] hover:bg-[#F5F3EF]'}`}
                 >
                   {advancingStatus ? '…' : (STATUS_ACTION_LABELS[nextStatus] ?? `→ ${nextStatus}`)}
                 </button>
@@ -408,7 +408,7 @@ export default function VariationDetail() {
               {canDelete && (
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms]"
+                  className="px-3 py-1.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors duration-[120ms]"
                 >
                   Delete
                 </button>
@@ -416,7 +416,7 @@ export default function VariationDetail() {
               {canRevise && !editing && (
                 <button
                   onClick={startRevising}
-                  className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/40 rounded-md hover:bg-[#F0F4FA] hover:border-[#1B365D] transition-colors duration-[120ms]"
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-slate-200 rounded-lg hover:bg-[#F0F4FA] hover:border-[#1B365D]/40 transition-colors duration-[120ms]"
                 >
                   ↩ Revise
                 </button>
@@ -424,7 +424,7 @@ export default function VariationDetail() {
               {canEdit && (
                 <button
                   onClick={startEditing}
-                  className="px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+                  className="px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-lg hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
                 >
                   Edit
                 </button>
@@ -432,7 +432,7 @@ export default function VariationDetail() {
               <button
                 onClick={handleSendEmail}
                 disabled={sendingEmail}
-                className="px-3 py-2.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/30 rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms] disabled:opacity-50 whitespace-nowrap"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#1B365D] border border-slate-200 rounded-lg hover:bg-[#F0F4FA] transition-colors duration-[120ms] disabled:opacity-50 whitespace-nowrap"
               >
                 {sendingEmail ? 'Preparing...' : '📧 Send by Email'}
               </button>
@@ -452,7 +452,7 @@ export default function VariationDetail() {
               <button
                 onClick={handleSave}
                 disabled={saving || !editTitle.trim()}
-                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
+                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-lg hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
               >
                 {saving ? 'Saving...' : revisingMode ? 'Save Revision' : 'Save Changes'}
               </button>
@@ -526,7 +526,7 @@ export default function VariationDetail() {
               <div>
                 <label className={labelClass}>Response Due Date</label>
                 <input type="date" value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className={inputClass} />
-                <p className="text-[11px] text-[#9CA3AF] mt-1">Date by which a response to this variation is required</p>
+                <p className="text-[11px] text-slate-500 mt-1">Date by which a response to this variation is required</p>
               </div>
             </div>
           ) : (
@@ -817,7 +817,7 @@ export default function VariationDetail() {
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#B25B4E] rounded-md hover:bg-[#9E4D41] disabled:opacity-40 transition-colors duration-[120ms]"
+                className="px-4 py-1.5 text-[13px] font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 disabled:opacity-40 transition-colors duration-[120ms]"
               >
                 {deleting ? 'Deleting...' : 'Delete Variation'}
               </button>

@@ -52,18 +52,18 @@ export function formatDate(dateStr: string): string {
 export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; dot: string }> = {
   draft: {
     label: 'Draft',
-    color: 'text-[#374151]',
-    bg: 'bg-[#F3F4F6]',
-    border: 'border-[#9CA3AF]',
-    dot: 'bg-[#9CA3AF]',
+    color: 'text-slate-600',
+    bg: 'bg-slate-100',
+    border: 'border-slate-200',
+    dot: 'bg-slate-400',
   },
   captured: {
     // Legacy alias for draft — backward compat
     label: 'Draft',
-    color: 'text-[#374151]',
-    bg: 'bg-[#F3F4F6]',
-    border: 'border-[#9CA3AF]',
-    dot: 'bg-[#9CA3AF]',
+    color: 'text-slate-600',
+    bg: 'bg-slate-100',
+    border: 'border-slate-200',
+    dot: 'bg-slate-400',
   },
   submitted: {
     label: 'Submitted',
@@ -95,10 +95,10 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
   },
   disputed: {
     label: 'Disputed',
-    color: 'text-[#9A4A3E]',
-    bg: 'bg-[#FDF2F0]',
-    border: 'border-[#B25B4E]',
-    dot: 'bg-[#B25B4E]',
+    color: 'text-rose-700',
+    bg: 'bg-rose-50',
+    border: 'border-rose-200',
+    dot: 'bg-rose-500',
   },
   // Variation Notice statuses
   issued: {
