@@ -304,27 +304,32 @@ export default function Dashboard() {
 
             {/* Card 1: Cash Flow at Risk */}
             <Link href="/variations?status=at_risk">
-              <div className="bg-white rounded-md border border-[#E5E7EB] border-l-4 border-l-[#DC2626] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)] hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[13px] font-semibold text-[#374151] uppercase tracking-wide">Cash Flow at Risk</span>
-                  <span className="text-lg">⚠️</span>
+              <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)] hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-4">
+                  <span className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider">Cash Flow at Risk</span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-50 text-red-600">
+                    {atRiskVars.length} unresolved
+                  </span>
                 </div>
-                <div className="text-[36px] font-black tabular-nums leading-none text-[#DC2626]">
+                <div className="text-[34px] font-black tabular-nums leading-none text-[#DC2626]">
                   {formatCurrency(atRiskTotal)}
                 </div>
-                <div className="mt-2 text-[12px] text-[#9CA3AF]">
-                  {atRiskVars.length} var{atRiskVars.length !== 1 ? 's' : ''} unresolved
-                </div>
+                <div className="mt-2 text-[12px] text-[#9CA3AF]">Disputed + draft + captured</div>
               </div>
             </Link>
 
             {/* Card 2: Pending Approval */}
             <Link href="/variations?status=submitted">
-              <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)] hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-[13px] font-semibold text-[#374151] uppercase tracking-wide">Pending Approval</span>
+              <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)] hover:shadow-md transition-shadow">
+                <div className="flex items-start justify-between mb-4">
+                  <span className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider">Pending Approval</span>
+                  {submittedVars.length > 0 && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-600">
+                      {submittedVars.length} submitted
+                    </span>
+                  )}
                 </div>
-                <div className="text-[36px] font-black tabular-nums leading-none text-[#EAB308]">
+                <div className="text-[34px] font-black tabular-nums leading-none text-[#B45309]">
                   {formatCurrency(submittedTotal)}
                 </div>
                 <div className="mt-2 text-[12px] text-[#9CA3AF]">
@@ -334,15 +339,19 @@ export default function Dashboard() {
             </Link>
 
             {/* Card 3: Recovery Rate */}
-            <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)]">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[13px] font-semibold text-[#374151] uppercase tracking-wide">Recovery Rate</span>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)]">
+              <div className="flex items-start justify-between mb-4">
+                <span className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider">Recovery Rate</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600">
+                  {formatCurrency(paidTotal)} paid
+                </span>
               </div>
-              <div className="text-[36px] font-black tabular-nums leading-none text-[#1B365D]">
-                {recoveryRate}% <span className="text-[28px]">↗</span>
+              <div className="flex items-baseline gap-2 leading-none">
+                <span className="text-[34px] font-black tabular-nums text-slate-900">{recoveryRate}%</span>
+                <span className="text-[22px] text-emerald-500 font-bold">↗</span>
               </div>
               <div className="mt-2 text-[12px] text-[#9CA3AF]">
-                {formatCurrency(paidTotal)} of {formatCurrency(grandTotal)} paid
+                of {formatCurrency(grandTotal)} total variations
               </div>
             </div>
 
@@ -411,7 +420,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Desktop: stacked bar chart */}
-                <div className="hidden md:block bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] p-5 space-y-4">
+                <div className="hidden md:block bg-white rounded-xl border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] p-5 space-y-2">
                   {barChartData.length === 0 ? (
                     <p className="text-[13px] text-[#9CA3AF] text-center py-6">No variation data to display.</p>
                   ) : (
@@ -422,12 +431,12 @@ export default function Dashboard() {
                       const dispPct   = p.totalValue > 0 ? (p.disputed  / p.totalValue) * 100 : 0;
                       const otherPct  = p.totalValue > 0 ? (p.other     / p.totalValue) * 100 : 0;
                       return (
-                        <div key={p.id} className="space-y-1">
-                          {/* Project name — full width, no truncation */}
-                          <div className="flex items-baseline justify-between gap-4">
+                        <div key={p.id}>
+                          {/* Name + value on the same row, immediately above bar */}
+                          <div className="flex items-baseline justify-between gap-4 mb-1.5">
                             <Link
                               href={`/project/${p.id}`}
-                              className="text-[13px] font-semibold text-[#1C1C1E] hover:text-[#1B365D] transition-colors leading-tight"
+                              className="text-[13px] font-semibold text-[#1C1C1E] hover:text-indigo-600 transition-colors leading-tight"
                             >
                               {p.name}
                             </Link>
@@ -435,28 +444,28 @@ export default function Dashboard() {
                               <div className="flex-shrink-0 text-right">
                                 <span className="text-[13px] font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(p.totalValue)}</span>
                                 {p.disputed > 0 && (
-                                  <span className="ml-2 text-[11px] text-[#991B1B] font-medium tabular-nums">{formatCurrency(p.disputed)} disputed</span>
+                                  <span className="ml-2 text-[11px] text-rose-600 font-medium tabular-nums">{formatCurrency(p.disputed)} disputed</span>
                                 )}
                               </div>
                             )}
                           </div>
-                          {/* Bar — full width */}
-                          <div className="w-full h-7 bg-[#F3F4F6] rounded overflow-hidden">
+                          {/* Bar */}
+                          <div className="w-full h-6 bg-slate-100 rounded-lg overflow-hidden mb-4">
                             <div style={{ width: `${barW}%` }} className="flex h-full">
                               {paidPct > 0 && (
-                                <div style={{ width: `${paidPct}%` }} className="bg-[#3B82F6] h-full"
+                                <div style={{ width: `${paidPct}%` }} className="bg-indigo-500 h-full"
                                   title={`Paid / Approved: ${formatCurrency(p.paid)}`} />
                               )}
                               {subPct > 0 && (
-                                <div style={{ width: `${subPct}%` }} className="bg-[#EAB308] h-full"
+                                <div style={{ width: `${subPct}%` }} className="bg-amber-400 h-full"
                                   title={`Submitted: ${formatCurrency(p.submitted)}`} />
                               )}
                               {dispPct > 0 && (
-                                <div style={{ width: `${dispPct}%` }} className="bg-[#991B1B] h-full"
+                                <div style={{ width: `${dispPct}%` }} className="bg-rose-500 h-full"
                                   title={`Disputed: ${formatCurrency(p.disputed)}`} />
                               )}
                               {otherPct > 0 && (
-                                <div style={{ width: `${otherPct}%` }} className="bg-[#D1D5DB] h-full"
+                                <div style={{ width: `${otherPct}%` }} className="bg-slate-300 h-full"
                                   title={`Draft: ${formatCurrency(p.other)}`} />
                               )}
                             </div>
@@ -469,10 +478,10 @@ export default function Dashboard() {
                   {/* Legend */}
                   <div className="flex flex-wrap gap-4 pt-3 border-t border-[#F0F0EE]">
                     {[
-                      { color: 'bg-[#3B82F6]', label: 'Paid / Approved' },
-                      { color: 'bg-[#EAB308]', label: 'Submitted' },
-                      { color: 'bg-[#991B1B]', label: 'Disputed' },
-                      { color: 'bg-[#D1D5DB]', label: 'Draft' },
+                      { color: 'bg-indigo-500', label: 'Paid / Approved' },
+                      { color: 'bg-amber-400',  label: 'Submitted' },
+                      { color: 'bg-rose-500',   label: 'Disputed' },
+                      { color: 'bg-slate-300',  label: 'Draft' },
                     ].map(l => (
                       <div key={l.label} className="flex items-center gap-1.5">
                         <div className={`w-3 h-3 rounded-sm flex-shrink-0 ${l.color}`} />
@@ -496,26 +505,27 @@ export default function Dashboard() {
               )}
             </div>
 
-            <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="bg-slate-50 rounded-xl border border-[#E5E7EB] p-2 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
               {urgentItems.length === 0 ? (
-                <div className="p-8 text-center">
+                <div className="bg-white rounded-lg p-8 text-center">
                   <div className="text-2xl mb-2">✅</div>
                   <p className="text-[13px] text-[#6B7280]">No urgent items — all variations on track.</p>
                 </div>
               ) : (
-                <div className="divide-y divide-[#F0F0EE]">
+                <div className="space-y-1.5">
                   {urgentItems.map(item => (
                     <Link key={item.id} href={`/variation/${item.variationId}`}>
-                      <div className="px-4 py-3.5 hover:bg-[#FAFAFA] transition-colors">
+                      <div className="bg-white rounded-lg px-4 py-3.5 hover:bg-slate-50 transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
                         <div className="flex items-start gap-3">
-                          {/* Icon */}
-                          <div className="flex-shrink-0 mt-0.5 text-[18px]">
-                            {item.kind === 'overdue' ? '🔴' : item.kind === 'high-value' ? '⚠️' : '🔴'}
-                          </div>
+                          {/* Dot indicator */}
+                          <div className={`flex-shrink-0 mt-1.5 w-2 h-2 rounded-full ${
+                            item.kind === 'overdue' ? 'bg-rose-500' :
+                            item.kind === 'disputed' ? 'bg-rose-400' : 'bg-amber-400'
+                          }`} />
                           {/* Content */}
                           <div className="flex-1 min-w-0">
                             <div className="text-[13px] text-[#1C1C1E] leading-snug">
-                              <span className="font-bold">
+                              <span className="font-semibold">
                                 {item.kind === 'overdue' ? 'Response Overdue: '
                                   : item.kind === 'high-value' ? 'High Value Alert: '
                                   : 'Dispute Escalation: '}
@@ -527,17 +537,17 @@ export default function Dashboard() {
                                 : `${item.extra} at ${item.projectName} marked 'Disputed'`
                               }
                             </div>
-                            <div className="mt-2">
+                            <div className="mt-1.5">
                               {item.kind === 'overdue' ? (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#DC2626] text-white uppercase tracking-wide">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-rose-50 text-rose-700">
                                   Overdue
                                 </span>
                               ) : item.kind === 'disputed' ? (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#DC2626] text-white uppercase tracking-wide">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-rose-50 text-rose-700">
                                   Disputed
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#FEF3C7] text-[#92400E] uppercase tracking-wide">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700">
                                   Submitted
                                 </span>
                               )}

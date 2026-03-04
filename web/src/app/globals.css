@@ -18,7 +18,7 @@
   --color-status-draft: #9CA3AF;
   --color-status-paid: #1C1C1E;
   --color-status-at-risk: #C8943E;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 html {

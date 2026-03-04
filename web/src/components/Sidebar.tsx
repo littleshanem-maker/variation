@@ -56,7 +56,7 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
       {/* Sidebar panel */}
       <aside
         className={`
-          fixed left-0 top-0 bottom-0 w-[240px] bg-[#1B365D] text-white flex flex-col z-50
+          fixed left-0 top-0 bottom-0 w-[240px] bg-slate-900 text-white flex flex-col z-50
           transition-transform duration-300 ease-in-out
           md:translate-x-0
           ${open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
@@ -97,10 +97,10 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                className={`relative flex items-center gap-2.5 px-3 py-2 rounded text-[13px] transition-colors duration-[120ms] ease-out ${
+                className={`relative flex items-center gap-2.5 px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ease-out ${
                   active
                     ? 'bg-white/10 text-white font-semibold'
-                    : 'text-white/55 hover:text-white/90 hover:bg-white/5 font-medium'
+                    : 'text-white/50 hover:text-white/85 hover:bg-white/6 font-medium'
                 }`}
               >
                 {active && (

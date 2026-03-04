@@ -1,6 +1,13 @@
 import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Variation Shield",
@@ -28,7 +35,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Variation Shield" />
         <link rel="apple-touch-icon" href="/variation-shield-logo.jpg" />
       </head>
-      <body className="antialiased bg-gray-50 text-gray-900">
+      <body className={`${inter.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
         <Providers>{children}</Providers>
       </body>
     </html>
