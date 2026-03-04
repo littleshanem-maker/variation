@@ -370,14 +370,14 @@ export default function Dashboard() {
                 {/* Quick Notice */}
                 <Link
                   href="/capture"
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-white bg-[#E85D1A] hover:bg-[#C94E14] rounded-md transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-[#E85D1A] bg-white border border-[#E85D1A] hover:bg-orange-50 rounded-lg transition-colors"
                 >
                   ⚡ Quick Notice
                 </Link>
-                {/* Quick Request */}
+                {/* Quick Request — secondary, navy outline */}
                 <Link
                   href="/variation/new"
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-white bg-[#1B365D] hover:bg-[#24466F] rounded-md transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.08)]"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
                 >
                   + Quick Request
                 </Link>
@@ -455,7 +455,7 @@ export default function Dashboard() {
                             <div style={{ width: `${barW}%` }} className="flex h-full gap-px">
                               {paidPct > 0 && (
                                 <Link href={`/variations?status=approved&project=${p.id}`} style={{ width: `${paidPct}%` }}
-                                  className="bg-indigo-500 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
+                                  className="bg-emerald-500 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
                                   title={`Paid / Approved: ${formatCurrency(p.paid)}`} />
                               )}
                               {subPct > 0 && (
@@ -483,7 +483,7 @@ export default function Dashboard() {
                   {/* Legend */}
                   <div className="flex flex-wrap gap-4 pt-3 border-t border-[#F0F0EE]">
                     {[
-                      { color: 'bg-indigo-500', label: 'Paid / Approved' },
+                      { color: 'bg-emerald-500', label: 'Paid / Approved' },
                       { color: 'bg-amber-400',  label: 'Submitted' },
                       { color: 'bg-rose-500',   label: 'Disputed' },
                       { color: 'bg-slate-300',  label: 'Draft' },

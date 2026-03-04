@@ -56,7 +56,7 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
       {/* Sidebar panel */}
       <aside
         className={`
-          fixed left-0 top-0 bottom-0 w-[240px] bg-slate-900 text-white flex flex-col z-50
+          fixed left-0 top-0 bottom-0 w-[240px] bg-[#1C2333] text-white flex flex-col z-50
           transition-transform duration-300 ease-in-out
           md:translate-x-0
           ${open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
@@ -99,8 +99,8 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
                 onClick={onClose}
                 className={`relative flex items-center gap-2.5 px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ease-out ${
                   active
-                    ? 'bg-white/10 text-white font-semibold'
-                    : 'text-white/50 hover:text-white/85 hover:bg-white/6 font-medium'
+                    ? 'bg-white/[0.08] text-white font-semibold'
+                    : 'text-white/45 hover:text-white/80 hover:bg-white/[0.05] font-medium'
                 }`}
               >
                 {active && (

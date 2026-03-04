@@ -74,10 +74,10 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
   },
   approved: {
     label: 'Approved',
-    color: 'text-[#3D6B5E]',
-    bg: 'bg-[#F0F7F4]',
-    border: 'border-[#4A7C6F]',
-    dot: 'bg-[#4A7C6F]',
+    color: 'text-emerald-700',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    dot: 'bg-emerald-500',
   },
   rejected: {
     label: 'Rejected',
@@ -88,10 +88,10 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
   },
   paid: {
     label: 'Paid',
-    color: 'text-[#1C1C1E]',
-    bg: 'bg-[#F3F4F6]',
-    border: 'border-[#1C1C1E]',
-    dot: 'bg-[#1C1C1E]',
+    color: 'text-emerald-800',
+    bg: 'bg-emerald-100',
+    border: 'border-emerald-300',
+    dot: 'bg-emerald-600',
   },
   disputed: {
     label: 'Disputed',
