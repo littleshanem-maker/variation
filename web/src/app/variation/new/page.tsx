@@ -1,27 +1,32 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
-import type { Project } from '@/lib/types';
+import type { Project, Variation } from '@/lib/types';
 
 const inputClass =
   'w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] bg-white focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400';
 const labelClass = 'block text-sm font-medium text-[#374151] mb-1.5';
 const hintClass = 'text-[11px] text-[#9CA3AF] mt-1';
 
-export default function NewVariationPage() {
+function NewVariationForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const preselectedProject = searchParams.get('project') || '';
+  const duplicateId = searchParams.get('duplicate') || '';
   const { companyId, isLoading: roleLoading } = useRole();
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
 
   // Form state
-  const [projectId, setProjectId] = useState('');
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  const [projectId, setProjectId] = useState(preselectedProject);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [instructionSource, setInstructionSource] = useState('verbal');
@@ -52,8 +57,27 @@ export default function NewVariationPage() {
       .eq('is_active', true)
       .order('name');
     setProjects(data || []);
-    if (data?.length === 1) setProjectId(data[0].id);
+    // Auto-select: single project, or URL-preselected project
+    if (!preselectedProject && data?.length === 1) setProjectId(data[0].id);
     setLoadingProjects(false);
+
+    // If duplicating, load source variation and pre-fill
+    if (duplicateId) {
+      const { data: src } = await supabase
+        .from('variations')
+        .select('*')
+        .eq('id', duplicateId)
+        .single();
+      if (src) {
+        setProjectId(src.project_id);
+        setTitle(`${src.title} (copy)`);
+        setDescription(src.description || src.ai_description || '');
+        setInstructionSource(src.instruction_source || 'verbal');
+        setInstructedBy(src.instructed_by || '');
+        setReferenceDoc(src.reference_doc || '');
+        setEstimatedValue(src.estimated_value ? (src.estimated_value / 100).toFixed(2) : '');
+      }
+    }
   }
 
   async function loadProfile() {
@@ -361,5 +385,13 @@ export default function NewVariationPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NewVariationPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-slate-400 text-sm">Loading...</div>}>
+      <NewVariationForm />
+    </Suspense>
   );
 }

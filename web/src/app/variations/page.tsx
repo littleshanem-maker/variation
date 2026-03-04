@@ -6,6 +6,7 @@ import Link from 'next/link';
 import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/DropdownMenu';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getStatusConfig, getVariationNumber } from '@/lib/utils';
 import { printRegister, getFilteredRegisterHtml } from '@/lib/print';
@@ -13,12 +14,14 @@ import { htmlToPdfBlob } from '@/lib/pdf';
 import { useRole } from '@/lib/role';
 import type { Variation, Project } from '@/lib/types';
 import * as XLSX from 'xlsx';
+import { MoreHorizontal, Pencil, Send, Copy, Trash2 } from 'lucide-react';
 
 type SortKey = 'sequence_number' | 'title' | 'project_name' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at' | 'response_due_date';
 
 function VariationsList() {
   const searchParams = useSearchParams();
   const initialStatus = searchParams.get('status') || 'all';
+  const initialProject = searchParams.get('project') || 'all';
 
   const [variations, setVariations] = useState<(Variation & { project_name: string })[]>([]);
   const [rawProjects, setRawProjects] = useState<(Project & { variations: Variation[] })[]>([]);
@@ -26,7 +29,7 @@ function VariationsList() {
   const [sortKey, setSortKey] = useState<SortKey>('captured_at');
   const [sortAsc, setSortAsc] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string>(initialStatus);
-  const [filterProject, setFilterProject] = useState<string>('all');
+  const [filterProject, setFilterProject] = useState<string>(initialProject);
   const [exportingPdf, setExportingPdf] = useState(false);
   const { isField } = useRole();
 
@@ -317,20 +320,24 @@ function VariationsList() {
                       <SortHeader label="Value" field="estimated_value" align="right" className="hidden sm:table-cell" />
                       <SortHeader label="Captured" field="captured_at" align="right" className="hidden md:table-cell" />
                       <SortHeader label="Due Date" field="response_due_date" align="right" className="hidden lg:table-cell" />
+                      <th className="w-10" />
                     </tr>
                   </thead>
                   <tbody>
                     {sorted.map((v, i) => (
-                      <Link key={v.id} href={`/variation/${v.id}`} className="contents">
-                        <tr className={`relative h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
-                          <td className="px-5 md:px-6 py-3 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums whitespace-nowrap">{getVariationNumber(v)}</td>
-                          <td className="px-5 md:px-6 py-3 max-w-[200px] overflow-hidden"><div className="truncate text-[14px] font-medium text-[#1C1C1E]">{v.title}</div></td>
-                          <td className="px-5 md:px-6 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-slate-500">{v.project_name}</div></td>
-                          <td className="px-5 md:px-6 py-3"><StatusBadge status={v.status} /></td>
-                          <td className="px-5 md:px-6 py-3 text-[13px] text-slate-500 capitalize hidden lg:table-cell whitespace-nowrap">{v.instruction_source?.replace(/_/g, ' ')}</td>
-                          <td className="px-5 md:px-6 py-3 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
-                          <td className="px-5 md:px-6 py-3 text-[13px] text-slate-500 text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
-                          <td className="px-5 md:px-6 py-3 text-right hidden lg:table-cell whitespace-nowrap">
+                      <tr key={v.id} className={`group relative border-b border-[#F0F0EE] hover:bg-slate-50 transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
+                        <td className="px-5 md:px-6 py-3 text-[13px] font-mono font-medium text-[#1B365D] tabular-nums whitespace-nowrap">
+                          <Link href={`/variation/${v.id}`} className="hover:underline">{getVariationNumber(v)}</Link>
+                        </td>
+                        <td className="px-5 md:px-6 py-3 max-w-[200px] overflow-hidden">
+                          <Link href={`/variation/${v.id}`} className="block truncate text-[14px] font-medium text-[#1C1C1E] hover:text-indigo-600 transition-colors">{v.title}</Link>
+                        </td>
+                        <td className="px-5 md:px-6 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-slate-500">{v.project_name}</div></td>
+                        <td className="px-5 md:px-6 py-3"><StatusBadge status={v.status} /></td>
+                        <td className="px-5 md:px-6 py-3 text-[13px] text-slate-500 capitalize hidden lg:table-cell whitespace-nowrap">{v.instruction_source?.replace(/_/g, ' ')}</td>
+                        <td className="px-5 md:px-6 py-3 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
+                        <td className="px-5 md:px-6 py-3 text-[13px] text-slate-500 text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
+                        <td className="px-5 md:px-6 py-3 text-right hidden lg:table-cell whitespace-nowrap">
                             {v.response_due_date ? (() => {
                               const due = new Date(v.response_due_date + 'T00:00:00');
                               const today = new Date(); today.setHours(0,0,0,0);
@@ -344,8 +351,42 @@ function VariationsList() {
                               );
                             })() : <span className="text-[13px] text-[#D1D5DB]">—</span>}
                           </td>
+                          {/* Ellipsis action menu */}
+                          <td className="px-3 py-3 w-10">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button
+                                  className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 opacity-0 group-hover:opacity-100 transition-all"
+                                  onClick={e => e.stopPropagation()}
+                                >
+                                  <MoreHorizontal size={16} />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent>
+                                <DropdownMenuItem onSelect={() => window.location.href = `/variation/${v.id}`}>
+                                  <Pencil size={13} /> View / Edit
+                                </DropdownMenuItem>
+                                {['draft','captured'].includes(v.status) && (
+                                  <DropdownMenuItem onSelect={() => window.location.href = `/variation/${v.id}`}>
+                                    <Send size={13} /> Submit
+                                  </DropdownMenuItem>
+                                )}
+                                <DropdownMenuItem onSelect={() => window.location.href = `/variation/new?duplicate=${v.id}`}>
+                                  <Copy size={13} /> Duplicate
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem destructive onSelect={() => {
+                                  if (confirm(`Delete "${v.title}"? This cannot be undone.`)) {
+                                    const supabase = createClient();
+                                    supabase.from('variations').delete().eq('id', v.id).then(() => loadData());
+                                  }
+                                }}>
+                                  <Trash2 size={13} /> Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </td>
                         </tr>
-                      </Link>
                     ))}
                   </tbody>
                 </table>

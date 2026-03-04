@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
+import { Plus } from 'lucide-react';
 
 export default function TopBar({ title }: { title: string }) {
   const router = useRouter();
@@ -26,17 +28,25 @@ export default function TopBar({ title }: { title: string }) {
   }
 
   return (
-    <header className="hidden md:flex h-14 border-b border-[#D1D5DB] bg-white items-center justify-between px-8 shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
+    <header className="hidden md:flex h-14 border-b border-slate-200 bg-white items-center justify-between px-8 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
       <div className="flex items-center gap-2.5 min-w-0">
-        <h1 className="text-[15px] font-bold text-[#0F172A] truncate">{title}</h1>
+        <h1 className="text-[15px] font-semibold text-slate-900 truncate">{title}</h1>
         {companyName && (
-          <span className="hidden lg:block text-[13px] text-[#9CA3AF] truncate">— {companyName}</span>
+          <span className="hidden lg:block text-[13px] text-slate-400 truncate">— {companyName}</span>
         )}
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
+        {/* Global New Variation — always accessible */}
+        <Link
+          href="/variation/new"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+        >
+          <Plus size={15} strokeWidth={2.5} />
+          New Variation
+        </Link>
         <button
           onClick={handleLogout}
-          className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] hover:text-[#1C1C1E] transition-colors duration-[120ms] ease-out"
+          className="px-3 py-1.5 text-[13px] font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors"
         >
           Log Out
         </button>
