@@ -38,7 +38,7 @@ export default function NewVariationPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!roleLoading) {
+    if (!roleLoading && companyId) {
       loadProjects();
       loadProfile();
     }

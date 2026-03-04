@@ -48,7 +48,7 @@ export default function CapturePage() {
 
   // Load projects once company is known
   useEffect(() => {
-    if (!roleLoading) {
+    if (!roleLoading && companyId) {
       loadProjects();
       loadProfile();
     }
