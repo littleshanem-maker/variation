@@ -119,6 +119,10 @@ export default function CapturePage() {
       setError('Please describe what happened.');
       return;
     }
+    if (!responseDueDate) {
+      setError('Please set a response due date.');
+      return;
+    }
 
     setSubmitting(true);
 
@@ -344,7 +348,7 @@ export default function CapturePage() {
               {/* Response Due Date */}
               <div>
                 <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                  Response due date <span className="text-[#9CA3AF] font-normal">(optional)</span>
+                  Response due date <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"

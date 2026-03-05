@@ -84,6 +84,7 @@ export default function VariationDetail() {
 
   async function handleSave() {
     if (!variation || !editTitle.trim()) return;
+    if (!editDueDate) { setSaveError('Please set a response due date.'); return; }
     setSaving(true);
     const supabase = createClient();
     const valueCents = Math.round(parseFloat(editValue || '0') * 100);
@@ -633,8 +634,8 @@ export default function VariationDetail() {
                 <input type="text" value={editReferenceDoc} onChange={e => setEditReferenceDoc(e.target.value)} className={inputClass} placeholder="e.g. RFI-042, Rev C drawings" />
               </div>
               <div>
-                <label className={labelClass}>Response Due Date</label>
-                <input type="date" value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className={inputClass} />
+                <label className={labelClass}>Response Due Date <span className="text-red-500">*</span></label>
+                <input type="date" required value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className={inputClass} />
                 <p className="text-[11px] text-slate-500 mt-1">Date by which a response to this variation is required</p>
               </div>
             </div>

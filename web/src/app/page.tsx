@@ -157,7 +157,7 @@ export default function Dashboard() {
   }, [projects, filterProject, filterDateRange]);
 
   // ── Urgent Attention Feed ─────────────────────────────────────────────────────
-  type AlertKind = 'high-value' | 'disputed' | 'overdue';
+  type AlertKind = 'disputed' | 'overdue' | 'due-soon';
   type UrgentItem = {
     id: string; variationId: string; title: string; projectName: string;
     value: number; daysOld: number; kind: AlertKind; extra?: string;
@@ -166,52 +166,17 @@ export default function Dashboard() {
   const urgentItems: UrgentItem[] = useMemo(() => {
     const items: UrgentItem[] = [];
     const seen = new Set<string>();
+    const now = new Date();
+    const threeDaysMs = 3 * 86400000;
 
-    // Overdue — response_due_date has passed
-    for (const v of filteredVariations.filter(v => v.response_due_date)) {
-      const due = new Date(v.response_due_date! + 'T00:00:00');
-      if (due < new Date() && !['approved','paid'].includes(v.status)) {
-        const proj = projects.find(p => p.id === v.project_id);
-        const daysOverdue = Math.ceil((Date.now() - due.getTime()) / 86400000);
-        items.push({
-          id: `od-${v.id}`, variationId: v.id,
-          title: v.title,
-          projectName: proj?.name || 'Unknown',
-          value: v.estimated_value || 0,
-          daysOld: daysSince(v.captured_at),
-          kind: 'overdue',
-          extra: `${daysOverdue}d overdue`,
-        });
-        seen.add(v.id);
-      }
-    }
-
-    // High-value submitted >7 days
-    for (const v of submittedVars) {
-      if (seen.has(v.id)) continue;
-      const daysOld = daysSince(v.captured_at);
-      if (daysOld > 7 || (v.estimated_value || 0) > 1_000_000) {
-        const proj = projects.find(p => p.id === v.project_id);
-        items.push({
-          id: `hv-${v.id}`, variationId: v.id,
-          title: v.title,
-          projectName: proj?.name || 'Unknown',
-          value: v.estimated_value || 0,
-          daysOld,
-          kind: 'high-value',
-          extra: daysOld > 7 ? `>10 days` : undefined,
-        });
-        seen.add(v.id);
-      }
-    }
-
-    // Disputed — group by project
+    // Disputed — group by project (always shown)
     const disputedByProject = new Map<string, { proj: Project & { variations: Variation[] }; vars: Variation[] }>();
     for (const v of filteredVariations.filter(v => v.status === 'disputed')) {
       const proj = projects.find(p => p.id === v.project_id);
       if (!proj) continue;
       if (!disputedByProject.has(proj.id)) disputedByProject.set(proj.id, { proj, vars: [] });
       disputedByProject.get(proj.id)!.vars.push(v);
+      seen.add(v.id);
     }
     for (const [, { proj, vars }] of disputedByProject) {
       const totalDisputed = vars.reduce((s, v) => s + (v.estimated_value || 0), 0);
@@ -226,14 +191,56 @@ export default function Dashboard() {
       });
     }
 
-    // Sort: overdue first, then disputed, then high-value by value desc
-    const kindOrder: Record<string, number> = { overdue: 0, disputed: 1, 'high-value': 2 };
+    // Overdue — past due date (not approved/paid)
+    for (const v of filteredVariations.filter(v => v.response_due_date && !['approved','paid'].includes(v.status))) {
+      if (seen.has(v.id)) continue;
+      const due = new Date(v.response_due_date! + 'T00:00:00');
+      const diffMs = due.getTime() - now.getTime();
+      if (diffMs < 0) {
+        const proj = projects.find(p => p.id === v.project_id);
+        const daysOverdue = Math.ceil(-diffMs / 86400000);
+        items.push({
+          id: `od-${v.id}`, variationId: v.id,
+          title: v.title,
+          projectName: proj?.name || 'Unknown',
+          value: v.estimated_value || 0,
+          daysOld: daysSince(v.captured_at),
+          kind: 'overdue',
+          extra: `${daysOverdue}d overdue`,
+        });
+        seen.add(v.id);
+      }
+    }
+
+    // Due soon — within 3 days (not approved/paid)
+    for (const v of filteredVariations.filter(v => v.response_due_date && !['approved','paid'].includes(v.status))) {
+      if (seen.has(v.id)) continue;
+      const due = new Date(v.response_due_date! + 'T00:00:00');
+      const diffMs = due.getTime() - now.getTime();
+      if (diffMs >= 0 && diffMs <= threeDaysMs) {
+        const proj = projects.find(p => p.id === v.project_id);
+        const daysLeft = Math.ceil(diffMs / 86400000);
+        items.push({
+          id: `ds-${v.id}`, variationId: v.id,
+          title: v.title,
+          projectName: proj?.name || 'Unknown',
+          value: v.estimated_value || 0,
+          daysOld: daysSince(v.captured_at),
+          kind: 'due-soon',
+          extra: daysLeft === 0 ? 'Due today' : `Due in ${daysLeft}d`,
+        });
+        seen.add(v.id);
+      }
+    }
+
+    // Sort: overdue first, then due-soon, then disputed; within group by value desc
+    const kindOrder: Record<string, number> = { overdue: 0, 'due-soon': 1, disputed: 2 };
     return items.sort((a, b) => {
       const kDiff = (kindOrder[a.kind] ?? 3) - (kindOrder[b.kind] ?? 3);
       if (kDiff !== 0) return kDiff;
       return b.value - a.value;
     });
-  }, [filteredVariations, submittedVars, projects]);
+  }, [filteredVariations, projects]);
 
   // ── Render guards ─────────────────────────────────────────────────────────────
 
@@ -518,13 +525,13 @@ export default function Dashboard() {
                             <div className="text-[13px] text-[#1C1C1E] leading-snug">
                               <span className="font-semibold">
                                 {item.kind === 'overdue' ? 'Response Overdue: '
-                                  : item.kind === 'high-value' ? 'High Value Alert: '
+                                  : item.kind === 'due-soon' ? 'Due Soon: '
                                   : 'Dispute Escalation: '}
                               </span>
                               {item.kind === 'overdue'
                                 ? `${item.projectName} — "${item.title}" response is ${item.extra}`
-                                : item.kind === 'high-value'
-                                ? `${item.projectName} variation (${formatCurrency(item.value)}) has been 'Submitted' for >${item.daysOld} days`
+                                : item.kind === 'due-soon'
+                                ? `${item.projectName} — "${item.title}" — ${item.extra}`
                                 : `${item.extra} at ${item.projectName} marked 'Disputed'`
                               }
                             </div>
@@ -539,7 +546,7 @@ export default function Dashboard() {
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700">
-                                  Submitted
+                                  Due Soon
                                 </span>
                               )}
                             </div>

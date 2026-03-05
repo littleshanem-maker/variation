@@ -84,6 +84,7 @@ function NewRequestForm() {
     if (!projectId) { setError('Please select a project.'); return; }
     if (!title.trim()) { setError('Please enter a title.'); return; }
     if (!description.trim()) { setError('Please describe the variation.'); return; }
+    if (!responseDueDate) { setError('Please set a response due date.'); return; }
 
     setSaving(true);
     try {
@@ -252,8 +253,8 @@ function NewRequestForm() {
 
             {/* Response due date */}
             <div>
-              <label className={labelClass}>Response Due Date</label>
-              <input type="date" value={responseDueDate} onChange={e => setResponseDueDate(e.target.value)} className={inputClass} />
+              <label className={labelClass}>Response Due Date <span className="text-red-500">*</span></label>
+              <input type="date" required value={responseDueDate} onChange={e => setResponseDueDate(e.target.value)} className={inputClass} />
             </div>
           </div>
 
