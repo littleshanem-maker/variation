@@ -65,7 +65,9 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
         {/* Logo */}
         <div className="px-6 py-6">
           <div className="flex items-center gap-3">
-            <Image src="/variation-shield-logo.jpg" alt="Variation Shield" width={32} height={32} className="rounded-md object-cover" />
+            <div className="w-8 h-8 rounded-md bg-indigo-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
+              <Image src="/variation-shield-logo.jpg" alt="Variation Shield" width={32} height={32} className="object-cover" />
+            </div>
             <span className="font-semibold text-[15px] tracking-tight">Variation Shield</span>
           </div>
           {company && (

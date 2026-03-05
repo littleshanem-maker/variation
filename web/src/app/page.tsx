@@ -312,7 +312,7 @@ export default function Dashboard() {
                     {atRiskVars.length} unresolved
                   </span>
                 </div>
-                <div className="text-[34px] font-black tabular-nums leading-none text-[#DC2626]">
+                <div className="text-[34px] font-black tabular-nums leading-none text-rose-600">
                   {formatCurrency(atRiskTotal)}
                 </div>
                 <div className="mt-2 text-[12px] text-[#9CA3AF]">Disputed + draft + captured</div>

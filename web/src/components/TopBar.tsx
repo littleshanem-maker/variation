@@ -39,7 +39,7 @@ export default function TopBar({ title }: { title: string }) {
         {/* Global creation CTAs */}
         <Link
           href="/notice/new"
-          className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors shadow-sm"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-indigo-600 bg-white border border-indigo-500 hover:bg-indigo-50 rounded-lg transition-colors shadow-sm"
         >
           <Plus size={15} strokeWidth={2.5} />
           New Notice
