@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import AppShell from '@/components/AppShell';
@@ -25,6 +25,7 @@ export default function VariationDetail() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const autoEdit = searchParams.get('edit') === '1';
+  const autoEditFired = useRef(false);
   const [variation, setVariation] = useState<Variation | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [photos, setPhotos] = useState<PhotoEvidence[]>([]);
@@ -318,8 +319,9 @@ export default function VariationDetail() {
 
     setLoading(false);
 
-    // Auto-open edit mode when arriving from notice conversion
-    if (autoEdit && v && EDITABLE_STATUSES.includes(v.status)) {
+    // Auto-open edit mode when arriving from notice conversion (only fires once)
+    if (autoEdit && !autoEditFired.current && v && EDITABLE_STATUSES.includes(v.status)) {
+      autoEditFired.current = true;
       setEditTitle(v.title);
       setEditDescription(v.description || v.ai_description || '');
       setEditSource(v.instruction_source === 'written' ? 'other' : (v.instruction_source || 'verbal'));
