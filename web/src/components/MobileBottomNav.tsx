@@ -40,7 +40,7 @@ export default function MobileBottomNav() {
 
       {/* FAB action menu — floats above the FAB button */}
       {fabOpen && (
-        <div className="fixed bottom-36 right-4 z-50 flex flex-col items-end gap-3">
+        <div className="fixed bottom-36 right-4 z-[60] flex flex-col items-end gap-3">
           <Link
             href="/notice/new"
             onClick={() => setFabOpen(false)}
