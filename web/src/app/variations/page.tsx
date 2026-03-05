@@ -2,7 +2,6 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
@@ -203,16 +202,7 @@ function VariationsList() {
       <TopBar title="Variation Register" />
       <div className="p-4 md:p-8 space-y-5 md:space-y-6">
         <div>
-          <Link
-            href="/"
-            className="flex items-center gap-2 w-full bg-white border border-[#E5E7EB] rounded-md px-4 py-3 text-[14px] font-semibold text-[#1B365D] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
-          >
-            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="flex-shrink-0">
-              <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Back to Dashboard
-          </Link>
-          <h2 className="text-xl font-semibold text-[#1C1C1E] mt-3">Variation Register</h2>
+          <h2 className="text-xl font-semibold text-[#1C1C1E]">Variation Register</h2>
           <p className="text-[13px] text-[#6B7280] mt-1">
             {filtered.length} variations · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value
           </p>
