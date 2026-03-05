@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { createClient } from '@/lib/supabase';
+import Logo from '@/components/Logo';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -39,7 +39,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm mx-auto px-6">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <Image src="/vs-icon.svg" alt="Variation Shield" width={64} height={64} className="rounded-xl mb-5" />
+          <Logo size={64} className="mb-5" />
           <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#1C1C1E' }}>
             Welcome back
           </h1>
