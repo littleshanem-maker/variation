@@ -268,7 +268,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                     className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
                   >
                     <ArrowUpRight size={15} />
-                    {acting ? 'Saving…' : 'Submit to Client'}
+                    {acting ? 'Saving…' : 'Mark as Submitted'}
                   </button>
                   <Link
                     href={`/variation/${variation.id}`}
