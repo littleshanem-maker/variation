@@ -403,7 +403,7 @@ export default function VariationDetail() {
             <span className="truncate">Back to {project.name}</span>
           </Link>
           {!editing && (
-            <div className="space-y-3">
+            <div className="hidden md:block space-y-3">
               {/* Step 1 — Draft: primary is Submit */}
               {isDraft && !isField && (
                 <div className="flex flex-wrap items-center gap-2">
@@ -945,6 +945,61 @@ export default function VariationDetail() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+      {/* Mobile sticky action bar */}
+      {!editing && !isField && (
+        <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 bg-white border-t border-slate-200 px-4 py-3 flex items-center gap-2 shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
+          {isDraft && (
+            <>
+              <button
+                onClick={() => handleAdvanceStatus('submitted')}
+                disabled={advancingStatus}
+                className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl disabled:opacity-40 transition-colors active:bg-indigo-700"
+              >
+                <Send size={15} />
+                {advancingStatus ? 'Saving…' : 'Mark as Submitted'}
+              </button>
+              <button onClick={startEditing} className="px-3 py-3 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                Edit
+              </button>
+            </>
+          )}
+          {isSubmitted && (
+            <>
+              <button
+                onClick={() => handleAdvanceStatus('approved')}
+                disabled={advancingStatus}
+                className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-emerald-600 rounded-xl disabled:opacity-40 transition-colors active:bg-emerald-700"
+              >
+                <CheckCircle size={15} /> {advancingStatus ? '…' : 'Mark as Approved'}
+              </button>
+              <button
+                onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }}
+                disabled={advancingStatus}
+                className="px-3 py-3 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-xl"
+              >
+                Dispute
+              </button>
+            </>
+          )}
+          {isDisputed && (
+            <button
+              onClick={startRevising}
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl transition-colors active:bg-indigo-700"
+            >
+              <ArrowUpRight size={15} /> Revise &amp; Resubmit
+            </button>
+          )}
+          {!isDraft && !isSubmitted && !isDisputed && (
+            <button
+              onClick={handleSendEmail}
+              disabled={sendingEmail}
+              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-slate-700 border border-slate-200 rounded-xl disabled:opacity-50"
+            >
+              {sendingEmail ? 'Preparing…' : '📎 Export PDF'}
+            </button>
+          )}
         </div>
       )}
     </AppShell>

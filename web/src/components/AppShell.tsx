@@ -1,26 +1,27 @@
 'use client';
 
-import { useState } from 'react';
 import Sidebar from './Sidebar';
 import MobileTopBar from './MobileTopBar';
+import MobileBottomNav from './MobileBottomNav';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
   return (
     <div className="min-h-screen bg-[#F8F8F6]">
-      {/* Sidebar — desktop: always visible; mobile: drawer controlled by sidebarOpen */}
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      {/* Desktop sidebar — hidden on mobile */}
+      <Sidebar />
 
-      {/* Mobile top bar — only visible below md breakpoint */}
+      {/* Mobile top bar — logo only, no hamburger */}
       <div className="md:hidden">
-        <MobileTopBar onMenuOpen={() => setSidebarOpen(true)} />
+        <MobileTopBar />
       </div>
 
-      {/* Main content — no left margin on mobile, 240px offset on desktop */}
-      <main className="md:ml-[240px]">
+      {/* Main content */}
+      <main className="md:ml-[240px] pb-24 md:pb-0">
         {children}
       </main>
+
+      {/* Mobile bottom nav + FAB */}
+      <MobileBottomNav />
     </div>
   );
 }

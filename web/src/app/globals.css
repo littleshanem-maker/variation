@@ -37,3 +37,17 @@ body {
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
+
+/* Prevent iOS auto-zoom on input focus (requires font-size >= 16px on mobile) */
+@media (max-width: 767px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="date"],
+  input[type="tel"],
+  input[type="password"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}

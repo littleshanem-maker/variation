@@ -31,12 +31,7 @@ const nav: NavItem[] = [
   { label: 'Settings',           href: '/settings',  icon: Settings },
 ];
 
-interface SidebarProps {
-  open?: boolean;
-  onClose?: () => void;
-}
-
-export default function Sidebar({ open = false, onClose }: SidebarProps) {
+export default function Sidebar() {
   const pathname = usePathname();
   const { role, company } = useRole();
 
@@ -44,24 +39,9 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile overlay backdrop */}
-      {open && (
-        <div
-          className="fixed inset-0 z-40 bg-black/40 md:hidden"
-          onClick={onClose}
-          aria-hidden="true"
-        />
-      )}
 
       {/* Sidebar panel */}
-      <aside
-        className={`
-          fixed left-0 top-0 bottom-0 w-[240px] bg-[#020617] text-white flex flex-col z-50
-          transition-transform duration-300 ease-in-out
-          md:translate-x-0
-          ${open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        `}
-      >
+      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[240px] bg-[#020617] text-white flex-col z-50">
         {/* Logo */}
         <div className="px-6 py-6">
           <div className="flex items-center gap-3">
@@ -80,12 +60,13 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
           <div className="px-3 pb-2">
             <Link
               href="/capture"
-              onClick={onClose}
+              
               className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-indigo-600 text-white text-[13px] font-semibold hover:bg-indigo-700 transition-colors"
             >
               <Zap size={15} strokeWidth={2.5} />
               Quick Capture
             </Link>
+
           </div>
         )}
 
@@ -98,7 +79,7 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={onClose}
+                
                 className={`relative flex items-center gap-2.5 px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ease-out ${
                   active
                     ? 'text-white font-semibold'
