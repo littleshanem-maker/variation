@@ -413,7 +413,7 @@ export default function VariationDetail() {
                     className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
                   >
                     <Send size={14} />
-                    {advancingStatus ? 'Submitting…' : 'Submit to Client'}
+                    {advancingStatus ? 'Saving…' : 'Mark as Submitted'}
                   </button>
                   <button
                     onClick={startEditing}
@@ -440,14 +440,14 @@ export default function VariationDetail() {
                     disabled={advancingStatus}
                     className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
                   >
-                    <CheckCircle size={14} /> {advancingStatus ? '…' : 'Approve'}
+                    <CheckCircle size={14} /> {advancingStatus ? '…' : 'Mark as Approved'}
                   </button>
                   <button
                     onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }}
                     disabled={advancingStatus}
                     className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors"
                   >
-                    <XCircle size={14} /> Dispute
+                    <XCircle size={14} /> Mark as Disputed
                   </button>
                   <button
                     onClick={() => handleAdvanceStatus('draft')}
@@ -484,7 +484,7 @@ export default function VariationDetail() {
                   disabled={sendingEmail}
                   className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
                 >
-                  {sendingEmail ? 'Preparing...' : '📧 Send by Email'}
+                  {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
                 </button>
                 {!isDraft && !isSubmitted && !isDisputed && canRevise && (
                   <button

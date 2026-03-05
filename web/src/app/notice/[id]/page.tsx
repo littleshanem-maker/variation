@@ -266,7 +266,7 @@ export default function NoticeDetail() {
               disabled={sendingEmail}
               className="px-3 py-2.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/30 rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms] disabled:opacity-50 whitespace-nowrap"
             >
-              {sendingEmail ? 'Preparing...' : '📧 Send by Email'}
+              {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
             </button>
           </div>
         </div>

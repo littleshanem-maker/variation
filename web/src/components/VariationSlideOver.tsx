@@ -268,7 +268,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                     className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
                   >
                     <ArrowUpRight size={15} />
-                    {acting ? 'Submitting…' : 'Submit to Client'}
+                    {acting ? 'Saving…' : 'Mark as Submitted'}
                   </button>
                   <Link
                     href={`/variation/${variation.id}`}
@@ -289,14 +289,14 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                     className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
                   >
                     <CheckCircle size={15} />
-                    {acting ? '…' : 'Approve'}
+                    {acting ? '…' : 'Mark as Approved'}
                   </button>
                   <button
                     onClick={() => setShowDisputeInput(true)}
                     disabled={acting}
                     className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors"
                   >
-                    <XCircle size={15} /> Dispute
+                    <XCircle size={15} /> Mark as Disputed
                   </button>
                   <button
                     onClick={() => advanceStatus('draft')}
