@@ -43,7 +43,7 @@ export default function Dashboard() {
 
   // Global filters
   const [filterProject, setFilterProject] = useState<string>('all');
-  const [filterDateRange, setFilterDateRange] = useState<DateRangeKey>('30d');
+  const [filterDateRange, setFilterDateRange] = useState<DateRangeKey>('all');
 
   const { isField, companyId } = useRole();
 
