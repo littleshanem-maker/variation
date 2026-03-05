@@ -1,7 +1,7 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
+import Logo from './Logo';
 import { usePathname } from 'next/navigation';
 import { useRole } from '@/lib/role';
 import type { UserRole } from '@/lib/types';
@@ -45,9 +45,7 @@ export default function Sidebar() {
         {/* Logo */}
         <div className="px-6 py-6">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-md bg-indigo-600 flex items-center justify-center flex-shrink-0 overflow-hidden">
-              <Image src="/variation-shield-logo.jpg" alt="Variation Shield" width={32} height={32} className="object-cover" />
-            </div>
+            <Logo size={32} />
             <span className="font-semibold text-[15px] tracking-tight">Variation Shield</span>
           </div>
           {company && (
