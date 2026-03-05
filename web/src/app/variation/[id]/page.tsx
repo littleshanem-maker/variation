@@ -15,7 +15,7 @@ import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
 import { getVariationEmailMeta } from '@/lib/email';
 import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice } from '@/lib/types';
-import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight } from 'lucide-react';
+import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight, Mail } from 'lucide-react';
 
 const EDITABLE_STATUSES = ['draft', 'captured'];
 const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
@@ -46,6 +46,12 @@ export default function VariationDetail() {
   // Dispute reason flow
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
   const [disputeReason, setDisputeReason] = useState('');
+  // Send to client flow
+  const [showSendDialog, setShowSendDialog] = useState(false);
+  const [sendTo, setSendTo] = useState('');
+  const [sendMessage, setSendMessage] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sendResult, setSendResult] = useState<{ ok: boolean; msg: string } | null>(null);
   const [revisions, setRevisions] = useState<Variation[]>([]);
   const [sendingEmail, setSendingEmail] = useState(false);
 
@@ -338,6 +344,49 @@ export default function VariationDetail() {
     }
   }
 
+  async function handleSendToClient() {
+    if (!variation || !project || !sendTo.trim()) return;
+    setSending(true);
+    setSendResult(null);
+    try {
+      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, {
+        logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard
+      });
+      const blob = await htmlToPdfBlob(html, css);
+      const arrayBuffer = await blob.arrayBuffer();
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      const varNum = getVariationNumber(variation);
+      const res = await fetch('/api/send-variation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          to: sendTo.trim(),
+          subject: `Variation Notice — ${varNum} — ${project.name}`,
+          message: sendMessage.trim() || undefined,
+          pdfBase64: base64,
+          pdfFilename: `${varNum}-${project.name.replace(/\s+/g, '-')}.pdf`,
+          variationNumber: varNum,
+          projectName: project.name,
+          value: new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(variation.estimated_value / 100),
+          senderName: sender.name || sender.email,
+        }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        setSendResult({ ok: true, msg: `Sent to ${sendTo}` });
+        // Auto-advance to submitted if still draft
+        if (isDraft) await handleAdvanceStatus('submitted');
+        setTimeout(() => { setShowSendDialog(false); setSendResult(null); setSendTo(''); setSendMessage(''); }, 2000);
+      } else {
+        setSendResult({ ok: false, msg: json.error || 'Send failed. Check the email address and try again.' });
+      }
+    } catch {
+      setSendResult({ ok: false, msg: 'Something went wrong. Please try again.' });
+    } finally {
+      setSending(false);
+    }
+  }
+
   if (loading) {
     return (
       <AppShell><TopBar title="Variation" />
@@ -479,6 +528,12 @@ export default function VariationDetail() {
 
               {/* Secondary actions — always shown */}
               <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => { setShowSendDialog(true); setSendResult(null); }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors whitespace-nowrap"
+                >
+                  <Mail size={13} /> Send to Client
+                </button>
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}
@@ -869,6 +924,75 @@ export default function VariationDetail() {
           </div>
         )}
       </div>
+
+      {/* Send to Client Dialog */}
+      {showSendDialog && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => !sending && setShowSendDialog(false)}>
+          <div className="bg-white rounded-t-xl sm:rounded-xl border border-slate-200 shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-2 mb-1">
+              <Mail size={18} className="text-indigo-500 flex-shrink-0" />
+              <h3 className="text-[15px] font-semibold text-slate-900">Send to Client</h3>
+            </div>
+            <p className="text-[13px] text-slate-500 mb-4">
+              The variation PDF will be emailed directly to your client from <span className="font-medium text-slate-700">hello@leveragedsystems.com.au</span>.
+              {isDraft && <span className="block mt-1 text-indigo-600 font-medium">This will also mark the variation as Submitted.</span>}
+            </p>
+
+            {sendResult ? (
+              <div className={`px-4 py-3 rounded-lg text-[13px] font-medium ${sendResult.ok ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}`}>
+                {sendResult.ok ? '✓ ' : '✗ '}{sendResult.msg}
+              </div>
+            ) : (
+              <>
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1">
+                      Client Email Address <span className="text-rose-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={sendTo}
+                      onChange={e => setSendTo(e.target.value)}
+                      placeholder="pm@headcontractor.com.au"
+                      autoFocus
+                      className="w-full px-3 py-2.5 text-[14px] border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1">
+                      Message (optional)
+                    </label>
+                    <textarea
+                      value={sendMessage}
+                      onChange={e => setSendMessage(e.target.value)}
+                      rows={3}
+                      placeholder="Add a personal note to accompany the variation…"
+                      className="w-full px-3 py-2.5 text-[14px] border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none resize-none"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 mt-4">
+                  <button
+                    onClick={() => setShowSendDialog(false)}
+                    disabled={sending}
+                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSendToClient}
+                    disabled={!sendTo.trim() || sending}
+                    className="flex items-center gap-1.5 px-4 py-1.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors"
+                  >
+                    <Mail size={13} />
+                    {sending ? 'Sending…' : 'Send Now'}
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Dispute Reason Dialog */}
       {showDisputeDialog && (
