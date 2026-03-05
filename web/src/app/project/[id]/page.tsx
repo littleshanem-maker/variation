@@ -7,7 +7,7 @@ import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
-import { formatCurrency, formatDate, getVariationNumber, formatVariationNumber } from '@/lib/utils';
+import { formatCurrency, formatDate, getVariationNumber } from '@/lib/utils';
 import { printProjectRegister } from '@/lib/print';
 import { useRole } from '@/lib/role';
 import type { Project, Variation, VariationNotice } from '@/lib/types';
@@ -18,23 +18,15 @@ function ProjectDetailContent() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const prefilledNoticeId = searchParams.get('noticeId');
-  const autoOpenNewVar = searchParams.get('newVariation') === '1';
+  const _prefilledNoticeId = searchParams.get('noticeId'); // reserved for future use
   const [project, setProject] = useState<Project | null>(null);
   const [variations, setVariations] = useState<Variation[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortKey, setSortKey] = useState<SortKey>('sequence_number');
   const [sortAsc, setSortAsc] = useState(true);
   const [notices, setNotices] = useState<VariationNotice[]>([]);
-  const [showNewVariation, setShowNewVariation] = useState(false);
-  const [newTitle, setNewTitle] = useState('');
-  const [newDescription, setNewDescription] = useState('');
-  const [newSource, setNewSource] = useState('verbal');
-  const [newInstructedBy, setNewInstructedBy] = useState('');
-  const [newValue, setNewValue] = useState('');
-  const [newFiles, setNewFiles] = useState<File[]>([]);
-  const [newNoticeId, setNewNoticeId] = useState(prefilledNoticeId || '');
-  const [creatingVariation, setCreatingVariation] = useState(false);
+
+
 
   // Delete/Archive state
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -48,11 +40,7 @@ function ProjectDetailContent() {
     loadProject();
   }, [id]);
 
-  useEffect(() => {
-    if (autoOpenNewVar) {
-      setShowNewVariation(true);
-    }
-  }, [autoOpenNewVar]);
+
 
   async function loadProject() {
     const supabase = createClient();
@@ -73,81 +61,6 @@ function ProjectDetailContent() {
     if (project) {
       printProjectRegister(project, variations);
     }
-  }
-
-  async function handleCreateVariation() {
-    if (!newTitle.trim()) return;
-    setCreatingVariation(true);
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    const nextSeq = variations.length > 0 ? Math.max(...variations.map(v => v.sequence_number)) + 1 : 1;
-    const valueCents = Math.round(parseFloat(newValue || '0') * 100);
-    const variationId = crypto.randomUUID();
-    const variationNumber = formatVariationNumber(nextSeq);
-
-    let requestorName: string | null = null;
-    let requestorEmail: string | null = null;
-    if (user) {
-      requestorEmail = user.email ?? null;
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name')
-        .eq('id', user.id)
-        .single();
-      requestorName =
-        profile?.full_name ??
-        (user.user_metadata?.full_name as string | undefined) ??
-        (user.user_metadata?.name as string | undefined) ??
-        null;
-    }
-
-    const { error } = await supabase.from('variations').insert({
-      id: variationId,
-      project_id: id,
-      sequence_number: nextSeq,
-      variation_number: variationNumber,
-      title: newTitle.trim(),
-      description: newDescription.trim(),
-      instruction_source: newSource,
-      instructed_by: newInstructedBy.trim() || null,
-      estimated_value: valueCents,
-      status: 'draft',
-      captured_at: new Date().toISOString(),
-      requestor_name: requestorName,
-      requestor_email: requestorEmail,
-      notice_id: newNoticeId || null,
-    });
-
-    if (!error && newFiles.length > 0 && user) {
-      for (const file of newFiles) {
-        const docId = crypto.randomUUID();
-        const storagePath = `${user.id}/documents/${docId}/${file.name}`;
-        const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file);
-        if (!uploadErr) {
-          await supabase.from('documents').insert({
-            id: docId,
-            variation_id: variationId,
-            file_name: file.name,
-            file_type: file.type,
-            file_size: file.size,
-            storage_path: storagePath,
-          });
-        }
-      }
-    }
-
-    if (!error) {
-      setNewTitle('');
-      setNewDescription('');
-      setNewSource('verbal');
-      setNewInstructedBy('');
-      setNewValue('');
-      setNewFiles([]);
-      setNewNoticeId('');
-      setShowNewVariation(false);
-      loadProject();
-    }
-    setCreatingVariation(false);
   }
 
   async function handleDeleteProject() {
@@ -247,23 +160,6 @@ function ProjectDetailContent() {
           </div>
           {/* Action buttons */}
           <div className="space-y-2 mt-3">
-            {/* Primary row — full width on mobile, side by side */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => setShowNewVariation(true)}
-                className="flex-1 px-4 py-2.5 text-[13px] font-semibold text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] whitespace-nowrap"
-              >
-                + New Variation
-              </button>
-              {!isField && (
-                <Link
-                  href={`/notice/new?projectId=${project.id}`}
-                  className="flex-1 px-4 py-2.5 text-[13px] font-medium text-center text-[#1B365D] bg-white border border-[#1B365D] rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms] whitespace-nowrap"
-                >
-                  + New Variation Notice
-                </Link>
-              )}
-            </div>
             {/* Destructive row — right-aligned, text-only style */}
             {(!isField || isAdmin) && (
               <div className="flex justify-end gap-3">
@@ -450,161 +346,7 @@ function ProjectDetailContent() {
           </>
         )}
 
-        {/* New Variation Modal */}
-        {showNewVariation && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowNewVariation(false)}>
-            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-lg max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-              <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">New Variation</h3>
-              {project.notice_required && (
-                <div className="mb-4 flex items-start gap-2 px-3 py-2.5 bg-[#FDF8ED] border border-[#C8943E]/30 rounded-md text-[13px]">
-                  <span className="text-[#92722E] mt-0.5">⚠</span>
-                  <div>
-                    <span className="text-[#92722E]">This project requires a Variation Notice. Consider issuing a notice before submitting this request.{' '}</span>
-                    <Link href={`/notice/new?projectId=${project.id}`} className="text-[#1B365D] font-medium hover:text-[#24466F] transition-colors" onClick={() => setShowNewVariation(false)}>
-                      Create Notice First →
-                    </Link>
-                  </div>
-                </div>
-              )}
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Title</label>
-                  <input
-                    type="text"
-                    value={newTitle}
-                    onChange={e => setNewTitle(e.target.value)}
-                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
-                    placeholder="e.g. Additional fire dampers — Level 3"
-                    autoFocus
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Description</label>
-                  <textarea
-                    value={newDescription}
-                    onChange={e => setNewDescription(e.target.value)}
-                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none resize-none"
-                    rows={3}
-                    placeholder="Describe the scope change..."
-                  />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Instruction Source</label>
-                    <select
-                      value={newSource}
-                      onChange={e => setNewSource(e.target.value)}
-                      className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white"
-                    >
-                      <option value="verbal">Verbal</option>
-                      <option value="email">Email</option>
-                      <option value="site_instruction">Site Instruction</option>
-                      <option value="drawing_revision">Drawing Revision</option>
-                      <option value="rfi">RFI</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Instructed By</label>
-                    <input
-                      type="text"
-                      value={newInstructedBy}
-                      onChange={e => setNewInstructedBy(e.target.value)}
-                      className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
-                      placeholder="e.g. John Smith"
-                    />
-                  </div>
-                </div>
-                {!isField && (
-                  <div>
-                    <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Estimated Value ($)</label>
-                    <input
-                      type="number"
-                      value={newValue}
-                      onChange={e => setNewValue(e.target.value)}
-                      className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
-                      placeholder="0.00"
-                      step="0.01"
-                      min="0"
-                    />
-                  </div>
-                )}
-                {(() => {
-                  const unlinkableNotices = notices.filter(n => n.status === 'issued' && !variations.some(v => v.notice_id === n.id));
-                  if (unlinkableNotices.length === 0) return null;
-                  return (
-                    <div>
-                      <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Link to Variation Notice (optional)</label>
-                      <select
-                        value={newNoticeId}
-                        onChange={e => setNewNoticeId(e.target.value)}
-                        className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white"
-                      >
-                        <option value="">None</option>
-                        {unlinkableNotices.map(n => (
-                          <option key={n.id} value={n.id}>{n.notice_number} — {n.event_description.substring(0, 50)}</option>
-                        ))}
-                      </select>
-                    </div>
-                  );
-                })()}
-                <div>
-                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Attachments</label>
-                  <div
-                    className="w-full px-3 py-4 border border-dashed border-[#D1D5DB] rounded-md text-center cursor-pointer hover:border-[#1B365D] hover:bg-[#F8FAFC] transition-colors duration-[120ms]"
-                    onClick={() => document.getElementById('file-input')?.click()}
-                  >
-                    <input
-                      id="file-input"
-                      type="file"
-                      multiple
-                      className="hidden"
-                      accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.heic"
-                      onChange={e => {
-                        if (e.target.files) {
-                          setNewFiles(prev => [...prev, ...Array.from(e.target.files!)]);
-                        }
-                      }}
-                    />
-                    <p className="text-[13px] text-[#6B7280]">Click to attach files</p>
-                    <p className="text-[11px] text-[#9CA3AF] mt-1">PDF, Word, Excel, Images</p>
-                  </div>
-                  {newFiles.length > 0 && (
-                    <div className="mt-2 space-y-1">
-                      {newFiles.map((f, i) => (
-                        <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-[#F8F8F6] rounded text-[13px]">
-                          <span className="text-[#1C1C1E] truncate">{f.name}</span>
-                          <button
-                            type="button"
-                            onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))}
-                            className="text-[#9CA3AF] hover:text-[#B25B4E] ml-2 transition-colors"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex justify-end gap-2 mt-5">
-                <button
-                  onClick={() => setShowNewVariation(false)}
-                  className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms]"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleCreateVariation}
-                  disabled={creatingVariation || !newTitle.trim()}
-                  className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
-                >
-                  {creatingVariation ? 'Creating...' : 'Create Variation'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+
       </div>
 
       {/* Delete Project Confirmation Modal */}

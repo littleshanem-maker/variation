@@ -36,13 +36,20 @@ export default function TopBar({ title }: { title: string }) {
         )}
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        {/* Global New Variation — always accessible */}
+        {/* Global creation CTAs */}
+        <Link
+          href="/notice/new"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors shadow-sm"
+        >
+          <Plus size={15} strokeWidth={2.5} />
+          New Notice
+        </Link>
         <Link
           href="/variation/new"
           className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
         >
           <Plus size={15} strokeWidth={2.5} />
-          New Variation
+          New Request
         </Link>
         <button
           onClick={handleLogout}

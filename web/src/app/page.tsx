@@ -367,20 +367,6 @@ export default function Dashboard() {
             <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
               <h2 className="text-[16px] font-bold text-[#1C1C1E]">Project Financial Health (Visual)</h2>
               <div className="flex items-center gap-2">
-                {/* Quick Notice */}
-                <Link
-                  href="/capture"
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-[#E85D1A] bg-white border border-[#E85D1A] hover:bg-orange-50 rounded-lg transition-colors"
-                >
-                  ⚡ Quick Notice
-                </Link>
-                {/* Quick Request — ghost/outline, defers to global header CTA */}
-                <Link
-                  href="/variation/new"
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors"
-                >
-                  + Quick Request
-                </Link>
                 {!isField && (
                   <button
                     onClick={() => setShowNewProject(true)}

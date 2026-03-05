@@ -15,7 +15,7 @@ import { htmlToPdfBlob } from '@/lib/pdf';
 import { useRole } from '@/lib/role';
 import type { Variation, Project } from '@/lib/types';
 import * as XLSX from 'xlsx';
-import { MoreHorizontal, Pencil, Send, Copy, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Pencil, Send, Trash2 } from 'lucide-react';
 
 type SortKey = 'sequence_number' | 'title' | 'project_name' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at' | 'response_due_date';
 
@@ -376,9 +376,6 @@ function VariationsList() {
                                     <Send size={13} /> Submit
                                   </DropdownMenuItem>
                                 )}
-                                <DropdownMenuItem onSelect={() => window.location.href = `/variation/new?duplicate=${v.id}`}>
-                                  <Copy size={13} /> Duplicate
-                                </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem destructive onSelect={() => {
                                   if (confirm(`Delete "${v.title}"? This cannot be undone.`)) {
