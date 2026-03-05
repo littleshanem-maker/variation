@@ -166,8 +166,8 @@ export default function Dashboard() {
   const urgentItems: UrgentItem[] = useMemo(() => {
     const items: UrgentItem[] = [];
     const seen = new Set<string>();
-    const now = new Date();
-    const threeDaysMs = 3 * 86400000;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     // Disputed — group by project (always shown)
     const disputedByProject = new Map<string, { proj: Project & { variations: Variation[] }; vars: Variation[] }>();
@@ -191,43 +191,22 @@ export default function Dashboard() {
       });
     }
 
-    // Overdue — past due date (not approved/paid)
+    // Due today or overdue (not approved/paid)
     for (const v of filteredVariations.filter(v => v.response_due_date && !['approved','paid'].includes(v.status))) {
       if (seen.has(v.id)) continue;
       const due = new Date(v.response_due_date! + 'T00:00:00');
-      const diffMs = due.getTime() - now.getTime();
-      if (diffMs < 0) {
+      if (due <= today) {
         const proj = projects.find(p => p.id === v.project_id);
-        const daysOverdue = Math.ceil(-diffMs / 86400000);
+        const diffMs = today.getTime() - due.getTime();
+        const daysOverdue = Math.round(diffMs / 86400000);
         items.push({
           id: `od-${v.id}`, variationId: v.id,
           title: v.title,
           projectName: proj?.name || 'Unknown',
           value: v.estimated_value || 0,
           daysOld: daysSince(v.captured_at),
-          kind: 'overdue',
-          extra: `${daysOverdue}d overdue`,
-        });
-        seen.add(v.id);
-      }
-    }
-
-    // Due soon — within 3 days (not approved/paid)
-    for (const v of filteredVariations.filter(v => v.response_due_date && !['approved','paid'].includes(v.status))) {
-      if (seen.has(v.id)) continue;
-      const due = new Date(v.response_due_date! + 'T00:00:00');
-      const diffMs = due.getTime() - now.getTime();
-      if (diffMs >= 0 && diffMs <= threeDaysMs) {
-        const proj = projects.find(p => p.id === v.project_id);
-        const daysLeft = Math.ceil(diffMs / 86400000);
-        items.push({
-          id: `ds-${v.id}`, variationId: v.id,
-          title: v.title,
-          projectName: proj?.name || 'Unknown',
-          value: v.estimated_value || 0,
-          daysOld: daysSince(v.captured_at),
-          kind: 'due-soon',
-          extra: daysLeft === 0 ? 'Due today' : `Due in ${daysLeft}d`,
+          kind: daysOverdue === 0 ? 'due-soon' : 'overdue',
+          extra: daysOverdue === 0 ? 'Due today' : `${daysOverdue}d overdue`,
         });
         seen.add(v.id);
       }
