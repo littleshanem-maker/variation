@@ -33,28 +33,13 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-white"
+      className="min-h-screen flex flex-col items-center justify-center"
+      style={{ backgroundColor: '#EEF2F7' }}
     >
-      {/* Top gradient band */}
-      <div
-        className="absolute top-0 left-0 right-0 h-64"
-        style={{
-          background: 'linear-gradient(180deg, #E2E8F0 0%, #EEF2F7 40%, rgba(255,255,255,0) 100%)',
-        }}
-      />
-
-      {/* Subtle color accent in the gradient */}
-      <div
-        className="absolute top-0 left-0 right-0 h-40 opacity-30"
-        style={{
-          background: 'linear-gradient(135deg, #CBD5E1 0%, #DDD6CC 50%, #C7D2E0 100%)',
-        }}
-      />
-
-      <div className="relative z-10 w-full max-w-sm mx-auto px-6">
+      <div className="w-full max-w-sm mx-auto px-6">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
-          <Image src="/variation-shield-logo.jpg" alt="Variation Shield" width={64} height={64} className="rounded-xl mb-5 object-cover" />
+          <Image src="/logo-icon.svg" alt="Variation Shield" width={64} height={64} className="rounded-xl mb-5" />
           <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#1C1C1E' }}>
             Welcome back
           </h1>
