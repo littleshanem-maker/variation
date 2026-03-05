@@ -457,12 +457,10 @@ export default function VariationDetail() {
               {isDraft && !isField && (
                 <div className="flex flex-wrap items-center gap-2">
                   <button
-                    onClick={() => handleAdvanceStatus('submitted')}
-                    disabled={advancingStatus}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
+                    onClick={() => { setShowSendDialog(true); setSendResult(null); }}
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
                   >
-                    <Send size={14} />
-                    {advancingStatus ? 'Saving…' : 'Mark as Submitted'}
+                    <Send size={14} /> Submit to Client
                   </button>
                   <button
                     onClick={startEditing}
@@ -528,12 +526,6 @@ export default function VariationDetail() {
 
               {/* Secondary actions — always shown */}
               <div className="flex flex-wrap items-center gap-2">
-                <button
-                  onClick={() => { setShowSendDialog(true); setSendResult(null); }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors whitespace-nowrap"
-                >
-                  <Mail size={13} /> Send to Client
-                </button>
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}
@@ -931,11 +923,11 @@ export default function VariationDetail() {
           <div className="bg-white rounded-t-xl sm:rounded-xl border border-slate-200 shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-2 mb-1">
               <Mail size={18} className="text-indigo-500 flex-shrink-0" />
-              <h3 className="text-[15px] font-semibold text-slate-900">Send to Client</h3>
+              <h3 className="text-[15px] font-semibold text-slate-900">Submit to Client</h3>
             </div>
             <p className="text-[13px] text-slate-500 mb-4">
               The variation PDF will be emailed directly to your client from <span className="font-medium text-slate-700">hello@leveragedsystems.com.au</span>.
-              {isDraft && <span className="block mt-1 text-indigo-600 font-medium">This will also mark the variation as Submitted.</span>}
+              {isDraft && <span className="block mt-1 text-indigo-600 font-medium">Sending this will mark the variation as Submitted.</span>}
             </p>
 
             {sendResult ? (
