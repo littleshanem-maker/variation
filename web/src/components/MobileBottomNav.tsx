@@ -38,13 +38,13 @@ export default function MobileBottomNav() {
         />
       )}
 
-      {/* FAB action menu */}
+      {/* FAB action menu — floats above the FAB button */}
       {fabOpen && (
-        <div className="fixed bottom-[88px] right-4 z-50 flex flex-col items-end gap-2.5">
+        <div className="fixed bottom-36 right-4 z-50 flex flex-col items-end gap-3">
           <Link
             href="/notice/new"
             onClick={() => setFabOpen(false)}
-            className="flex items-center gap-2 px-4 py-3 bg-white border border-indigo-500 text-indigo-600 text-[14px] font-semibold rounded-2xl shadow-xl"
+            className="flex items-center gap-2 px-5 py-3 bg-white border border-indigo-500 text-indigo-600 text-[15px] font-semibold rounded-2xl shadow-xl whitespace-nowrap"
           >
             <FileText size={16} />
             New Notice
@@ -52,7 +52,7 @@ export default function MobileBottomNav() {
           <Link
             href="/variation/new"
             onClick={() => setFabOpen(false)}
-            className="flex items-center gap-2 px-4 py-3 bg-indigo-600 text-white text-[14px] font-semibold rounded-2xl shadow-xl"
+            className="flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white text-[15px] font-semibold rounded-2xl shadow-xl whitespace-nowrap"
           >
             <Plus size={16} />
             New Request
@@ -64,7 +64,7 @@ export default function MobileBottomNav() {
       <button
         onClick={() => setFabOpen(prev => !prev)}
         aria-label="Create new"
-        className="fixed bottom-[72px] right-4 z-50 w-14 h-14 rounded-full bg-indigo-600 text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform md:hidden"
+        className="fixed bottom-[76px] right-4 z-50 w-14 h-14 rounded-full bg-indigo-600 text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform md:hidden"
       >
         {fabOpen
           ? <X size={24} strokeWidth={2.5} />
