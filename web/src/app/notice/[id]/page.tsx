@@ -142,7 +142,7 @@ export default function NoticeDetail() {
       sequence_number: nextSeq,
       title: autoTitle,
       description: notice.event_description,
-      instruction_source: 'written',
+      instruction_source: 'other',
       instructed_by: notice.issued_by_name || null,
       estimated_value: 0,
       status: 'draft',
@@ -163,8 +163,8 @@ export default function NoticeDetail() {
       return;
     }
 
-    // Navigate to the new variation
-    router.push(`/variation/${varId}`);
+    // Navigate to the new variation in edit mode so user can fill in value + details
+    router.push(`/variation/${varId}?edit=1`);
   }
 
   function handlePrint() {

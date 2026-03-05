@@ -3,7 +3,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
@@ -23,6 +23,8 @@ const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
 export default function VariationDetail() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const autoEdit = searchParams.get('edit') === '1';
   const [variation, setVariation] = useState<Variation | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [photos, setPhotos] = useState<PhotoEvidence[]>([]);
@@ -315,6 +317,20 @@ export default function VariationDetail() {
     }
 
     setLoading(false);
+
+    // Auto-open edit mode when arriving from notice conversion
+    if (autoEdit && v && EDITABLE_STATUSES.includes(v.status)) {
+      setEditTitle(v.title);
+      setEditDescription(v.description || v.ai_description || '');
+      setEditSource(v.instruction_source === 'written' ? 'other' : (v.instruction_source || 'verbal'));
+      setEditInstructedBy(v.instructed_by || '');
+      setEditValue(((v.estimated_value ?? 0) / 100).toFixed(2));
+      setEditStatus(v.status);
+      setEditNotes(v.notes || '');
+      setEditReferenceDoc(v.reference_doc || '');
+      setEditDueDate(v.response_due_date || '');
+      setEditing(true);
+    }
   }
 
   function handlePrint() {
