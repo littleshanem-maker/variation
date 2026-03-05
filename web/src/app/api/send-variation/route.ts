@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = 'Variation Shield <hello@leveragedsystems.com.au>';
 
 export async function POST(req: NextRequest) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    return NextResponse.json({ error: 'Email service not configured' }, { status: 500 });
+  }
+  const resend = new Resend(apiKey);
+
   try {
     const body = await req.json();
     const { to, subject, message, pdfBase64, pdfFilename, variationNumber, projectName, value, senderName } = body;
