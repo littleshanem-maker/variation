@@ -21,7 +21,7 @@ export default function MobileBottomNav() {
   const tabs = [
     { label: 'Dashboard', href: '/', icon: LayoutDashboard, roles: [] },
     { label: 'Register', href: '/variations', icon: ClipboardList, roles: ['admin', 'office'] },
-    { label: 'Notices', href: '/notices', icon: FileText, roles: ['admin', 'office'] },
+    { label: 'Notices',  href: '/notices',   icon: FileText,      roles: ['admin', 'office'] },
     { label: 'Settings', href: '/settings', icon: Settings, roles: [] },
   ].filter(t => t.roles.length === 0 || t.roles.includes(role));
 
