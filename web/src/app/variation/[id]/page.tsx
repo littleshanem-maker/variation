@@ -235,7 +235,22 @@ export default function VariationDetail() {
     setAdvancingStatus(true);
     const supabase = createClient();
     const oldStatus = variation.status;
-    const { error } = await supabase.from('variations').update({ status: newStatus }).eq('id', variation.id);
+
+    // When resubmitting after a withdraw, increment revision_number
+    let updatePayload: Record<string, unknown> = { status: newStatus };
+    if (newStatus === 'submitted') {
+      const { data: prevSubmits } = await supabase
+        .from('status_changes')
+        .select('id')
+        .eq('variation_id', variation.id)
+        .eq('to_status', 'submitted')
+        .limit(1);
+      if (prevSubmits && prevSubmits.length > 0) {
+        updatePayload.revision_number = (variation.revision_number ?? 0) + 1;
+      }
+    }
+
+    const { error } = await supabase.from('variations').update(updatePayload).eq('id', variation.id);
     if (!error) {
       const { data: { user } } = await supabase.auth.getUser();
       const changedBy = user?.email ?? 'Office';
