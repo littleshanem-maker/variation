@@ -8,6 +8,7 @@ import TopBar from '@/components/TopBar';
 import { createClient } from '@/lib/supabase';
 import { formatNoticeNumber } from '@/lib/utils';
 import { useRole } from '@/lib/role';
+import AttachmentPicker from '@/components/AttachmentPicker';
 import type { Project } from '@/lib/types';
 
 function NewNoticeForm() {
@@ -26,6 +27,7 @@ function NewNoticeForm() {
   const [contractClause, setContractClause] = useState('');
   const [issuedByName, setIssuedByName] = useState('');
   const [issuedByEmail, setIssuedByEmail] = useState('');
+  const [attachments, setAttachments] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -98,6 +100,28 @@ function NewNoticeForm() {
       .single();
 
     if (!error && inserted) {
+      // Upload attachments
+      if (attachments.length > 0) {
+        const supabase2 = createClient();
+        const { data: { user } } = await supabase2.auth.getUser();
+        if (user) {
+          for (const file of attachments) {
+            const docId = crypto.randomUUID();
+            const storagePath = `${user.id}/documents/${docId}/${file.name}`;
+            const { error: uploadErr } = await supabase2.storage.from('documents').upload(storagePath, file);
+            if (!uploadErr) {
+              await supabase2.from('documents').insert({
+                id: docId,
+                notice_id: inserted.id,
+                file_name: file.name,
+                file_type: file.type,
+                file_size: file.size,
+                storage_path: storagePath,
+              });
+            }
+          }
+        }
+      }
       router.push(`/notice/${inserted.id}`);
     } else {
       console.error('Failed to create notice:', error);
@@ -247,6 +271,11 @@ function NewNoticeForm() {
               />
             </div>
           </div>
+        </div>
+
+        {/* Attachments */}
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <AttachmentPicker files={attachments} onChange={setAttachments} label="Photos & Files (optional)" />
         </div>
 
         {/* Actions */}

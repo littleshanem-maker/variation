@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
+import AttachmentPicker from '@/components/AttachmentPicker';
 import type { Project, Variation } from '@/lib/types';
 
 const inputClass =
@@ -39,6 +40,7 @@ function NewVariationForm() {
   const [basisOfValuation, setBasisOfValuation] = useState('');
   const [requestorName, setRequestorName] = useState('');
 
+  const [attachments, setAttachments] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -157,6 +159,25 @@ function NewVariationForm() {
       });
 
       if (insertError) throw new Error(insertError.message);
+
+      // Upload attachments
+      if (attachments.length > 0) {
+        for (const file of attachments) {
+          const docId = crypto.randomUUID();
+          const storagePath = `${user.id}/documents/${docId}/${file.name}`;
+          const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file);
+          if (!uploadErr) {
+            await supabase.from('documents').insert({
+              id: docId,
+              variation_id: variationId,
+              file_name: file.name,
+              file_type: file.type,
+              file_size: file.size,
+              storage_path: storagePath,
+            });
+          }
+        }
+      }
 
       router.push(`/variation/${variationId}`);
     } catch (err: any) {
@@ -352,6 +373,12 @@ function NewVariationForm() {
                   <option value="reasonable_rates">By reasonable rates (no applicable Contract rates)</option>
                 </select>
                 <p className={hintClass}>As per Clause 36.3 (AS 4000) / Clause 40.2 (AS 2124)</p>
+              </div>
+
+              {/* Attachments */}
+              <div className="pt-2 pb-1 border-t border-gray-100">
+                <p className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF] mb-3">Attachments</p>
+                <AttachmentPicker files={attachments} onChange={setAttachments} label="Photos & Files" />
               </div>
 
               {/* Error */}
