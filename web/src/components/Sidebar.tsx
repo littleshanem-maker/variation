@@ -56,7 +56,7 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
       {/* Sidebar panel */}
       <aside
         className={`
-          fixed left-0 top-0 bottom-0 w-[240px] bg-[#1C2333] text-white flex flex-col z-50
+          fixed left-0 top-0 bottom-0 w-[240px] bg-[#020617] text-white flex flex-col z-50
           transition-transform duration-300 ease-in-out
           md:translate-x-0
           ${open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
@@ -79,7 +79,7 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
             <Link
               href="/capture"
               onClick={onClose}
-              className="flex items-center gap-2.5 px-3 py-2 rounded bg-[#D4A853] text-[#1B365D] text-[13px] font-semibold hover:bg-[#c49840] transition-colors"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-indigo-600 text-white text-[13px] font-semibold hover:bg-indigo-700 transition-colors"
             >
               <Zap size={15} strokeWidth={2.5} />
               Quick Capture
@@ -99,12 +99,12 @@ export default function Sidebar({ open = false, onClose }: SidebarProps) {
                 onClick={onClose}
                 className={`relative flex items-center gap-2.5 px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ease-out ${
                   active
-                    ? 'bg-white/[0.08] text-white font-semibold'
-                    : 'text-white/45 hover:text-white/80 hover:bg-white/[0.05] font-medium'
+                    ? 'text-white font-semibold'
+                    : 'text-white/40 hover:text-white/75 hover:bg-white/[0.04] font-medium'
                 }`}
               >
                 {active && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#D4A853] rounded-r" />
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-indigo-500 rounded-r" />
                 )}
                 <Icon
                   size={15}

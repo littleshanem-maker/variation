@@ -374,10 +374,10 @@ export default function Dashboard() {
                 >
                   ⚡ Quick Notice
                 </Link>
-                {/* Quick Request — secondary, navy outline */}
+                {/* Quick Request — ghost/outline, defers to global header CTA */}
                 <Link
                   href="/variation/new"
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors"
                 >
                   + Quick Request
                 </Link>
