@@ -9,6 +9,9 @@ import { useRole } from '@/lib/role';
 
 export default function SettingsPage() {
   const [email, setEmail] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState('');
+  const [savingName, setSavingName] = useState(false);
+  const [nameSaved, setNameSaved] = useState(false);
   const [companyName, setCompanyName] = useState('');
   const [companyAbn, setCompanyAbn] = useState('');
   const [companyAddress, setCompanyAddress] = useState('');
@@ -26,6 +29,12 @@ export default function SettingsPage() {
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
       setEmail(session?.user?.email ?? null);
+      const meta = session?.user?.user_metadata ?? {};
+      const givenName = (meta.given_name ?? meta.first_name ?? '') as string;
+      const familyName = (meta.family_name ?? meta.last_name ?? '') as string;
+      const combined = [givenName, familyName].filter(Boolean).join(' ');
+      const name = (meta.full_name ?? meta.name ?? combined ?? '') as string;
+      setDisplayName(name);
     }
     load();
   }, []);
@@ -70,6 +79,22 @@ export default function SettingsPage() {
     const supabase = createClient();
     await supabase.auth.signOut();
     router.push('/login');
+  }
+
+  async function handleSaveDisplayName() {
+    if (!displayName.trim()) return;
+    setSavingName(true);
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({
+      data: { full_name: displayName.trim(), name: displayName.trim() },
+    });
+    if (error) {
+      alert('Failed to save name: ' + error.message);
+    } else {
+      setNameSaved(true);
+      setTimeout(() => setNameSaved(false), 2000);
+    }
+    setSavingName(false);
   }
 
   async function handleSaveCompany() {
@@ -121,6 +146,28 @@ export default function SettingsPage() {
                   {company && <span className="text-[13px] text-[#6B7280] truncate">{company.name}</span>}
                 </div>
               </div>
+              {/* Display Name */}
+              <div className="pt-1">
+                <label className="block text-[12px] font-medium text-[#6B7280] uppercase tracking-wider mb-1.5">Display Name</label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={displayName}
+                    onChange={e => setDisplayName(e.target.value)}
+                    placeholder="Your full name"
+                    className="flex-1 px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md bg-white text-[#1C1C1E] focus:outline-none focus:ring-1 focus:ring-[#1B365D]"
+                  />
+                  <button
+                    onClick={handleSaveDisplayName}
+                    disabled={savingName || !displayName.trim()}
+                    className="px-3 py-2 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
+                  >
+                    {nameSaved ? '✓ Saved' : savingName ? '…' : 'Save'}
+                  </button>
+                </div>
+                <p className="text-[12px] text-[#9CA3AF] mt-1">Used as &ldquo;Issued By&rdquo; on new notices.</p>
+              </div>
+
               <button
                 onClick={handleSignOut}
                 className="w-full py-2.5 px-3 text-[13px] font-medium text-[#B25B4E] bg-[#B25B4E]/5 border border-[#B25B4E]/15 rounded-md hover:bg-[#B25B4E]/10 transition-colors duration-[120ms] ease-out"

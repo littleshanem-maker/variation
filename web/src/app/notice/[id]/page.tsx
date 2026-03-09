@@ -245,14 +245,6 @@ export default function NoticeDetail() {
                 {advancing ? '…' : 'Mark Acknowledged'}
               </button>
             )}
-            {canCreateVR && (
-              <Link
-                href={`/project/${project.id}?noticeId=${notice.id}&newVariation=1`}
-                className="px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] whitespace-nowrap"
-              >
-                Create Variation Request
-              </Link>
-            )}
             {canDelete && (
               <button
                 onClick={() => setShowDeleteConfirm(true)}
@@ -337,8 +329,12 @@ export default function NoticeDetail() {
             </div>
             {notice.time_flag && notice.estimated_days != null && (
               <div>
-                <div className={labelClass}>Estimated Days</div>
-                <div className="text-[14px] text-[#1C1C1E]">{notice.estimated_days} day{notice.estimated_days !== 1 ? 's' : ''}</div>
+                <div className={labelClass}>Time Implication</div>
+                <div className="text-[14px] text-[#1C1C1E]">
+                  {notice.estimated_days} {notice.time_implication_unit === 'hours'
+                    ? `hour${notice.estimated_days !== 1 ? 's' : ''}`
+                    : `day${notice.estimated_days !== 1 ? 's' : ''}`}
+                </div>
               </div>
             )}
           </div>

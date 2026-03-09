@@ -104,6 +104,7 @@ export interface VariationNotice {
   cost_flag: boolean;
   time_flag: boolean;
   estimated_days?: number;
+  time_implication_unit?: 'hours' | 'days' | null;
   contract_clause?: string;
   issued_by_name?: string;
   issued_by_email?: string;

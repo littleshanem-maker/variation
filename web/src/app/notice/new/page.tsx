@@ -24,6 +24,7 @@ function NewNoticeForm() {
   const [costFlag, setCostFlag] = useState(true);
   const [timeFlag, setTimeFlag] = useState(false);
   const [estimatedDays, setEstimatedDays] = useState('');
+  const [timeUnit, setTimeUnit] = useState<'days' | 'hours'>('days');
   const [contractClause, setContractClause] = useState('');
   const [issuedByName, setIssuedByName] = useState('');
   const [issuedByEmail, setIssuedByEmail] = useState('');
@@ -48,10 +49,15 @@ function NewNoticeForm() {
           .select('full_name')
           .eq('id', user.id)
           .single();
+        const meta = user.user_metadata ?? {};
+        const givenName = (meta.given_name ?? meta.first_name ?? '') as string;
+        const familyName = (meta.family_name ?? meta.last_name ?? '') as string;
+        const combined = [givenName, familyName].filter(Boolean).join(' ');
         const fullName =
           profile?.full_name ??
-          (user.user_metadata?.full_name as string | undefined) ??
-          (user.user_metadata?.name as string | undefined) ??
+          (meta.full_name as string | undefined) ??
+          (meta.name as string | undefined) ??
+          combined ||
           '';
         setIssuedByName(fullName);
       }
@@ -88,6 +94,7 @@ function NewNoticeForm() {
         cost_flag: costFlag,
         time_flag: timeFlag,
         estimated_days: timeFlag && estimatedDays ? parseInt(estimatedDays) : null,
+        time_implication_unit: timeFlag && estimatedDays ? timeUnit : null,
         contract_clause: contractClause.trim() || null,
         issued_by_name: issuedByName.trim() || null,
         issued_by_email: issuedByEmail.trim() || null,
@@ -224,15 +231,25 @@ function NewNoticeForm() {
 
           {timeFlag && (
             <div>
-              <label className={labelClass}>Estimated Days</label>
-              <input
-                type="number"
-                value={estimatedDays}
-                onChange={e => setEstimatedDays(e.target.value)}
-                className={inputClass}
-                placeholder="e.g. 5"
-                min="1"
-              />
+              <label className={labelClass}>Time Implication</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  value={estimatedDays}
+                  onChange={e => setEstimatedDays(e.target.value)}
+                  className={`${inputClass} flex-1`}
+                  placeholder="e.g. 4"
+                  min="1"
+                />
+                <select
+                  value={timeUnit}
+                  onChange={e => setTimeUnit(e.target.value as 'days' | 'hours')}
+                  className="px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md bg-white text-[#1C1C1E] focus:outline-none focus:ring-1 focus:ring-[#1B365D]"
+                >
+                  <option value="hours">Hours</option>
+                  <option value="days">Days</option>
+                </select>
+              </div>
             </div>
           )}
 
