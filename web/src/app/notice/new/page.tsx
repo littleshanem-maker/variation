@@ -57,7 +57,7 @@ function NewNoticeForm() {
           profile?.full_name ??
           (meta.full_name as string | undefined) ??
           (meta.name as string | undefined) ??
-          combined ||
+          combined ??
           '';
         setIssuedByName(fullName);
       }
