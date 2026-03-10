@@ -17,6 +17,7 @@ interface TeamMember {
   accepted_at: string | null;
   email: string;
   full_name: string | null;
+  display_name: string | null;
 }
 
 interface PendingInvite {
@@ -42,6 +43,11 @@ export default function TeamPage() {
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
+  const [editMember, setEditMember] = useState<TeamMember | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editRole, setEditRole] = useState<UserRole>('field');
+  const [savingEdit, setSavingEdit] = useState(false);
+
   useEffect(() => {
     if (roleLoading) return;
     if (!isAdmin) {
@@ -59,7 +65,7 @@ export default function TeamPage() {
 
     const { data: memberData } = await supabase
       .from('company_members')
-      .select('id, company_id, user_id, role, is_active, invited_at, accepted_at')
+      .select('id, company_id, user_id, role, is_active, invited_at, accepted_at, display_name')
       .eq('company_id', companyId)
       .order('invited_at');
 
@@ -80,6 +86,7 @@ export default function TeamPage() {
         accepted_at: m.accepted_at,
         email: emailMap[m.user_id]?.email || m.user_id.slice(0, 8) + '...',
         full_name: emailMap[m.user_id]?.full_name || null,
+        display_name: (m as any).display_name || null,
       }));
       setMembers(enriched);
     }
@@ -142,6 +149,32 @@ export default function TeamPage() {
     loadTeam();
   }
 
+  function openEditModal(m: TeamMember) {
+    setEditMember(m);
+    setEditName(m.display_name || m.full_name || '');
+    setEditRole(m.role);
+  }
+
+  async function handleSaveEdit() {
+    if (!editMember) return;
+    setSavingEdit(true);
+    const supabase = createClient();
+    const { error } = await supabase
+      .from('company_members')
+      .update({
+        display_name: editName.trim() || null,
+        role: editRole,
+      })
+      .eq('id', editMember.id);
+    if (error) {
+      alert('Failed to save: ' + error.message);
+    } else {
+      setEditMember(null);
+      loadTeam();
+    }
+    setSavingEdit(false);
+  }
+
   async function handleRevokeInvite(inviteId: string) {
     const supabase = createClient();
     await supabase.from('invitations').delete().eq('id', inviteId);
@@ -188,22 +221,19 @@ export default function TeamPage() {
               {members.filter(m => m.is_active).map(m => (
                 <div key={m.id} className="px-4 md:px-5 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <div className="text-[14px] text-[#1C1C1E] break-all">{m.email}</div>
-                    {m.full_name && <div className="text-[12px] text-[#9CA3AF]">{m.full_name}</div>}
+                    <div className="text-[14px] font-medium text-[#1C1C1E]">{m.display_name || m.full_name || '—'}</div>
+                    <div className="text-[12px] text-[#9CA3AF] break-all">{m.email}</div>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
-                    <select
-                      value={m.role}
-                      onChange={e => handleChangeRole(m.id, e.target.value as UserRole)}
-                      className={`text-[12px] font-medium rounded-full px-2.5 py-1 border-0 cursor-pointer ${roleBadgeColors[m.role]}`}
-                    >
-                      <option value="admin">Admin</option>
-                      <option value="office">Office</option>
-                      <option value="field">Field</option>
-                    </select>
-                    <span className="text-[13px] text-[#9CA3AF] hidden sm:inline">
-                      {m.accepted_at ? new Date(m.accepted_at).toLocaleDateString() : 'Pending'}
+                    <span className={`inline-block px-2.5 py-1 text-[12px] font-medium rounded-full capitalize ${roleBadgeColors[m.role]}`}>
+                      {m.role}
                     </span>
+                    <button
+                      onClick={() => openEditModal(m)}
+                      className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors"
+                    >
+                      Edit
+                    </button>
                     <button
                       onClick={() => handleRemoveMember(m.id)}
                       className="text-[12px] text-[#9CA3AF] hover:text-[#B25B4E] transition-colors"
@@ -259,6 +289,65 @@ export default function TeamPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* Edit Member Modal */}
+        {editMember && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setEditMember(null)}>
+            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+              <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Edit Team Member</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Display Name</label>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={e => setEditName(e.target.value)}
+                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                    placeholder="Full name"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Email Address</label>
+                  <input
+                    type="text"
+                    value={editMember.email}
+                    readOnly
+                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md bg-[#F8F8F6] text-[#9CA3AF] cursor-not-allowed"
+                  />
+                  <p className="text-[11px] text-[#9CA3AF] mt-1">Email can only be changed by the member in their account settings.</p>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Role</label>
+                  <select
+                    value={editRole}
+                    onChange={e => setEditRole(e.target.value as UserRole)}
+                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white"
+                  >
+                    <option value="field">Field — capture variations only, no pricing</option>
+                    <option value="office">Office — full register, reports, pricing</option>
+                    <option value="admin">Admin — everything + team management</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-5">
+                <button
+                  onClick={() => setEditMember(null)}
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms]"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveEdit}
+                  disabled={savingEdit}
+                  className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
+                >
+                  {savingEdit ? 'Saving…' : 'Save Changes'}
+                </button>
+              </div>
             </div>
           </div>
         )}
