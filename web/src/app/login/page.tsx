@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
 import Logo from '@/components/Logo';
 
@@ -151,8 +152,15 @@ export default function LoginPage() {
           </a>
         </div>
 
-        <p className="text-center text-xs mt-10" style={{ color: '#C4C9D0' }}>
-          Leveraged Systems · Leveraged Systems
+        <p className="mt-6 text-center text-sm" style={{ color: '#6B7280' }}>
+          Don't have an account?{' '}
+          <Link href="/signup" className="font-medium" style={{ color: '#1B365D' }}>
+            Sign up
+          </Link>
+        </p>
+
+        <p className="text-center text-xs mt-8" style={{ color: '#C4C9D0' }}>
+          Leveraged Systems · Variation Shield
         </p>
       </div>
     </div>
