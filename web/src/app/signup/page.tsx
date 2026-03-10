@@ -45,33 +45,15 @@ export default function SignupPage() {
       return;
     }
 
-    // 2. Create company
+    // 2 & 3. Create company + membership via server-side RPC (bypasses RLS)
     const companyId = crypto.randomUUID();
-    const { error: companyError } = await supabase.from('companies').insert({
-      id: companyId,
-      name: 'My Company',
-      created_at: new Date().toISOString(),
+    const { error: provisionError } = await supabase.rpc('provision_new_account', {
+      p_company_id: companyId,
+      p_company_name: 'My Company',
     });
 
-    if (companyError) {
-      setError('Account created but company setup failed: ' + companyError.message);
-      setLoading(false);
-      return;
-    }
-
-    // 3. Create company_members record
-    const { error: memberError } = await supabase.from('company_members').insert({
-      id: crypto.randomUUID(),
-      company_id: companyId,
-      user_id: userId,
-      role: 'admin',
-      is_active: true,
-      invited_at: new Date().toISOString(),
-      accepted_at: new Date().toISOString(),
-    });
-
-    if (memberError) {
-      setError('Account created but membership setup failed: ' + memberError.message);
+    if (provisionError) {
+      setError('Account created but setup failed: ' + provisionError.message);
       setLoading(false);
       return;
     }
