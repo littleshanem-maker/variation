@@ -76,17 +76,37 @@ export default function CapturePage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    // Try full_name from profiles table
+    // Try display_name from company_members first (set via Settings)
+    const { data: member } = await supabase
+      .from('company_members')
+      .select('display_name')
+      .eq('user_id', user.id)
+      .eq('is_active', true)
+      .limit(1)
+      .single();
+
+    if (member?.display_name) {
+      setRequestorName(member.display_name);
+      return;
+    }
+
+    // Fall back to profiles table or user_metadata
     const { data: profile } = await supabase
       .from('profiles')
       .select('full_name')
       .eq('id', user.id)
       .single();
 
+    const meta = user.user_metadata ?? {};
+    const givenName = (meta.given_name ?? meta.first_name ?? '') as string;
+    const familyName = (meta.family_name ?? meta.last_name ?? '') as string;
+    const combined = [givenName, familyName].filter(Boolean).join(' ');
+
     const name =
       profile?.full_name ??
-      (user.user_metadata?.full_name as string | undefined) ??
-      (user.user_metadata?.name as string | undefined) ??
+      (meta.full_name as string | undefined) ??
+      (meta.name as string | undefined) ??
+      combined ??
       '';
 
     if (name) setRequestorName(name);
