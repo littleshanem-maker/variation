@@ -743,21 +743,7 @@ export default function VariationDetail() {
           )}
         </div>
 
-        {/* Notes */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Notes</h3>
-          {editing ? (
-            <textarea
-              value={editNotes}
-              onChange={e => setEditNotes(e.target.value)}
-              className={inputClass + " resize-none"}
-              rows={3}
-              placeholder="Internal notes..."
-            />
-          ) : (
-            <p className="text-[14px] text-[#1C1C1E] whitespace-pre-wrap">{variation.notes || '—'}</p>
-          )}
-        </div>
+
 
         {/* Documents */}
         {(documents.length > 0 || editing) && (
