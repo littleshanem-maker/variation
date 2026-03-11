@@ -74,12 +74,81 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
       )}
 
       {items.map((item, idx) => (
-        <div key={item.id}>
+        <div key={item.id} className="rounded-lg border border-[#E5E7EB] bg-white p-3 sm:p-0 sm:rounded-none sm:border-0 sm:bg-transparent space-y-2 sm:space-y-0">
           {/* Mobile label */}
-          <div className="sm:hidden text-[11px] font-medium mb-1" style={{ color: '#6B7280' }}>Item {idx + 1}</div>
+          <div className="sm:hidden text-[11px] font-semibold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>Item {idx + 1}</div>
 
-          <div className="grid grid-cols-[2fr_80px_90px_100px_90px_32px] gap-2 items-center">
-            {/* Description */}
+          {/* Mobile: description row */}
+          <div className="sm:hidden flex items-center gap-2">
+            <input
+              type="text"
+              value={item.description}
+              onChange={e => update(item.id, 'description', e.target.value)}
+              className={inputCls + ' flex-1'}
+              placeholder="e.g. Site supervisor labour"
+            />
+            <button
+              type="button"
+              onClick={() => removeRow(item.id)}
+              className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded hover:bg-red-50 transition-colors"
+            >
+              <Trash2 size={15} style={{ color: '#9CA3AF' }} />
+            </button>
+          </div>
+
+          {/* Mobile: qty / unit / rate / total row */}
+          <div className="sm:hidden grid grid-cols-[1fr_90px_1fr_auto] gap-2 items-center">
+            {/* Qty */}
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: '#9CA3AF' }}>Qty</div>
+              <input
+                type="number"
+                value={item.qty}
+                onChange={e => update(item.id, 'qty', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                className={inputCls}
+                placeholder="0"
+                min="0"
+                step="0.5"
+              />
+            </div>
+            {/* Unit */}
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: '#9CA3AF' }}>Unit</div>
+              <select
+                value={item.unit}
+                onChange={e => update(item.id, 'unit', e.target.value)}
+                className={inputCls}
+              >
+                {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+              </select>
+            </div>
+            {/* Rate */}
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: '#9CA3AF' }}>Rate ($)</div>
+              <div className="relative">
+                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[12px]" style={{ color: '#9CA3AF' }}>$</span>
+                <input
+                  type="number"
+                  value={item.rate}
+                  onChange={e => update(item.id, 'rate', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                  className={inputCls + ' pl-5'}
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                />
+              </div>
+            </div>
+            {/* Total */}
+            <div className="text-right">
+              <div className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: '#9CA3AF' }}>Total</div>
+              <div className="px-1 py-1.5 text-[13px] font-semibold tabular-nums" style={{ color: '#1C1C1E' }}>
+                ${item.total.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop: single row (unchanged) */}
+          <div className="hidden sm:grid grid-cols-[2fr_80px_90px_100px_90px_32px] gap-2 items-center">
             <input
               type="text"
               value={item.description}
@@ -87,8 +156,6 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
               className={inputCls}
               placeholder="e.g. Site supervisor labour"
             />
-
-            {/* Qty */}
             <input
               type="number"
               value={item.qty}
@@ -98,8 +165,6 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
               min="0"
               step="0.5"
             />
-
-            {/* Unit */}
             <select
               value={item.unit}
               onChange={e => update(item.id, 'unit', e.target.value)}
@@ -107,8 +172,6 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
             >
               {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
             </select>
-
-            {/* Rate */}
             <div className="relative">
               <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[12px]" style={{ color: '#9CA3AF' }}>$</span>
               <input
@@ -121,13 +184,9 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
                 step="0.01"
               />
             </div>
-
-            {/* Total */}
             <div className="px-2 py-1.5 text-[13px] font-medium text-right" style={{ color: '#1C1C1E' }}>
               ${item.total.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-
-            {/* Delete */}
             <button
               type="button"
               onClick={() => removeRow(item.id)}
