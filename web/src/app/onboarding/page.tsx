@@ -63,10 +63,8 @@ export default function OnboardingPage() {
     // Upload logo if provided
     let logoUrl: string | null = null;
     if (logoFile) {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const ext = logoFile.name.split('.').pop();
-        const path = `${session.user.id}/logo.${ext}`;
+      const ext = logoFile.name.split('.').pop();
+        const path = `${companyId}/logo.${ext}`;
         const { error: uploadErr } = await supabase.storage
           .from('logos')
           .upload(path, logoFile, { upsert: true });
@@ -74,7 +72,6 @@ export default function OnboardingPage() {
           const { data: urlData } = supabase.storage.from('logos').getPublicUrl(path);
           logoUrl = urlData?.publicUrl ?? null;
         }
-      }
     }
 
     // Update company
