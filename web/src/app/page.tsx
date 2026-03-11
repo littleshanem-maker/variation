@@ -152,7 +152,6 @@ export default function Dashboard() {
         const totalValue = paid + submitted + disputed + other;
         return { id: p.id, name: p.name, totalValue, paid, submitted, disputed, other };
       })
-      .filter(p => p.totalValue > 0)
       .sort((a, b) => b.totalValue - a.totalValue); // Sort by total bar length desc
   }, [projects, filterProject, filterDateRange]);
 
@@ -424,28 +423,34 @@ export default function Dashboard() {
                           </div>
                           {/* Bar — segments are clickable links to filtered register */}
                           <div className="w-full h-[18px] bg-slate-100 rounded-md overflow-hidden mb-5">
-                            <div style={{ width: `${barW}%` }} className="flex h-full gap-px">
-                              {paidPct > 0 && (
-                                <Link href={`/variations?status=approved&project=${p.id}`} style={{ width: `${paidPct}%` }}
-                                  className="bg-emerald-500 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
-                                  title={`Paid / Approved: ${formatCurrency(p.paid)}`} />
-                              )}
-                              {subPct > 0 && (
-                                <Link href={`/variations?status=submitted&project=${p.id}`} style={{ width: `${subPct}%` }}
-                                  className="bg-amber-400 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
-                                  title={`Submitted: ${formatCurrency(p.submitted)}`} />
-                              )}
-                              {dispPct > 0 && (
-                                <Link href={`/variations?status=disputed&project=${p.id}`} style={{ width: `${dispPct}%` }}
-                                  className="bg-rose-500 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
-                                  title={`Disputed: ${formatCurrency(p.disputed)}`} />
-                              )}
-                              {otherPct > 0 && (
-                                <Link href={`/variations?status=draft&project=${p.id}`} style={{ width: `${otherPct}%` }}
-                                  className="bg-slate-300 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
-                                  title={`Draft: ${formatCurrency(p.other)}`} />
-                              )}
-                            </div>
+                            {p.totalValue === 0 ? (
+                              <div className="flex items-center h-full px-2">
+                                <span className="text-[11px] text-[#9CA3AF]">No variations yet — <Link href={`/project/${p.id}`} className="underline hover:text-[#1B365D]">open project to add one</Link></span>
+                              </div>
+                            ) : (
+                              <div style={{ width: `${barW}%` }} className="flex h-full gap-px">
+                                {paidPct > 0 && (
+                                  <Link href={`/variations?status=approved&project=${p.id}`} style={{ width: `${paidPct}%` }}
+                                    className="bg-emerald-500 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
+                                    title={`Paid / Approved: ${formatCurrency(p.paid)}`} />
+                                )}
+                                {subPct > 0 && (
+                                  <Link href={`/variations?status=submitted&project=${p.id}`} style={{ width: `${subPct}%` }}
+                                    className="bg-amber-400 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
+                                    title={`Submitted: ${formatCurrency(p.submitted)}`} />
+                                )}
+                                {dispPct > 0 && (
+                                  <Link href={`/variations?status=disputed&project=${p.id}`} style={{ width: `${dispPct}%` }}
+                                    className="bg-rose-500 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
+                                    title={`Disputed: ${formatCurrency(p.disputed)}`} />
+                                )}
+                                {otherPct > 0 && (
+                                  <Link href={`/variations?status=draft&project=${p.id}`} style={{ width: `${otherPct}%` }}
+                                    className="bg-slate-300 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
+                                    title={`Draft: ${formatCurrency(p.other)}`} />
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                       );
