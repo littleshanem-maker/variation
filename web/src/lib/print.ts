@@ -81,6 +81,8 @@ const GLOBAL_CSS = `
     border-bottom: 1px solid #E5E7EB; 
     vertical-align: top; 
   }
+  tbody tr { page-break-inside: avoid; break-inside: avoid; }
+  thead { display: table-header-group; }
   tr.total-row td { 
     border-top: 2px solid #1C1C1E; 
     border-bottom: none; 

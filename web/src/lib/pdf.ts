@@ -1,73 +1,19 @@
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-
 /**
- * Renders an HTML string to a PDF blob.
- * Uses a hidden off-screen container, html2canvas, and jsPDF.
+ * Renders an HTML string to a PDF blob via the server-side /api/generate-pdf route.
+ * Uses Puppeteer + Chromium — respects CSS page-break-inside: avoid so rows never split.
  */
 export async function htmlToPdfBlob(htmlContent: string, cssContent: string): Promise<Blob> {
-  // Create hidden container
-  const container = document.createElement('div');
-  container.style.cssText = `
-    position: fixed;
-    left: -9999px;
-    top: 0;
-    width: 794px;
-    background: white;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  `;
+  const res = await fetch('/api/generate-pdf', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ html: htmlContent, css: cssContent }),
+  });
 
-  // Inject styles + content — generous top/bottom padding so first/last page edges are clear
-  container.innerHTML = `<style>${cssContent}</style><div style="padding: 56px 40px;">${htmlContent}</div>`;
-  document.body.appendChild(container);
-
-  try {
-    const canvas = await html2canvas(container, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      windowWidth: 794,
-    });
-
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-    });
-
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const sideMargin = 12;  // mm — left/right
-    const topMargin = 22;   // mm — generous top breathing room on every page
-    const botMargin = 22;   // mm — generous bottom breathing room on every page
-    const usableWidth = pageWidth - sideMargin * 2;
-    const usableHeight = pageHeight - topMargin - botMargin;
-
-    const imgWidth = usableWidth;
-    const imgHeight = (canvas.height * usableWidth) / canvas.width;
-
-    let heightLeft = imgHeight;
-    let yOffset = 0;
-
-    // First page — image starts at (sideMargin, topMargin)
-    pdf.addImage(imgData, 'JPEG', sideMargin, topMargin, imgWidth, imgHeight);
-    heightLeft -= usableHeight;
-
-    // Subsequent pages — shift image up so correct slice shows in the content area
-    while (heightLeft > 0) {
-      yOffset += usableHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', sideMargin, topMargin - yOffset, imgWidth, imgHeight);
-      heightLeft -= usableHeight;
-    }
-
-    return pdf.output('blob');
-  } finally {
-    document.body.removeChild(container);
+  if (!res.ok) {
+    throw new Error(`PDF generation failed: ${res.status} ${await res.text()}`);
   }
+
+  return res.blob();
 }
 
 /**
