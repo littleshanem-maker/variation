@@ -17,8 +17,8 @@ export async function htmlToPdfBlob(htmlContent: string, cssContent: string): Pr
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   `;
 
-  // Inject styles + content
-  container.innerHTML = `<style>${cssContent}</style><div style="padding: 40px;">${htmlContent}</div>`;
+  // Inject styles + content — generous top/bottom padding so first/last page edges are clear
+  container.innerHTML = `<style>${cssContent}</style><div style="padding: 56px 40px;">${htmlContent}</div>`;
   document.body.appendChild(container);
 
   try {
@@ -40,9 +40,11 @@ export async function htmlToPdfBlob(htmlContent: string, cssContent: string): Pr
 
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    const margin = 15; // mm — matches @page CSS margin
-    const usableWidth = pageWidth - margin * 2;
-    const usableHeight = pageHeight - margin * 2;
+    const sideMargin = 12;  // mm — left/right
+    const topMargin = 22;   // mm — generous top breathing room on every page
+    const botMargin = 22;   // mm — generous bottom breathing room on every page
+    const usableWidth = pageWidth - sideMargin * 2;
+    const usableHeight = pageHeight - topMargin - botMargin;
 
     const imgWidth = usableWidth;
     const imgHeight = (canvas.height * usableWidth) / canvas.width;
@@ -50,15 +52,15 @@ export async function htmlToPdfBlob(htmlContent: string, cssContent: string): Pr
     let heightLeft = imgHeight;
     let yOffset = 0;
 
-    // First page — image starts at (margin, margin)
-    pdf.addImage(imgData, 'JPEG', margin, margin, imgWidth, imgHeight);
+    // First page — image starts at (sideMargin, topMargin)
+    pdf.addImage(imgData, 'JPEG', sideMargin, topMargin, imgWidth, imgHeight);
     heightLeft -= usableHeight;
 
     // Subsequent pages — shift image up so correct slice shows in the content area
     while (heightLeft > 0) {
       yOffset += usableHeight;
       pdf.addPage();
-      pdf.addImage(imgData, 'JPEG', margin, margin - yOffset, imgWidth, imgHeight);
+      pdf.addImage(imgData, 'JPEG', sideMargin, topMargin - yOffset, imgWidth, imgHeight);
       heightLeft -= usableHeight;
     }
 
