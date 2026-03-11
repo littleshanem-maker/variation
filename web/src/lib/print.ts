@@ -698,15 +698,6 @@ function buildVariationHtml(
       </div>
     </div>
 
-    <div style="margin-bottom:24px; padding:16px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB;">
-      <div style="font-size:10pt; line-height:1.6; margin-bottom:10px;">
-        ${getNoticeLanguage(companyInfo?.preferredStandard)}
-      </div>
-      <div style="font-size:9pt; color:#6B7280; line-height:1.5;">
-        The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
-      </div>
-    </div>
-
     <div class="detail-grid">
       <div>
         <div class="field-group">
@@ -763,7 +754,16 @@ function buildVariationHtml(
       </div>
     ` : ''}
 
-    <div style="margin-top:32px; padding-top:20px; border-top:2px solid #E5E7EB; margin-bottom:32px;">
+    <div style="margin-top:32px; padding:16px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB; margin-bottom:32px;">
+      <div style="font-size:10pt; line-height:1.6; margin-bottom:10px;">
+        ${getNoticeLanguage(companyInfo?.preferredStandard)}
+      </div>
+      <div style="font-size:9pt; color:#6B7280; line-height:1.5;">
+        The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
+      </div>
+    </div>
+
+    <div style="padding-top:20px; margin-bottom:32px;">
       <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9CA3AF; margin-bottom:12px;">Document Information</div>
       <table style="width:100%; border-collapse:collapse; font-size:9pt;">
         <tr>
