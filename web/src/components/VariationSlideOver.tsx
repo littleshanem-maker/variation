@@ -6,8 +6,12 @@ import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getVariationNumber } from '@/lib/utils';
 import StatusBadge from '@/components/StatusBadge';
 import { Sheet, SheetContent, SheetHeader, SheetBody, SheetFooter, SheetTitle, SheetDescription } from '@/components/ui/Sheet';
-import { ArrowUpRight, Lock, Pencil, RotateCcw, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
-import type { Variation, Project, PhotoEvidence } from '@/lib/types';
+import { ArrowUpRight, Lock, Pencil, RotateCcw, CheckCircle, XCircle, AlertTriangle, FileText } from 'lucide-react';
+import { useRole } from '@/lib/role';
+import { getVariationHtmlForPdf } from '@/lib/print';
+import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
+import { getVariationEmailMeta } from '@/lib/email';
+import type { Variation, Project, PhotoEvidence, VariationNotice } from '@/lib/types';
 
 interface Props {
   variationId: string | null;
@@ -20,12 +24,17 @@ const metaLabel = 'text-[10px] font-medium uppercase tracking-wider text-slate-4
 const metaValue = 'text-[14px] font-medium text-slate-800 mt-0.5';
 
 export default function VariationSlideOver({ variationId, open, onClose, onStatusChange }: Props) {
+  const { company } = useRole();
   const [variation, setVariation] = useState<Variation | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [photos, setPhotos] = useState<PhotoEvidence[]>([]);
   const [photoUrls, setPhotoUrls] = useState<Record<string, string>>({});
+  const [linkedNotice, setLinkedNotice] = useState<VariationNotice | null>(null);
+  const [revisions, setRevisions] = useState<Variation[]>([]);
+  const [sender, setSender] = useState<{ name: string; email: string }>({ name: '', email: '' });
   const [loading, setLoading] = useState(false);
   const [acting, setActing] = useState(false);
+  const [sendingPdf, setSendingPdf] = useState(false);
 
   // Dispute reason state
   const [showDisputeInput, setShowDisputeInput] = useState(false);
@@ -42,12 +51,39 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
   async function loadVariation(id: string) {
     setLoading(true);
     const supabase = createClient();
+
+    // Fetch user for sender metadata (needed for PDF)
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setSender({
+        name: user.user_metadata?.full_name || user.user_metadata?.name || '',
+        email: user.email || '',
+      });
+    }
+
     const { data: v } = await supabase.from('variations').select('*').eq('id', id).single();
     if (!v) { setLoading(false); return; }
     setVariation(v);
 
     const { data: proj } = await supabase.from('projects').select('*').eq('id', v.project_id).single();
     setProject(proj);
+
+    // Fetch revisions (for PDF revision history)
+    const { data: revData } = await supabase
+      .from('variations')
+      .select('*')
+      .eq('project_id', v.project_id)
+      .eq('sequence_number', v.sequence_number)
+      .order('revision_number', { ascending: true });
+    setRevisions(revData ?? []);
+
+    // Fetch linked notice if present
+    if (v.notice_id) {
+      const { data: noticeData } = await supabase.from('variation_notices').select('*').eq('id', v.notice_id).single();
+      setLinkedNotice(noticeData ?? null);
+    } else {
+      setLinkedNotice(null);
+    }
 
     const { data: ph } = await supabase.from('photo_evidence').select('*').eq('variation_id', id).order('captured_at');
     setPhotos(ph || []);
@@ -64,6 +100,25 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
     }
 
     setLoading(false);
+  }
+
+  async function handleSendPdf() {
+    if (!variation || !project) return;
+    setSendingPdf(true);
+    try {
+      const { html, css } = getVariationHtmlForPdf(
+        variation, project, photos, photoUrls,
+        company?.name || '', sender, linkedNotice, revisions,
+        { logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard }
+      );
+      const blob = await htmlToPdfBlob(html, css);
+      const { subject, body, filename } = getVariationEmailMeta(variation, project);
+      await shareOrDownloadPdf(blob, filename, subject, body);
+    } catch (err) {
+      console.error('PDF send failed:', err);
+    } finally {
+      setSendingPdf(false);
+    }
   }
 
   async function advanceStatus(newStatus: string, extra?: { notes?: string }) {
@@ -321,15 +376,25 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                 </>
               )}
 
-              {/* Always: link to full detail */}
+              {/* Always: PDF / Send + full detail */}
               {!showDisputeInput && (
-                <Link
-                  href={`/variation/${variation.id}`}
-                  className="ml-auto flex items-center gap-1 text-[12px] text-slate-400 hover:text-slate-700 transition-colors"
-                  onClick={onClose}
-                >
-                  Full detail <ArrowUpRight size={12} />
-                </Link>
+                <div className="ml-auto flex items-center gap-3">
+                  <button
+                    onClick={handleSendPdf}
+                    disabled={sendingPdf}
+                    className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
+                  >
+                    <FileText size={14} />
+                    {sendingPdf ? 'Building…' : 'PDF / Send'}
+                  </button>
+                  <Link
+                    href={`/variation/${variation.id}`}
+                    className="flex items-center gap-1 text-[12px] text-slate-400 hover:text-slate-700 transition-colors"
+                    onClick={onClose}
+                  >
+                    Full detail <ArrowUpRight size={12} />
+                  </Link>
+                </div>
               )}
             </SheetFooter>
           </>
