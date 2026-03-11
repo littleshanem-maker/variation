@@ -28,10 +28,13 @@ export default function MobileBottomNav() {
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href);
 
+  // Hide FAB on detail pages that have their own sticky action bar
+  const hideFab = /^\/(variation|notice)\/[^/]+$/.test(pathname);
+
   return (
     <>
       {/* FAB backdrop */}
-      {fabOpen && (
+      {!hideFab && fabOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/20"
           onClick={() => setFabOpen(false)}
@@ -39,7 +42,7 @@ export default function MobileBottomNav() {
       )}
 
       {/* FAB action menu — floats above the FAB button */}
-      {fabOpen && (
+      {!hideFab && fabOpen && (
         <div className="fixed bottom-36 right-4 z-[60] flex flex-col items-end gap-3">
           <Link
             href="/notice/new"
@@ -60,8 +63,8 @@ export default function MobileBottomNav() {
         </div>
       )}
 
-      {/* FAB button */}
-      <button
+      {/* FAB button — hidden on detail pages that have their own action bar */}
+      {!hideFab && <button
         onClick={() => setFabOpen(prev => !prev)}
         aria-label="Create new"
         className="fixed bottom-[76px] right-4 z-50 w-14 h-14 rounded-full bg-indigo-600 text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform md:hidden"
@@ -70,7 +73,7 @@ export default function MobileBottomNav() {
           ? <X size={24} strokeWidth={2.5} />
           : <Plus size={26} strokeWidth={2.5} />
         }
-      </button>
+      </button>}
 
       {/* Bottom nav bar */}
       <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-[#020617] border-t border-white/[0.08] flex items-stretch h-16 safe-area-inset-bottom">
