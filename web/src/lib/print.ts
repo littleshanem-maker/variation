@@ -1,5 +1,5 @@
 import { formatCurrency, formatDate, formatDocDate, formatDocDateOnly, getStatusConfig, getVariationNumber } from './utils';
-import type { Project, Variation, PhotoEvidence, VariationNotice } from './types';
+import type { Project, Variation, PhotoEvidence, VariationNotice, Document } from './types';
 
 interface ProjectWithVariations extends Project {
   variations: Variation[];
@@ -458,7 +458,9 @@ function buildNoticeHtml(
   project: Project,
   companyName: string,
   sender: { name: string; email: string },
-  companyInfo?: CompanyPrintInfo
+  companyInfo?: CompanyPrintInfo,
+  documents?: Document[],
+  docUrls?: Record<string, string>
 ): string {
   const logoUrl = companyInfo?.logoUrl || (typeof window !== 'undefined' ? `${window.location.origin}/variation-shield-logo.jpg` : '');
 
@@ -631,6 +633,8 @@ function buildNoticeHtml(
       </table>
     </div>
 
+    ${buildAttachmentsSection(documents || [], docUrls || {})}
+
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
         <img src="${logoUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;" />
@@ -649,9 +653,11 @@ export function printNotice(
   project: Project,
   companyName: string = '',
   sender: { name: string; email: string } = { name: '', email: '' },
-  companyInfo?: CompanyPrintInfo
+  companyInfo?: CompanyPrintInfo,
+  documents?: Document[],
+  docUrls?: Record<string, string>
 ) {
-  const html = buildNoticeHtml(notice, project, companyName, sender, companyInfo);
+  const html = buildNoticeHtml(notice, project, companyName, sender, companyInfo, documents, docUrls);
   openHtml(html, `${notice.notice_number} - Variation Notice`);
 }
 
@@ -663,10 +669,12 @@ export function getNoticeHtmlForPdf(
   project: Project,
   companyName: string,
   sender: { name: string; email: string },
-  companyInfo?: CompanyPrintInfo
+  companyInfo?: CompanyPrintInfo,
+  documents?: Document[],
+  docUrls?: Record<string, string>
 ): { html: string; css: string } {
   return {
-    html: buildNoticeHtml(notice, project, companyName, sender, companyInfo),
+    html: buildNoticeHtml(notice, project, companyName, sender, companyInfo, documents, docUrls),
     css: GLOBAL_CSS,
   };
 }
@@ -674,6 +682,40 @@ export function getNoticeHtmlForPdf(
 // ------------------------------------------------------------------
 // 4a. BUILDER: VARIATION HTML
 // ------------------------------------------------------------------
+function buildAttachmentsSection(documents: Document[], docUrls: Record<string, string>): string {
+  if (!documents || documents.length === 0) return '';
+  const isImage = (type: string) => /^image\//i.test(type);
+  const imageDocs = documents.filter(d => isImage(d.file_type));
+  const otherDocs = documents.filter(d => !isImage(d.file_type));
+  return `
+    <div class="avoid-break" style="margin-bottom:32px;">
+      <h3 style="font-size:11pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:16px; border-bottom:1px solid #E5E7EB; padding-bottom:8px;">Attachments</h3>
+      ${imageDocs.length > 0 ? `
+        <div class="photo-grid" style="margin-bottom:16px;">
+          ${imageDocs.map(d => {
+            const url = docUrls[d.id];
+            if (!url) return '';
+            return `<div class="photo-item">
+              <img src="${url}" class="photo-img" />
+              <div class="photo-caption">${escapeHtml(d.file_name)}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      ` : ''}
+      ${otherDocs.length > 0 ? `
+        <ul style="list-style:none; padding:0; margin:0;">
+          ${otherDocs.map(d => `
+            <li style="padding:8px 0; border-bottom:1px solid #F0F0F0; font-size:9pt; color:#374151;">
+              📎 ${escapeHtml(d.file_name)}
+              <span style="color:#9CA3AF; font-size:8pt; margin-left:8px;">(${(d.file_size / 1024).toFixed(0)} KB)</span>
+            </li>
+          `).join('')}
+        </ul>
+      ` : ''}
+    </div>
+  `;
+}
+
 function buildVariationHtml(
   variation: Variation,
   project: Project,
@@ -683,7 +725,9 @@ function buildVariationHtml(
   sender: { name: string; email: string },
   linkedNotice?: VariationNotice | null,
   revisions?: Variation[],
-  companyInfo?: CompanyPrintInfo
+  companyInfo?: CompanyPrintInfo,
+  documents?: Document[],
+  docUrls?: Record<string, string>
 ): string {
   const status = getStatusConfig(variation.status).label;
   const varNumber = getVariationNumber(variation);
@@ -860,6 +904,8 @@ function buildVariationHtml(
 
     ${photoGrid}
 
+    ${buildAttachmentsSection(documents || [], docUrls || {})}
+
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
         <img src="${logoUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;" />
@@ -882,10 +928,12 @@ export function printVariation(
   sender: { name: string; email: string } = { name: '', email: '' },
   linkedNotice?: VariationNotice | null,
   revisions?: Variation[],
-  companyInfo?: CompanyPrintInfo
+  companyInfo?: CompanyPrintInfo,
+  documents?: Document[],
+  docUrls?: Record<string, string>
 ) {
   const varNumber = getVariationNumber(variation);
-  const html = buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice, revisions, companyInfo);
+  const html = buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice, revisions, companyInfo, documents, docUrls);
   openHtml(html, `${varNumber} - ${variation.title}`);
 }
 
@@ -901,10 +949,12 @@ export function getVariationHtmlForPdf(
   sender: { name: string; email: string },
   linkedNotice?: VariationNotice | null,
   revisions?: Variation[],
-  companyInfo?: CompanyPrintInfo
+  companyInfo?: CompanyPrintInfo,
+  documents?: Document[],
+  docUrls?: Record<string, string>
 ): { html: string; css: string } {
   return {
-    html: buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice, revisions, companyInfo),
+    html: buildVariationHtml(variation, project, photos, photoUrls, companyName, sender, linkedNotice, revisions, companyInfo, documents, docUrls),
     css: GLOBAL_CSS,
   };
 }

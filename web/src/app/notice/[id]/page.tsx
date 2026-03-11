@@ -12,7 +12,7 @@ import { printNotice, getNoticeHtmlForPdf } from '@/lib/print';
 import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
 import { getNoticeEmailMeta } from '@/lib/email';
 import { useRole } from '@/lib/role';
-import type { VariationNotice, Project, Variation } from '@/lib/types';
+import type { VariationNotice, Project, Variation, Document } from '@/lib/types';
 
 export default function NoticeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +22,8 @@ export default function NoticeDetail() {
   const [notice, setNotice] = useState<VariationNotice | null>(null);
   const [project, setProject] = useState<Project | null>(null);
   const [linkedVariation, setLinkedVariation] = useState<Variation | null>(null);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [docUrls, setDocUrls] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [sender, setSender] = useState<{ name: string; email: string }>({ name: '', email: '' });
 
@@ -68,6 +70,23 @@ export default function NoticeDetail() {
       .limit(1);
     if (vars && vars.length > 0) {
       setLinkedVariation(vars[0]);
+    }
+
+    // Fetch notice attachments
+    const { data: docs } = await supabase
+      .from('documents')
+      .select('*')
+      .eq('notice_id', id)
+      .order('uploaded_at');
+    setDocuments(docs || []);
+
+    if (docs && docs.length > 0) {
+      const urls: Record<string, string> = {};
+      for (const doc of docs) {
+        const { data } = await supabase.storage.from('documents').createSignedUrl(doc.storage_path, 3600);
+        if (data?.signedUrl) urls[doc.id] = data.signedUrl;
+      }
+      setDocUrls(urls);
     }
 
     setLoading(false);
@@ -172,9 +191,11 @@ export default function NoticeDetail() {
     router.push(`/variation/${varId}?edit=1`);
   }
 
+  const noticeCompanyInfo = { logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard };
+
   function handlePrint() {
     if (notice && project) {
-      printNotice(notice, project, company?.name || '', sender, { logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard });
+      printNotice(notice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
     }
   }
 
@@ -182,7 +203,7 @@ export default function NoticeDetail() {
     if (!notice || !project) return;
     setSendingEmail(true);
     try {
-      const { html, css } = getNoticeHtmlForPdf(notice, project, company?.name || '', sender, { logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard });
+      const { html, css } = getNoticeHtmlForPdf(notice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
       const blob = await htmlToPdfBlob(html, css);
       const { subject, body, filename } = getNoticeEmailMeta(notice, project);
       await shareOrDownloadPdf(blob, filename, subject, body);

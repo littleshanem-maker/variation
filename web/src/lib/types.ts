@@ -154,7 +154,8 @@ export interface StatusChange {
 
 export interface Document {
   id: string;
-  variation_id: string;
+  variation_id?: string;
+  notice_id?: string;
   file_name: string;
   file_type: string;
   file_size: number;

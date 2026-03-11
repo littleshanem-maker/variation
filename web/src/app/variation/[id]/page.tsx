@@ -16,7 +16,7 @@ import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
 import { getVariationEmailMeta } from '@/lib/email';
 import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice } from '@/lib/types';
-import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight } from 'lucide-react';
+import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight, FileText } from 'lucide-react';
 
 const EDITABLE_STATUSES = ['draft', 'captured'];
 const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
@@ -358,9 +358,11 @@ export default function VariationDetail() {
     }
   }
 
+  const companyInfo = { logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard };
+
   function handlePrint() {
     if (variation && project) {
-      printVariation(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, { logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard });
+      printVariation(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
     }
   }
 
@@ -368,7 +370,7 @@ export default function VariationDetail() {
     if (!variation || !project) return;
     setSendingEmail(true);
     try {
-      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, { logoUrl: company?.logo_url, abn: company?.abn, address: company?.address, phone: company?.phone, preferredStandard: company?.preferred_standard });
+      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
       const blob = await htmlToPdfBlob(html, css);
       const { subject, body, filename } = getVariationEmailMeta(variation, project);
       await shareOrDownloadPdf(blob, filename, subject, body);
@@ -1001,20 +1003,29 @@ export default function VariationDetail() {
       )}
       {/* Mobile sticky action bar */}
       {!editing && !isField && (
-        <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 bg-white border-t border-slate-200 px-4 py-3 flex items-center gap-2 shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
+        <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 bg-white border-t border-slate-200 px-4 py-3 flex flex-col gap-2 shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
           {isDraft && (
             <>
               <button
                 onClick={() => handleAdvanceStatus('submitted')}
                 disabled={advancingStatus}
-                className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl disabled:opacity-40 transition-colors active:bg-indigo-700"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl disabled:opacity-40 transition-colors active:bg-indigo-700"
               >
                 <Send size={15} />
                 {advancingStatus ? 'Saving…' : 'Mark as Submitted'}
               </button>
-              <button onClick={startEditing} className="px-3 py-3 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
-                Edit
-              </button>
+              <div className="grid grid-cols-2 gap-2">
+                <button onClick={startEditing} className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                  Edit
+                </button>
+                <button
+                  onClick={handleSendEmail}
+                  disabled={sendingEmail}
+                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50 transition-colors"
+                >
+                  <FileText size={14} /> {sendingEmail ? '…' : 'PDF / Send'}
+                </button>
+              </div>
             </>
           )}
           {isSubmitted && (
@@ -1022,34 +1033,55 @@ export default function VariationDetail() {
               <button
                 onClick={() => handleAdvanceStatus('approved')}
                 disabled={advancingStatus}
-                className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-emerald-600 rounded-xl disabled:opacity-40 transition-colors active:bg-emerald-700"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-emerald-600 rounded-xl disabled:opacity-40 transition-colors active:bg-emerald-700"
               >
                 <CheckCircle size={15} /> {advancingStatus ? '…' : 'Mark as Approved'}
               </button>
-              <button
-                onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }}
-                disabled={advancingStatus}
-                className="px-3 py-3 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-xl"
-              >
-                Dispute
-              </button>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }}
+                  disabled={advancingStatus}
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-xl"
+                >
+                  Dispute
+                </button>
+                <button onClick={startRevising} disabled={advancingStatus} className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-xl">
+                  Withdraw
+                </button>
+                <button
+                  onClick={handleSendEmail}
+                  disabled={sendingEmail}
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+                >
+                  <FileText size={14} /> {sendingEmail ? '…' : 'PDF'}
+                </button>
+              </div>
             </>
           )}
           {isDisputed && (
-            <button
-              onClick={startRevising}
-              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl transition-colors active:bg-indigo-700"
-            >
-              <ArrowUpRight size={15} /> Revise &amp; Resubmit
-            </button>
+            <>
+              <button
+                onClick={startRevising}
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl transition-colors active:bg-indigo-700"
+              >
+                <ArrowUpRight size={15} /> Revise &amp; Resubmit
+              </button>
+              <button
+                onClick={handleSendEmail}
+                disabled={sendingEmail}
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+              >
+                <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
+              </button>
+            </>
           )}
           {!isDraft && !isSubmitted && !isDisputed && (
             <button
               onClick={handleSendEmail}
               disabled={sendingEmail}
-              className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-slate-700 border border-slate-200 rounded-xl disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
             >
-              {sendingEmail ? 'Preparing…' : '📎 Export PDF'}
+              <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
             </button>
           )}
         </div>
