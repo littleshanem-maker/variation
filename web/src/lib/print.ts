@@ -583,7 +583,7 @@ function buildNoticeHtml(
         <tr>
           <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Sent By</td>
           <td style="padding:4px 0; font-weight:600; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.name || notice.issued_by_name || '—')}</td>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Account</td>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Email</td>
           <td style="padding:4px 0; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.email || notice.issued_by_email || '—')}</td>
         </tr>
         <tr>
@@ -781,7 +781,7 @@ function buildVariationHtml(
         <tr>
           <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Submitted By</td>
           <td style="padding:4px 0; font-weight:600; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.name || variation.requestor_name || '—')}</td>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Account</td>
+          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Email</td>
           <td style="padding:4px 0; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.email || variation.requestor_email || '—')}</td>
         </tr>
         <tr>
