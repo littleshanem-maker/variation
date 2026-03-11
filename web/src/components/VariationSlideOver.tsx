@@ -312,7 +312,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
               )}
             </SheetBody>
 
-            {/* Footer — two-row layout: primary action + secondary row */}
+            {/* Footer — primary action full-width, secondary actions in 2-col grid */}
             <SheetFooter className="flex-col items-stretch gap-2">
               {/* Step 1: Draft */}
               {isDraft && !showDisputeInput && (
@@ -325,10 +325,10 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                     <ArrowUpRight size={15} />
                     {acting ? 'Saving…' : 'Mark as Submitted'}
                   </button>
-                  <div className="flex items-center gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                     <Link
                       href={`/variation/${variation.id}`}
-                      className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                       onClick={onClose}
                     >
                       <Pencil size={13} /> Edit
@@ -336,19 +336,19 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                     <button
                       onClick={handleSendPdf}
                       disabled={sendingPdf}
-                      className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
+                      className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
                     >
                       <FileText size={13} />
                       {sendingPdf ? 'Building…' : 'PDF / Send'}
                     </button>
-                    <Link
-                      href={`/variation/${variation.id}`}
-                      className="ml-auto flex items-center gap-1 text-[12px] text-slate-400 hover:text-slate-700 transition-colors"
-                      onClick={onClose}
-                    >
-                      Full detail <ArrowUpRight size={12} />
-                    </Link>
                   </div>
+                  <Link
+                    href={`/variation/${variation.id}`}
+                    className="flex items-center justify-center gap-1 text-[12px] text-slate-400 hover:text-slate-700 transition-colors py-1"
+                    onClick={onClose}
+                  >
+                    Full detail <ArrowUpRight size={12} />
+                  </Link>
                 </>
               )}
 
@@ -363,37 +363,37 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                     <CheckCircle size={15} />
                     {acting ? '…' : 'Mark as Approved'}
                   </button>
-                  <div className="flex items-center gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     <button
                       onClick={() => setShowDisputeInput(true)}
                       disabled={acting}
-                      className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors"
+                      className="flex items-center justify-center gap-1.5 px-2 py-2.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors"
                     >
                       <XCircle size={14} /> Dispute
                     </button>
                     <button
                       onClick={() => advanceStatus('draft')}
                       disabled={acting}
-                      className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                      className="flex items-center justify-center gap-1.5 px-2 py-2.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                     >
                       <RotateCcw size={13} /> Withdraw
                     </button>
                     <button
                       onClick={handleSendPdf}
                       disabled={sendingPdf}
-                      className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
+                      className="flex items-center justify-center gap-1.5 px-2 py-2.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
                     >
                       <FileText size={13} />
                       {sendingPdf ? '…' : 'PDF'}
                     </button>
-                    <Link
-                      href={`/variation/${variation.id}`}
-                      className="ml-auto flex items-center gap-1 text-[12px] text-slate-400 hover:text-slate-700 transition-colors"
-                      onClick={onClose}
-                    >
-                      Full detail <ArrowUpRight size={12} />
-                    </Link>
                   </div>
+                  <Link
+                    href={`/variation/${variation.id}`}
+                    className="flex items-center justify-center gap-1 text-[12px] text-slate-400 hover:text-slate-700 transition-colors py-1"
+                    onClick={onClose}
+                  >
+                    Full detail <ArrowUpRight size={12} />
+                  </Link>
                 </>
               )}
 
@@ -407,45 +407,27 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                   >
                     <Pencil size={14} /> Revise &amp; Resubmit
                   </Link>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={handleSendPdf}
-                      disabled={sendingPdf}
-                      className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
-                    >
-                      <FileText size={13} />
-                      {sendingPdf ? 'Building…' : 'PDF / Send'}
-                    </button>
-                    <Link
-                      href={`/variation/${variation.id}`}
-                      className="ml-auto flex items-center gap-1 text-[12px] text-slate-400 hover:text-slate-700 transition-colors"
-                      onClick={onClose}
-                    >
-                      Full detail <ArrowUpRight size={12} />
-                    </Link>
-                  </div>
+                  <button
+                    onClick={handleSendPdf}
+                    disabled={sendingPdf}
+                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
+                  >
+                    <FileText size={13} />
+                    {sendingPdf ? 'Building…' : 'PDF / Send'}
+                  </button>
                 </>
               )}
 
               {/* Resolved (approved/paid/rejected) */}
               {isResolved && !showDisputeInput && (
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleSendPdf}
-                    disabled={sendingPdf}
-                    className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
-                  >
-                    <FileText size={13} />
-                    {sendingPdf ? 'Building…' : 'PDF / Send'}
-                  </button>
-                  <Link
-                    href={`/variation/${variation.id}`}
-                    className="ml-auto flex items-center gap-1 text-[12px] text-slate-400 hover:text-slate-700 transition-colors"
-                    onClick={onClose}
-                  >
-                    Full detail <ArrowUpRight size={12} />
-                  </Link>
-                </div>
+                <button
+                  onClick={handleSendPdf}
+                  disabled={sendingPdf}
+                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
+                >
+                  <FileText size={13} />
+                  {sendingPdf ? 'Building…' : 'PDF / Send'}
+                </button>
               )}
             </SheetFooter>
           </>
