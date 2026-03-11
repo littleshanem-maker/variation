@@ -9,6 +9,7 @@ import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
+import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
 import { formatCurrency, formatDate, getVariationNumber } from '@/lib/utils';
 import { printVariation, getVariationHtmlForPdf } from '@/lib/print';
 import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
@@ -59,6 +60,7 @@ export default function VariationDetail() {
   const [editSource, setEditSource] = useState('');
   const [editInstructedBy, setEditInstructedBy] = useState('');
   const [editValue, setEditValue] = useState('');
+  const [editCostItems, setEditCostItems] = useState<CostItem[]>([]);
   const [editStatus, setEditStatus] = useState('');
   const [editNotes, setEditNotes] = useState('');
   const [editReferenceDoc, setEditReferenceDoc] = useState('');
@@ -74,6 +76,7 @@ export default function VariationDetail() {
     setEditSource(variation.instruction_source || 'verbal');
     setEditInstructedBy(variation.instructed_by || '');
     setEditValue((variation.estimated_value / 100).toFixed(2));
+    setEditCostItems((variation as any).cost_items || []);
     setEditStatus(variation.status);
     setEditNotes(variation.notes || '');
     setEditReferenceDoc(variation.reference_doc || '');
@@ -115,6 +118,7 @@ export default function VariationDetail() {
           instructed_by: editInstructedBy.trim() || null,
           reference_doc: editReferenceDoc.trim() || null,
           estimated_value: valueCents,
+          cost_items: editCostItems,
           notes: editNotes.trim() || null,
           response_due_date: editDueDate || null,
           status: 'draft',
@@ -155,6 +159,7 @@ export default function VariationDetail() {
       instruction_source: editSource,
       instructed_by: editInstructedBy.trim() || null,
       estimated_value: valueCents,
+      cost_items: editCostItems,
       status: editStatus,
       notes: editNotes.trim() || null,
       reference_doc: editReferenceDoc.trim() || null,
@@ -223,6 +228,7 @@ export default function VariationDetail() {
     setEditSource(variation.instruction_source || 'verbal');
     setEditInstructedBy(variation.instructed_by || '');
     setEditValue((variation.estimated_value / 100).toFixed(2));
+    setEditCostItems((variation as any).cost_items || []);
     setEditNotes(variation.notes || '');
     setEditReferenceDoc(variation.reference_doc || '');
     setEditDueDate(variation.response_due_date || '');
@@ -343,6 +349,7 @@ export default function VariationDetail() {
       setEditSource(v.instruction_source === 'written' ? 'other' : (v.instruction_source || 'verbal'));
       setEditInstructedBy(v.instructed_by || '');
       setEditValue(((v.estimated_value ?? 0) / 100).toFixed(2));
+      setEditCostItems((v as any).cost_items || []);
       setEditStatus(v.status);
       setEditNotes(v.notes || '');
       setEditReferenceDoc(v.reference_doc || '');
@@ -594,10 +601,6 @@ export default function VariationDetail() {
                   <label className={labelClass}>Title</label>
                   <input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)} className={inputClass} />
                 </div>
-                <div className="sm:w-48">
-                  <label className={labelClass}>Estimated Value ($)</label>
-                  <input type="number" value={editValue} onChange={e => setEditValue(e.target.value)} className={inputClass} step="0.01" min="0" />
-                </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {!revisingMode && (
@@ -744,6 +747,35 @@ export default function VariationDetail() {
         </div>
 
 
+
+        {/* Cost Breakdown */}
+        {(editing || (variation as any).cost_items?.length > 0) && (
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Cost Breakdown</h3>
+            {editing ? (
+              <div className="bg-[#F9FAFB] rounded-lg border border-[#E5E7EB] p-3">
+                <CostItemsTable
+                  items={editCostItems}
+                  onChange={setEditCostItems}
+                  onTotalChange={cents => setEditValue((cents / 100).toFixed(2))}
+                />
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {((variation as any).cost_items || []).map((item: any) => (
+                  <div key={item.id} className="flex justify-between text-[13px] py-1 border-b border-[#F0F0EE]">
+                    <span className="text-[#1C1C1E]">{item.description} <span className="text-[#9CA3AF]">({item.qty} {item.unit} @ ${item.rate})</span></span>
+                    <span className="font-medium tabular-nums">${item.total?.toFixed(2)}</span>
+                  </div>
+                ))}
+                <div className="flex justify-between text-[13px] pt-2 font-bold">
+                  <span>Total</span>
+                  <span>{formatCurrency(variation.estimated_value)}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Documents */}
         {(documents.length > 0 || editing) && (

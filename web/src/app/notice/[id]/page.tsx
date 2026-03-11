@@ -144,7 +144,12 @@ export default function NoticeDetail() {
       description: notice.event_description,
       instruction_source: 'other',
       instructed_by: notice.issued_by_name || null,
-      estimated_value: 0,
+      estimated_value: notice.cost_items
+        ? (notice.cost_items as any[]).reduce((s: number, i: any) => s + (i.total || 0), 0) * 100
+        : 0,
+      cost_items: notice.cost_items || [],
+      time_implication_unit: notice.time_implication_unit || 'days',
+      eot_days_claimed: notice.estimated_days || null,
       status: 'draft',
       captured_at: notice.event_date
         ? new Date(notice.event_date + 'T00:00:00').toISOString()
