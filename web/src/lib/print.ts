@@ -530,8 +530,8 @@ function buildNoticeHtml(
         </tr>
         ${notice.time_flag && notice.estimated_days != null ? `
         <tr>
-          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Estimated Days</td>
-          <td style="padding:6px 0; font-size:10pt;">${notice.estimated_days}</td>
+          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Time Implication</td>
+          <td style="padding:6px 0; font-size:10pt;">${notice.estimated_days} ${notice.time_implication_unit || 'days'}</td>
         </tr>
         ` : ''}
         ${notice.contract_clause ? `
@@ -542,6 +542,38 @@ function buildNoticeHtml(
         ` : ''}
       </table>
     </div>
+
+    ${notice.cost_flag && (notice as any).cost_items?.length > 0 ? `
+    <div style="margin-bottom:32px;">
+      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#6B7280; margin-bottom:10px;">Cost Breakdown</div>
+      <table style="width:100%; border-collapse:collapse; font-size:9pt;">
+        <thead>
+          <tr style="border-bottom:1px solid #E5E7EB;">
+            <th style="text-align:left; padding:4px 8px 6px 0; color:#6B7280; font-weight:600;">Description</th>
+            <th style="text-align:right; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:60px;">Qty</th>
+            <th style="text-align:left; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:50px;">Unit</th>
+            <th style="text-align:right; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:80px;">Rate</th>
+            <th style="text-align:right; padding:4px 0 6px 0; color:#6B7280; font-weight:600; width:80px;">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${(notice as any).cost_items.map((item: any) => `
+          <tr style="border-bottom:1px solid #F5F5F5;">
+            <td style="padding:5px 8px 5px 0; color:#1C1C1E;">${escapeHtml(item.description || '—')}</td>
+            <td style="padding:5px 8px 5px 0; text-align:right; color:#1C1C1E;">${item.qty}</td>
+            <td style="padding:5px 8px 5px 0; color:#6B7280;">${escapeHtml(item.unit || '')}</td>
+            <td style="padding:5px 8px 5px 0; text-align:right; color:#1C1C1E;">$${Number(item.rate).toFixed(2)}</td>
+            <td style="padding:5px 0; text-align:right; font-weight:600; color:#1C1C1E;">$${Number(item.total).toFixed(2)}</td>
+          </tr>
+          `).join('')}
+          <tr style="border-top:2px solid #E5E7EB;">
+            <td colspan="4" style="padding:8px 8px 4px 0; font-weight:700; font-size:9pt; text-align:right; color:#6B7280; text-transform:uppercase; letter-spacing:0.05em;">Total</td>
+            <td style="padding:8px 0 4px 0; font-weight:700; font-size:10pt; text-align:right; color:#1C1C1E;">$${(notice as any).cost_items.reduce((s: number, i: any) => s + (Number(i.total) || 0), 0).toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    ` : ''}
 
     <div style="font-size:10pt; line-height:1.6; margin-bottom:32px;">
       A formal Variation Request will be submitted in accordance with the contract.
