@@ -9,6 +9,7 @@ import { createClient } from '@/lib/supabase';
 import { formatNoticeNumber } from '@/lib/utils';
 import { useRole } from '@/lib/role';
 import AttachmentPicker from '@/components/AttachmentPicker';
+import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
 import type { Project } from '@/lib/types';
 
 function NewNoticeForm() {
@@ -28,6 +29,7 @@ function NewNoticeForm() {
   const [contractClause, setContractClause] = useState('');
   const [issuedByName, setIssuedByName] = useState('');
   const [issuedByEmail, setIssuedByEmail] = useState('');
+  const [costItems, setCostItems] = useState<CostItem[]>([]);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -92,6 +94,7 @@ function NewNoticeForm() {
         event_description: eventDescription.trim(),
         event_date: eventDate,
         cost_flag: costFlag,
+        cost_items: costFlag ? costItems : [],
         time_flag: timeFlag,
         estimated_days: timeFlag && estimatedDays ? parseInt(estimatedDays) : null,
         time_implication_unit: timeFlag && estimatedDays ? timeUnit : null,
@@ -228,6 +231,16 @@ function NewNoticeForm() {
               </div>
             </div>
           </div>
+
+          {/* Cost breakdown table */}
+          {costFlag && (
+            <div>
+              <label className={labelClass}>Cost Breakdown</label>
+              <div className="mt-2 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB] p-3">
+                <CostItemsTable items={costItems} onChange={setCostItems} />
+              </div>
+            </div>
+          )}
 
           {timeFlag && (
             <div>

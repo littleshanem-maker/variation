@@ -8,6 +8,7 @@ import { useRole } from '@/lib/role';
 import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
 import AttachmentPicker from '@/components/AttachmentPicker';
+import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
 import type { Project } from '@/lib/types';
 
 const inputClass = 'w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white';
@@ -31,9 +32,11 @@ function NewRequestForm() {
   const [instructedBy, setInstructedBy] = useState('');
   const [referenceDoc, setReferenceDoc] = useState('');
   const [estimatedValue, setEstimatedValue] = useState('');
+  const [costItems, setCostItems] = useState<CostItem[]>([]);
   const [responseDueDate, setResponseDueDate] = useState('');
   const [claimType, setClaimType] = useState<'cost' | 'time' | 'cost_and_time'>('cost');
   const [eotDays, setEotDays] = useState('');
+  const [eotUnit, setEotUnit] = useState<'days' | 'hours'>('days');
   const [basisOfValuation, setBasisOfValuation] = useState('');
   const [requestorName, setRequestorName] = useState('');
   const [attachments, setAttachments] = useState<File[]>([]);
@@ -120,9 +123,11 @@ function NewRequestForm() {
         instructed_by: instructedBy.trim() || null,
         reference_doc: referenceDoc.trim() || null,
         estimated_value: valueCents,
+        cost_items: costItems,
         response_due_date: responseDueDate || null,
         claim_type: claimType,
         eot_days_claimed: (claimType !== 'cost' && eotDays) ? parseInt(eotDays) : null,
+        time_implication_unit: claimType !== 'cost' ? eotUnit : null,
         basis_of_valuation: basisOfValuation || null,
         status: 'draft',
         captured_at: new Date().toISOString(),
@@ -237,19 +242,40 @@ function NewRequestForm() {
               </div>
             </div>
 
-            {/* Reference doc + Estimated value */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className={labelClass}>Reference Document</label>
-                <input type="text" value={referenceDoc} onChange={e => setReferenceDoc(e.target.value)}
-                  placeholder="e.g. RFI-042, Email 4 Mar 2026" className={inputClass} />
-              </div>
-              <div>
-                <label className={labelClass}>Estimated Value (AUD)</label>
-                <input type="number" step="0.01" min="0" value={estimatedValue}
-                  onChange={e => setEstimatedValue(e.target.value)} placeholder="0.00" className={inputClass} />
-              </div>
+            {/* Reference doc */}
+            <div>
+              <label className={labelClass}>Reference Document</label>
+              <input type="text" value={referenceDoc} onChange={e => setReferenceDoc(e.target.value)}
+                placeholder="e.g. RFI-042, Email 4 Mar 2026" className={inputClass} />
             </div>
+
+            {/* Cost breakdown */}
+            {claimType !== 'time' && (
+              <div>
+                <label className={labelClass}>Cost Breakdown</label>
+                <div className="mt-1 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB] p-3">
+                  <CostItemsTable
+                    items={costItems}
+                    onChange={setCostItems}
+                    onTotalChange={cents => setEstimatedValue((cents / 100).toFixed(2))}
+                  />
+                </div>
+                <p className="mt-1 text-[11px]" style={{ color: '#9CA3AF' }}>
+                  Total auto-fills estimated value. You can also enter manually below.
+                </p>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="text-[12px] font-medium" style={{ color: '#6B7280' }}>Estimated Value (AUD)</span>
+                  <div className="relative flex-1 max-w-[160px]">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[13px]" style={{ color: '#9CA3AF' }}>$</span>
+                    <input type="number" step="0.01" min="0" value={estimatedValue}
+                      onChange={e => setEstimatedValue(e.target.value)}
+                      placeholder="0.00"
+                      className="w-full pl-5 pr-2 py-1.5 text-[13px] border border-[#E5E7EB] rounded-md outline-none focus:border-[#1B365D] focus:ring-1 focus:ring-[#1B365D]" />
+                  </div>
+                </div>
+              </div>
+            )}
+
 
             {/* Response due date */}
             <div>
@@ -274,9 +300,16 @@ function NewRequestForm() {
 
             {showEot && (
               <div>
-                <label className={labelClass}>Extension of Time Claimed (calendar days)</label>
-                <input type="number" min="0" value={eotDays} onChange={e => setEotDays(e.target.value)}
-                  placeholder="e.g. 5" className={inputClass} />
+                <label className={labelClass}>Time Implication</label>
+                <div className="flex gap-2">
+                  <input type="number" min="0" value={eotDays} onChange={e => setEotDays(e.target.value)}
+                    placeholder="e.g. 5" className={`${inputClass} flex-1`} />
+                  <select value={eotUnit} onChange={e => setEotUnit(e.target.value as 'days' | 'hours')}
+                    className="px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md bg-white text-[#1C1C1E] focus:outline-none focus:ring-1 focus:ring-[#1B365D]">
+                    <option value="hours">Hours</option>
+                    <option value="days">Days</option>
+                  </select>
+                </div>
               </div>
             )}
 
