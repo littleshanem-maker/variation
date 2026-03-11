@@ -72,6 +72,8 @@ export interface Variation {
   instructed_by?: string;
   reference_doc?: string;
   estimated_value: number; // cents
+  cost_items?: Array<{ id: string; description: string; qty: number | ''; unit: string; rate: number | ''; total: number }>;
+  time_implication_unit?: 'hours' | 'days' | null;
   status: string;
   captured_at: string;
   latitude?: number;
@@ -102,6 +104,7 @@ export interface VariationNotice {
   event_description: string;
   event_date: string;           // ISO date string
   cost_flag: boolean;
+  cost_items?: Array<{ id: string; description: string; qty: number | ''; unit: string; rate: number | ''; total: number }>;
   time_flag: boolean;
   estimated_days?: number;
   time_implication_unit?: 'hours' | 'days' | null;
