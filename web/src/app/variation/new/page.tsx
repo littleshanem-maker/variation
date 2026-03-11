@@ -260,19 +260,7 @@ function NewRequestForm() {
                     onTotalChange={cents => setEstimatedValue((cents / 100).toFixed(2))}
                   />
                 </div>
-                <p className="mt-1 text-[11px]" style={{ color: '#9CA3AF' }}>
-                  Total auto-fills estimated value. You can also enter manually below.
-                </p>
-                <div className="mt-2 flex items-center gap-2">
-                  <span className="text-[12px] font-medium" style={{ color: '#6B7280' }}>Estimated Value (AUD)</span>
-                  <div className="relative flex-1 max-w-[160px]">
-                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[13px]" style={{ color: '#9CA3AF' }}>$</span>
-                    <input type="number" step="0.01" min="0" value={estimatedValue}
-                      onChange={e => setEstimatedValue(e.target.value)}
-                      placeholder="0.00"
-                      className="w-full pl-5 pr-2 py-1.5 text-[13px] border border-[#E5E7EB] rounded-md outline-none focus:border-[#1B365D] focus:ring-1 focus:ring-[#1B365D]" />
-                  </div>
-                </div>
+
               </div>
             )}
 
