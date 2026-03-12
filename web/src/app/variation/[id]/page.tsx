@@ -433,7 +433,7 @@ export default function VariationDetail() {
 
   return (
     <AppShell>
-      <TopBar title="Variation Detail" />
+      <TopBar title="Variation Request" />
       <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-4xl">
         {/* Back + Actions */}
         <div className="space-y-3">

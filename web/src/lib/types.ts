@@ -111,6 +111,7 @@ export interface VariationNotice {
   contract_clause?: string;
   issued_by_name?: string;
   issued_by_email?: string;
+  revision_number?: number;
   status: 'draft' | 'issued' | 'acknowledged';
   issued_at?: string;
   acknowledged_at?: string;

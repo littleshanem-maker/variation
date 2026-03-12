@@ -7,7 +7,7 @@ import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
-import { Send } from 'lucide-react';
+import { Send, FileText } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { printNotice, getNoticeHtmlForPdf } from '@/lib/print';
 import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
@@ -33,6 +33,14 @@ export default function NoticeDetail() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editDescription, setEditDescription] = useState('');
+  const [editEventDate, setEditEventDate] = useState('');
+  const [editContractClause, setEditContractClause] = useState('');
+  const [editIssuedByName, setEditIssuedByName] = useState('');
+  const [editIssuedByEmail, setEditIssuedByEmail] = useState('');
+  const [saveError, setSaveError] = useState<string | null>(null);
   const [sendingEmail, setSendingEmail] = useState(false);
 
   useEffect(() => { loadNotice(); }, [id]);
@@ -130,6 +138,42 @@ export default function NoticeDetail() {
     } else {
       setDeleting(false);
       setDeleteError('Delete failed. You may not have permission, or the notice could not be removed.');
+    }
+  }
+
+  function startEditing() {
+    if (!notice) return;
+    setEditDescription(notice.event_description || '');
+    setEditEventDate(notice.event_date || '');
+    setEditContractClause(notice.contract_clause || '');
+    setEditIssuedByName(notice.issued_by_name || '');
+    setEditIssuedByEmail(notice.issued_by_email || '');
+    setSaveError(null);
+    setEditing(true);
+  }
+
+  async function handleSaveEdit() {
+    if (!notice) return;
+    setSaving(true);
+    setSaveError(null);
+    const supabase = createClient();
+    const { error } = await supabase.from('variation_notices').update({
+      event_description: editDescription.trim(),
+      event_date: editEventDate,
+      contract_clause: editContractClause.trim() || null,
+      issued_by_name: editIssuedByName.trim() || null,
+      issued_by_email: editIssuedByEmail.trim() || null,
+      updated_at: new Date().toISOString(),
+    }).eq('id', notice.id);
+    if (error) {
+      setSaveError('Save failed. Please try again.');
+      setSaving(false);
+    } else {
+      setEditing(false);
+      setSaving(false);
+      // Reload
+      const { data } = await supabase.from('variation_notices').select('*').eq('id', notice.id).single();
+      if (data) setNotice(data as VariationNotice);
     }
   }
 
@@ -253,82 +297,160 @@ export default function NoticeDetail() {
             </svg>
             <span className="truncate">Back to {project.name}</span>
           </Link>
-          <div className="flex flex-wrap items-center gap-2">
-            {canIssue && (
+          {!editing && (
+            <div className="flex flex-wrap items-center gap-2">
+              {canIssue && (
+                <button
+                  onClick={handleIssue}
+                  disabled={advancing}
+                  className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors duration-[120ms] disabled:opacity-40 shadow-sm whitespace-nowrap"
+                >
+                  <Send size={14} />
+                  {advancing ? '…' : 'Submitted to Client'}
+                </button>
+              )}
               <button
-                onClick={handleIssue}
-                disabled={advancing}
-                className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors duration-[120ms] disabled:opacity-40 shadow-sm whitespace-nowrap"
+                onClick={handleSendEmail}
+                disabled={sendingEmail}
+                className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
               >
-                <Send size={14} />
-                {advancing ? '…' : 'Submitted to Client'}
+                {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
               </button>
-            )}
-            {canAcknowledge && (
+              {!isField && (
+                <button
+                  onClick={startEditing}
+                  className="px-3 py-1.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                >
+                  Edit
+                </button>
+              )}
+              {canAcknowledge && (
+                <button
+                  onClick={handleAcknowledge}
+                  disabled={advancing}
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#3D6B5E] border border-[#4A7C6F] rounded-lg hover:bg-[#F0F7F4] transition-colors disabled:opacity-40 whitespace-nowrap"
+                >
+                  {advancing ? '…' : 'Mark Acknowledged'}
+                </button>
+              )}
+              {canDelete && (
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="px-3 py-1.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
+          )}
+          {editing && (
+            <div className="flex items-center gap-2">
+              {saveError && <p className="text-[13px] text-rose-600 bg-rose-50 border border-rose-200 rounded-md px-3 py-2">{saveError}</p>}
               <button
-                onClick={handleAcknowledge}
-                disabled={advancing}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#3D6B5E] border border-[#4A7C6F] rounded-md hover:bg-[#F0F7F4] transition-colors duration-[120ms] disabled:opacity-40 whitespace-nowrap"
+                onClick={() => { setEditing(false); setSaveError(null); }}
+                className="px-3 py-1.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
-                {advancing ? '…' : 'Mark Acknowledged'}
+                Cancel
               </button>
-            )}
-            {canDelete && (
               <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#B25B4E] border border-[#E5E7EB] rounded-md hover:bg-[#FDF2F0] hover:border-[#B25B4E] transition-colors duration-[120ms] whitespace-nowrap"
+                onClick={handleSaveEdit}
+                disabled={saving || !editDescription.trim()}
+                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-lg hover:bg-[#24466F] disabled:opacity-40 transition-colors"
               >
-                Delete
+                {saving ? 'Saving…' : 'Save Changes'}
               </button>
-            )}
-            <button
-              onClick={handleSendEmail}
-              disabled={sendingEmail}
-              className="px-3 py-2.5 text-[13px] font-medium text-[#1B365D] border border-[#1B365D]/30 rounded-md hover:bg-[#F0F4FA] transition-colors duration-[120ms] disabled:opacity-50 whitespace-nowrap"
-            >
-              {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
-            </button>
-          </div>
+            </div>
+          )}
         </div>
+
+        {/* Progress Stepper */}
+        {!editing && (() => {
+          const isIssued = notice.status === 'issued' || notice.status === 'acknowledged';
+          const steps = [
+            { label: 'Draft', done: true, current: notice.status === 'draft' },
+            { label: 'Submitted to Client', done: isIssued, current: isIssued },
+          ];
+          return (
+            <div className="flex items-center gap-0 bg-white border border-[#E5E7EB] rounded-md px-4 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+              {steps.map((step, i) => (
+                <div key={step.label} className="flex items-center flex-1 min-w-0">
+                  <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${
+                      step.done && !step.current ? 'bg-emerald-500 text-white'
+                      : step.current && i === 0 ? 'bg-indigo-600 text-white'
+                      : step.current ? 'bg-emerald-500 text-white'
+                      : 'bg-slate-100 text-slate-400'
+                    }`}>
+                      {step.done && !step.current ? '✓' : step.current && i > 0 ? '✓' : i + 1}
+                    </div>
+                    <span className={`text-[10px] font-medium text-center leading-tight hidden sm:block ${
+                      step.done ? 'text-emerald-600' : step.current ? 'text-indigo-600' : 'text-slate-400'
+                    }`}>{step.label}</span>
+                  </div>
+                  {i < steps.length - 1 && (
+                    <div className={`h-[2px] flex-1 mx-1 ${isIssued ? 'bg-emerald-300' : 'bg-slate-200'}`} />
+                  )}
+                </div>
+              ))}
+            </div>
+          );
+        })()}
 
         {/* Header Card */}
         <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
-              <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1">{notice.notice_number}</div>
+              <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1">{notice.notice_number}{(notice.revision_number ?? 0) > 0 && <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">Rev {notice.revision_number}</span>}</div>
               <h2 className="text-xl font-semibold text-[#1C1C1E]">Variation Notice</h2>
               <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
             </div>
             <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0">
               <StatusBadge status={notice.status} />
-              {notice.issued_at && (
-                <div className="text-[12px] text-[#9CA3AF] sm:mt-2">Issued {formatDate(notice.issued_at)}</div>
-              )}
-              {notice.acknowledged_at && (
-                <div className="text-[12px] text-[#9CA3AF] sm:mt-1">Acknowledged {formatDate(notice.acknowledged_at)}</div>
-              )}
+              {notice.issued_at && <div className="text-[12px] text-[#9CA3AF] sm:mt-2">Issued {formatDate(notice.issued_at)}</div>}
+              {notice.acknowledged_at && <div className="text-[12px] text-[#9CA3AF] sm:mt-1">Acknowledged {formatDate(notice.acknowledged_at)}</div>}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-5 pt-4 md:pt-5 border-t border-[#F0F0EE]">
-            <div>
-              <div className={labelClass}>Event Date</div>
-              <div className="text-[14px] text-[#1C1C1E]">{new Date(notice.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
-            </div>
-            {notice.issued_by_name && (
-              <div>
-                <div className={labelClass}>Issued By</div>
-                <div className="text-[14px] text-[#1C1C1E]">{notice.issued_by_name}</div>
-                {notice.issued_by_email && (
-                  <div className="text-[12px] text-[#6B7280] mt-0.5 break-all">{notice.issued_by_email}</div>
+            {editing ? (
+              <>
+                <div>
+                  <label className={labelClass}>Event Date</label>
+                  <input type="date" value={editEventDate} onChange={e => setEditEventDate(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none" />
+                </div>
+                <div>
+                  <label className={labelClass}>Issued By Name</label>
+                  <input type="text" value={editIssuedByName} onChange={e => setEditIssuedByName(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none" />
+                </div>
+                <div>
+                  <label className={labelClass}>Issued By Email</label>
+                  <input type="email" value={editIssuedByEmail} onChange={e => setEditIssuedByEmail(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none" />
+                </div>
+                <div className="sm:col-span-3">
+                  <label className={labelClass}>Contract Clause</label>
+                  <input type="text" value={editContractClause} onChange={e => setEditContractClause(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none" />
+                </div>
+              </>
+            ) : (
+              <>
+                <div>
+                  <div className={labelClass}>Event Date</div>
+                  <div className="text-[14px] text-[#1C1C1E]">{new Date(notice.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+                </div>
+                {notice.issued_by_name && (
+                  <div>
+                    <div className={labelClass}>Issued By</div>
+                    <div className="text-[14px] text-[#1C1C1E]">{notice.issued_by_name}</div>
+                    {notice.issued_by_email && <div className="text-[12px] text-[#6B7280] mt-0.5 break-all">{notice.issued_by_email}</div>}
+                  </div>
                 )}
-              </div>
-            )}
-            {notice.contract_clause && (
-              <div>
-                <div className={labelClass}>Contract Clause</div>
-                <div className="text-[14px] text-[#1C1C1E]">{notice.contract_clause}</div>
-              </div>
+                {notice.contract_clause && (
+                  <div>
+                    <div className={labelClass}>Contract Clause</div>
+                    <div className="text-[14px] text-[#1C1C1E]">{notice.contract_clause}</div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -336,7 +458,11 @@ export default function NoticeDetail() {
         {/* Event Description */}
         <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Description of Event</h3>
-          <p className="text-[14px] text-[#1C1C1E] leading-relaxed whitespace-pre-wrap">{notice.event_description}</p>
+          {editing ? (
+            <textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={5} className="w-full px-3 py-2.5 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none resize-none" />
+          ) : (
+            <p className="text-[14px] text-[#1C1C1E] leading-relaxed whitespace-pre-wrap">{notice.event_description}</p>
+          )}
         </div>
 
         {/* Implications Card */}
