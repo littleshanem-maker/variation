@@ -277,6 +277,7 @@ export function getFilteredRegisterHtml(
     <tr>
       <td class="tabular-nums font-medium" style="color:#1B365D; font-family:monospace;">${getVariationNumber(v)}</td>
       <td class="font-medium">${escapeHtml(v.title)}</td>
+      <td class="text-muted">${escapeHtml(v.project_name)}</td>
       <td>${getStatusConfig(v.status).label}</td>
       <td class="text-right tabular-nums">${formatDate(v.captured_at)}</td>
       <td class="text-right tabular-nums font-medium">${formatCurrency(v.estimated_value)}</td>
@@ -324,6 +325,7 @@ export function getFilteredRegisterHtml(
         <tr>
           <th style="width:80px">Var No.</th>
           <th>Title</th>
+          <th style="width:140px">Project</th>
           <th style="width:90px">Status</th>
           <th style="width:90px; text-align:right">Date</th>
           <th style="width:110px; text-align:right">Value</th>
@@ -332,7 +334,7 @@ export function getFilteredRegisterHtml(
       <tbody>${rows}</tbody>
       <tfoot>
         <tr class="total-row">
-          <td colspan="4" class="text-right">Total</td>
+          <td colspan="5" class="text-right">Total</td>
           <td class="text-right tabular-nums">${formatCurrency(totalValue)}</td>
         </tr>
       </tfoot>
