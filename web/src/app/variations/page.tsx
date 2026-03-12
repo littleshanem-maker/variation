@@ -322,17 +322,17 @@ function VariationsList() {
                         onClick={() => setSlideOverId(v.id)}
                         className={`group relative border-b border-[#F0F0EE] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}
                       >
-                        <td className="px-5 md:px-6 py-3 text-[13px] font-mono font-medium text-indigo-600 tabular-nums whitespace-nowrap">
+                        <td className="px-5 md:px-6 py-3 text-[13px] font-medium text-[#1C1C1E] tabular-nums whitespace-nowrap">
                           {getVariationNumber(v)}
                         </td>
                         <td className="px-5 md:px-6 py-3 max-w-[200px] overflow-hidden">
-                          <div className="truncate text-[14px] font-medium text-slate-800">{v.title}</div>
+                          <div className="truncate text-[14px] font-medium text-[#1C1C1E]">{v.title}</div>
                         </td>
-                        <td className="px-5 md:px-6 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-slate-500">{v.project_name}</div></td>
+                        <td className="px-5 md:px-6 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-[#1C1C1E]">{v.project_name}</div></td>
                         <td className="px-5 md:px-6 py-3"><StatusBadge status={v.status} /></td>
 
-                        <td className="px-5 md:px-6 py-3 text-[14px] font-medium text-slate-800 text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
-                        <td className="px-5 md:px-6 py-3 text-[13px] text-slate-500 text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
+                        <td className="px-5 md:px-6 py-3 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
+                        <td className="px-5 md:px-6 py-3 text-[13px] text-[#1C1C1E] text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
                         <td className="px-5 md:px-6 py-3 text-right hidden lg:table-cell whitespace-nowrap">
                             {v.response_due_date ? (() => {
                               const due = new Date(v.response_due_date + 'T00:00:00');
@@ -341,7 +341,7 @@ function VariationsList() {
                               const overdue = daysLeft < 0;
                               const dueSoon = daysLeft >= 0 && daysLeft <= 3;
                               return (
-                                <span className={`text-[13px] font-medium ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#6B7280]'}`}>
+                                <span className={`text-[13px] font-medium ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#1C1C1E]'}`}>
                                   {`${String(due.getDate()).padStart(2,'0')}/${String(due.getMonth()+1).padStart(2,'0')}/${String(due.getFullYear()).slice(-2)}`}
                                 </span>
                               );
