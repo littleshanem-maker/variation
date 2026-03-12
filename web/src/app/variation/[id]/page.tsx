@@ -50,6 +50,7 @@ export default function VariationDetail() {
   // Dispute reason flow
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
   const [disputeReason, setDisputeReason] = useState('');
+  const [rejectionFiles, setRejectionFiles] = useState<File[]>([]);
   const [revisions, setRevisions] = useState<Variation[]>([]);
   const [sendingEmail, setSendingEmail] = useState(false);
 
@@ -1014,14 +1015,50 @@ export default function VariationDetail() {
             <textarea
               value={disputeReason}
               onChange={e => setDisputeReason(e.target.value)}
-              rows={4}
+              rows={3}
               autoFocus
               placeholder="e.g. This work falls within the original scope as per drawing M-201…"
-              className="w-full px-3 py-2.5 text-[14px] border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:border-rose-400 outline-none resize-none"
+              className="w-full px-3 py-2.5 text-[14px] border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:border-rose-400 outline-none resize-none mb-3"
             />
-            <div className="flex justify-end gap-2 mt-4">
+            {/* Attachment upload */}
+            <div className="mb-4">
               <button
-                onClick={() => { setShowDisputeDialog(false); setDisputeReason(''); }}
+                type="button"
+                onClick={() => document.getElementById('rejection-file-input')?.click()}
+                className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-slate-600 border border-dashed border-slate-300 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-colors w-full justify-center"
+              >
+                📎 Attach client email or PDF
+              </button>
+              <input
+                id="rejection-file-input"
+                type="file"
+                multiple
+                accept=".pdf,.doc,.docx,.eml,.msg,.jpg,.jpeg,.png"
+                className="hidden"
+                onChange={e => {
+                  const files = Array.from(e.target.files || []);
+                  setRejectionFiles(prev => [...prev, ...files]);
+                  e.target.value = '';
+                }}
+              />
+              {rejectionFiles.length > 0 && (
+                <ul className="mt-2 space-y-1">
+                  {rejectionFiles.map((f, i) => (
+                    <li key={i} className="flex items-center justify-between text-[12px] text-slate-600 bg-slate-50 rounded px-2 py-1">
+                      <span className="truncate">📄 {f.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => setRejectionFiles(prev => prev.filter((_, idx) => idx !== i))}
+                        className="ml-2 text-slate-400 hover:text-rose-500 flex-shrink-0"
+                      >✕</button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => { setShowDisputeDialog(false); setDisputeReason(''); setRejectionFiles([]); }}
                 className="px-3 py-1.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 Cancel
@@ -1031,11 +1068,34 @@ export default function VariationDetail() {
                   if (!disputeReason.trim()) return;
                   await handleAdvanceStatus('disputed');
                   const supabase = createClient();
+                  // Save rejection reason
                   await supabase.from('variations').update({
                     notes: `DISPUTE REASON: ${disputeReason.trim()}`
                   }).eq('id', variation!.id);
+                  // Upload any attached files
+                  if (rejectionFiles.length > 0) {
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (user) {
+                      for (const file of rejectionFiles) {
+                        const docId = crypto.randomUUID();
+                        const storagePath = `${user.id}/documents/${docId}/${file.name}`;
+                        const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file);
+                        if (!uploadErr) {
+                          await supabase.from('documents').insert({
+                            id: docId,
+                            variation_id: variation!.id,
+                            file_name: file.name,
+                            file_type: file.type,
+                            file_size: file.size,
+                            storage_path: storagePath,
+                          });
+                        }
+                      }
+                    }
+                  }
                   setShowDisputeDialog(false);
                   setDisputeReason('');
+                  setRejectionFiles([]);
                   loadVariation();
                 }}
                 disabled={!disputeReason.trim() || advancingStatus}
