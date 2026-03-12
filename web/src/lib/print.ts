@@ -832,15 +832,6 @@ function buildVariationHtml(
       </div>
     ` : ''}
 
-    <div style="margin-top:32px; padding:16px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB; margin-bottom:32px;">
-      <div style="font-size:10pt; line-height:1.6; margin-bottom:10px;">
-        ${getNoticeLanguage(companyInfo?.preferredStandard)}
-      </div>
-      <div style="font-size:9pt; color:#6B7280; line-height:1.5;">
-        The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
-      </div>
-    </div>
-
     ${(variation as any).cost_items?.length > 0 ? `
     <div style="margin-bottom:32px;">
       <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#6B7280; margin-bottom:10px;">Cost Breakdown</div>
@@ -937,6 +928,15 @@ function buildVariationHtml(
     ${photoGrid}
 
     ${buildAttachmentsSection(documents || [], docUrls || {})}
+
+    <div style="margin-top:32px; padding:16px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB; margin-bottom:32px;">
+      <div style="font-size:10pt; line-height:1.6; margin-bottom:10px;">
+        ${getNoticeLanguage(companyInfo?.preferredStandard)}
+      </div>
+      <div style="font-size:9pt; color:#6B7280; line-height:1.5;">
+        The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
+      </div>
+    </div>
 
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
