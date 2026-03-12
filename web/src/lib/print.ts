@@ -19,7 +19,6 @@ const GLOBAL_CSS = `
     background: white; 
     -webkit-print-color-adjust: exact; 
     print-color-adjust: exact;
-    padding-bottom: 32mm;
   }
 
   /* UTILS */
@@ -129,17 +128,13 @@ const GLOBAL_CSS = `
 
   /* FOOTER */
   .footer { 
-    position: fixed; 
-    bottom: 0; 
-    left: 0; 
-    right: 0; 
-    padding-top: 16px; 
+    margin-top: 32px;
+    padding-top: 12px; 
     border-top: 1px solid #E5E7EB; 
     font-size: 8pt; 
     color: #9CA3AF; 
     display: flex; 
     justify-content: space-between; 
-    background: white;
   }
 `;
 
@@ -508,16 +503,6 @@ function buildNoticeHtml(
       </div>
     </div>
 
-    <div style="margin-bottom:24px; padding:16px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB;">
-      <div style="font-size:9pt; color:#6B7280; margin-bottom:8px;">TO: ${escapeHtml(project.client)}</div>
-      <div style="font-size:10pt; line-height:1.6; margin-bottom:10px;">
-        ${getNoticeLanguage(companyInfo?.preferredStandard)}
-      </div>
-      <div style="font-size:9pt; color:#6B7280; line-height:1.5;">
-        The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
-      </div>
-    </div>
-
     <div class="description-box">
       <div class="field-label">Description of Event</div>
       <div class="description-text">${escapeHtml(notice.event_description)}</div>
@@ -635,6 +620,16 @@ function buildNoticeHtml(
     </div>
 
     ${buildAttachmentsSection(documents || [], docUrls || {})}
+
+    <div style="margin-top:32px; padding:16px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB; margin-bottom:24px;">
+      <div style="font-size:9pt; color:#6B7280; margin-bottom:8px;">TO: ${escapeHtml(project.client)}</div>
+      <div style="font-size:10pt; line-height:1.6; margin-bottom:10px;">
+        ${getNoticeLanguage(companyInfo?.preferredStandard)}
+      </div>
+      <div style="font-size:9pt; color:#6B7280; line-height:1.5;">
+        The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
+      </div>
+    </div>
 
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
