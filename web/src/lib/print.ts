@@ -171,6 +171,28 @@ function escapeHtml(text: string): string {
 }
 
 // ------------------------------------------------------------------
+// 0. OPEN REGISTER HTML FOR BROWSER PRINT (sorted flat list)
+// ------------------------------------------------------------------
+export function openRegisterForPrint(html: string, css: string, title: string) {
+  const fullHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${title}</title>
+  <style>${css}</style>
+</head>
+<body>
+  ${html}
+  <script>window.onload=function(){window.print();}</script>
+</body>
+</html>`;
+  const blob = new Blob([fullHtml], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
+// ------------------------------------------------------------------
 // 1. PRINT FULL REGISTER (ALL PROJECTS)
 // ------------------------------------------------------------------
 export function printRegister(projects: ProjectWithVariations[], companyName?: string) {
@@ -205,7 +227,7 @@ export function printRegister(projects: ProjectWithVariations[], companyName?: s
         <table>
           <thead>
             <tr>
-              <th style="width:70px">Var No.</th>
+              <th style="width:100px">Var No.</th>
               <th>Title</th>
               <th style="width:110px">Status</th>
               <th style="width:80px; text-align:right">Captured</th>
@@ -332,7 +354,7 @@ export function getFilteredRegisterHtml(
     <table>
       <thead>
         <tr>
-          <th style="width:70px">Var No.</th>
+          <th style="width:100px">Var No.</th>
           <th>Title</th>
           <th style="width:130px">Project</th>
           <th style="width:110px">Status</th>
@@ -395,7 +417,7 @@ export function printProjectRegister(project: Project, variations: Variation[], 
     <table>
       <thead>
         <tr>
-          <th style="width:70px">Var No.</th>
+          <th style="width:100px">Var No.</th>
           <th>Title</th>
           <th style="width:110px">Status</th>
           <th style="width:80px; text-align:right">Captured</th>

@@ -9,7 +9,7 @@ import VariationSlideOver from '@/components/VariationSlideOver';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/DropdownMenu';
 import { createClient } from '@/lib/supabase';
 import { formatCurrency, formatDate, getStatusConfig, getVariationNumber } from '@/lib/utils';
-import { printRegister, getFilteredRegisterHtml } from '@/lib/print';
+import { getFilteredRegisterHtml, openRegisterForPrint } from '@/lib/print';
 import { htmlToPdfBlob } from '@/lib/pdf';
 import { useRole } from '@/lib/role';
 import type { Variation, Project } from '@/lib/types';
@@ -106,7 +106,15 @@ function VariationsList() {
   );
 
   function handlePrint() {
-    printRegister(rawProjects, company?.name);
+    const projectName = filterProject !== 'all'
+      ? rawProjects.find(p => p.id === filterProject)?.name || 'Project'
+      : 'All Projects';
+    const statusLabel = filterStatus !== 'all'
+      ? ` — ${filterStatus.charAt(0).toUpperCase() + filterStatus.slice(1)}`
+      : '';
+    const label = `${projectName}${statusLabel}`;
+    const { html, css } = getFilteredRegisterHtml(sorted, label, company?.name);
+    openRegisterForPrint(html, css, `Variation Register — ${label}`);
   }
 
   function handleExportExcel() {
