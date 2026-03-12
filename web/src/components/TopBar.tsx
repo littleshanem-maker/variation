@@ -37,7 +37,6 @@ export default function TopBar({ title }: { title: string }) {
         )}
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
-        <span className="hidden lg:block text-[13px] text-slate-400 mr-2">{today}</span>
         {/* Global creation CTAs */}
         <Link
           href="/notice/new"
@@ -59,6 +58,7 @@ export default function TopBar({ title }: { title: string }) {
         >
           Log Out
         </button>
+        <span className="hidden lg:block text-[13px] text-slate-400 pl-2 border-l border-slate-200">{today}</span>
       </div>
     </header>
   );
