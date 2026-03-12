@@ -520,7 +520,7 @@ export default function NoticeDetail() {
                 <button
                   onClick={handleConvertToVar}
                   disabled={converting}
-                  className="w-full py-3 px-4 bg-[#1B365D] hover:bg-[#24466F] disabled:opacity-50 text-white text-[14px] font-semibold rounded-md transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+                  className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-[14px] font-semibold rounded-md transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
                 >
                   {converting ? 'Creating...' : 'Convert to Variation Request →'}
                 </button>
