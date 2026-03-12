@@ -316,10 +316,9 @@ function VariationsList() {
                       <SortHeader label="Title" field="title" />
                       <SortHeader label="Project" field="project_name" className="hidden md:table-cell" />
                       <SortHeader label="Status" field="status" />
-
-                      <SortHeader label="Value" field="estimated_value" align="right" className="hidden sm:table-cell" />
                       <SortHeader label="Captured" field="captured_at" align="right" className="hidden md:table-cell" />
                       <SortHeader label="Due Date" field="response_due_date" align="right" className="hidden lg:table-cell" />
+                      <SortHeader label="Value" field="estimated_value" align="right" className="hidden sm:table-cell" />
                       <th className="w-10" />
                     </tr>
                   </thead>
@@ -338,8 +337,6 @@ function VariationsList() {
                         </td>
                         <td className="px-5 md:px-6 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-[#1C1C1E]">{v.project_name}</div></td>
                         <td className="px-5 md:px-6 py-3"><StatusBadge status={v.status} /></td>
-
-                        <td className="px-5 md:px-6 py-3 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
                         <td className="px-5 md:px-6 py-3 text-[13px] text-[#1C1C1E] text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
                         <td className="px-5 md:px-6 py-3 text-right hidden lg:table-cell whitespace-nowrap">
                             {v.response_due_date ? (() => {
@@ -355,6 +352,7 @@ function VariationsList() {
                               );
                             })() : <span className="text-[13px] text-[#D1D5DB]">—</span>}
                           </td>
+                        <td className="px-5 md:px-6 py-3 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
                           {/* Ellipsis action menu */}
                           <td className="px-3 py-3 w-10" onClick={e => e.stopPropagation()}>
                             <DropdownMenu>
