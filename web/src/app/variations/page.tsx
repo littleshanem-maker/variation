@@ -12,7 +12,7 @@ import { formatCurrency, formatDate, getStatusConfig, getVariationNumber } from 
 import { getFilteredRegisterHtml, openRegisterForPrint } from '@/lib/print';
 import { htmlToPdfBlob } from '@/lib/pdf';
 import { useRole } from '@/lib/role';
-import type { Variation, Project } from '@/lib/types';
+import type { Variation, Project, VariationNotice } from '@/lib/types';
 import * as XLSX from 'xlsx';
 import { MoreHorizontal, Pencil, Send, Trash2 } from 'lucide-react';
 
@@ -32,6 +32,7 @@ function VariationsList() {
   const [filterProject, setFilterProject] = useState<string>(initialProject);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [slideOverId, setSlideOverId] = useState<string | null>(null);
+  const [notices, setNotices] = useState<(VariationNotice & { project_name: string })[]>([]);
   const { isField, company } = useRole();
 
   useEffect(() => {
@@ -68,6 +69,18 @@ function VariationsList() {
       }));
       setRawProjects(projectsWithVars);
     }
+    const { data: noticesData } = await supabase
+      .from('variation_notices')
+      .select('*')
+      .order('sequence_number', { ascending: true });
+    if (noticesData) {
+      const activeNotices = noticesData.filter((n: VariationNotice) => activeProjectIds.has(n.project_id));
+      setNotices(activeNotices.map((n: VariationNotice) => ({
+        ...n,
+        project_name: projectMap.get(n.project_id) || 'Unknown Project'
+      })));
+    }
+
     setLoading(false);
   }
 
@@ -391,6 +404,63 @@ function VariationsList() {
               </div>
             </div>
           </>
+        )}
+
+        {/* Variation Notices */}
+        {notices.length > 0 && (
+          <div className="mt-8">
+            <div className="flex items-center justify-between mb-3 px-1">
+              <h2 className="text-[15px] font-semibold text-slate-900">Variation Notices</h2>
+              <span className="text-[13px] text-slate-400">{notices.filter(n => filterProject === 'all' || n.project_id === filterProject).length} notices</span>
+            </div>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-[#E5E7EB] bg-slate-50/60">
+                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5">Notice No.</th>
+                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5">Description</th>
+                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5 hidden md:table-cell">Project</th>
+                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5">Status</th>
+                    <th className="text-right text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5 hidden md:table-cell">Event Date</th>
+                    <th className="text-right text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5 hidden lg:table-cell">Issued</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {notices
+                    .filter(n => filterProject === 'all' || n.project_id === filterProject)
+                    .map((n, i, arr) => {
+                      const statusConfig: Record<string, { label: string; color: string; bg: string; border: string; dot: string }> = {
+                        draft: { label: 'Draft', color: 'text-slate-600', bg: 'bg-slate-100', border: 'border-slate-200', dot: 'bg-slate-400' },
+                        issued: { label: 'Issued', color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200', dot: 'bg-blue-500' },
+                        acknowledged: { label: 'Acknowledged', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200', dot: 'bg-emerald-500' },
+                      };
+                      const sc = statusConfig[n.status] || statusConfig.draft;
+                      return (
+                        <tr
+                          key={n.id}
+                          onClick={() => window.location.href = `/notice/${n.id}`}
+                          className={`group border-b border-[#F0F0EE] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === arr.length - 1 ? 'border-b-0' : ''}`}
+                        >
+                          <td className="px-5 md:px-6 py-3 text-[13px] font-medium text-[#1C1C1E] whitespace-nowrap">{n.notice_number}</td>
+                          <td className="px-5 md:px-6 py-3 max-w-[260px] overflow-hidden">
+                            <div className="truncate text-[14px] font-medium text-[#1C1C1E]">{n.event_description}</div>
+                          </td>
+                          <td className="px-5 md:px-6 py-3 text-[13px] text-[#1C1C1E] hidden md:table-cell">{n.project_name}</td>
+                          <td className="px-5 md:px-6 py-3">
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium border ${sc.color} ${sc.bg} ${sc.border}`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
+                              {sc.label}
+                            </span>
+                          </td>
+                          <td className="px-5 md:px-6 py-3 text-[13px] text-[#1C1C1E] text-right hidden md:table-cell whitespace-nowrap">{formatDate(n.event_date + 'T00:00:00')}</td>
+                          <td className="px-5 md:px-6 py-3 text-[13px] text-[#1C1C1E] text-right hidden lg:table-cell whitespace-nowrap">{n.issued_at ? formatDate(n.issued_at) : <span className="text-slate-300">—</span>}</td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          </div>
         )}
       </div>
 
