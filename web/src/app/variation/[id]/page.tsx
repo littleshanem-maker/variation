@@ -460,6 +460,13 @@ export default function VariationDetail() {
                     {advancingStatus ? 'Saving…' : 'Submitted to Client'}
                   </button>
                   <button
+                    onClick={handleSendEmail}
+                    disabled={sendingEmail}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 transition-colors disabled:opacity-50 whitespace-nowrap"
+                  >
+                    <FileText size={14} /> {sendingEmail ? 'Preparing…' : 'PDF / Send'}
+                  </button>
+                  <button
                     onClick={startEditing}
                     className="px-3 py-1.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                   >
