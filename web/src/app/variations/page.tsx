@@ -290,7 +290,7 @@ function VariationsList() {
                       </div>
                       <div className="flex-shrink-0 text-right">
                         <StatusBadge status={v.status} />
-                        <div className="text-[13px] font-medium text-slate-700 tabular-nums mt-1">{formatCurrency(v.estimated_value)}</div>
+                        <div className="text-[13px] font-medium text-slate-700 mt-1">{formatCurrency(v.estimated_value)}</div>
                       </div>
                     </div>
                   </div>
@@ -331,7 +331,7 @@ function VariationsList() {
                         <td className="px-5 md:px-6 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-slate-500">{v.project_name}</div></td>
                         <td className="px-5 md:px-6 py-3"><StatusBadge status={v.status} /></td>
 
-                        <td className="px-5 md:px-6 py-3 text-[14px] font-medium text-slate-800 text-right tabular-nums font-mono hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
+                        <td className="px-5 md:px-6 py-3 text-[14px] font-medium text-slate-800 text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
                         <td className="px-5 md:px-6 py-3 text-[13px] text-slate-500 text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
                         <td className="px-5 md:px-6 py-3 text-right hidden lg:table-cell whitespace-nowrap">
                             {v.response_due_date ? (() => {
