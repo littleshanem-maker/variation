@@ -33,7 +33,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Variation Shield" />
-        <link rel="apple-touch-icon" href="/variation-shield-logo.jpg" />
+        <link rel="apple-touch-icon" href="/vs-icon.svg" />
       </head>
       <body className={`${inter.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
         <Providers>{children}</Providers>
