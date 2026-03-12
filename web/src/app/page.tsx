@@ -136,6 +136,7 @@ export default function Dashboard() {
   type ProjectBarData = {
     id: string; name: string; totalValue: number;
     paid: number; submitted: number; disputed: number; other: number;
+    variationCount: number;
   };
 
   const barChartData: ProjectBarData[] = useMemo(() => {
@@ -150,7 +151,7 @@ export default function Dashboard() {
         const disputed = vars.filter(v => v.status === 'disputed').reduce((s, v) => s + (v.estimated_value || 0), 0);
         const other = vars.filter(v => ['draft', 'captured'].includes(v.status)).reduce((s, v) => s + (v.estimated_value || 0), 0);
         const totalValue = paid + submitted + disputed + other;
-        return { id: p.id, name: p.name, totalValue, paid, submitted, disputed, other };
+        return { id: p.id, name: p.name, totalValue, paid, submitted, disputed, other, variationCount: vars.length };
       })
       .sort((a, b) => b.totalValue - a.totalValue); // Sort by total bar length desc
   }, [projects, filterProject, filterDateRange]);
@@ -423,9 +424,13 @@ export default function Dashboard() {
                           </div>
                           {/* Bar — segments are clickable links to filtered register */}
                           <div className="w-full h-[18px] bg-slate-100 rounded-md overflow-hidden mb-5">
-                            {p.totalValue === 0 ? (
+                            {p.variationCount === 0 ? (
                               <div className="flex items-center h-full px-2">
                                 <span className="text-[11px] text-[#9CA3AF]">No variations yet — <Link href={`/project/${p.id}`} className="underline hover:text-[#1B365D]">open project to add one</Link></span>
+                              </div>
+                            ) : p.totalValue === 0 ? (
+                              <div className="flex items-center h-full px-2">
+                                <span className="text-[11px] text-[#9CA3AF]">{p.variationCount} variation{p.variationCount !== 1 ? 's' : ''} — no value recorded yet</span>
                               </div>
                             ) : (
                               <div style={{ width: `${barW}%` }} className="flex h-full gap-px">
