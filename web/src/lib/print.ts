@@ -18,7 +18,8 @@ const GLOBAL_CSS = `
     color: #1C1C1E; 
     background: white; 
     -webkit-print-color-adjust: exact; 
-    print-color-adjust: exact; 
+    print-color-adjust: exact;
+    padding-bottom: 32mm;
   }
 
   /* UTILS */
@@ -142,6 +143,10 @@ const GLOBAL_CSS = `
   }
 `;
 
+// Inline SVG for the Variation Shield logo (purple shield with V chevron)
+const VS_LOGO_SVG_16 = `<svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#4f46e5"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,255,255,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const VS_LOGO_SVG_32 = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#4f46e5"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,255,255,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
 // ------------------------------------------------------------------
 // HELPER: CREATE & OPEN BLOB
 // ------------------------------------------------------------------
@@ -177,7 +182,6 @@ export function printRegister(projects: ProjectWithVariations[]) {
   const allVariations = projects.flatMap(p => p.variations);
   const totalValue = allVariations.reduce((s, v) => s + v.estimated_value, 0);
   const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
-  const logoUrl = `${window.location.origin}/variation-shield-logo.jpg`;
 
   const projectSections = projects.map(p => {
     if (p.variations.length === 0) return '';
@@ -221,7 +225,7 @@ export function printRegister(projects: ProjectWithVariations[]) {
     <div class="doc-header">
       <div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-          <img src="${logoUrl}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;" />
+          ${VS_LOGO_SVG_32}
           <div class="brand">Variation Shield</div>
         </div>
         <div class="doc-title">Variation Register</div>
@@ -255,7 +259,7 @@ export function printRegister(projects: ProjectWithVariations[]) {
 
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
-        <img src="${logoUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;" />
+        ${VS_LOGO_SVG_16}
         <span>Variation Shield</span>
       </div>
       <div>Page <span class="page-number"></span></div>
@@ -354,7 +358,6 @@ export function getFilteredRegisterHtml(
 export function printProjectRegister(project: Project, variations: Variation[]) {
   const totalValue = variations.reduce((s, v) => s + v.estimated_value, 0);
   const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
-  const logoUrl = `${window.location.origin}/variation-shield-logo.jpg`;
 
   const rows = variations.map(v => `
     <tr>
@@ -371,7 +374,7 @@ export function printProjectRegister(project: Project, variations: Variation[]) 
     <div class="doc-header">
       <div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-          <img src="${logoUrl}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;" />
+          ${VS_LOGO_SVG_32}
           <div class="brand">Variation Shield</div>
         </div>
         <div class="doc-title">${escapeHtml(project.name)}</div>
@@ -405,7 +408,7 @@ export function printProjectRegister(project: Project, variations: Variation[]) 
 
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
-        <img src="${logoUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;" />
+        ${VS_LOGO_SVG_16}
         <span>Variation Shield</span>
       </div>
       <div>${escapeHtml(project.name)}</div>
@@ -437,11 +440,9 @@ function getNoticeLanguage(standard?: 'AS4000' | 'AS2124' | 'both'): string {
 }
 
 function buildCompanyHeader(companyName: string, companyInfo?: CompanyPrintInfo): string {
-  const vsLogoUrl = typeof window !== 'undefined' ? `${window.location.origin}/variation-shield-logo.jpg` : '';
-  const logoSrc = companyInfo?.logoUrl || vsLogoUrl;
   const logoImg = companyInfo?.logoUrl
-    ? `<img src="${logoSrc}" style="height:48px;width:auto;max-width:120px;object-fit:contain;border-radius:4px;" />`
-    : `<img src="${vsLogoUrl}" style="width:32px;height:32px;border-radius:6px;object-fit:cover;" />`;
+    ? `<img src="${companyInfo.logoUrl}" style="height:48px;width:auto;max-width:120px;object-fit:contain;border-radius:4px;" />`
+    : VS_LOGO_SVG_32;
   const nameBlock = companyInfo?.logoUrl
     ? `<div class="brand" style="font-size:13pt;">${escapeHtml(companyName || 'Variation Shield')}</div>`
     : `<div class="brand">${escapeHtml(companyName || 'Variation Shield')}</div>`;
@@ -462,7 +463,7 @@ function buildNoticeHtml(
   documents?: Document[],
   docUrls?: Record<string, string>
 ): string {
-  const logoUrl = companyInfo?.logoUrl || (typeof window !== 'undefined' ? `${window.location.origin}/variation-shield-logo.jpg` : '');
+  // logoUrl kept for backward compat but footer now uses inline SVG
 
   const eventDateFormatted = formatDocDateOnly(notice.event_date + 'T00:00:00');
   const issuedFormatted = notice.issued_at ? formatDocDate(notice.issued_at) : '—';
@@ -637,7 +638,7 @@ function buildNoticeHtml(
 
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
-        <img src="${logoUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;" />
+        ${VS_LOGO_SVG_16}
         <span>Variation Shield</span>
       </div>
       <div>${escapeHtml(notice.notice_number)} · ${escapeHtml(project.name)}</div>
@@ -731,7 +732,6 @@ function buildVariationHtml(
 ): string {
   const status = getStatusConfig(variation.status).label;
   const varNumber = getVariationNumber(variation);
-  const logoUrl = companyInfo?.logoUrl || `${window.location.origin}/variation-shield-logo.jpg`;
 
   const photoGrid = photos.length > 0 ? `
     <div class="avoid-break">
@@ -841,6 +841,38 @@ function buildVariationHtml(
       </div>
     </div>
 
+    ${(variation as any).cost_items?.length > 0 ? `
+    <div style="margin-bottom:32px;">
+      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#6B7280; margin-bottom:10px;">Cost Breakdown</div>
+      <table style="width:100%; border-collapse:collapse; font-size:9pt;">
+        <thead>
+          <tr style="border-bottom:1px solid #E5E7EB;">
+            <th style="text-align:left; padding:4px 8px 6px 0; color:#6B7280; font-weight:600;">Description</th>
+            <th style="text-align:right; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:60px;">Qty</th>
+            <th style="text-align:left; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:50px;">Unit</th>
+            <th style="text-align:right; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:80px;">Rate</th>
+            <th style="text-align:right; padding:4px 0 6px 0; color:#6B7280; font-weight:600; width:80px;">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${(variation as any).cost_items.map((item: any) => `
+          <tr style="border-bottom:1px solid #F5F5F5;">
+            <td style="padding:5px 8px 5px 0; color:#1C1C1E;">${escapeHtml(item.description || '—')}</td>
+            <td style="padding:5px 8px 5px 0; text-align:right; color:#1C1C1E;">${item.qty}</td>
+            <td style="padding:5px 8px 5px 0; color:#6B7280;">${escapeHtml(item.unit || '')}</td>
+            <td style="padding:5px 8px 5px 0; text-align:right; color:#1C1C1E;">$${Number(item.rate).toFixed(2)}</td>
+            <td style="padding:5px 0; text-align:right; font-weight:600; color:#1C1C1E;">$${Number(item.total).toFixed(2)}</td>
+          </tr>
+          `).join('')}
+          <tr style="border-top:2px solid #E5E7EB;">
+            <td colspan="4" style="padding:8px 8px 4px 0; font-weight:700; font-size:9pt; text-align:right; color:#6B7280; text-transform:uppercase; letter-spacing:0.05em;">Total</td>
+            <td style="padding:8px 0 4px 0; font-weight:700; font-size:10pt; text-align:right; color:#1C1C1E;">$${(variation as any).cost_items.reduce((s: number, i: any) => s + (Number(i.total) || 0), 0).toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    ` : ''}
+
     <div style="padding-top:20px; margin-bottom:32px;">
       <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9CA3AF; margin-bottom:12px;">Document Information</div>
       <table style="width:100%; border-collapse:collapse; font-size:9pt;">
@@ -908,7 +940,7 @@ function buildVariationHtml(
 
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
-        <img src="${logoUrl}" style="width:16px;height:16px;border-radius:3px;object-fit:cover;" />
+        ${VS_LOGO_SVG_16}
         <span>Variation Shield</span>
       </div>
       <div>${escapeHtml(varNumber)} · Ref: ${variation.evidence_hash?.substring(0,8) || ''}</div>
