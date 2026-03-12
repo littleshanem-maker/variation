@@ -9,6 +9,7 @@ import { Plus } from 'lucide-react';
 export default function TopBar({ title }: { title: string }) {
   const router = useRouter();
   const [companyName, setCompanyName] = useState<string | null>(null);
+  const today = new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
 
   useEffect(() => {
     async function loadCompany() {
@@ -36,6 +37,7 @@ export default function TopBar({ title }: { title: string }) {
         )}
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
+        <span className="hidden lg:block text-[13px] text-slate-400 mr-2">{today}</span>
         {/* Global creation CTAs */}
         <Link
           href="/notice/new"
