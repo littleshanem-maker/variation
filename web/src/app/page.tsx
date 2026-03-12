@@ -141,9 +141,10 @@ export default function Dashboard() {
 
   const barChartData: ProjectBarData[] = useMemo(() => {
     return projects
+      .filter(p => filterProject === 'all' || p.id === filterProject)
       .map(p => {
         const vars = filterByDateRange(
-          filterProject !== 'all' && p.id !== filterProject ? [] : p.variations,
+          p.variations,
           filterDateRange
         );
         const paid = vars.filter(v => ['paid', 'approved'].includes(v.status)).reduce((s, v) => s + (v.estimated_value || 0), 0);
