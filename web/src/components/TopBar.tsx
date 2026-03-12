@@ -58,7 +58,6 @@ export default function TopBar({ title }: { title: string }) {
         >
           Log Out
         </button>
-        <span className="hidden lg:block text-[13px] text-slate-400 pl-2 border-l border-slate-200">{today}</span>
       </div>
     </header>
   );
