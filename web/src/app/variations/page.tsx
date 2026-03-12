@@ -32,7 +32,7 @@ function VariationsList() {
   const [filterProject, setFilterProject] = useState<string>(initialProject);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [slideOverId, setSlideOverId] = useState<string | null>(null);
-  const { isField } = useRole();
+  const { isField, company } = useRole();
 
   useEffect(() => {
     loadData();
@@ -106,7 +106,7 @@ function VariationsList() {
   );
 
   function handlePrint() {
-    printRegister(rawProjects);
+    printRegister(rawProjects, company?.name);
   }
 
   function handleExportExcel() {
@@ -159,7 +159,7 @@ function VariationsList() {
         : '';
       const label = `${projectName}${statusLabel}`;
 
-      const { html, css } = getFilteredRegisterHtml(sorted, label);
+      const { html, css } = getFilteredRegisterHtml(sorted, label, company?.name);
       const blob = await htmlToPdfBlob(html, css);
 
       const projectSlug = projectName.replace(/\s+/g, '-');

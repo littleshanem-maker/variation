@@ -34,7 +34,7 @@ function ProjectDetailContent() {
   const [showArchiveConfirm, setShowArchiveConfirm] = useState(false);
   const [archiving, setArchiving] = useState(false);
   const [togglingNoticeRequired, setTogglingNoticeRequired] = useState(false);
-  const { isField, isAdmin, isOffice, companyId } = useRole();
+  const { isField, isAdmin, isOffice, companyId, company } = useRole();
 
   useEffect(() => {
     loadProject();
@@ -59,7 +59,7 @@ function ProjectDetailContent() {
 
   function handlePrint() {
     if (project) {
-      printProjectRegister(project, variations);
+      printProjectRegister(project, variations, company?.name);
     }
   }
 
