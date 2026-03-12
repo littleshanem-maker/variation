@@ -118,7 +118,7 @@ function VariationsList() {
 
       'Value (AUD)': (v.estimated_value || 0) / 100,
       'Captured': v.captured_at ? new Date(v.captured_at).toLocaleDateString('en-AU') : '',
-      'Due Date': v.response_due_date ? new Date(v.response_due_date + 'T00:00:00').toLocaleDateString('en-AU') : '',
+      'Due Date': v.response_due_date ? (() => { const d = new Date(v.response_due_date + 'T00:00:00'); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()).slice(-2)}`; })() : '',
     }));
 
     const ws = XLSX.utils.json_to_sheet(rows);
@@ -342,7 +342,7 @@ function VariationsList() {
                               const dueSoon = daysLeft >= 0 && daysLeft <= 3;
                               return (
                                 <span className={`text-[13px] font-medium ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#6B7280]'}`}>
-                                  {due.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                  {`${String(due.getDate()).padStart(2,'0')}/${String(due.getMonth()+1).padStart(2,'0')}/${String(due.getFullYear()).slice(-2)}`}
                                 </span>
                               );
                             })() : <span className="text-[13px] text-[#D1D5DB]">—</span>}

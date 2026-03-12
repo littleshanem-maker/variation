@@ -34,18 +34,12 @@ export function formatDocDateOnly(dateStr: string | null | undefined): string {
 
 /** Format a date string as relative or absolute */
 export function formatDate(dateStr: string): string {
+  if (!dateStr) return '—';
   const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 14) return `${diffDays} days ago`;
-
-  const day = date.getDate();
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${day} ${months[date.getMonth()]} ${date.getFullYear()}`;
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = String(date.getFullYear()).slice(-2);
+  return `${day}/${month}/${year}`;
 }
 
 /** Status display config — desaturated, sophisticated tones */
