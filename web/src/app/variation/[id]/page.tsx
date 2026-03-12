@@ -632,7 +632,7 @@ export default function VariationDetail() {
           const isRejected = variation.status === 'disputed';
           const steps = [
             { key: 'draft',     label: 'Draft' },
-            { key: 'submitted', label: 'Submitted' },
+            { key: 'submitted', label: 'Submitted to Client' },
             { key: isRejected ? 'disputed' : 'approved', label: isRejected ? 'Rejected' : 'Approved' },
             { key: 'paid',      label: 'Paid' },
           ];

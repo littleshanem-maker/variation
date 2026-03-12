@@ -32,6 +32,8 @@ function NewNoticeForm() {
   const [costItems, setCostItems] = useState<CostItem[]>([]);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [saving, setSaving] = useState(false);
+  const [createdNotice, setCreatedNotice] = useState<{ id: string; number: string; projectName: string; description: string } | null>(null);
+  const [submittingNotice, setSubmittingNotice] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -101,8 +103,8 @@ function NewNoticeForm() {
         contract_clause: contractClause.trim() || null,
         issued_by_name: issuedByName.trim() || null,
         issued_by_email: issuedByEmail.trim() || null,
-        status: issueImmediately ? 'issued' : 'draft',
-        issued_at: issueImmediately ? nowIso : null,
+        status: 'draft',
+        issued_at: null,
         created_at: nowIso,
         updated_at: nowIso,
       })
@@ -132,7 +134,13 @@ function NewNoticeForm() {
           }
         }
       }
-      router.push(`/notice/${inserted.id}`);
+      const proj = projects.find(p => p.id === projectId);
+      setCreatedNotice({
+        id: inserted.id,
+        number: noticeNumber,
+        projectName: proj?.name ?? '',
+        description: eventDescription.trim(),
+      });
     } else {
       console.error('Failed to create notice:', error);
     }
@@ -318,14 +326,72 @@ function NewNoticeForm() {
             {saving ? 'Saving...' : 'Save as Draft'}
           </button>
           <button
-            onClick={() => handleSave(true)}
+            onClick={() => handleSave(false)}
             disabled={saving || !projectId || !eventDescription.trim()}
-            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] text-center"
+            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] text-center"
           >
-            {saving ? 'Saving...' : 'Issue Immediately'}
+            {saving ? 'Creating…' : 'Create Variation Notice'}
           </button>
         </div>
       </div>
+
+      {/* Post-create modal */}
+      {createdNotice && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/30 px-0 sm:px-4">
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl border border-[#E5E7EB] shadow-xl p-6 w-full sm:max-w-md">
+            {/* Header */}
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-[16px]">✓</div>
+              <div>
+                <div className="text-[15px] font-semibold text-slate-900">Notice Created</div>
+                <div className="text-[12px] text-slate-500">{createdNotice.number} · {createdNotice.projectName}</div>
+              </div>
+            </div>
+
+            {/* Description preview */}
+            <p className="text-[13px] text-slate-600 mt-3 mb-5 line-clamp-2 leading-relaxed">{createdNotice.description}</p>
+
+            {/* Progress stepper */}
+            <div className="flex items-center gap-0 mb-6">
+              {[{ label: 'Draft', done: true, current: false }, { label: 'Submitted to Client', done: false, current: false }].map((step, i, arr) => (
+                <div key={step.label} className="flex items-center flex-1 min-w-0">
+                  <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${step.done ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-400'}`}>
+                      {step.done ? '✓' : i + 1}
+                    </div>
+                    <span className={`text-[10px] font-medium text-center leading-tight ${step.done ? 'text-emerald-600' : 'text-slate-400'}`}>{step.label}</span>
+                  </div>
+                  {i < arr.length - 1 && <div className="h-[2px] flex-1 mx-1 bg-slate-200" />}
+                </div>
+              ))}
+            </div>
+
+            {/* Actions */}
+            <button
+              onClick={async () => {
+                setSubmittingNotice(true);
+                const supabase = createClient();
+                await supabase.from('variation_notices').update({
+                  status: 'issued',
+                  issued_at: new Date().toISOString(),
+                }).eq('id', createdNotice.id);
+                setSubmittingNotice(false);
+                router.push(`/notice/${createdNotice.id}`);
+              }}
+              disabled={submittingNotice}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl disabled:opacity-40 transition-colors mb-2"
+            >
+              {submittingNotice ? 'Submitting…' : 'Submit to Client'}
+            </button>
+            <button
+              onClick={() => router.push(`/notice/${createdNotice.id}`)}
+              className="w-full px-4 py-2.5 text-[13px] font-medium text-slate-500 hover:text-slate-800 transition-colors text-center"
+            >
+              Save as Draft — submit later
+            </button>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }
