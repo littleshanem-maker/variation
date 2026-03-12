@@ -25,7 +25,7 @@ const GLOBAL_CSS = `
   .tabular-nums { font-variant-numeric: tabular-nums; }
   .uppercase { text-transform: uppercase; letter-spacing: 0.05em; }
   .text-right { text-align: right; }
-  .text-muted { color: #6B7280; }
+  .text-muted { color: #1C1C1E; }
   .font-medium { font-weight: 500; }
   .font-semibold { font-weight: 600; }
   .font-bold { font-weight: 700; }
@@ -145,13 +145,13 @@ const VS_LOGO_SVG_32 = `<svg width="32" height="32" viewBox="0 0 32 32" fill="no
 // ------------------------------------------------------------------
 // HELPER: CREATE & OPEN BLOB
 // ------------------------------------------------------------------
-function openHtml(htmlContent: string, title: string) {
+function openHtml(htmlContent: string, title: string, extraCss?: string) {
   const fullHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>${title}</title>
-  <style>${GLOBAL_CSS}</style>
+  <style>${GLOBAL_CSS}${extraCss || ''}</style>
 </head>
 <body>
   ${htmlContent}
@@ -182,15 +182,19 @@ export function printRegister(projects: ProjectWithVariations[], companyName?: s
     if (p.variations.length === 0) return '';
     const pTotal = p.variations.reduce((s, v) => s + v.estimated_value, 0);
     
-    const rows = p.variations.map(v => `
+    const rows = p.variations.map(v => {
+      const dueDate = v.response_due_date ? formatDate(v.response_due_date + 'T00:00:00') : '—';
+      return `
       <tr>
-        <td class="tabular-nums font-medium" style="color:#1B365D; font-family:monospace;">${getVariationNumber(v)}</td>
+        <td class="tabular-nums font-medium">${getVariationNumber(v)}</td>
         <td class="font-medium">${escapeHtml(v.title)}</td>
         <td>${getStatusConfig(v.status).label}</td>
         <td class="text-right tabular-nums">${formatDate(v.captured_at)}</td>
+        <td class="text-right tabular-nums">${dueDate}</td>
         <td class="text-right tabular-nums font-medium">${formatCurrency(v.estimated_value)}</td>
       </tr>
-    `).join('');
+      `;
+    }).join('');
 
     return `
       <div class="avoid-break" style="margin-bottom: 40px;">
@@ -201,11 +205,12 @@ export function printRegister(projects: ProjectWithVariations[], companyName?: s
         <table>
           <thead>
             <tr>
-              <th style="width:80px">Var No.</th>
+              <th style="width:70px">Var No.</th>
               <th>Title</th>
-              <th style="width:100px">Status</th>
-              <th style="width:100px; text-align:right">Date</th>
-              <th style="width:120px; text-align:right">Value</th>
+              <th style="width:110px">Status</th>
+              <th style="width:80px; text-align:right">Captured</th>
+              <th style="width:80px; text-align:right">Due Date</th>
+              <th style="width:90px; text-align:right">Value</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -259,7 +264,7 @@ export function printRegister(projects: ProjectWithVariations[], companyName?: s
     </div>
   `;
 
-  openHtml(html, `Variation Register - ${now}`);
+  openHtml(html, `Variation Register - ${now}`, '@page { size: A4 landscape; margin: 10mm 15mm; }');
 }
 
 // ------------------------------------------------------------------
@@ -273,16 +278,20 @@ export function getFilteredRegisterHtml(
   const totalValue = variations.reduce((s, v) => s + (v.estimated_value || 0), 0);
   const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
 
-  const rows = variations.map(v => `
+  const rows = variations.map(v => {
+    const dueDate = v.response_due_date ? formatDate(v.response_due_date + 'T00:00:00') : '—';
+    return `
     <tr>
-      <td class="tabular-nums font-medium" style="color:#1B365D; font-family:monospace;">${getVariationNumber(v)}</td>
+      <td class="tabular-nums font-medium">${getVariationNumber(v)}</td>
       <td class="font-medium">${escapeHtml(v.title)}</td>
-      <td class="text-muted">${escapeHtml(v.project_name)}</td>
+      <td>${escapeHtml(v.project_name)}</td>
       <td>${getStatusConfig(v.status).label}</td>
       <td class="text-right tabular-nums">${formatDate(v.captured_at)}</td>
+      <td class="text-right tabular-nums">${dueDate}</td>
       <td class="text-right tabular-nums font-medium">${formatCurrency(v.estimated_value)}</td>
     </tr>
-  `).join('');
+  `;
+  }).join('');
 
   const approvedValue = variations.filter(v => ['approved', 'paid'].includes(v.status)).reduce((s, v) => s + (v.estimated_value || 0), 0);
   const pendingValue  = variations.filter(v => ['submitted', 'captured', 'draft'].includes(v.status)).reduce((s, v) => s + (v.estimated_value || 0), 0);
@@ -323,25 +332,27 @@ export function getFilteredRegisterHtml(
     <table>
       <thead>
         <tr>
-          <th style="width:80px">Var No.</th>
+          <th style="width:70px">Var No.</th>
           <th>Title</th>
-          <th style="width:140px">Project</th>
-          <th style="width:90px">Status</th>
-          <th style="width:90px; text-align:right">Date</th>
-          <th style="width:110px; text-align:right">Value</th>
+          <th style="width:130px">Project</th>
+          <th style="width:110px">Status</th>
+          <th style="width:80px; text-align:right">Captured</th>
+          <th style="width:80px; text-align:right">Due Date</th>
+          <th style="width:90px; text-align:right">Value</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
       <tfoot>
         <tr class="total-row">
-          <td colspan="5" class="text-right">Total</td>
+          <td colspan="6" class="text-right">Total</td>
           <td class="text-right tabular-nums">${formatCurrency(totalValue)}</td>
         </tr>
       </tfoot>
     </table>
   `;
 
-  return { html, css: GLOBAL_CSS };
+  const LANDSCAPE_CSS = '@page { size: A4 landscape; margin: 10mm 15mm; }';
+  return { html, css: GLOBAL_CSS + LANDSCAPE_CSS };
 }
 
 // ------------------------------------------------------------------
@@ -351,15 +362,19 @@ export function printProjectRegister(project: Project, variations: Variation[], 
   const totalValue = variations.reduce((s, v) => s + v.estimated_value, 0);
   const now = new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' });
 
-  const rows = variations.map(v => `
+  const rows = variations.map(v => {
+    const dueDate = v.response_due_date ? formatDate(v.response_due_date + 'T00:00:00') : '—';
+    return `
     <tr>
-      <td class="tabular-nums font-medium" style="color:#1B365D; font-family:monospace;">${getVariationNumber(v)}</td>
+      <td class="tabular-nums font-medium">${getVariationNumber(v)}</td>
       <td class="font-medium">${escapeHtml(v.title)}</td>
       <td>${getStatusConfig(v.status).label}</td>
       <td class="text-right tabular-nums">${formatDate(v.captured_at)}</td>
+      <td class="text-right tabular-nums">${dueDate}</td>
       <td class="text-right tabular-nums font-medium">${formatCurrency(v.estimated_value)}</td>
     </tr>
-  `).join('');
+    `;
+  }).join('');
 
   const html = `
     <div class="doc-header">
@@ -380,17 +395,18 @@ export function printProjectRegister(project: Project, variations: Variation[], 
     <table>
       <thead>
         <tr>
-          <th style="width:80px">Var No.</th>
+          <th style="width:70px">Var No.</th>
           <th>Title</th>
-          <th style="width:100px">Status</th>
-          <th style="width:100px; text-align:right">Date</th>
-          <th style="width:120px; text-align:right">Value</th>
+          <th style="width:110px">Status</th>
+          <th style="width:80px; text-align:right">Captured</th>
+          <th style="width:80px; text-align:right">Due Date</th>
+          <th style="width:90px; text-align:right">Value</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
       <tfoot>
         <tr class="total-row">
-          <td colspan="4" class="text-right">Project Total</td>
+          <td colspan="5" class="text-right">Project Total</td>
           <td class="text-right tabular-nums">${formatCurrency(totalValue)}</td>
         </tr>
       </tfoot>
@@ -405,7 +421,7 @@ export function printProjectRegister(project: Project, variations: Variation[], 
     </div>
   `;
 
-  openHtml(html, `${project.name} - Variation Register`);
+  openHtml(html, `${project.name} - Variation Register`, '@page { size: A4 landscape; margin: 10mm 15mm; }');
 }
 
 // ------------------------------------------------------------------
