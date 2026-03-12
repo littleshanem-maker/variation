@@ -16,7 +16,7 @@ import type { Variation, Project } from '@/lib/types';
 import * as XLSX from 'xlsx';
 import { MoreHorizontal, Pencil, Send, Trash2 } from 'lucide-react';
 
-type SortKey = 'sequence_number' | 'title' | 'project_name' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at' | 'response_due_date';
+type SortKey = 'sequence_number' | 'title' | 'project_name' | 'status' | 'estimated_value' | 'captured_at' | 'response_due_date';
 
 function VariationsList() {
   const searchParams = useSearchParams();
@@ -115,7 +115,7 @@ function VariationsList() {
       'Title': v.title,
       'Project': v.project_name,
       'Status': v.status.charAt(0).toUpperCase() + v.status.slice(1),
-      'Source': v.instruction_source?.replace(/_/g, ' ') || '',
+
       'Value (AUD)': (v.estimated_value || 0) / 100,
       'Captured': v.captured_at ? new Date(v.captured_at).toLocaleDateString('en-AU') : '',
       'Due Date': v.response_due_date ? new Date(v.response_due_date + 'T00:00:00').toLocaleDateString('en-AU') : '',
@@ -308,7 +308,7 @@ function VariationsList() {
                       <SortHeader label="Title" field="title" />
                       <SortHeader label="Project" field="project_name" className="hidden md:table-cell" />
                       <SortHeader label="Status" field="status" />
-                      <SortHeader label="Source" field="instruction_source" className="hidden lg:table-cell" />
+
                       <SortHeader label="Value" field="estimated_value" align="right" className="hidden sm:table-cell" />
                       <SortHeader label="Captured" field="captured_at" align="right" className="hidden md:table-cell" />
                       <SortHeader label="Due Date" field="response_due_date" align="right" className="hidden lg:table-cell" />
@@ -330,7 +330,7 @@ function VariationsList() {
                         </td>
                         <td className="px-5 md:px-6 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-slate-500">{v.project_name}</div></td>
                         <td className="px-5 md:px-6 py-3"><StatusBadge status={v.status} /></td>
-                        <td className="px-5 md:px-6 py-3 text-[13px] text-slate-500 capitalize hidden lg:table-cell whitespace-nowrap">{v.instruction_source?.replace(/_/g, ' ')}</td>
+
                         <td className="px-5 md:px-6 py-3 text-[14px] font-medium text-slate-800 text-right tabular-nums font-mono hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
                         <td className="px-5 md:px-6 py-3 text-[13px] text-slate-500 text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
                         <td className="px-5 md:px-6 py-3 text-right hidden lg:table-cell whitespace-nowrap">
