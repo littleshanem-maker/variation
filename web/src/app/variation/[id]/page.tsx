@@ -148,7 +148,7 @@ export default function VariationDetail() {
       setSaving(false);
       setRevisingMode(false);
       setEditing(false);
-      router.push(`/project/${variation.project_id}`);
+      router.push(`/variation/${newVar.id}`);
       return;
     }
 
