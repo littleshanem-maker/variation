@@ -447,7 +447,7 @@ export default function VariationDetail() {
           </Link>
           {!editing && (
             <div className="hidden md:block space-y-3">
-              {/* Step 1 — Draft: primary is Submit */}
+              {/* Step 1 — Draft: Submit to Client */}
               {isDraft && !isField && (
                 <div className="flex flex-wrap items-center gap-2">
                   <button
@@ -456,7 +456,7 @@ export default function VariationDetail() {
                     className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
                   >
                     <Send size={14} />
-                    {advancingStatus ? 'Saving…' : 'Mark as Submitted'}
+                    {advancingStatus ? 'Saving…' : 'Submit to Client'}
                   </button>
                   <button
                     onClick={startEditing}
@@ -475,7 +475,7 @@ export default function VariationDetail() {
                 </div>
               )}
 
-              {/* Step 2 — Submitted: locked. Approve / Dispute / Withdraw */}
+              {/* Step 2 — Submitted to Client: Approved / Rejected */}
               {isSubmitted && !isField && (
                 <div className="flex flex-wrap items-center gap-2">
                   <button
@@ -483,61 +483,93 @@ export default function VariationDetail() {
                     disabled={advancingStatus}
                     className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
                   >
-                    <CheckCircle size={14} /> {advancingStatus ? '…' : 'Mark as Approved'}
+                    <CheckCircle size={14} /> {advancingStatus ? '…' : 'Approved by Client'}
                   </button>
                   <button
                     onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }}
                     disabled={advancingStatus}
                     className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors"
                   >
-                    <XCircle size={14} /> Mark as Disputed
+                    <XCircle size={14} /> Rejected by Client
                   </button>
+                  <button
+                    onClick={handleSendEmail}
+                    disabled={sendingEmail}
+                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
+                  >
+                    {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
+                  </button>
+                  {/* Withdraw & Edit — escape hatch, subtle */}
                   <button
                     onClick={() => handleAdvanceStatus('draft')}
                     disabled={advancingStatus}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-slate-400 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    title="Withdraw and return to draft for editing"
                   >
-                    <RotateCcw size={13} /> Withdraw &amp; Edit
+                    <RotateCcw size={12} /> Withdraw
                   </button>
                 </div>
               )}
 
-              {/* Step 3 — Disputed: Revise & Resubmit */}
+              {/* Step 3 — Rejected: Revise */}
               {isDisputed && !isField && (
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     onClick={startRevising}
                     className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
                   >
-                    <ArrowUpRight size={14} /> Revise &amp; Resubmit
+                    <ArrowUpRight size={14} /> Revise
                   </button>
                   <button
-                    onClick={startEditing}
-                    className="px-3 py-1.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    onClick={handleSendEmail}
+                    disabled={sendingEmail}
+                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
                   >
-                    Edit
+                    {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
                   </button>
                 </div>
               )}
 
-              {/* Secondary actions — always shown */}
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  onClick={handleSendEmail}
-                  disabled={sendingEmail}
-                  className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-                >
-                  {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
-                </button>
-                {!isDraft && !isSubmitted && !isDisputed && canRevise && (
+              {/* Step 4 — Approved by Client: Mark as Paid */}
+              {variation.status === 'approved' && !isField && (
+                <div className="flex flex-wrap items-center gap-2">
                   <button
-                    onClick={startRevising}
-                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    onClick={() => handleAdvanceStatus('paid')}
+                    disabled={advancingStatus}
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
                   >
-                    ↩ Revise
+                    <CheckCircle size={14} /> {advancingStatus ? '…' : 'Mark as Paid'}
                   </button>
-                )}
-              </div>
+                  <button
+                    onClick={handleSendEmail}
+                    disabled={sendingEmail}
+                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
+                  >
+                    {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
+                  </button>
+                  {canRevise && (
+                    <button
+                      onClick={startRevising}
+                      className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    >
+                      ↩ Revise
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Paid / other terminal states */}
+              {variation.status === 'paid' && !isField && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    onClick={handleSendEmail}
+                    disabled={sendingEmail}
+                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
+                  >
+                    {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
+                  </button>
+                </div>
+              )}
             </div>
           )}
           {editing && (
@@ -581,18 +613,64 @@ export default function VariationDetail() {
         {isSubmitted && !editing && (
           <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-[13px] text-amber-700 font-medium">
             <Lock size={14} className="flex-shrink-0" />
-            This variation is submitted and locked. Use <span className="font-semibold">Withdraw &amp; Edit</span> to make changes.
+            Submitted to client and locked. Use <span className="font-semibold">Withdraw</span> to pull back and edit.
           </div>
         )}
         {isDisputed && !editing && variation.notes?.startsWith('DISPUTE REASON:') && (
           <div className="flex items-start gap-2 px-4 py-3 bg-rose-50 border border-rose-200 rounded-xl text-[13px] text-rose-700">
             <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
             <div>
-              <span className="font-semibold">Dispute reason: </span>
+              <span className="font-semibold">Rejected by client: </span>
               {variation.notes.replace('DISPUTE REASON: ', '')}
             </div>
           </div>
         )}
+
+        {/* Progress Stepper */}
+        {!editing && (() => {
+          const isRejected = variation.status === 'disputed';
+          const steps = [
+            { key: 'draft',     label: 'Draft' },
+            { key: 'submitted', label: 'Submitted' },
+            { key: isRejected ? 'disputed' : 'approved', label: isRejected ? 'Rejected' : 'Approved' },
+            { key: 'paid',      label: 'Paid' },
+          ];
+          const ORDER = ['draft', 'captured', 'submitted', 'approved', 'disputed', 'paid'];
+          const currentIdx = ORDER.indexOf(variation.status);
+          return (
+            <div className="flex items-center gap-0 bg-white border border-[#E5E7EB] rounded-md px-4 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+              {steps.map((step, i) => {
+                const stepOrder = ORDER.indexOf(step.key);
+                const isCurrent = variation.status === step.key || (step.key === 'draft' && variation.status === 'captured');
+                const isDone = !isCurrent && currentIdx > stepOrder;
+                const isNext = !isCurrent && !isDone;
+                return (
+                  <div key={step.key} className="flex items-center flex-1 min-w-0">
+                    <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${
+                        isCurrent
+                          ? step.key === 'disputed' ? 'bg-rose-500 text-white' : 'bg-indigo-600 text-white'
+                          : isDone
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-slate-100 text-slate-400'
+                      }`}>
+                        {isDone ? '✓' : i + 1}
+                      </div>
+                      <span className={`text-[10px] font-medium text-center leading-tight hidden sm:block ${
+                        isCurrent
+                          ? step.key === 'disputed' ? 'text-rose-600' : 'text-indigo-600'
+                          : isDone ? 'text-emerald-600' : 'text-slate-400'
+                      }`}>{step.label}</span>
+                    </div>
+                    {i < steps.length - 1 && (
+                      <div className={`h-[2px] flex-1 mx-1 ${isDone ? 'bg-emerald-300' : 'bg-slate-200'}`} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
 
         {/* Header Card */}
         <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
@@ -930,9 +1008,9 @@ export default function VariationDetail() {
           <div className="bg-white rounded-t-xl sm:rounded-xl border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-2 mb-1">
               <XCircle size={18} className="text-rose-500 flex-shrink-0" />
-              <h3 className="text-[15px] font-semibold text-slate-900">Dispute Variation</h3>
+              <h3 className="text-[15px] font-semibold text-slate-900">Rejected by Client</h3>
             </div>
-            <p className="text-[13px] text-slate-500 mb-4">Provide a reason for the dispute. This will be recorded and visible to the submitter.</p>
+            <p className="text-[13px] text-slate-500 mb-4">Record the reason for rejection. This will be saved against the variation.</p>
             <textarea
               value={disputeReason}
               onChange={e => setDisputeReason(e.target.value)}
@@ -963,7 +1041,7 @@ export default function VariationDetail() {
                 disabled={!disputeReason.trim() || advancingStatus}
                 className="px-4 py-1.5 text-[13px] font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg disabled:opacity-40 transition-colors"
               >
-                Confirm Dispute
+                Confirm Rejection
               </button>
             </div>
           </div>
@@ -1012,7 +1090,7 @@ export default function VariationDetail() {
                 className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl disabled:opacity-40 transition-colors active:bg-indigo-700"
               >
                 <Send size={15} />
-                {advancingStatus ? 'Saving…' : 'Mark as Submitted'}
+                {advancingStatus ? 'Saving…' : 'Submit to Client'}
               </button>
               <div className="grid grid-cols-2 gap-2">
                 <button onClick={startEditing} className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
@@ -1035,7 +1113,7 @@ export default function VariationDetail() {
                 disabled={advancingStatus}
                 className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-emerald-600 rounded-xl disabled:opacity-40 transition-colors active:bg-emerald-700"
               >
-                <CheckCircle size={15} /> {advancingStatus ? '…' : 'Mark as Approved'}
+                <CheckCircle size={15} /> {advancingStatus ? '…' : 'Approved by Client'}
               </button>
               <div className="grid grid-cols-3 gap-2">
                 <button
@@ -1043,9 +1121,9 @@ export default function VariationDetail() {
                   disabled={advancingStatus}
                   className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-xl"
                 >
-                  Dispute
+                  Rejected
                 </button>
-                <button onClick={startRevising} disabled={advancingStatus} className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-xl">
+                <button onClick={() => handleAdvanceStatus('draft')} disabled={advancingStatus} className="flex items-center justify-center gap-1 px-2 py-2.5 text-[12px] font-medium text-slate-400 border border-slate-200 rounded-xl">
                   Withdraw
                 </button>
                 <button
@@ -1064,7 +1142,7 @@ export default function VariationDetail() {
                 onClick={startRevising}
                 className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl transition-colors active:bg-indigo-700"
               >
-                <ArrowUpRight size={15} /> Revise &amp; Resubmit
+                <ArrowUpRight size={15} /> Revise
               </button>
               <button
                 onClick={handleSendEmail}
@@ -1075,7 +1153,25 @@ export default function VariationDetail() {
               </button>
             </>
           )}
-          {!isDraft && !isSubmitted && !isDisputed && (
+          {variation.status === 'approved' && (
+            <>
+              <button
+                onClick={() => handleAdvanceStatus('paid')}
+                disabled={advancingStatus}
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-emerald-700 rounded-xl disabled:opacity-40 transition-colors active:bg-emerald-800"
+              >
+                <CheckCircle size={15} /> {advancingStatus ? '…' : 'Mark as Paid'}
+              </button>
+              <button
+                onClick={handleSendEmail}
+                disabled={sendingEmail}
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+              >
+                <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
+              </button>
+            </>
+          )}
+          {!isDraft && !isSubmitted && !isDisputed && variation.status !== 'approved' && (
             <button
               onClick={handleSendEmail}
               disabled={sendingEmail}
