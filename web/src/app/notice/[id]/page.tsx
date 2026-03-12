@@ -7,6 +7,7 @@ import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
+import { Send } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { printNotice, getNoticeHtmlForPdf } from '@/lib/print';
 import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
@@ -257,9 +258,10 @@ export default function NoticeDetail() {
               <button
                 onClick={handleIssue}
                 disabled={advancing}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#92722E] border border-[#C8943E] rounded-md hover:bg-[#FDF8ED] transition-colors duration-[120ms] disabled:opacity-40 whitespace-nowrap"
+                className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors duration-[120ms] disabled:opacity-40 shadow-sm whitespace-nowrap"
               >
-                {advancing ? '…' : 'Issue Notice'}
+                <Send size={14} />
+                {advancing ? '…' : 'Submitted to Client'}
               </button>
             )}
             {canAcknowledge && (
