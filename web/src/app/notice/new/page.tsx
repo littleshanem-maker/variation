@@ -311,6 +311,14 @@ function NewNoticeForm() {
         {/* Actions */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
           <button
+            type="button"
+            onClick={() => router.back()}
+            disabled={saving}
+            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] disabled:opacity-40 transition-colors duration-[120ms] text-center"
+          >
+            Cancel
+          </button>
+          <button
             onClick={() => handleSave(false)}
             disabled={saving || !projectId || !eventDescription.trim()}
             className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] text-center"
