@@ -502,7 +502,7 @@ export default function Dashboard() {
               ) : (
                 <div className="space-y-1.5">
                   {urgentItems.map(item => (
-                    <Link key={item.id} href={`/variation/${item.variationId}`}>
+                    <Link key={item.id} href={`/variation/${item.variationId}?from=dashboard`}>
                       <div className="bg-white rounded-lg px-4 py-3.5 hover:bg-slate-50 transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
                         <div className="flex items-start gap-3">
                           {/* Dot indicator */}
