@@ -381,7 +381,7 @@ function NewNoticeForm() {
               disabled={submittingNotice}
               className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl disabled:opacity-40 transition-colors mb-2"
             >
-              {submittingNotice ? 'Submitting…' : 'Submit to Client'}
+              {submittingNotice ? 'Submitting…' : 'Submitted to Client'}
             </button>
             <button
               onClick={() => router.push(`/notice/${createdNotice.id}`)}
