@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
 import type { Project } from '@/lib/types';
@@ -14,7 +15,12 @@ interface CaptureResult {
   capturedAt: string;
 }
 
-export default function CapturePage() {
+function CapturePageContent() {
+  const searchParams = useSearchParams();
+  const isOnboarding = searchParams.get('onboarding') === 'true';
+  const onboardingProjectId = searchParams.get('project') ?? '';
+  const router = useRouter();
+
   const { companyId, isField, isLoading: roleLoading, userId } = useRole();
 
   // Projects
@@ -31,6 +37,10 @@ export default function CapturePage() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Onboarding UI state
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [showExtraFields, setShowExtraFields] = useState(false);
 
   // Submit state
   const [submitting, setSubmitting] = useState(false);
@@ -64,7 +74,10 @@ export default function CapturePage() {
 
     if (!error && data) {
       setProjects(data as Project[]);
-      if (data.length === 1) {
+      if (isOnboarding && onboardingProjectId) {
+        // Pre-select the onboarding project
+        setSelectedProjectId(onboardingProjectId);
+      } else if (data.length === 1) {
         setSelectedProjectId(data[0].id);
       }
     }
@@ -136,10 +149,11 @@ export default function CapturePage() {
       return;
     }
     if (!description.trim()) {
-      setError('Please describe what happened.');
+      setError('Please enter a title for this variation.');
       return;
     }
-    if (!responseDueDate) {
+    // In non-onboarding mode, response due date is required
+    if (!isOnboarding && !responseDueDate) {
       setError('Please set a response due date.');
       return;
     }
@@ -192,15 +206,18 @@ export default function CapturePage() {
         return;
       }
 
-      // Photo evidence attaches to variations, not notices — skip photo upload here.
-      // Photo can be added after converting this notice to a Variation Request.
-
       // Get project name for confirmation
       const project = projects.find((p) => p.id === selectedProjectId);
 
+      if (isOnboarding) {
+        // In onboarding mode, redirect to the variations register with success flag
+        router.push('/variations?onboarding=success');
+        return;
+      }
+
       setResult({
-        variationId: noticeId,       // holds notice ID
-        variationNumber: noticeNumber, // holds VN-001 format
+        variationId: noticeId,
+        variationNumber: noticeNumber,
         projectName: project?.name ?? 'Your project',
         capturedAt: new Date().toISOString(),
       });
@@ -271,6 +288,11 @@ export default function CapturePage() {
     );
   }
 
+  // Derive the onboarding project object (for display name)
+  const onboardingProject = isOnboarding && onboardingProjectId
+    ? projects.find(p => p.id === onboardingProjectId)
+    : null;
+
   // ── FORM ────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#F8F8F6] flex flex-col">
@@ -279,8 +301,29 @@ export default function CapturePage() {
       <div className="flex-1 flex items-start justify-center px-4 pt-8 pb-12">
         <div className="w-full max-w-lg">
 
-          {/* Context note for non-field users */}
-          {!roleLoading && !isField && (
+          {/* Onboarding welcome banner */}
+          {isOnboarding && !bannerDismissed && (
+            <div
+              className="mb-4 px-4 py-3.5 rounded-lg flex items-start justify-between gap-3"
+              style={{ backgroundColor: '#EEF2FF', border: '1px solid #C7D2FE', color: '#1E1B4B' }}
+            >
+              <div>
+                <div className="text-[14px] font-semibold mb-0.5">⚡ You&apos;re 60 seconds from your first captured variation.</div>
+                <div className="text-[13px]" style={{ color: '#3730A3' }}>Fill in the title and hit Save.</div>
+              </div>
+              <button
+                onClick={() => setBannerDismissed(true)}
+                className="flex-shrink-0 text-[16px] leading-none mt-0.5"
+                style={{ color: '#6366F1' }}
+                aria-label="Dismiss"
+              >
+                ×
+              </button>
+            </div>
+          )}
+
+          {/* Context note for non-field users (non-onboarding only) */}
+          {!isOnboarding && !roleLoading && !isField && (
             <div className="mb-4 px-4 py-2.5 bg-[#FDF8ED] border border-[#C8943E]/40 rounded-lg text-xs text-[#92722E]">
               Quick notice mode — for the full register,{' '}
               <Link href="/" className="underline">go to Dashboard</Link>.
@@ -294,8 +337,16 @@ export default function CapturePage() {
 
             <form onSubmit={handleSubmit} className="space-y-5">
 
-              {/* Project select */}
-              {loadingProjects ? (
+              {/* Project — locked (read-only) in onboarding mode, normal otherwise */}
+              {isOnboarding ? (
+                loadingProjects ? (
+                  <div className="h-12 bg-gray-100 rounded-lg animate-pulse" />
+                ) : (
+                  <div className="px-4 py-3 bg-[#F3F4F6] rounded-lg text-sm text-[#1C1C1E] font-medium">
+                    📋 {onboardingProject?.name ?? 'Your project'}
+                  </div>
+                )
+              ) : loadingProjects ? (
                 <div className="h-12 bg-gray-100 rounded-lg animate-pulse" />
               ) : projects.length === 0 ? (
                 <div className="text-sm text-[#6B7280] py-2">
@@ -323,115 +374,236 @@ export default function CapturePage() {
                 </div>
               )}
 
-              {/* What happened */}
+              {/* Title / Description */}
               <div>
                 <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                  What happened? <span className="text-red-500">*</span>
+                  {isOnboarding ? 'Variation title' : 'What happened?'}{' '}
+                  <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                  placeholder="Describe the change — what was directed, by whom, where on site"
+                  rows={isOnboarding ? 3 : 4}
+                  placeholder={
+                    isOnboarding
+                      ? 'e.g. Additional blockwork to Level 3 corridor'
+                      : 'Describe the change — what was directed, by whom, where on site'
+                  }
                   className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] resize-none focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
                   required
                 />
               </div>
 
-              {/* Who instructed it */}
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                  Who instructed it?
-                </label>
-                <input
-                  type="text"
-                  value={instructedBy}
-                  onChange={(e) => setInstructedBy(e.target.value)}
-                  placeholder="e.g. Site foreman, client rep, engineer"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
-                />
-              </div>
-
-              {/* Date / Time */}
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                  When did it happen?
-                </label>
-                <input
-                  type="datetime-local"
-                  value={occurredAt}
-                  onChange={(e) => setOccurredAt(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
-                />
-              </div>
-
-              {/* Response Due Date */}
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                  Response due date <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  value={responseDueDate}
-                  onChange={(e) => setResponseDueDate(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
-                />
-              </div>
-
-              {/* Photo */}
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                  Photo evidence <span className="text-[#9CA3AF] font-normal">(optional)</span>
-                </label>
-                {photoPreview ? (
-                  <div className="relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={photoPreview}
-                      alt="Preview"
-                      className="w-full h-48 object-cover rounded-lg border border-gray-200"
-                    />
-                    <button
-                      type="button"
-                      onClick={removePhoto}
-                      className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md hover:bg-black/80"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ) : (
+              {/* Onboarding: collapsible extra fields */}
+              {isOnboarding ? (
+                <div>
                   <button
                     type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full border-2 border-dashed border-gray-300 rounded-lg py-8 text-sm text-[#6B7280] hover:border-gray-400 hover:text-[#4B5563] transition-colors flex flex-col items-center gap-2"
+                    onClick={() => setShowExtraFields(!showExtraFields)}
+                    className="text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors"
                   >
-                    <span className="text-2xl">📷</span>
-                    Tap to attach a photo
+                    {showExtraFields ? 'Hide extra details ▴' : 'Add more details ▾'}
                   </button>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  className="hidden"
-                  onChange={handlePhotoChange}
-                />
-              </div>
 
-              {/* Your name */}
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                  Your name <span className="text-[#9CA3AF] font-normal">(optional)</span>
-                </label>
-                <input
-                  type="text"
-                  value={requestorName}
-                  onChange={(e) => setRequestorName(e.target.value)}
-                  placeholder="Your name or reference"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
-                />
-              </div>
+                  {showExtraFields && (
+                    <div className="mt-4 space-y-5">
+                      {/* Who instructed it */}
+                      <div>
+                        <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                          Who instructed it?
+                        </label>
+                        <input
+                          type="text"
+                          value={instructedBy}
+                          onChange={(e) => setInstructedBy(e.target.value)}
+                          placeholder="e.g. Site foreman, client rep, engineer"
+                          className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
+                        />
+                      </div>
+
+                      {/* Date / Time */}
+                      <div>
+                        <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                          When did it happen?
+                        </label>
+                        <input
+                          type="datetime-local"
+                          value={occurredAt}
+                          onChange={(e) => setOccurredAt(e.target.value)}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
+                        />
+                      </div>
+
+                      {/* Response Due Date */}
+                      <div>
+                        <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                          Response due date <span className="text-[#9CA3AF] font-normal">(optional)</span>
+                        </label>
+                        <input
+                          type="date"
+                          value={responseDueDate}
+                          onChange={(e) => setResponseDueDate(e.target.value)}
+                          className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
+                        />
+                      </div>
+
+                      {/* Photo */}
+                      <div>
+                        <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                          Photo evidence <span className="text-[#9CA3AF] font-normal">(optional)</span>
+                        </label>
+                        {photoPreview ? (
+                          <div className="relative">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={photoPreview}
+                              alt="Preview"
+                              className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                            />
+                            <button
+                              type="button"
+                              onClick={removePhoto}
+                              className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md hover:bg-black/80"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="w-full border-2 border-dashed border-gray-300 rounded-lg py-8 text-sm text-[#6B7280] hover:border-gray-400 hover:text-[#4B5563] transition-colors flex flex-col items-center gap-2"
+                          >
+                            <span className="text-2xl">📷</span>
+                            Tap to attach a photo
+                          </button>
+                        )}
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          className="hidden"
+                          onChange={handlePhotoChange}
+                        />
+                      </div>
+
+                      {/* Your name */}
+                      <div>
+                        <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                          Your name <span className="text-[#9CA3AF] font-normal">(optional)</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={requestorName}
+                          onChange={(e) => setRequestorName(e.target.value)}
+                          placeholder="Your name or reference"
+                          className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <>
+                  {/* Non-onboarding: show all fields as normal */}
+
+                  {/* Who instructed it */}
+                  <div>
+                    <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                      Who instructed it?
+                    </label>
+                    <input
+                      type="text"
+                      value={instructedBy}
+                      onChange={(e) => setInstructedBy(e.target.value)}
+                      placeholder="e.g. Site foreman, client rep, engineer"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
+                    />
+                  </div>
+
+                  {/* Date / Time */}
+                  <div>
+                    <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                      When did it happen?
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={occurredAt}
+                      onChange={(e) => setOccurredAt(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
+                    />
+                  </div>
+
+                  {/* Response Due Date */}
+                  <div>
+                    <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                      Response due date <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      value={responseDueDate}
+                      onChange={(e) => setResponseDueDate(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
+                    />
+                  </div>
+
+                  {/* Photo */}
+                  <div>
+                    <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                      Photo evidence <span className="text-[#9CA3AF] font-normal">(optional)</span>
+                    </label>
+                    {photoPreview ? (
+                      <div className="relative">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={photoPreview}
+                          alt="Preview"
+                          className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                        />
+                        <button
+                          type="button"
+                          onClick={removePhoto}
+                          className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md hover:bg-black/80"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full border-2 border-dashed border-gray-300 rounded-lg py-8 text-sm text-[#6B7280] hover:border-gray-400 hover:text-[#4B5563] transition-colors flex flex-col items-center gap-2"
+                      >
+                        <span className="text-2xl">📷</span>
+                        Tap to attach a photo
+                      </button>
+                    )}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      className="hidden"
+                      onChange={handlePhotoChange}
+                    />
+                  </div>
+
+                  {/* Your name */}
+                  <div>
+                    <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                      Your name <span className="text-[#9CA3AF] font-normal">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={requestorName}
+                      onChange={(e) => setRequestorName(e.target.value)}
+                      placeholder="Your name or reference"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
+                    />
+                  </div>
+                </>
+              )}
 
               {/* Error */}
               {error && (
@@ -443,7 +615,7 @@ export default function CapturePage() {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={submitting || loadingProjects || projects.length === 0}
+                disabled={submitting || loadingProjects || (!isOnboarding && projects.length === 0)}
                 className="w-full bg-[#E85D1A] hover:bg-[#C94E14] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl text-lg transition-colors flex items-center justify-center gap-2"
               >
                 {submitting ? (
@@ -464,6 +636,21 @@ export default function CapturePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CapturePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#F8F8F6] flex flex-col">
+        <CaptureHeader />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-[#9CA3AF] text-sm">Loading…</div>
+        </div>
+      </div>
+    }>
+      <CapturePageContent />
+    </Suspense>
   );
 }
 

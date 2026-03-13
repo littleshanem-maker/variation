@@ -22,6 +22,7 @@ function VariationsList() {
   const searchParams = useSearchParams();
   const initialStatus = searchParams.get('status') || 'all';
   const initialProject = searchParams.get('project') || 'all';
+  const showOnboardingSuccess = searchParams.get('onboarding') === 'success';
 
   const [variations, setVariations] = useState<(Variation & { project_name: string })[]>([]);
   const [rawProjects, setRawProjects] = useState<(Project & { variations: Variation[] })[]>([]);
@@ -33,6 +34,7 @@ function VariationsList() {
   const [exportingPdf, setExportingPdf] = useState(false);
   const [slideOverId, setSlideOverId] = useState<string | null>(null);
   const [notices, setNotices] = useState<(VariationNotice & { project_name: string })[]>([]);
+  const [onboardingBannerDismissed, setOnboardingBannerDismissed] = useState(false);
   const { isField, company } = useRole();
 
   useEffect(() => {
@@ -221,6 +223,31 @@ function VariationsList() {
   return (
     <>
       <TopBar title="Variation Register" />
+
+      {/* Onboarding success banner */}
+      {showOnboardingSuccess && !onboardingBannerDismissed && (
+        <div
+          className="mx-4 md:mx-8 mt-4 md:mt-6 px-4 py-3.5 rounded-lg flex items-center justify-between gap-3"
+          style={{ backgroundColor: '#F0FDF4', border: '1px solid #BBF7D0', color: '#166534' }}
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-[16px]">✅</span>
+            <div>
+              <span className="text-[14px] font-semibold">First variation captured. Welcome to Variation Shield.</span>
+              <span className="text-[13px] ml-2">Every variation you capture from here is protected.</span>
+            </div>
+          </div>
+          <button
+            onClick={() => setOnboardingBannerDismissed(true)}
+            className="flex-shrink-0 text-[18px] leading-none font-light"
+            style={{ color: '#16A34A' }}
+            aria-label="Dismiss"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       <div className="p-4 md:p-8 space-y-5 md:space-y-6">
         <div>
           <h2 className="text-xl font-semibold text-[#1C1C1E]">Variation Register</h2>

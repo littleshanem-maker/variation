@@ -40,6 +40,7 @@ export default function Dashboard() {
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectClient, setNewProjectClient] = useState('');
   const [creatingProject, setCreatingProject] = useState(false);
+  const [noVariationsBannerDismissed, setNoVariationsBannerDismissed] = useState(false);
 
   // Global filters
   const [filterProject, setFilterProject] = useState<string>('all');
@@ -366,8 +367,20 @@ export default function Dashboard() {
             </div>
 
             {projects.length === 0 ? (
-              <div className="bg-white rounded-md border border-[#E5E7EB] p-12 text-center text-[#9CA3AF] text-sm">
-                No projects yet. Click <strong>+ New Project</strong> to get started.
+              <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-12 text-center">
+                <div className="text-4xl mb-4">🛡️</div>
+                <h3 className="text-[18px] font-semibold text-[#1C1C1E] mb-2">Welcome to Variation Shield</h3>
+                <p className="text-[14px] text-[#6B7280] mb-1">Start by creating your first project.</p>
+                <p className="text-[14px] text-[#6B7280] mb-8">Then capture a variation in under 60 seconds.</p>
+                <Link
+                  href="/onboarding"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[14px] font-semibold text-white transition-colors"
+                  style={{ backgroundColor: '#1B365D' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#24466F'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1B365D'; }}
+                >
+                  Create your first project →
+                </Link>
               </div>
             ) : (
               <>
@@ -481,6 +494,30 @@ export default function Dashboard() {
               </>
             )}
           </div>
+
+          {/* State B: projects exist but 0 variations — prompt to capture */}
+          {projects.length > 0 && allVariationsRaw.length === 0 && !noVariationsBannerDismissed && (
+            <div
+              className="w-full px-4 py-3.5 rounded-lg flex items-center justify-between gap-3"
+              style={{ backgroundColor: '#EEF2FF', border: '1px solid #C7D2FE', color: '#1E1B4B' }}
+            >
+              <div>
+                <div className="text-[14px] font-semibold mb-0.5">⚡ No variations yet.</div>
+                <div className="text-[13px]" style={{ color: '#3730A3' }}>
+                  Capture one now — it takes 60 seconds on site.{' '}
+                  <Link href="/capture" className="underline font-medium hover:text-indigo-900">Capture a variation →</Link>
+                </div>
+              </div>
+              <button
+                onClick={() => setNoVariationsBannerDismissed(true)}
+                className="flex-shrink-0 text-[18px] leading-none font-light"
+                style={{ color: '#6366F1' }}
+                aria-label="Dismiss"
+              >
+                ×
+              </button>
+            </div>
+          )}
 
           {/* Urgent Attention Feed — full width, below bar chart */}
           <div className="w-full">
