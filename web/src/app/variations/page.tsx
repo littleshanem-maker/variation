@@ -196,6 +196,9 @@ function VariationsList() {
       a.click();
       document.body.removeChild(a);
       setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } catch (err: any) {
+      console.error('PDF export failed:', err);
+      alert('PDF generation failed. Try reducing the number of photos, or try again.');
     } finally {
       setExportingPdf(false);
     }

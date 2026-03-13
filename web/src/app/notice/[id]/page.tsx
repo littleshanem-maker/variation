@@ -254,6 +254,7 @@ export default function NoticeDetail() {
       await shareOrDownloadPdf(blob, filename, subject, body);
     } catch (err) {
       console.error('Email send failed:', err);
+      setSaveError('PDF generation failed. Try reducing the number of photos, or try again.');
     } finally {
       setSendingEmail(false);
     }

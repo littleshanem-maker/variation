@@ -3,29 +3,31 @@ import { NextRequest, NextResponse } from 'next/server';
 export const maxDuration = 30;
 
 export async function POST(req: NextRequest) {
-  const { html, css } = await req.json();
-
-  if (!html || !css) {
-    return NextResponse.json({ error: 'html and css required' }, { status: 400 });
-  }
-
   // Dynamic imports — avoid bundling in client builds
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const chromium = ((await import('@sparticuz/chromium-min')) as any).default;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const puppeteer = ((await import('puppeteer-core')) as any).default;
 
-  const executablePath = await chromium.executablePath(
-    'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
-  );
-
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    executablePath,
-    headless: true,
-  });
+  let browser: any = null;
 
   try {
+    const { html, css } = await req.json();
+
+    if (!html || !css) {
+      return NextResponse.json({ error: 'html and css required' }, { status: 400 });
+    }
+
+    const executablePath = await chromium.executablePath(
+      'https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar'
+    );
+
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath,
+      headless: true,
+    });
+
     const page = await browser.newPage();
 
     const fullHtml = `<!DOCTYPE html>
@@ -47,13 +49,20 @@ export async function POST(req: NextRequest) {
 </body>
 </html>`;
 
-    await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('PDF timeout after 25s')), 25000)
+    );
 
-    const pdfBuffer: Buffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' },
-    });
+    await Promise.race([page.setContent(fullHtml, { waitUntil: 'networkidle0' }), timeoutPromise]);
+
+    const pdfBuffer = await Promise.race([
+      page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: { top: '20mm', bottom: '20mm', left: '15mm', right: '15mm' },
+      }),
+      timeoutPromise,
+    ]) as Buffer;
 
     return new NextResponse(Buffer.from(pdfBuffer), {
       headers: {
@@ -61,7 +70,15 @@ export async function POST(req: NextRequest) {
         'Content-Disposition': 'inline; filename="variation.pdf"',
       },
     });
+  } catch (err) {
+    console.error('PDF generation error:', err);
+    return NextResponse.json(
+      { error: 'PDF generation failed. Try with fewer photos or contact support.' },
+      { status: 500 }
+    );
   } finally {
-    await browser.close();
+    if (browser) {
+      await browser.close();
+    }
   }
 }

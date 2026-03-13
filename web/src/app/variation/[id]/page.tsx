@@ -168,7 +168,13 @@ export default function VariationDetail() {
       response_due_date: editDueDate || null,
     }).eq('id', variation.id);
 
-    if (!error && editStatus !== oldStatus) {
+    if (error) {
+      setSaveError('Failed to save: ' + error.message);
+      setSaving(false);
+      return;
+    }
+
+    if (editStatus !== oldStatus) {
       await supabase.from('status_changes').insert({
         id: crypto.randomUUID(),
         variation_id: variation.id,
@@ -179,7 +185,7 @@ export default function VariationDetail() {
       });
     }
 
-    if (!error && newFiles.length > 0) {
+    if (newFiles.length > 0) {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         for (const file of newFiles) {
@@ -200,11 +206,9 @@ export default function VariationDetail() {
       }
     }
 
-    if (!error) {
-      setEditing(false);
-      setNewFiles([]);
-      loadVariation();
-    }
+    setEditing(false);
+    setNewFiles([]);
+    loadVariation();
     setSaving(false);
   }
 
@@ -260,19 +264,22 @@ export default function VariationDetail() {
     }
 
     const { error } = await supabase.from('variations').update(updatePayload).eq('id', variation.id);
-    if (!error) {
-      const { data: { user } } = await supabase.auth.getUser();
-      const changedBy = user?.email ?? 'Office';
-      await supabase.from('status_changes').insert({
-        id: crypto.randomUUID(),
-        variation_id: variation.id,
-        from_status: oldStatus,
-        to_status: newStatus,
-        changed_at: new Date().toISOString(),
-        changed_by: changedBy,
-      });
-      await loadVariation();
+    if (error) {
+      setSaveError('Failed to update status: ' + error.message);
+      setAdvancingStatus(false);
+      return;
     }
+    const { data: { user } } = await supabase.auth.getUser();
+    const changedBy = user?.email ?? 'Office';
+    await supabase.from('status_changes').insert({
+      id: crypto.randomUUID(),
+      variation_id: variation.id,
+      from_status: oldStatus,
+      to_status: newStatus,
+      changed_at: new Date().toISOString(),
+      changed_by: changedBy,
+    });
+    await loadVariation();
     setAdvancingStatus(false);
   }
 
@@ -378,6 +385,7 @@ export default function VariationDetail() {
       await shareOrDownloadPdf(blob, filename, subject, body);
     } catch (err) {
       console.error('Email send failed:', err);
+      setSaveError('PDF generation failed. Try reducing the number of photos, or try again.');
     } finally {
       setSendingEmail(false);
     }
@@ -1077,9 +1085,12 @@ export default function VariationDetail() {
                   await handleAdvanceStatus('disputed');
                   const supabase = createClient();
                   // Save rejection reason
-                  await supabase.from('variations').update({
+                  const { error: disputeNoteError } = await supabase.from('variations').update({
                     notes: `DISPUTE REASON: ${disputeReason.trim()}`
                   }).eq('id', variation!.id);
+                  if (disputeNoteError) {
+                    setSaveError('Failed to save dispute reason: ' + disputeNoteError.message);
+                  }
                   // Upload any attached files
                   if (rejectionFiles.length > 0) {
                     const { data: { user } } = await supabase.auth.getUser();

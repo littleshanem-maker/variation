@@ -116,6 +116,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
       await shareOrDownloadPdf(blob, filename, subject, body);
     } catch (err) {
       console.error('PDF send failed:', err);
+      alert('PDF generation failed. Try reducing the number of photos, or try again.');
     } finally {
       setSendingPdf(false);
     }
