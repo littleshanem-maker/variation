@@ -453,15 +453,49 @@ function VariationsList() {
               <h2 className="text-[15px] font-semibold text-slate-900">Variation Notices</h2>
               <span className="text-[13px] text-slate-400">{notices.filter(n => filterProject === 'all' || n.project_id === filterProject).length} notices</span>
             </div>
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            {/* Mobile cards */}
+            <div className="md:hidden bg-white rounded-xl border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden divide-y divide-[#F0F0EE]">
+              {notices
+                .filter(n => filterProject === 'all' || n.project_id === filterProject)
+                .map(n => {
+                  const statusConfig: Record<string, { label: string; color: string; bg: string; dot: string }> = {
+                    draft: { label: 'Draft', color: 'text-slate-600', bg: 'bg-slate-100', dot: 'bg-slate-400' },
+                    issued: { label: 'Issued', color: 'text-blue-700', bg: 'bg-blue-50', dot: 'bg-blue-500' },
+                    acknowledged: { label: 'Acknowledged', color: 'text-emerald-700', bg: 'bg-emerald-50', dot: 'bg-emerald-500' },
+                  };
+                  const sc = statusConfig[n.status] || statusConfig.draft;
+                  return (
+                    <button key={n.id} className="w-full text-left" onClick={() => window.location.href = `/notice/${n.id}`}>
+                      <div className="px-4 py-3 hover:bg-slate-50 transition-colors">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="text-[12px] font-mono font-semibold text-indigo-600">{n.notice_number}</div>
+                            <div className="text-[14px] font-medium text-slate-800 mt-0.5 truncate">{n.event_description}</div>
+                            <div className="text-[12px] text-slate-400 mt-0.5 truncate">{n.project_name}</div>
+                          </div>
+                          <div className="flex-shrink-0">
+                            <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium ${sc.bg} ${sc.color}`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
+                              {sc.label}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden md:block bg-white rounded-xl border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-[#E5E7EB] bg-slate-50/60">
                     <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
                     <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
-                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5 hidden md:table-cell">Project</th>
+                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Project</th>
                     <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Status</th>
-                    <th className="text-right text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5 hidden md:table-cell">Event Date</th>
+                    <th className="text-right text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Event Date</th>
                     <th className="text-right text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5 hidden lg:table-cell">Issued</th>
                   </tr>
                 </thead>
@@ -485,14 +519,14 @@ function VariationsList() {
                           <td className="px-3 md:px-4 py-3 max-w-[260px] overflow-hidden">
                             <div className="truncate text-[14px] font-medium text-[#1C1C1E]">{n.event_description}</div>
                           </td>
-                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] hidden md:table-cell">{n.project_name}</td>
+                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E]">{n.project_name}</td>
                           <td className="px-3 md:px-4 py-3">
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium border ${sc.color} ${sc.bg} ${sc.border}`}>
                               <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
                               {sc.label}
                             </span>
                           </td>
-                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] text-right hidden md:table-cell whitespace-nowrap">{formatDate(n.event_date + 'T00:00:00')}</td>
+                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] text-right whitespace-nowrap">{formatDate(n.event_date + 'T00:00:00')}</td>
                           <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] text-right hidden lg:table-cell whitespace-nowrap">{n.issued_at ? formatDate(n.issued_at) : <span className="text-slate-300">—</span>}</td>
                         </tr>
                       );
