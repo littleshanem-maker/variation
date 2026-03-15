@@ -113,7 +113,7 @@ function VariationsList() {
 
   const SortHeader = ({ label, field, align, className = '' }: { label: string; field: SortKey; align?: 'right'; className?: string }) => (
     <th
-      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5 cursor-pointer hover:text-slate-700 select-none transition-colors duration-[120ms] ${className}`}
+      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5 cursor-pointer hover:text-slate-700 select-none transition-colors duration-[120ms] ${className}`}
       onClick={() => handleSort(field)}
     >
       {label} {sortKey === field ? (sortAsc ? '↑' : '↓') : ''}
@@ -372,16 +372,16 @@ function VariationsList() {
                         onClick={() => setSlideOverId(v.id)}
                         className={`group relative border-b border-[#F0F0EE] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}
                       >
-                        <td className="px-5 md:px-6 py-3 text-[13px] font-medium text-[#1C1C1E] tabular-nums whitespace-nowrap">
+                        <td className="px-3 md:px-4 py-3 text-[13px] font-medium text-[#1C1C1E] tabular-nums whitespace-nowrap">
                           {getVariationNumber(v)}
                         </td>
-                        <td className="px-5 md:px-6 py-3 max-w-[200px] overflow-hidden">
+                        <td className="px-3 md:px-4 py-3 max-w-[200px] overflow-hidden">
                           <div className="truncate text-[14px] font-medium text-[#1C1C1E]">{v.title}</div>
                         </td>
-                        <td className="px-5 md:px-6 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-[#1C1C1E]">{v.project_name}</div></td>
-                        <td className="px-5 md:px-6 py-3"><StatusBadge status={v.status} /></td>
-                        <td className="px-5 md:px-6 py-3 text-[13px] text-[#1C1C1E] text-right hidden md:table-cell whitespace-nowrap">{formatDate(v.captured_at)}</td>
-                        <td className="px-5 md:px-6 py-3 text-right hidden lg:table-cell whitespace-nowrap">
+                        <td className="px-3 md:px-4 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-[#1C1C1E]">{v.project_name}</div></td>
+                        <td className="px-3 md:px-4 py-3 w-[110px]"><StatusBadge status={v.status} /></td>
+                        <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] text-right hidden md:table-cell whitespace-nowrap w-[90px]">{formatDate(v.captured_at)}</td>
+                        <td className="px-3 md:px-4 py-3 text-right hidden lg:table-cell whitespace-nowrap">
                             {v.response_due_date ? (() => {
                               const due = new Date(v.response_due_date + 'T00:00:00');
                               const today = new Date(); today.setHours(0,0,0,0);
@@ -395,7 +395,7 @@ function VariationsList() {
                               );
                             })() : <span className="text-[13px] text-[#D1D5DB]">—</span>}
                           </td>
-                        <td className="px-5 md:px-6 py-3 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
+                        <td className="px-3 md:px-4 py-3 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
                           {/* Ellipsis action menu */}
                           <td className="px-3 py-3 w-10" onClick={e => e.stopPropagation()}>
                             <DropdownMenu>
@@ -447,12 +447,12 @@ function VariationsList() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-[#E5E7EB] bg-slate-50/60">
-                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5">Notice No.</th>
-                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5">Description</th>
-                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5 hidden md:table-cell">Project</th>
-                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5">Status</th>
-                    <th className="text-right text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5 hidden md:table-cell">Event Date</th>
-                    <th className="text-right text-[11px] font-medium text-slate-500 uppercase tracking-wider px-5 md:px-6 py-3.5 hidden lg:table-cell">Issued</th>
+                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
+                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
+                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5 hidden md:table-cell">Project</th>
+                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Status</th>
+                    <th className="text-right text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5 hidden md:table-cell">Event Date</th>
+                    <th className="text-right text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5 hidden lg:table-cell">Issued</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -471,19 +471,19 @@ function VariationsList() {
                           onClick={() => window.location.href = `/notice/${n.id}`}
                           className={`group border-b border-[#F0F0EE] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === arr.length - 1 ? 'border-b-0' : ''}`}
                         >
-                          <td className="px-5 md:px-6 py-3 text-[13px] font-medium text-[#1C1C1E] whitespace-nowrap">{n.notice_number}</td>
-                          <td className="px-5 md:px-6 py-3 max-w-[260px] overflow-hidden">
+                          <td className="px-3 md:px-4 py-3 text-[13px] font-medium text-[#1C1C1E] whitespace-nowrap">{n.notice_number}</td>
+                          <td className="px-3 md:px-4 py-3 max-w-[260px] overflow-hidden">
                             <div className="truncate text-[14px] font-medium text-[#1C1C1E]">{n.event_description}</div>
                           </td>
-                          <td className="px-5 md:px-6 py-3 text-[13px] text-[#1C1C1E] hidden md:table-cell">{n.project_name}</td>
-                          <td className="px-5 md:px-6 py-3">
+                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] hidden md:table-cell">{n.project_name}</td>
+                          <td className="px-3 md:px-4 py-3">
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium border ${sc.color} ${sc.bg} ${sc.border}`}>
                               <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
                               {sc.label}
                             </span>
                           </td>
-                          <td className="px-5 md:px-6 py-3 text-[13px] text-[#1C1C1E] text-right hidden md:table-cell whitespace-nowrap">{formatDate(n.event_date + 'T00:00:00')}</td>
-                          <td className="px-5 md:px-6 py-3 text-[13px] text-[#1C1C1E] text-right hidden lg:table-cell whitespace-nowrap">{n.issued_at ? formatDate(n.issued_at) : <span className="text-slate-300">—</span>}</td>
+                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] text-right hidden md:table-cell whitespace-nowrap">{formatDate(n.event_date + 'T00:00:00')}</td>
+                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] text-right hidden lg:table-cell whitespace-nowrap">{n.issued_at ? formatDate(n.issued_at) : <span className="text-slate-300">—</span>}</td>
                         </tr>
                       );
                     })}

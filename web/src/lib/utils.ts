@@ -60,21 +60,21 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
     dot: 'bg-slate-400',
   },
   submitted: {
-    label: 'Submitted to Client',
+    label: 'Submitted',
     color: 'text-[#92722E]',
     bg: 'bg-[#FDF8ED]',
     border: 'border-[#C8943E]',
     dot: 'bg-[#C8943E]',
   },
   approved: {
-    label: 'Approved by Client',
+    label: 'Approved',
     color: 'text-emerald-700',
     bg: 'bg-emerald-50',
     border: 'border-emerald-200',
     dot: 'bg-emerald-500',
   },
   rejected: {
-    label: 'Rejected by Client',
+    label: 'Rejected',
     color: 'text-[#5B3A7C]',
     bg: 'bg-[#F5F0FA]',
     border: 'border-[#7C5BA0]',
@@ -88,7 +88,7 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
     dot: 'bg-emerald-600',
   },
   disputed: {
-    label: 'Rejected by Client',
+    label: 'Disputed',
     color: 'text-rose-700',
     bg: 'bg-rose-50',
     border: 'border-rose-200',
