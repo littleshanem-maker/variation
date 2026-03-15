@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { PlusCircle, FileText, ChevronRight, Clock } from 'lucide-react';
+import { PlusCircle, FileText, ChevronRight, Clock, List } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
 import Logo from '@/components/Logo';
@@ -17,11 +17,21 @@ interface RecentCapture {
   created_at: string;
 }
 
+interface VariationSummary {
+  id: string;
+  title: string;
+  project_name: string;
+  status: string;
+  sequence_number: number;
+  project_id: string;
+}
+
 export default function FieldHome() {
   const { isField, isLoading: roleLoading, company } = useRole();
   const router = useRouter();
   const [displayName, setDisplayName] = useState('');
   const [recent, setRecent] = useState<RecentCapture[]>([]);
+  const [variations, setVariations] = useState<VariationSummary[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Non-field users don't belong here
@@ -52,19 +62,36 @@ export default function FieldHome() {
       .order('created_at', { ascending: false })
       .limit(8);
 
-    if (notices && notices.length > 0) {
-      // Get project names
-      const projectIds = [...new Set(notices.map((n: any) => n.project_id))];
-      const { data: projects } = await supabase
-        .from('projects')
-        .select('id, name')
-        .in('id', projectIds);
-      const projectMap = new Map((projects || []).map((p: any) => [p.id, p.name]));
+    // Get all active projects first (used for both notices and variations)
+    const { data: projects } = await supabase
+      .from('projects')
+      .select('id, name')
+      .eq('is_active', true);
+    const projectMap = new Map((projects || []).map((p: any) => [p.id, p.name]));
 
+    if (notices && notices.length > 0) {
       setRecent(notices.map((n: any) => ({
         ...n,
         project_name: projectMap.get(n.project_id) || 'Project',
       })));
+    }
+
+    // All variations (read-only, no values)
+    const { data: vars } = await supabase
+      .from('variations')
+      .select('id, title, project_id, status, sequence_number')
+      .order('captured_at', { ascending: false });
+
+    if (vars) {
+      const activeProjectIds = new Set((projects || []).map((p: any) => p.id));
+      setVariations(
+        vars
+          .filter((v: any) => activeProjectIds.has(v.project_id))
+          .map((v: any) => ({
+            ...v,
+            project_name: projectMap.get(v.project_id) || 'Project',
+          }))
+      );
     }
 
     setLoading(false);
@@ -169,9 +196,55 @@ export default function FieldHome() {
           )}
         </div>
 
+        {/* Variations register — read only, no values */}
+        <div>
+          <div className="flex items-center gap-2 mb-3 px-1">
+            <List size={14} className="text-slate-400" />
+            <span className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">Variation Register</span>
+            <span className="text-[12px] text-slate-400 ml-auto">{variations.length} items · read only</span>
+          </div>
+
+          {variations.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-[#E5E7EB] px-5 py-6 text-center">
+              <div className="text-[13px] text-slate-400">No variations in the register yet</div>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl border border-[#E5E7EB] overflow-hidden divide-y divide-[#F0F0EE]">
+              {variations.map(v => {
+                const varStatuses: Record<string, { label: string; color: string; dot: string }> = {
+                  draft:     { label: 'Draft',     color: 'text-slate-500',   dot: 'bg-slate-400' },
+                  captured:  { label: 'Draft',     color: 'text-slate-500',   dot: 'bg-slate-400' },
+                  submitted: { label: 'Submitted', color: 'text-amber-600',   dot: 'bg-amber-500' },
+                  approved:  { label: 'Approved',  color: 'text-emerald-600', dot: 'bg-emerald-500' },
+                  rejected:  { label: 'Rejected',  color: 'text-purple-600',  dot: 'bg-purple-500' },
+                  disputed:  { label: 'Disputed',  color: 'text-rose-600',    dot: 'bg-rose-500' },
+                  paid:      { label: 'Paid',      color: 'text-emerald-700', dot: 'bg-emerald-600' },
+                };
+                const sc = varStatuses[v.status] || varStatuses.draft;
+                const varNum = `VAR-${String(v.sequence_number).padStart(3, '0')}`;
+                return (
+                  <div key={v.id} className="px-4 py-3.5 flex items-center gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[11px] font-mono font-semibold text-indigo-500">{varNum}</span>
+                        <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${sc.color}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
+                          {sc.label}
+                        </span>
+                      </div>
+                      <div className="text-[14px] font-medium text-slate-800 truncate">{v.title}</div>
+                      <div className="text-[11px] text-slate-400 mt-0.5 truncate">{v.project_name}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
         {/* Footer note */}
         <p className="text-center text-[11px] text-slate-400 pb-4">
-          Field view · Contact your PM for full register access
+          Field view · Contact your PM for full details
         </p>
       </div>
     </div>

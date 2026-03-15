@@ -153,8 +153,8 @@ function CapturePageContent() {
       setError('Please enter a title for this variation.');
       return;
     }
-    // In non-onboarding mode, response due date is required
-    if (!isOnboarding && !responseDueDate) {
+    // In non-onboarding mode, response due date is required (except field users)
+    if (!isOnboarding && !isField && !responseDueDate) {
       setError('Please set a response due date.');
       return;
     }
@@ -430,7 +430,8 @@ function CapturePageContent() {
                         />
                       </div>
 
-                      {/* Response Due Date */}
+                      {/* Response Due Date — hidden for field users */}
+                      {!isField && (
                       <div>
                         <label className="block text-sm font-medium text-[#374151] mb-1.5">
                           Response due date <span className="text-[#9CA3AF] font-normal">(optional)</span>
@@ -442,6 +443,7 @@ function CapturePageContent() {
                           className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
                         />
                       </div>
+                      )}
 
                       {/* Photo */}
                       <div>
@@ -531,7 +533,8 @@ function CapturePageContent() {
                     />
                   </div>
 
-                  {/* Response Due Date */}
+                  {/* Response Due Date — hidden for field users */}
+                  {!isField && (
                   <div>
                     <label className="block text-sm font-medium text-[#374151] mb-1.5">
                       Response due date <span className="text-red-500">*</span>
@@ -543,6 +546,7 @@ function CapturePageContent() {
                       className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
                     />
                   </div>
+                  )}
 
                   {/* Photo */}
                   <div>
