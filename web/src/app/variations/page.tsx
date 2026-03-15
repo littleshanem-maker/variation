@@ -352,7 +352,17 @@ function VariationsList() {
             {/* Desktop table — hidden md:block */}
             <div className="hidden md:block bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[480px]">
+                <table className="w-full min-w-[480px]" style={{tableLayout: 'fixed'}}>
+                  <colgroup>
+                    <col style={{width: '90px'}} />   {/* Var No. */}
+                    <col />                            {/* Title — flex */}
+                    <col style={{width: '180px'}} />  {/* Project */}
+                    <col style={{width: '110px'}} />  {/* Status */}
+                    <col style={{width: '90px'}} />   {/* Captured */}
+                    <col style={{width: '90px'}} />   {/* Due Date */}
+                    <col style={{width: '100px'}} />  {/* Value */}
+                    <col style={{width: '40px'}} />   {/* Actions */}
+                  </colgroup>
                   <thead>
                     <tr className="border-b border-[#E5E7EB] bg-slate-50/60">
                       <SortHeader label="Var No." field="sequence_number" />
