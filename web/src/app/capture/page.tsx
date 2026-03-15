@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
 import type { Project } from '@/lib/types';
 import ProjectPicker from '@/components/ui/ProjectPicker';
+import { Home, PlusCircle, FileText, List } from 'lucide-react';
 
 interface CaptureResult {
   variationId: string;
@@ -296,7 +297,7 @@ function CapturePageContent() {
 
   // ── FORM ────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#F8F8F6] flex flex-col">
+    <div className="min-h-screen bg-[#F8F8F6] flex flex-col pb-20">
       <CaptureHeader />
 
       <div className="flex-1 flex items-start justify-center px-4 pt-8 pb-12">
@@ -635,6 +636,28 @@ function CapturePageContent() {
           </p>
         </div>
       </div>
+
+      {/* Bottom nav — field users only */}
+      {isField && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] flex items-center justify-around px-2 py-2 z-50">
+          <Link href="/field" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl">
+            <Home size={20} className="text-slate-400" />
+            <span className="text-[10px] font-medium text-slate-400">Home</span>
+          </Link>
+          <Link href="/capture" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl bg-indigo-50">
+            <PlusCircle size={20} className="text-indigo-600" />
+            <span className="text-[10px] font-medium text-indigo-600">Capture</span>
+          </Link>
+          <Link href="/field#notices" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl">
+            <FileText size={20} className="text-slate-400" />
+            <span className="text-[10px] font-medium text-slate-400">Notices</span>
+          </Link>
+          <Link href="/field#register" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl">
+            <List size={20} className="text-slate-400" />
+            <span className="text-[10px] font-medium text-slate-400">Register</span>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

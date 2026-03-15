@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { PlusCircle, ChevronRight, Clock } from 'lucide-react';
+import { PlusCircle, ChevronRight, Clock, Home, FileText, List } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
 
@@ -129,7 +129,7 @@ export default function FieldHome() {
   const firstName = displayName.split(' ')[0];
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-slate-900 pb-20">
 
       {/* Header — flush to top, no card */}
       <div className="px-5 pt-14 pb-6">
@@ -232,6 +232,26 @@ export default function FieldHome() {
         </div>
 
         <p className="text-center text-[11px] text-slate-400">Field view · {company?.name}</p>
+      </div>
+
+      {/* Bottom nav */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] flex items-center justify-around px-2 py-2 safe-area-pb z-50">
+        <Link href="/field" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl bg-indigo-50">
+          <Home size={20} className="text-indigo-600" />
+          <span className="text-[10px] font-medium text-indigo-600">Home</span>
+        </Link>
+        <Link href="/capture" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl">
+          <PlusCircle size={20} className="text-slate-400" />
+          <span className="text-[10px] font-medium text-slate-400">Capture</span>
+        </Link>
+        <Link href="/field#notices" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl">
+          <FileText size={20} className="text-slate-400" />
+          <span className="text-[10px] font-medium text-slate-400">Notices</span>
+        </Link>
+        <Link href="/field#register" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl">
+          <List size={20} className="text-slate-400" />
+          <span className="text-[10px] font-medium text-slate-400">Register</span>
+        </Link>
       </div>
     </div>
   );
