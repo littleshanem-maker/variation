@@ -10,6 +10,7 @@ import { formatNoticeNumber } from '@/lib/utils';
 import { useRole } from '@/lib/role';
 import AttachmentPicker from '@/components/AttachmentPicker';
 import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
+import ProjectPicker from '@/components/ui/ProjectPicker';
 import type { Project } from '@/lib/types';
 
 function NewNoticeForm() {
@@ -165,16 +166,12 @@ function NewNoticeForm() {
           {/* Project */}
           <div>
             <label className={labelClass}>Project *</label>
-            <select
+            <ProjectPicker
+              projects={projects.map(p => ({ id: p.id, name: p.client ? `${p.name} — ${p.client}` : p.name }))}
               value={projectId}
-              onChange={e => setProjectId(e.target.value)}
-              className={inputClass + ' bg-white'}
-            >
-              <option value="">Select a project…</option>
-              {projects.map(p => (
-                <option key={p.id} value={p.id}>{p.name} — {p.client}</option>
-              ))}
-            </select>
+              onChange={setProjectId}
+              required
+            />
           </div>
 
           {/* Event Date */}

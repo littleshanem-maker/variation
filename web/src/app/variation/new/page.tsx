@@ -10,6 +10,7 @@ import TopBar from '@/components/TopBar';
 import AttachmentPicker from '@/components/AttachmentPicker';
 import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
 import type { Project } from '@/lib/types';
+import ProjectPicker from '@/components/ui/ProjectPicker';
 
 const inputClass = 'w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white';
 const labelClass = 'block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1';
@@ -200,10 +201,12 @@ function NewRequestForm() {
                   {projects[0].name}
                 </div>
               ) : (
-                <select value={projectId} onChange={e => setProjectId(e.target.value)} className={inputClass} required>
-                  <option value="">Select a project…</option>
-                  {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                </select>
+                <ProjectPicker
+                  projects={projects}
+                  value={projectId}
+                  onChange={setProjectId}
+                  required
+                />
               )}
             </div>
 

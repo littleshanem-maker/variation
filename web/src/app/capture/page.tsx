@@ -7,6 +7,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
 import type { Project } from '@/lib/types';
+import ProjectPicker from '@/components/ui/ProjectPicker';
 
 interface CaptureResult {
   variationId: string;
@@ -360,17 +361,12 @@ function CapturePageContent() {
               ) : (
                 <div>
                   <label className="block text-sm font-medium text-[#374151] mb-1.5">Project</label>
-                  <select
+                  <ProjectPicker
+                    projects={projects}
                     value={selectedProjectId}
-                    onChange={(e) => setSelectedProjectId(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] bg-white focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
+                    onChange={setSelectedProjectId}
                     required
-                  >
-                    <option value="">Select a project…</option>
-                    {projects.map((p) => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                  </select>
+                  />
                 </div>
               )}
 
