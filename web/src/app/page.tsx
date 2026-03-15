@@ -50,10 +50,10 @@ export default function Dashboard() {
   const { isField, companyId, isLoading: roleLoading } = useRole();
   const router = useRouter();
 
-  // Field users have no business on the dashboard — send them straight to capture
+  // Field users have no business on the dashboard — send them to field home
   useEffect(() => {
     if (!roleLoading && isField) {
-      router.replace('/capture');
+      router.replace('/field');
     }
   }, [isField, roleLoading]);
 
