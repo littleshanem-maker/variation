@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import AppShell from '@/components/AppShell';
@@ -46,7 +47,15 @@ export default function Dashboard() {
   const [filterProject, setFilterProject] = useState<string>('all');
   const [filterDateRange, setFilterDateRange] = useState<DateRangeKey>('all');
 
-  const { isField, companyId } = useRole();
+  const { isField, companyId, isLoading: roleLoading } = useRole();
+  const router = useRouter();
+
+  // Field users have no business on the dashboard — send them straight to capture
+  useEffect(() => {
+    if (!roleLoading && isField) {
+      router.replace('/capture');
+    }
+  }, [isField, roleLoading]);
 
   useEffect(() => { loadData(); }, []);
 
