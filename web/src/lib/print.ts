@@ -716,6 +716,18 @@ function buildAttachmentsSection(documents: Document[], docUrls: Record<string, 
   const isImage = (type: string) => /^image\//i.test(type);
   const imageDocs = documents.filter(d => isImage(d.file_type));
   const otherDocs = documents.filter(d => !isImage(d.file_type));
+
+  function formatUploadDateTime(iso: string): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    const hrs = String(d.getHours()).padStart(2, '0');
+    const mins = String(d.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hrs}:${mins}`;
+  }
+
   return `
     <div class="avoid-break" style="margin-bottom:32px;">
       <h3 style="font-size:11pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:16px; border-bottom:1px solid #E5E7EB; padding-bottom:8px;">Attachments</h3>
@@ -724,9 +736,13 @@ function buildAttachmentsSection(documents: Document[], docUrls: Record<string, 
           ${imageDocs.map(d => {
             const url = docUrls[d.id];
             if (!url) return '';
+            const uploadedStr = d.uploaded_at ? formatUploadDateTime(d.uploaded_at) : '';
             return `<div class="photo-item">
               <img src="${url}" class="photo-img" />
-              <div class="photo-caption">${escapeHtml(d.file_name)}</div>
+              <div class="photo-caption" style="font-size:8pt; color:#374151; margin-top:4px; line-height:1.4;">
+                <strong>${escapeHtml(d.file_name)}</strong><br/>
+                ${uploadedStr ? `<span style="color:#6B7280;">Uploaded: ${uploadedStr}</span>` : ''}
+              </div>
             </div>`;
           }).join('')}
         </div>
@@ -737,6 +753,7 @@ function buildAttachmentsSection(documents: Document[], docUrls: Record<string, 
             <li style="padding:8px 0; border-bottom:1px solid #F0F0F0; font-size:9pt; color:#374151;">
               📎 ${escapeHtml(d.file_name)}
               <span style="color:#9CA3AF; font-size:8pt; margin-left:8px;">(${(d.file_size / 1024).toFixed(0)} KB)</span>
+              ${d.uploaded_at ? `<span style="color:#9CA3AF; font-size:8pt; margin-left:8px;">· ${formatUploadDateTime(d.uploaded_at)}</span>` : ''}
             </li>
           `).join('')}
         </ul>
@@ -771,7 +788,10 @@ function buildVariationHtml(
           return `
             <div class="photo-item">
               <img src="${url}" class="photo-img" />
-              <div class="photo-caption">${formatDate(p.captured_at)}</div>
+              <div class="photo-caption" style="font-size:8pt; color:#374151; margin-top:4px; line-height:1.4;">
+                <strong>Photo Evidence</strong><br/>
+                <span style="color:#6B7280;">Captured: ${formatDocDate(p.captured_at)}</span>
+              </div>
             </div>
           `;
         }).join('')}
