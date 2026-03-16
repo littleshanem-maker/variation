@@ -482,8 +482,8 @@ export default function NoticeDetail() {
           )}
         </div>
 
-        {/* Implications Card */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        {/* Implications Card — office/admin only */}
+        {!isField && <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Implications</h3>
           <div className={`grid gap-4 md:gap-6 ${editing ? 'grid-cols-1' : 'grid-cols-2'}`}>
             <div className={editing ? 'col-span-2' : ''}>
@@ -559,10 +559,10 @@ export default function NoticeDetail() {
               )}
             </div>
           </div>
-        </div>
+        </div>}
 
-        {/* Linked Variation Request */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        {/* Linked Variation Request — office/admin only */}
+        {!isField && <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Linked Variation Request</h3>
           {linkedVariation ? (
             <Link
@@ -594,7 +594,7 @@ export default function NoticeDetail() {
               )}
             </div>
           )}
-        </div>
+        </div>}
       </div>
 
       {/* Delete Confirmation Modal */}
