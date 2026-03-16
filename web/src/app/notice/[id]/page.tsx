@@ -192,7 +192,9 @@ export default function NoticeDetail() {
       if (newFiles.length > 0) {
         for (const file of newFiles) {
           const ext = file.name.split('.').pop() || 'bin';
-          const storagePath = `notices/${notice.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+          const { data: { user: upUser } } = await supabase.auth.getUser();
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const storagePath = `${upUser!.id}/documents/${docId}/${safeName}`;
           const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file);
           if (!uploadErr) {
             await supabase.from('documents').insert({

@@ -214,13 +214,15 @@ function CapturePageContent() {
       if (photoFile) {
         try {
           const ext = photoFile.name.split('.').pop() || 'jpg';
-          const storagePath = `notices/${noticeId}/photo-${Date.now()}.${ext}`;
+          const docId = crypto.randomUUID();
+          const storagePath = `${userId}/documents/${docId}/photo-${Date.now()}.${ext}`;
           const { error: uploadError } = await supabase.storage
             .from('documents')
             .upload(storagePath, photoFile, { contentType: photoFile.type, upsert: false });
 
           if (!uploadError) {
             await supabase.from('documents').insert({
+              id: docId,
               notice_id: noticeId,
               file_name: photoFile.name,
               file_type: photoFile.type,
@@ -228,6 +230,8 @@ function CapturePageContent() {
               storage_path: storagePath,
               uploaded_at: new Date().toISOString(),
             });
+          } else {
+            console.error('Photo upload error:', uploadError);
           }
         } catch (photoErr) {
           console.error('Photo upload failed (non-fatal):', photoErr);

@@ -119,7 +119,7 @@ function NewNoticeForm() {
           for (const file of attachments) {
             const docId = crypto.randomUUID();
             const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-            const storagePath = `notices/${inserted.id}/${Date.now()}-${safeName}`;
+            const storagePath = `${user.id}/documents/${docId}/${safeName}`;
             const ext = file.name.split('.').pop() || 'bin';
             const { error: uploadErr } = await supabase2.storage.from('documents').upload(storagePath, file, { contentType: file.type });
             if (uploadErr) { console.error('Storage upload error:', uploadErr); continue; }

@@ -139,16 +139,14 @@ function NewRequestForm() {
       if (insertError) throw new Error(insertError.message);
 
       if (attachments.length > 0) {
+        const { data: { user: upUser } } = await supabase.auth.getUser();
         for (const file of attachments) {
           const docId = crypto.randomUUID();
           const ext = file.name.split('.').pop() || 'bin';
           const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-          const storagePath = `variations/${variationId}/${Date.now()}-${safeName}`;
+          const storagePath = `${upUser!.id}/documents/${docId}/${safeName}`;
           const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file, { contentType: file.type });
-          if (uploadErr) {
-            console.error('Storage upload error:', uploadErr);
-            continue;
-          }
+          if (uploadErr) { console.error('Storage upload error:', uploadErr); continue; }
           const { error: docErr } = await supabase.from('documents').insert({
             id: docId,
             variation_id: variationId,
