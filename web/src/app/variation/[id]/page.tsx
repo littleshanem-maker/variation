@@ -371,6 +371,8 @@ export default function VariationDetail() {
       setEditNotes(v.notes || '');
       setEditReferenceDoc(v.reference_doc || '');
       setEditDueDate(v.response_due_date || '');
+      setEditEotDays(v.eot_days_claimed != null ? String(v.eot_days_claimed) : '');
+      setEditTimeUnit((v.time_implication_unit as 'days' | 'hours') || 'days');
       setEditing(true);
     }
   }
