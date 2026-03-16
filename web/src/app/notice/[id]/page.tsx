@@ -190,14 +190,16 @@ export default function NoticeDetail() {
     } else {
       // Upload new files
       if (newFiles.length > 0) {
+        const { data: { user: upUser } } = await supabase.auth.getUser();
         for (const file of newFiles) {
+          const docId = crypto.randomUUID();
           const ext = file.name.split('.').pop() || 'bin';
-          const { data: { user: upUser } } = await supabase.auth.getUser();
-        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-        const storagePath = `${upUser!.id}/documents/${docId}/${safeName}`;
-          const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file);
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+          const storagePath = `${upUser!.id}/documents/${docId}/${safeName}`;
+          const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file, { contentType: file.type });
           if (!uploadErr) {
-            await supabase.from('documents').insert({
+            const { error: docErr } = await supabase.from('documents').insert({
+              id: docId,
               notice_id: notice.id,
               file_name: file.name,
               file_type: file.type || `application/${ext}`,
@@ -205,6 +207,9 @@ export default function NoticeDetail() {
               storage_path: storagePath,
               uploaded_at: new Date().toISOString(),
             });
+            if (docErr) console.error('Doc insert error:', docErr);
+          } else {
+            console.error('Upload error:', uploadErr);
           }
         }
         setNewFiles([]);
