@@ -512,6 +512,31 @@ export default function NoticeDetail() {
           )}
         </div>
 
+        {/* Photo Attachments */}
+        {documents.filter(d => d.file_type.startsWith('image/')).length > 0 && (
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Photo Evidence</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {documents
+                .filter(d => d.file_type.startsWith('image/'))
+                .map(d => {
+                  const url = docUrls[d.id];
+                  if (!url) return null;
+                  return (
+                    <a key={d.id} href={url} target="_blank" rel="noopener noreferrer">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={url}
+                        alt={d.file_name}
+                        className="w-full h-36 object-cover rounded-lg border border-[#E5E7EB] hover:opacity-90 transition-opacity"
+                      />
+                    </a>
+                  );
+                })}
+            </div>
+          </div>
+        )}
+
         {/* Implications Card — office/admin only */}
         {!isField && <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Impact</h3>
