@@ -176,7 +176,7 @@ export default function FieldHome() {
                     <div className="px-4 py-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors">
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-[11px] font-mono font-semibold text-indigo-500">{n.notice_number}</span>
+                          <span className="text-[11px] font-mono font-semibold text-[#1C1C1E]">{n.notice_number}</span>
                           <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${sc.color}`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
                             {sc.label}
