@@ -514,10 +514,10 @@ export default function NoticeDetail() {
 
         {/* Implications Card — office/admin only */}
         {!isField && <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Implications</h3>
+          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Impact</h3>
           <div className={`grid gap-4 md:gap-6 ${editing ? 'grid-cols-1' : 'grid-cols-2'}`}>
-            <div className={editing ? 'col-span-2' : ''}>
-              <div className={labelClass}>Cost Implication</div>
+            <div className={editing || (notice.cost_flag && (notice.cost_items as any[])?.length > 0) ? 'col-span-2' : ''}>
+              <div className={labelClass}>Cost Impact</div>
               {editing ? (
                 <div className="space-y-3">
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -534,17 +534,47 @@ export default function NoticeDetail() {
                   )}
                 </div>
               ) : (
-                <div className={`text-[14px] font-medium ${notice.cost_flag ? 'text-[#92722E]' : 'text-[#6B7280]'}`}>
-                  {notice.cost_flag
-                    ? notice.cost_items && (notice.cost_items as any[]).length > 0
-                      ? `$${((notice.cost_items as any[]).reduce((s: number, i: any) => s + (i.total || 0), 0)).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                      : '✓ Yes'
-                    : '✗ No'}
+                <div>
+                  <div className={`text-[14px] font-medium mb-2 ${notice.cost_flag ? 'text-[#1C1C1E]' : 'text-[#6B7280]'}`}>
+                    {notice.cost_flag ? 'Yes' : 'No'}
+                  </div>
+                  {notice.cost_flag && notice.cost_items && (notice.cost_items as any[]).length > 0 && (
+                    <div className="border border-[#E5E7EB] rounded-md overflow-hidden">
+                      <table className="w-full text-[13px]">
+                        <thead>
+                          <tr className="bg-slate-50 border-b border-[#E5E7EB]">
+                            <th className="text-left px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider">Description</th>
+                            <th className="text-right px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider w-16">Qty</th>
+                            <th className="text-left px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider w-16">Unit</th>
+                            <th className="text-right px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider w-20">Rate</th>
+                            <th className="text-right px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider w-24">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {(notice.cost_items as any[]).map((item: any, i: number) => (
+                            <tr key={i} className="border-b border-[#F0F0EE] last:border-b-0">
+                              <td className="px-3 py-2 text-[#1C1C1E]">{item.description}</td>
+                              <td className="px-3 py-2 text-right text-[#1C1C1E] tabular-nums">{item.qty}</td>
+                              <td className="px-3 py-2 text-[#6B7280]">{item.unit}</td>
+                              <td className="px-3 py-2 text-right text-[#1C1C1E] tabular-nums">${Number(item.rate).toFixed(2)}</td>
+                              <td className="px-3 py-2 text-right font-medium text-[#1C1C1E] tabular-nums">${Number(item.total).toFixed(2)}</td>
+                            </tr>
+                          ))}
+                          <tr className="bg-slate-50 border-t-2 border-[#E5E7EB]">
+                            <td colSpan={4} className="px-3 py-2 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total</td>
+                            <td className="px-3 py-2 text-right font-bold text-[#1C1C1E] tabular-nums">
+                              ${(notice.cost_items as any[]).reduce((s: number, i: any) => s + (Number(i.total) || 0), 0).toFixed(2)}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
             <div>
-              <div className={labelClass}>Time Implication</div>
+              <div className={labelClass}>Time Impact</div>
               {editing ? (
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -579,12 +609,17 @@ export default function NoticeDetail() {
                   )}
                 </div>
               ) : (
-                <div className={`text-[14px] font-medium ${notice.time_flag ? 'text-[#92722E]' : 'text-[#6B7280]'}`}>
-                  {notice.time_flag
-                    ? notice.estimated_days != null
-                      ? `${notice.estimated_days} ${notice.time_implication_unit === 'hours' ? `hour${notice.estimated_days !== 1 ? 's' : ''}` : `day${notice.estimated_days !== 1 ? 's' : ''}`}`
-                      : '✓ Yes'
-                    : '✗ No'}
+                <div>
+                  <div className={`text-[14px] font-medium ${notice.time_flag ? 'text-[#1C1C1E]' : 'text-[#6B7280]'}`}>
+                    {notice.time_flag ? 'Yes' : 'No'}
+                  </div>
+                  {notice.time_flag && notice.estimated_days != null && (
+                    <div className="text-[14px] text-[#92722E] font-medium mt-0.5">
+                      {notice.estimated_days} {notice.time_implication_unit === 'hours'
+                        ? `hour${notice.estimated_days !== 1 ? 's' : ''}`
+                        : `day${notice.estimated_days !== 1 ? 's' : ''}`}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
