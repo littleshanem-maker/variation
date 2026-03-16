@@ -210,6 +210,31 @@ function CapturePageContent() {
         return;
       }
 
+      // Upload photo if attached
+      if (photoFile) {
+        try {
+          const ext = photoFile.name.split('.').pop() || 'jpg';
+          const storagePath = `notices/${noticeId}/photo-${Date.now()}.${ext}`;
+          const { error: uploadError } = await supabase.storage
+            .from('documents')
+            .upload(storagePath, photoFile, { contentType: photoFile.type, upsert: false });
+
+          if (!uploadError) {
+            await supabase.from('documents').insert({
+              notice_id: noticeId,
+              file_name: photoFile.name,
+              file_type: photoFile.type,
+              file_size: photoFile.size,
+              storage_path: storagePath,
+              uploaded_at: new Date().toISOString(),
+            });
+          }
+        } catch (photoErr) {
+          console.error('Photo upload failed (non-fatal):', photoErr);
+          // Don't block submission if photo fails
+        }
+      }
+
       // Get project name for confirmation
       const project = projects.find((p) => p.id === selectedProjectId);
 
