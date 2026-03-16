@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { PlusCircle, ChevronRight, Clock, Home, FileText, List } from 'lucide-react';
+import { PlusCircle, ChevronRight, Clock, Home, Settings } from 'lucide-react';
 import { createClient } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
 
@@ -236,17 +236,13 @@ export default function FieldHome() {
 
       {/* Bottom nav — dark to match header */}
       <div className="fixed bottom-0 left-0 right-0 bg-slate-900 flex items-center justify-around px-2 py-3 z-50">
-        <Link href="/field" className="flex flex-col items-center gap-1 px-8 py-1">
+        <Link href="/field" className="flex flex-col items-center gap-1 px-10 py-1">
           <Home size={20} className="text-white" />
           <span className="text-[10px] font-medium text-white">Home</span>
         </Link>
-        <Link href="/field#notices" className="flex flex-col items-center gap-1 px-8 py-1">
-          <FileText size={20} className="text-slate-400" />
-          <span className="text-[10px] font-medium text-slate-400">Notices</span>
-        </Link>
-        <Link href="/field#register" className="flex flex-col items-center gap-1 px-8 py-1">
-          <List size={20} className="text-slate-400" />
-          <span className="text-[10px] font-medium text-slate-400">Register</span>
+        <Link href="/settings" className="flex flex-col items-center gap-1 px-10 py-1">
+          <Settings size={20} className="text-slate-400" />
+          <span className="text-[10px] font-medium text-slate-400">Settings</span>
         </Link>
       </div>
     </div>

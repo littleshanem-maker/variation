@@ -8,7 +8,7 @@ import { createClient } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
 import type { Project } from '@/lib/types';
 import ProjectPicker from '@/components/ui/ProjectPicker';
-import { Home, FileText, List } from 'lucide-react';
+import { Home, Settings } from 'lucide-react';
 
 interface CaptureResult {
   variationId: string;
@@ -640,17 +640,13 @@ function CapturePageContent() {
       {/* Bottom nav — field users only */}
       {isField && (
         <div className="fixed bottom-0 left-0 right-0 bg-slate-900 flex items-center justify-around px-2 py-3 z-50">
-          <Link href="/field" className="flex flex-col items-center gap-1 px-8 py-1">
+          <Link href="/field" className="flex flex-col items-center gap-1 px-10 py-1">
             <Home size={20} className="text-slate-400" />
             <span className="text-[10px] font-medium text-slate-400">Home</span>
           </Link>
-          <Link href="/field#notices" className="flex flex-col items-center gap-1 px-8 py-1">
-            <FileText size={20} className="text-slate-400" />
-            <span className="text-[10px] font-medium text-slate-400">Notices</span>
-          </Link>
-          <Link href="/field#register" className="flex flex-col items-center gap-1 px-8 py-1">
-            <List size={20} className="text-slate-400" />
-            <span className="text-[10px] font-medium text-slate-400">Register</span>
+          <Link href="/settings" className="flex flex-col items-center gap-1 px-10 py-1">
+            <Settings size={20} className="text-slate-400" />
+            <span className="text-[10px] font-medium text-slate-400">Settings</span>
           </Link>
         </div>
       )}
