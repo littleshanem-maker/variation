@@ -293,7 +293,10 @@ export default function NoticeDetail() {
       const { html, css } = getNoticeHtmlForPdf(notice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
       const blob = await htmlToPdfBlob(html, css);
       const { subject, body, filename } = getNoticeEmailMeta(notice, project);
-      await shareOrDownloadPdf(blob, filename, subject, body);
+      const attachmentUrls = documents
+        .filter(d => !d.file_type.startsWith('image/') && docUrls[d.id])
+        .map(d => ({ url: docUrls[d.id], filename: d.file_name, mimeType: d.file_type }));
+      await shareOrDownloadPdf(blob, filename, subject, body, attachmentUrls);
     } catch (err) {
       console.error('Email send failed:', err);
       setSaveError('PDF generation failed. Try reducing the number of photos, or try again.');

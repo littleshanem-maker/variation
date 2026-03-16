@@ -393,7 +393,11 @@ export default function VariationDetail() {
       const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
       const blob = await htmlToPdfBlob(html, css);
       const { subject, body, filename } = getVariationEmailMeta(variation, project);
-      await shareOrDownloadPdf(blob, filename, subject, body);
+      // Include non-image attachments (PDFs etc) as separate files
+      const attachmentUrls = documents
+        .filter(d => !d.file_type.startsWith('image/') && docUrls[d.id])
+        .map(d => ({ url: docUrls[d.id], filename: d.file_name, mimeType: d.file_type }));
+      await shareOrDownloadPdf(blob, filename, subject, body, attachmentUrls);
     } catch (err) {
       console.error('Email send failed:', err);
       setSaveError('PDF generation failed. Try reducing the number of photos, or try again.');

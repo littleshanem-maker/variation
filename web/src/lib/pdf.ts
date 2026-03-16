@@ -17,38 +17,56 @@ export async function htmlToPdfBlob(htmlContent: string, cssContent: string): Pr
 }
 
 /**
- * Share or download a PDF blob.
- * - Mobile: Web Share API with file attachment (1-step)
- * - Desktop: auto-download + mailto opens simultaneously
+ * Share or download a PDF blob, with optional extra attachment URLs.
+ * - Mobile: Web Share API with all files at once (1-step)
+ * - Desktop: download main PDF + each attachment, then open mailto
  */
 export async function shareOrDownloadPdf(
   blob: Blob,
   filename: string,
   emailSubject: string,
-  emailBody: string
+  emailBody: string,
+  attachmentUrls?: Array<{ url: string; filename: string; mimeType: string }>
 ): Promise<void> {
-  const file = new File([blob], filename, { type: 'application/pdf' });
+  const mainFile = new File([blob], filename, { type: 'application/pdf' });
+
+  // Fetch additional attachment blobs if provided
+  const extraFiles: File[] = [];
+  if (attachmentUrls && attachmentUrls.length > 0) {
+    for (const att of attachmentUrls) {
+      try {
+        const r = await fetch(att.url);
+        if (r.ok) {
+          const attBlob = await r.blob();
+          extraFiles.push(new File([attBlob], att.filename, { type: att.mimeType }));
+        }
+      } catch (e) {
+        console.warn('Could not fetch attachment:', att.filename, e);
+      }
+    }
+  }
+
+  const allFiles = [mainFile, ...extraFiles];
 
   // Try Web Share API with file support (mobile)
   if (
     typeof navigator.share === 'function' &&
     typeof navigator.canShare === 'function' &&
-    navigator.canShare({ files: [file] })
+    navigator.canShare({ files: allFiles })
   ) {
     try {
       await navigator.share({
-        files: [file],
+        files: allFiles,
         title: emailSubject,
         text: emailBody,
       });
       return;
     } catch (err) {
-      // User cancelled or share failed — fall through to download
       if ((err as Error).name === 'AbortError') return;
     }
   }
 
-  // Desktop fallback: auto-download + open mailto simultaneously
+  // Desktop: download main PDF
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -58,7 +76,21 @@ export async function shareOrDownloadPdf(
   document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(url), 10000);
 
-  // Open mailto after a short delay so download starts first
+  // Download each extra attachment with a small delay between each
+  extraFiles.forEach((file, i) => {
+    setTimeout(() => {
+      const attUrl = URL.createObjectURL(file);
+      const attA = document.createElement('a');
+      attA.href = attUrl;
+      attA.download = file.name;
+      document.body.appendChild(attA);
+      attA.click();
+      document.body.removeChild(attA);
+      setTimeout(() => URL.revokeObjectURL(attUrl), 10000);
+    }, (i + 1) * 800);
+  });
+
+  // Open mailto after downloads start
   const mailtoUrl = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-  setTimeout(() => { window.location.href = mailtoUrl; }, 500);
+  setTimeout(() => { window.location.href = mailtoUrl; }, 500 + extraFiles.length * 800);
 }
