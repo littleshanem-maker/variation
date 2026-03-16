@@ -430,12 +430,15 @@ export default function Dashboard() {
                         <div key={p.id}>
                           {/* Name + value on the same row, immediately above bar */}
                           <div className="flex items-baseline justify-between gap-4 mb-1.5">
+                            <div className="min-w-0">
                             <Link
                               href={`/project/${p.id}`}
                               className="text-[13px] font-semibold text-[#1C1C1E] hover:text-indigo-600 transition-colors leading-tight"
                             >
                               {p.name}
                             </Link>
+                            {p.client && <div className="text-[11px] text-slate-400 truncate">{p.client}</div>}
+                            </div>
                             {!isField && (
                               <div className="flex-shrink-0 text-right">
                                 <span className="text-[13px] font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(p.totalValue)}</span>
