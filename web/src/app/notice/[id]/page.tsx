@@ -40,6 +40,9 @@ export default function NoticeDetail() {
   const [editContractClause, setEditContractClause] = useState('');
   const [editIssuedByName, setEditIssuedByName] = useState('');
   const [editIssuedByEmail, setEditIssuedByEmail] = useState('');
+  const [editTimeFlag, setEditTimeFlag] = useState(false);
+  const [editTimeDays, setEditTimeDays] = useState('');
+  const [editTimeUnit, setEditTimeUnit] = useState<'days' | 'hours'>('days');
   const [saveError, setSaveError] = useState<string | null>(null);
   const [sendingEmail, setSendingEmail] = useState(false);
 
@@ -148,6 +151,9 @@ export default function NoticeDetail() {
     setEditContractClause(notice.contract_clause || '');
     setEditIssuedByName(notice.issued_by_name || '');
     setEditIssuedByEmail(notice.issued_by_email || '');
+    setEditTimeFlag(notice.time_flag || false);
+    setEditTimeDays(notice.estimated_days != null ? String(notice.estimated_days) : '');
+    setEditTimeUnit((notice.time_implication_unit as 'days' | 'hours') || 'days');
     setSaveError(null);
     setEditing(true);
   }
@@ -163,6 +169,9 @@ export default function NoticeDetail() {
       contract_clause: editContractClause.trim() || null,
       issued_by_name: editIssuedByName.trim() || null,
       issued_by_email: editIssuedByEmail.trim() || null,
+      time_flag: editTimeFlag,
+      estimated_days: editTimeFlag && editTimeDays ? parseFloat(editTimeDays) : null,
+      time_implication_unit: editTimeUnit,
       updated_at: new Date().toISOString(),
     }).eq('id', notice.id);
     if (error) {
@@ -478,20 +487,49 @@ export default function NoticeDetail() {
             </div>
             <div>
               <div className={labelClass}>Time Implication</div>
-              <div className={`text-[14px] font-medium ${notice.time_flag ? 'text-[#92722E]' : 'text-[#6B7280]'}`}>
-                {notice.time_flag ? '✓ Yes' : '✗ No'}
-              </div>
-            </div>
-            {notice.time_flag && notice.estimated_days != null && (
-              <div>
-                <div className={labelClass}>Time Implication</div>
-                <div className="text-[14px] text-[#1C1C1E]">
-                  {notice.estimated_days} {notice.time_implication_unit === 'hours'
-                    ? `hour${notice.estimated_days !== 1 ? 's' : ''}`
-                    : `day${notice.estimated_days !== 1 ? 's' : ''}`}
+              {editing ? (
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={editTimeFlag}
+                      onChange={e => setEditTimeFlag(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-indigo-600"
+                    />
+                    <span className="text-[14px] text-[#1C1C1E]">Time impact</span>
+                  </label>
+                  {editTimeFlag && (
+                    <div className="flex gap-2 mt-1">
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        value={editTimeDays}
+                        onChange={e => setEditTimeDays(e.target.value)}
+                        placeholder="0"
+                        className="w-24 px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none"
+                      />
+                      <select
+                        value={editTimeUnit}
+                        onChange={e => setEditTimeUnit(e.target.value as 'days' | 'hours')}
+                        className="px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none bg-white"
+                      >
+                        <option value="days">days</option>
+                        <option value="hours">hours</option>
+                      </select>
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
+              ) : (
+                <div className={`text-[14px] font-medium ${notice.time_flag ? 'text-[#92722E]' : 'text-[#6B7280]'}`}>
+                  {notice.time_flag
+                    ? notice.estimated_days != null
+                      ? `${notice.estimated_days} ${notice.time_implication_unit === 'hours' ? `hour${notice.estimated_days !== 1 ? 's' : ''}` : `day${notice.estimated_days !== 1 ? 's' : ''}`}`
+                      : '✓ Yes'
+                    : '✗ No'}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

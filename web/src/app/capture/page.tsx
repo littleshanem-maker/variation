@@ -68,11 +68,13 @@ function CapturePageContent() {
 
   async function loadProjects() {
     const supabase = createClient();
-    const { data, error } = await supabase
+    let query = supabase
       .from('projects')
       .select('*')
       .eq('is_active', true)
       .order('created_at', { ascending: false });
+    if (companyId) query = query.eq('company_id', companyId);
+    const { data, error } = await query;
 
     if (!error && data) {
       setProjects(data as Project[]);
