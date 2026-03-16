@@ -234,21 +234,17 @@ export default function FieldHome() {
         <p className="text-center text-[11px] text-slate-400">Field view · {company?.name}</p>
       </div>
 
-      {/* Bottom nav */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E5E7EB] flex items-center justify-around px-2 py-2 safe-area-pb z-50">
-        <Link href="/field" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl bg-indigo-50">
-          <Home size={20} className="text-indigo-600" />
-          <span className="text-[10px] font-medium text-indigo-600">Home</span>
+      {/* Bottom nav — dark to match header */}
+      <div className="fixed bottom-0 left-0 right-0 bg-slate-900 flex items-center justify-around px-2 py-3 z-50">
+        <Link href="/field" className="flex flex-col items-center gap-1 px-8 py-1">
+          <Home size={20} className="text-white" />
+          <span className="text-[10px] font-medium text-white">Home</span>
         </Link>
-        <Link href="/capture" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl">
-          <PlusCircle size={20} className="text-slate-400" />
-          <span className="text-[10px] font-medium text-slate-400">Capture</span>
-        </Link>
-        <Link href="/field#notices" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl">
+        <Link href="/field#notices" className="flex flex-col items-center gap-1 px-8 py-1">
           <FileText size={20} className="text-slate-400" />
           <span className="text-[10px] font-medium text-slate-400">Notices</span>
         </Link>
-        <Link href="/field#register" className="flex flex-col items-center gap-0.5 px-5 py-1.5 rounded-xl">
+        <Link href="/field#register" className="flex flex-col items-center gap-1 px-8 py-1">
           <List size={20} className="text-slate-400" />
           <span className="text-[10px] font-medium text-slate-400">Register</span>
         </Link>
