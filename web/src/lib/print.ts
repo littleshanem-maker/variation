@@ -545,18 +545,18 @@ function buildNoticeHtml(
       <table style="width:auto; border-collapse:collapse;">
         <tr>
           <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Cost Implication</td>
-          <td style="padding:6px 0; font-size:10pt;">${costCheck} Yes &nbsp;&nbsp; ${costClear} No</td>
+          <td style="padding:6px 0; font-size:10pt;">
+            ${costCheck} Yes &nbsp;&nbsp; ${costClear} No
+            ${notice.cost_flag && (notice as any).cost_items?.length > 0 ? `<span style="margin-left:12px; font-size:9pt; color:#6B7280;">(see breakdown below)</span>` : ''}
+          </td>
         </tr>
         <tr>
           <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Time Implication</td>
-          <td style="padding:6px 0; font-size:10pt;">${timeCheck} Yes &nbsp;&nbsp; ${timeClear} No</td>
+          <td style="padding:6px 0; font-size:10pt;">
+            ${timeCheck} Yes &nbsp;&nbsp; ${timeClear} No
+            ${notice.time_flag && notice.estimated_days != null ? `<span style="margin-left:12px; font-weight:600; color:#1C1C1E;">${notice.estimated_days} ${notice.time_implication_unit === 'hours' ? `hour${notice.estimated_days !== 1 ? 's' : ''}` : `day${notice.estimated_days !== 1 ? 's' : ''}`}</span>` : ''}
+          </td>
         </tr>
-        ${notice.time_flag && notice.estimated_days != null ? `
-        <tr>
-          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Time Implication</td>
-          <td style="padding:6px 0; font-size:10pt;">${notice.estimated_days} ${notice.time_implication_unit || 'days'}</td>
-        </tr>
-        ` : ''}
         ${notice.contract_clause ? `
         <tr>
           <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Contract Clause</td>
