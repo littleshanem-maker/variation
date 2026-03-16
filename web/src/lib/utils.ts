@@ -42,6 +42,17 @@ export function formatDate(dateStr: string): string {
   return `${day}/${month}/${year}`;
 }
 
+export function formatDateTime(dateStr: string): string {
+  if (!dateStr) return '—';
+  const date = new Date(dateStr);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = String(date.getFullYear()).slice(-2);
+  const hours = String(date.getHours()).padStart(2, '0');
+  const mins = String(date.getMinutes()).padStart(2, '0');
+  return `${day}/${month}/${year} ${hours}:${mins}`;
+}
+
 /** Status display config — desaturated, sophisticated tones */
 export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; dot: string }> = {
   draft: {

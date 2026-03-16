@@ -10,7 +10,7 @@ import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
 import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
-import { formatCurrency, formatDate, getVariationNumber } from '@/lib/utils';
+import { formatCurrency, formatDate, formatDateTime, getVariationNumber } from '@/lib/utils';
 import { printVariation, getVariationHtmlForPdf } from '@/lib/print';
 import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
 import { getVariationEmailMeta } from '@/lib/email';
@@ -1084,7 +1084,7 @@ export default function VariationDetail() {
             <div className="space-y-2.5">
               {statusHistory.map(sc => (
                 <div key={sc.id} className="flex flex-wrap items-center gap-2 md:gap-4 text-[13px]">
-                  <div className="text-[#9CA3AF] tabular-nums text-[12px]">{formatDate(sc.changed_at)}</div>
+                  <div className="text-[#9CA3AF] tabular-nums text-[12px]">{formatDateTime(sc.changed_at)}</div>
                   <div className="flex items-center gap-2">
                     {sc.from_status && <StatusBadge status={sc.from_status} />}
                     {sc.from_status && <span className="text-[#9CA3AF]">→</span>}
