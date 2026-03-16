@@ -276,6 +276,29 @@ export default function NoticeDetail() {
     }
   }
 
+  async function handleDownloadPdf() {
+    if (!notice || !project) return;
+    setSendingEmail(true);
+    try {
+      const { html, css } = getNoticeHtmlForPdf(notice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
+      const blob = await htmlToPdfBlob(html, css);
+      const { filename } = getNoticeEmailMeta(notice, project);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } catch (err) {
+      console.error('PDF download failed:', err);
+      setSaveError('PDF generation failed. Try reducing the number of photos, or try again.');
+    } finally {
+      setSendingEmail(false);
+    }
+  }
+
   if (loading) {
     return (
       <AppShell><TopBar title="Variation Notice" />
@@ -332,6 +355,13 @@ export default function NoticeDetail() {
                 className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
               >
                 {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
+              </button>
+              <button
+                onClick={handleDownloadPdf}
+                disabled={sendingEmail}
+                className="hidden md:inline-flex px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
+              >
+                {sendingEmail ? '…' : '⬇ Download PDF'}
               </button>
               {!isField && (
                 <button
