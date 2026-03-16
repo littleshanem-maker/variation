@@ -136,7 +136,8 @@ function CapturePageContent() {
     const now = new Date();
     const dateStr = now.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
     const timeStr = now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: false });
-    const stampText = `${dateStr} ${timeStr}`;
+    const projectName = projects.find(p => p.id === selectedProjectId)?.name || '';
+    const stampText = projectName ? `${projectName} · ${dateStr} ${timeStr}` : `${dateStr} ${timeStr}`;
 
     // Try to get GPS, then stamp regardless
     const stampPhoto = (gpsText?: string) => {
