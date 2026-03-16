@@ -118,18 +118,21 @@ function NewNoticeForm() {
         if (user) {
           for (const file of attachments) {
             const docId = crypto.randomUUID();
-            const storagePath = `${user.id}/documents/${docId}/${file.name}`;
-            const { error: uploadErr } = await supabase2.storage.from('documents').upload(storagePath, file);
-            if (!uploadErr) {
-              await supabase2.from('documents').insert({
-                id: docId,
-                notice_id: inserted.id,
-                file_name: file.name,
-                file_type: file.type,
-                file_size: file.size,
-                storage_path: storagePath,
-              });
-            }
+            const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+            const storagePath = `notices/${inserted.id}/${Date.now()}-${safeName}`;
+            const ext = file.name.split('.').pop() || 'bin';
+            const { error: uploadErr } = await supabase2.storage.from('documents').upload(storagePath, file, { contentType: file.type });
+            if (uploadErr) { console.error('Storage upload error:', uploadErr); continue; }
+            const { error: docErr } = await supabase2.from('documents').insert({
+              id: docId,
+              notice_id: inserted.id,
+              file_name: file.name,
+              file_type: file.type || `application/${ext}`,
+              file_size: file.size,
+              storage_path: storagePath,
+              uploaded_at: new Date().toISOString(),
+            });
+            if (docErr) console.error('Document insert error:', docErr);
           }
         }
       }

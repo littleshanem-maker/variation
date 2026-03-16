@@ -141,18 +141,24 @@ function NewRequestForm() {
       if (attachments.length > 0) {
         for (const file of attachments) {
           const docId = crypto.randomUUID();
-          const storagePath = `${user.id}/documents/${docId}/${file.name}`;
-          const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file);
-          if (!uploadErr) {
-            await supabase.from('documents').insert({
-              id: docId,
-              variation_id: variationId,
-              file_name: file.name,
-              file_type: file.type,
-              file_size: file.size,
-              storage_path: storagePath,
-            });
+          const ext = file.name.split('.').pop() || 'bin';
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+          const storagePath = `variations/${variationId}/${Date.now()}-${safeName}`;
+          const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file, { contentType: file.type });
+          if (uploadErr) {
+            console.error('Storage upload error:', uploadErr);
+            continue;
           }
+          const { error: docErr } = await supabase.from('documents').insert({
+            id: docId,
+            variation_id: variationId,
+            file_name: file.name,
+            file_type: file.type || `application/${ext}`,
+            file_size: file.size,
+            storage_path: storagePath,
+            uploaded_at: new Date().toISOString(),
+          });
+          if (docErr) console.error('Document insert error:', docErr);
         }
       }
 
