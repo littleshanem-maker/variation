@@ -144,7 +144,7 @@ export default function Dashboard() {
 
   // ── Bar chart ─────────────────────────────────────────────────────────────────
   type ProjectBarData = {
-    id: string; name: string; totalValue: number;
+    id: string; name: string; client: string; totalValue: number;
     paid: number; submitted: number; disputed: number; other: number;
     variationCount: number;
   };
@@ -162,7 +162,7 @@ export default function Dashboard() {
         const disputed = vars.filter(v => v.status === 'disputed').reduce((s, v) => s + (v.estimated_value || 0), 0);
         const other = vars.filter(v => ['draft', 'captured'].includes(v.status)).reduce((s, v) => s + (v.estimated_value || 0), 0);
         const totalValue = paid + submitted + disputed + other;
-        return { id: p.id, name: p.name, totalValue, paid, submitted, disputed, other, variationCount: vars.length };
+        return { id: p.id, name: p.name, client: p.client || '', totalValue, paid, submitted, disputed, other, variationCount: vars.length };
       })
       .sort((a, b) => b.totalValue - a.totalValue); // Sort by total bar length desc
   }, [projects, filterProject, filterDateRange]);
