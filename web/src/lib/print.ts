@@ -892,6 +892,17 @@ function buildVariationHtml(
     </div>
     ` : ''}
 
+    ${variation.eot_days_claimed != null ? `
+    <div style="margin-bottom:32px;">
+      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#6B7280; margin-bottom:8px;">Time Impact</div>
+      <div style="font-size:10pt; font-weight:600; color:#1C1C1E;">
+        ${variation.eot_days_claimed} ${variation.time_implication_unit === 'hours'
+          ? `hour${variation.eot_days_claimed !== 1 ? 's' : ''}`
+          : `day${variation.eot_days_claimed !== 1 ? 's' : ''}`} extension claimed
+      </div>
+    </div>
+    ` : ''}
+
     <div style="padding-top:20px; margin-bottom:32px;">
       <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9CA3AF; margin-bottom:12px;">Document Information</div>
       <table style="width:100%; border-collapse:collapse; font-size:9pt;">
