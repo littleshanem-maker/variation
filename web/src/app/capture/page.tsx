@@ -382,7 +382,7 @@ function CapturePageContent() {
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  rows={isOnboarding ? 3 : 4}
+                  rows={isOnboarding ? 2 : 3}
                   placeholder={
                     isOnboarding
                       ? 'e.g. Additional blockwork to Level 3 corridor'
@@ -459,7 +459,7 @@ function CapturePageContent() {
                             <img
                               src={photoPreview}
                               alt="Preview"
-                              className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                              className="w-full h-28 object-cover rounded-lg border border-gray-200"
                             />
                             <button
                               type="button"
@@ -473,7 +473,7 @@ function CapturePageContent() {
                           <button
                             type="button"
                             onClick={() => fileInputRef.current?.click()}
-                            className="w-full border-2 border-dashed border-gray-300 rounded-lg py-8 text-sm text-[#6B7280] hover:border-gray-400 hover:text-[#4B5563] transition-colors flex flex-col items-center gap-2"
+                            className="w-full border-2 border-dashed border-gray-300 rounded-lg py-3 text-sm text-[#6B7280] hover:border-gray-400 hover:text-[#4B5563] transition-colors flex flex-col items-center gap-1"
                           >
                             <span className="text-2xl">📷</span>
                             Tap to attach a photo
@@ -562,7 +562,7 @@ function CapturePageContent() {
                         <img
                           src={photoPreview}
                           alt="Preview"
-                          className="w-full h-48 object-cover rounded-lg border border-gray-200"
+                          className="w-full h-28 object-cover rounded-lg border border-gray-200"
                         />
                         <button
                           type="button"
@@ -576,7 +576,7 @@ function CapturePageContent() {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full border-2 border-dashed border-gray-300 rounded-lg py-8 text-sm text-[#6B7280] hover:border-gray-400 hover:text-[#4B5563] transition-colors flex flex-col items-center gap-2"
+                        className="w-full border-2 border-dashed border-gray-300 rounded-lg py-3 text-sm text-[#6B7280] hover:border-gray-400 hover:text-[#4B5563] transition-colors flex flex-col items-center gap-1"
                       >
                         <span className="text-2xl">📷</span>
                         Tap to attach a photo
