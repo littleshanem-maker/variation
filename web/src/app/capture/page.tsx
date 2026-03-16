@@ -132,10 +132,73 @@ function CapturePageContent() {
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setPhotoFile(file);
-    const reader = new FileReader();
-    reader.onload = (ev) => setPhotoPreview(ev.target?.result as string);
-    reader.readAsDataURL(file);
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
+    const timeStr = now.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', hour12: false });
+    const stampText = `${dateStr} ${timeStr}`;
+
+    // Try to get GPS, then stamp regardless
+    const stampPhoto = (gpsText?: string) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new window.Image() as HTMLImageElement;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d')!;
+          ctx.drawImage(img, 0, 0);
+
+          // Build stamp lines
+          const lines = [stampText];
+          if (gpsText) lines.push(gpsText);
+
+          const padding = Math.round(img.width * 0.012);
+          const fontSize = Math.round(img.width * 0.028);
+          ctx.font = `bold ${fontSize}px monospace`;
+
+          const lineH = fontSize + padding;
+          const boxH = lineH * lines.length + padding * 2;
+          const boxW = Math.max(...lines.map(l => ctx.measureText(l).width)) + padding * 2;
+          const x = padding;
+          const y = img.height - boxH - padding;
+
+          // Semi-transparent black background
+          ctx.fillStyle = 'rgba(0,0,0,0.6)';
+          ctx.fillRect(x, y, boxW, boxH);
+
+          // White text
+          ctx.fillStyle = '#ffffff';
+          lines.forEach((line, i) => {
+            ctx.fillText(line, x + padding, y + padding + fontSize + i * lineH);
+          });
+
+          canvas.toBlob((blob) => {
+            if (!blob) return;
+            const stamped = new File([blob], file.name, { type: 'image/jpeg' });
+            setPhotoFile(stamped);
+            setPhotoPreview(canvas.toDataURL('image/jpeg', 0.92));
+          }, 'image/jpeg', 0.92);
+        };
+        img.src = ev.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude.toFixed(5);
+          const lng = pos.coords.longitude.toFixed(5);
+          stampPhoto(`${lat}, ${lng}`);
+        },
+        () => stampPhoto(), // GPS denied/unavailable — stamp without coords
+        { timeout: 4000, maximumAge: 60000 }
+      );
+    } else {
+      stampPhoto();
+    }
   }
 
   function removePhoto() {
