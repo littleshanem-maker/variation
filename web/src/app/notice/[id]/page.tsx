@@ -14,6 +14,7 @@ import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
 import { getNoticeEmailMeta } from '@/lib/email';
 import { useRole } from '@/lib/role';
 import type { VariationNotice, Project, Variation, Document } from '@/lib/types';
+import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
 
 export default function NoticeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -43,6 +44,8 @@ export default function NoticeDetail() {
   const [editTimeFlag, setEditTimeFlag] = useState(false);
   const [editTimeDays, setEditTimeDays] = useState('');
   const [editTimeUnit, setEditTimeUnit] = useState<'days' | 'hours'>('days');
+  const [editCostFlag, setEditCostFlag] = useState(false);
+  const [editCostItems, setEditCostItems] = useState<CostItem[]>([]);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [sendingEmail, setSendingEmail] = useState(false);
 
@@ -154,6 +157,8 @@ export default function NoticeDetail() {
     setEditTimeFlag(notice.time_flag || false);
     setEditTimeDays(notice.estimated_days != null ? String(notice.estimated_days) : '');
     setEditTimeUnit((notice.time_implication_unit as 'days' | 'hours') || 'days');
+    setEditCostFlag(notice.cost_flag || false);
+    setEditCostItems((notice.cost_items as CostItem[]) || []);
     setSaveError(null);
     setEditing(true);
   }
@@ -172,6 +177,8 @@ export default function NoticeDetail() {
       time_flag: editTimeFlag,
       estimated_days: editTimeFlag && editTimeDays ? parseFloat(editTimeDays) : null,
       time_implication_unit: editTimeUnit,
+      cost_flag: editCostFlag,
+      cost_items: editCostFlag ? editCostItems : [],
       updated_at: new Date().toISOString(),
     }).eq('id', notice.id);
     if (error) {
@@ -478,12 +485,33 @@ export default function NoticeDetail() {
         {/* Implications Card */}
         <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Implications</h3>
-          <div className="grid grid-cols-2 gap-4 md:gap-6">
-            <div>
+          <div className={`grid gap-4 md:gap-6 ${editing ? 'grid-cols-1' : 'grid-cols-2'}`}>
+            <div className={editing ? 'col-span-2' : ''}>
               <div className={labelClass}>Cost Implication</div>
-              <div className={`text-[14px] font-medium ${notice.cost_flag ? 'text-[#92722E]' : 'text-[#6B7280]'}`}>
-                {notice.cost_flag ? '✓ Yes' : '✗ No'}
-              </div>
+              {editing ? (
+                <div className="space-y-3">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={editCostFlag}
+                      onChange={e => setEditCostFlag(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-indigo-600"
+                    />
+                    <span className="text-[14px] text-[#1C1C1E]">Cost impact</span>
+                  </label>
+                  {editCostFlag && (
+                    <CostItemsTable items={editCostItems} onChange={setEditCostItems} />
+                  )}
+                </div>
+              ) : (
+                <div className={`text-[14px] font-medium ${notice.cost_flag ? 'text-[#92722E]' : 'text-[#6B7280]'}`}>
+                  {notice.cost_flag
+                    ? notice.cost_items && (notice.cost_items as any[]).length > 0
+                      ? `$${((notice.cost_items as any[]).reduce((s: number, i: any) => s + (i.total || 0), 0)).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                      : '✓ Yes'
+                    : '✗ No'}
+                </div>
+              )}
             </div>
             <div>
               <div className={labelClass}>Time Implication</div>
