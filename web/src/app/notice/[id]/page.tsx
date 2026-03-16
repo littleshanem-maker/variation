@@ -279,6 +279,22 @@ export default function NoticeDetail() {
       return;
     }
 
+    // Copy notice documents to the new variation so they appear on the VR
+    if (documents.length > 0) {
+      for (const doc of documents) {
+        await supabase.from('documents').insert({
+          id: crypto.randomUUID(),
+          variation_id: varId,
+          notice_id: doc.notice_id,
+          file_name: doc.file_name,
+          file_type: doc.file_type,
+          file_size: doc.file_size,
+          storage_path: doc.storage_path,
+          uploaded_at: doc.uploaded_at,
+        });
+      }
+    }
+
     // Navigate to the new variation in edit mode so user can fill in value + details
     router.push(`/variation/${varId}?edit=1`);
   }
