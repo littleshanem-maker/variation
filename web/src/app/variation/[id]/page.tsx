@@ -67,6 +67,8 @@ export default function VariationDetail() {
   const [editNotes, setEditNotes] = useState('');
   const [editReferenceDoc, setEditReferenceDoc] = useState('');
   const [editDueDate, setEditDueDate] = useState('');
+  const [editEotDays, setEditEotDays] = useState('');
+  const [editTimeUnit, setEditTimeUnit] = useState<'days' | 'hours'>('days');
   const [newFiles, setNewFiles] = useState<File[]>([]);
 
   useEffect(() => { loadVariation(); }, [id]);
@@ -83,6 +85,8 @@ export default function VariationDetail() {
     setEditNotes(variation.notes || '');
     setEditReferenceDoc(variation.reference_doc || '');
     setEditDueDate(variation.response_due_date || '');
+    setEditEotDays(variation.eot_days_claimed != null ? String(variation.eot_days_claimed) : '');
+    setEditTimeUnit((variation.time_implication_unit as 'days' | 'hours') || 'days');
     setNewFiles([]);
     setEditing(true);
   }
@@ -123,6 +127,8 @@ export default function VariationDetail() {
           cost_items: editCostItems,
           notes: editNotes.trim() || null,
           response_due_date: editDueDate || null,
+          eot_days_claimed: editEotDays ? parseFloat(editEotDays) : null,
+          time_implication_unit: editEotDays ? editTimeUnit : null,
           status: 'draft',
           captured_at: new Date().toISOString(),
         })
@@ -166,6 +172,8 @@ export default function VariationDetail() {
       notes: editNotes.trim() || null,
       reference_doc: editReferenceDoc.trim() || null,
       response_due_date: editDueDate || null,
+      eot_days_claimed: editEotDays ? parseFloat(editEotDays) : null,
+      time_implication_unit: editEotDays ? editTimeUnit : null,
     }).eq('id', variation.id);
 
     if (error) {
@@ -927,6 +935,41 @@ export default function VariationDetail() {
                   <span>Total</span>
                   <span>{formatCurrency(variation.estimated_value)}</span>
                 </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Time Implication */}
+        {(editing || variation.eot_days_claimed != null) && (
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Time Implication</h3>
+            {editing ? (
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.5"
+                  value={editEotDays}
+                  onChange={e => setEditEotDays(e.target.value)}
+                  placeholder="e.g. 5"
+                  className="w-28 px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none"
+                />
+                <select
+                  value={editTimeUnit}
+                  onChange={e => setEditTimeUnit(e.target.value as 'days' | 'hours')}
+                  className="px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none bg-white"
+                >
+                  <option value="days">days</option>
+                  <option value="hours">hours</option>
+                </select>
+                <span className="text-[13px] text-slate-400">Leave blank if no time impact</span>
+              </div>
+            ) : (
+              <div className="text-[14px] text-[#1C1C1E] font-medium">
+                {variation.eot_days_claimed} {variation.time_implication_unit === 'hours'
+                  ? `hour${variation.eot_days_claimed !== 1 ? 's' : ''}`
+                  : `day${variation.eot_days_claimed !== 1 ? 's' : ''}`} extension claimed
               </div>
             )}
           </div>
