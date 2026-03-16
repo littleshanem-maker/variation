@@ -302,7 +302,7 @@ function CapturePageContent() {
     <div className="min-h-screen bg-[#F8F8F6] flex flex-col pb-20">
       <CaptureHeader />
 
-      <div className="flex-1 flex items-start justify-center px-4 pt-8 pb-12">
+      <div className="flex-1 flex items-start justify-center px-4 pt-4 pb-6">
         <div className="w-full max-w-lg">
 
           {/* Onboarding welcome banner */}
@@ -339,7 +339,7 @@ function CapturePageContent() {
               Capture a Variation Notice
             </h1>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-3">
 
               {/* Project — locked (read-only) in onboarding mode, normal otherwise */}
               {isOnboarding ? (
@@ -416,7 +416,7 @@ function CapturePageContent() {
                           value={instructedBy}
                           onChange={(e) => setInstructedBy(e.target.value)}
                           placeholder="e.g. Site foreman, client rep, engineer"
-                          className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
                         />
                       </div>
 
@@ -429,7 +429,7 @@ function CapturePageContent() {
                           type="datetime-local"
                           value={occurredAt}
                           onChange={(e) => setOccurredAt(e.target.value)}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
                         />
                       </div>
 
@@ -443,7 +443,7 @@ function CapturePageContent() {
                           type="date"
                           value={responseDueDate}
                           onChange={(e) => setResponseDueDate(e.target.value)}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
+                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
                         />
                       </div>
                       )}
@@ -489,19 +489,7 @@ function CapturePageContent() {
                         />
                       </div>
 
-                      {/* Your name */}
-                      <div>
-                        <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                          Your name <span className="text-[#9CA3AF] font-normal">(optional)</span>
-                        </label>
-                        <input
-                          type="text"
-                          value={requestorName}
-                          onChange={(e) => setRequestorName(e.target.value)}
-                          placeholder="Your name or reference"
-                          className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
-                        />
-                      </div>
+
                     </div>
                   )}
                 </div>
@@ -519,7 +507,7 @@ function CapturePageContent() {
                       value={instructedBy}
                       onChange={(e) => setInstructedBy(e.target.value)}
                       placeholder="e.g. Site foreman, client rep, engineer"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
                     />
                   </div>
 
@@ -532,7 +520,7 @@ function CapturePageContent() {
                       type="datetime-local"
                       value={occurredAt}
                       onChange={(e) => setOccurredAt(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
                     />
                   </div>
 
@@ -546,7 +534,7 @@ function CapturePageContent() {
                       type="date"
                       value={responseDueDate}
                       onChange={(e) => setResponseDueDate(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D]"
                     />
                   </div>
                   )}
@@ -592,19 +580,7 @@ function CapturePageContent() {
                     />
                   </div>
 
-                  {/* Your name */}
-                  <div>
-                    <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                      Your name <span className="text-[#9CA3AF] font-normal">(optional)</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={requestorName}
-                      onChange={(e) => setRequestorName(e.target.value)}
-                      placeholder="Your name or reference"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#1C1C1E] focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 focus:border-[#1B365D] placeholder:text-gray-400"
-                    />
-                  </div>
+
                 </>
               )}
 
@@ -619,7 +595,7 @@ function CapturePageContent() {
               <button
                 type="submit"
                 disabled={submitting || loadingProjects || (!isOnboarding && projects.length === 0)}
-                className="w-full bg-[#E85D1A] hover:bg-[#C94E14] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl text-lg transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#E85D1A] hover:bg-[#C94E14] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl text-base transition-colors flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <>
