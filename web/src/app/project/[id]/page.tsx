@@ -222,8 +222,8 @@ function ProjectDetailContent() {
                     <div className="px-4 py-3 hover:bg-[#F5F3EF] transition-colors">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">
-                          <div className="text-[12px] font-mono font-bold text-[#1B365D]">{n.notice_number}</div>
-                          <div className="text-[14px] text-[#1C1C1E] mt-1 leading-snug">{n.event_description}</div>
+                          <div className="text-[12px] font-mono font-semibold text-[#1C1C1E]">{n.notice_number}</div>
+                          <div className="text-[14px] font-medium text-[#1C1C1E] mt-0.5 truncate">{n.event_description}</div>
                           <div className="flex items-center gap-2 mt-1 flex-wrap">
                             <span className="text-[12px] text-[#9CA3AF]">
                               {new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
@@ -246,15 +246,21 @@ function ProjectDetailContent() {
             {/* Desktop table — hidden md:block */}
             <div className="hidden md:block bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[540px]">
+                <table className="w-full min-w-[540px]" style={{tableLayout: 'fixed'}}>
+                  <colgroup>
+                    <col style={{width: '110px'}} />  {/* Notice No. */}
+                    <col />                            {/* Description — flex */}
+                    <col style={{width: '110px'}} />  {/* Status */}
+                    <col style={{width: '100px'}} />  {/* Event Date */}
+                    <col style={{width: '110px'}} />  {/* Linked VR */}
+                  </colgroup>
                   <thead>
-                    <tr className="border-b border-[#E5E7EB]">
-                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Notice No.</th>
-                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Description</th>
-                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden sm:table-cell">Event Date</th>
-                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3">Status</th>
-                      <th className="text-left text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3 hidden md:table-cell">Linked VR</th>
-                      <th className="text-right text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] px-4 md:px-5 py-3"></th>
+                    <tr className="border-b border-[#E5E7EB] bg-slate-50/60">
+                      <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
+                      <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
+                      <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Status</th>
+                      <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Event Date</th>
+                      <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Linked VR</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -262,15 +268,14 @@ function ProjectDetailContent() {
                       const linkedVar = variations.find(v => v.notice_id === n.id);
                       return (
                         <Link key={n.id} href={`/notice/${n.id}`} className="contents">
-                          <tr className={`h-[44px] border-b border-[#F0F0EE] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === notices.length - 1 ? 'border-b-0' : ''}`}>
-                            <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#1B365D] whitespace-nowrap">{n.notice_number}</td>
-                            <td className="px-4 md:px-5 py-2.5 max-w-[180px] overflow-hidden"><div className="text-[14px] text-[#1C1C1E]">{n.event_description}</div></td>
-                            <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#6B7280] hidden sm:table-cell whitespace-nowrap">{new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
-                            <td className="px-4 md:px-5 py-2.5"><StatusBadge status={n.status} /></td>
-                            <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono text-[#1B365D] hidden md:table-cell whitespace-nowrap">
-                              {linkedVar ? (linkedVar.variation_number ?? `VAR-${String(linkedVar.sequence_number).padStart(3, '0')}`) : '—'}
+                          <tr className={`border-b border-[#F0F0EE] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === notices.length - 1 ? 'border-b-0' : ''}`}>
+                            <td className="px-3 md:px-4 py-3 text-[13px] font-medium text-[#1C1C1E] whitespace-nowrap tabular-nums">{n.notice_number}</td>
+                            <td className="px-3 md:px-4 py-3 overflow-hidden"><div className="truncate text-[14px] font-medium text-[#1C1C1E]">{n.event_description}</div></td>
+                            <td className="px-3 md:px-4 py-3"><StatusBadge status={n.status} /></td>
+                            <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] whitespace-nowrap">{new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                            <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] whitespace-nowrap">
+                              {linkedVar ? (linkedVar.variation_number ?? `VAR-${String(linkedVar.sequence_number).padStart(3, '0')}`) : <span className="text-slate-300">—</span>}
                             </td>
-                            <td className="px-4 md:px-5 py-2.5 text-right text-[12px] text-[#1B365D] font-medium whitespace-nowrap">View →</td>
                           </tr>
                         </Link>
                       );
