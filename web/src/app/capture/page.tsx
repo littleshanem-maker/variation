@@ -213,15 +213,18 @@ function CapturePageContent() {
       // Upload photo if attached
       if (photoFile) {
         try {
+          const { data: { user: photoUser } } = await supabase.auth.getUser();
+          const uploadUserId = photoUser?.id ?? userId;
+          if (!uploadUserId) throw new Error('No user ID for upload');
           const ext = photoFile.name.split('.').pop() || 'jpg';
           const docId = crypto.randomUUID();
-          const storagePath = `${userId}/documents/${docId}/photo-${Date.now()}.${ext}`;
+          const storagePath = `${uploadUserId}/documents/${docId}/photo-${Date.now()}.${ext}`;
           const { error: uploadError } = await supabase.storage
             .from('documents')
             .upload(storagePath, photoFile, { contentType: photoFile.type, upsert: false });
 
           if (!uploadError) {
-            await supabase.from('documents').insert({
+            const { error: docInsertError } = await supabase.from('documents').insert({
               id: docId,
               notice_id: noticeId,
               file_name: photoFile.name,
@@ -230,8 +233,9 @@ function CapturePageContent() {
               storage_path: storagePath,
               uploaded_at: new Date().toISOString(),
             });
+            if (docInsertError) console.error('Photo DB insert error:', docInsertError);
           } else {
-            console.error('Photo upload error:', uploadError);
+            console.error('Photo storage upload error:', uploadError);
           }
         } catch (photoErr) {
           console.error('Photo upload failed (non-fatal):', photoErr);
