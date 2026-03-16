@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AppShell from '@/components/AppShell';
@@ -46,6 +46,8 @@ export default function NoticeDetail() {
   const [editTimeUnit, setEditTimeUnit] = useState<'days' | 'hours'>('days');
   const [editCostFlag, setEditCostFlag] = useState(false);
   const [editCostItems, setEditCostItems] = useState<CostItem[]>([]);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [sendingEmail, setSendingEmail] = useState(false);
 
@@ -159,6 +161,7 @@ export default function NoticeDetail() {
     setEditTimeUnit((notice.time_implication_unit as 'days' | 'hours') || 'days');
     setEditCostFlag(notice.cost_flag || false);
     setEditCostItems((notice.cost_items as CostItem[]) || []);
+    setNewFiles([]);
     setSaveError(null);
     setEditing(true);
   }
@@ -185,11 +188,32 @@ export default function NoticeDetail() {
       setSaveError('Save failed. Please try again.');
       setSaving(false);
     } else {
+      // Upload new files
+      if (newFiles.length > 0) {
+        for (const file of newFiles) {
+          const ext = file.name.split('.').pop() || 'bin';
+          const storagePath = `notices/${notice.id}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+          const { error: uploadErr } = await supabase.storage.from('documents').upload(storagePath, file);
+          if (!uploadErr) {
+            await supabase.from('documents').insert({
+              notice_id: notice.id,
+              file_name: file.name,
+              file_type: file.type || `application/${ext}`,
+              file_size: file.size,
+              storage_path: storagePath,
+              uploaded_at: new Date().toISOString(),
+            });
+          }
+        }
+        setNewFiles([]);
+      }
       setEditing(false);
       setSaving(false);
       // Reload
       const { data } = await supabase.from('variation_notices').select('*').eq('id', notice.id).single();
       if (data) setNotice(data as VariationNotice);
+      // Reload docs
+      await loadNotice();
     }
   }
 
@@ -391,6 +415,35 @@ export default function NoticeDetail() {
             </div>
           )}
           {editing && (
+            <div className="space-y-3">
+            {/* File attachments */}
+            <div>
+              <div
+                className="w-full px-3 py-3 border border-dashed border-[#D1D5DB] rounded-md text-center cursor-pointer hover:border-[#1B365D] hover:bg-[#F8FAFC] transition-colors"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  className="hidden"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.heic"
+                  onChange={e => { if (e.target.files) setNewFiles(prev => [...prev, ...Array.from(e.target.files!)]); }}
+                />
+                <p className="text-[13px] text-[#6B7280]">📎 Attach photos or files</p>
+                <p className="text-[11px] text-[#9CA3AF] mt-0.5">PDF, Word, Excel, Images</p>
+              </div>
+              {newFiles.length > 0 && (
+                <div className="mt-2 space-y-1">
+                  {newFiles.map((f, i) => (
+                    <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-[#F8F8F6] rounded text-[13px]">
+                      <span className="text-[#1C1C1E] truncate">{f.name}</span>
+                      <button type="button" onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))} className="text-[#9CA3AF] hover:text-rose-500 ml-2">✕</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="flex items-center gap-2">
               {saveError && <p className="text-[13px] text-rose-600 bg-rose-50 border border-rose-200 rounded-md px-3 py-2">{saveError}</p>}
               <button
@@ -406,6 +459,7 @@ export default function NoticeDetail() {
               >
                 {saving ? 'Saving…' : 'Save Changes'}
               </button>
+            </div>
             </div>
           )}
         </div>
@@ -513,27 +567,42 @@ export default function NoticeDetail() {
         </div>
 
         {/* Photo Attachments */}
-        {documents.filter(d => d.file_type.startsWith('image/')).length > 0 && (
+        {documents.length > 0 && (
           <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Photo Evidence</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {documents
-                .filter(d => d.file_type.startsWith('image/'))
-                .map(d => {
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Attachments</h3>
+            {/* Photos */}
+            {documents.filter(d => d.file_type.startsWith('image/')).length > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+                {documents.filter(d => d.file_type.startsWith('image/')).map(d => {
                   const url = docUrls[d.id];
                   if (!url) return null;
                   return (
                     <a key={d.id} href={url} target="_blank" rel="noopener noreferrer">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={url}
-                        alt={d.file_name}
-                        className="w-full h-36 object-cover rounded-lg border border-[#E5E7EB] hover:opacity-90 transition-opacity"
-                      />
+                      <img src={url} alt={d.file_name} className="w-full h-36 object-cover rounded-lg border border-[#E5E7EB] hover:opacity-90 transition-opacity" />
                     </a>
                   );
                 })}
-            </div>
+              </div>
+            )}
+            {/* Other files */}
+            {documents.filter(d => !d.file_type.startsWith('image/')).length > 0 && (
+              <div className="space-y-1">
+                {documents.filter(d => !d.file_type.startsWith('image/')).map(d => {
+                  const url = docUrls[d.id];
+                  return (
+                    <a key={d.id} href={url || '#'} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center justify-between px-3 py-2.5 bg-[#F8F8F6] rounded-md hover:bg-[#F0F0EE] transition-colors">
+                      <div>
+                        <div className="text-[14px] font-medium text-[#1C1C1E] truncate">{d.file_name}</div>
+                        <div className="text-[12px] text-[#9CA3AF]">{(d.file_size / 1024).toFixed(0)} KB</div>
+                      </div>
+                      <span className="text-[12px] text-[#1B365D] font-medium flex-shrink-0 ml-3">Download ↓</span>
+                    </a>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
