@@ -354,7 +354,7 @@ function VariationsList() {
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[480px]" style={{tableLayout: 'fixed'}}>
                   <colgroup>
-                    <col style={{width: '90px'}} />   {/* Var No. */}
+                    <col style={{width: '130px'}} />  {/* Var No. */}
                     <col />                            {/* Title — flex */}
                     <col style={{width: '180px'}} />  {/* Project */}
                     <col style={{width: '110px'}} />  {/* Status */}
