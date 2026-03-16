@@ -1,25 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
 import { Plus } from 'lucide-react';
+import { useRole } from '@/lib/role';
 
 export default function TopBar({ title }: { title: string }) {
   const router = useRouter();
-  const [companyName, setCompanyName] = useState<string | null>(null);
+  const { company } = useRole();
+  const companyName = company?.name ?? null;
   const today = new Date().toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-
-  useEffect(() => {
-    async function loadCompany() {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      const name = user?.user_metadata?.company_name;
-      if (name) setCompanyName(name);
-    }
-    loadCompany();
-  }, []);
 
   async function handleLogout() {
     const supabase = createClient();
