@@ -941,7 +941,7 @@ export default function VariationDetail() {
         )}
 
         {/* Time Implication */}
-        {(editing || variation.eot_days_claimed != null) && (
+        {(editing || variation.eot_days_claimed != null || linkedNotice?.time_flag) && (
           <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Time Implication</h3>
             {editing ? (
@@ -967,9 +967,12 @@ export default function VariationDetail() {
               </div>
             ) : (
               <div className="text-[14px] text-[#1C1C1E] font-medium">
-                {variation.eot_days_claimed} {variation.time_implication_unit === 'hours'
-                  ? `hour${variation.eot_days_claimed !== 1 ? 's' : ''}`
-                  : `day${variation.eot_days_claimed !== 1 ? 's' : ''}`} extension claimed
+                {variation.eot_days_claimed != null
+                  ? `${variation.eot_days_claimed} ${variation.time_implication_unit === 'hours'
+                      ? `hour${variation.eot_days_claimed !== 1 ? 's' : ''}`
+                      : `day${variation.eot_days_claimed !== 1 ? 's' : ''}`} extension claimed`
+                  : <span className="text-slate-400 font-normal">Time impact flagged — enter days/hours to quantify</span>
+                }
               </div>
             )}
           </div>
