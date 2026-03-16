@@ -182,10 +182,10 @@ export default function FieldHome() {
                             {sc.label}
                           </span>
                         </div>
-                        <div className="text-[14px] font-medium text-slate-800 truncate">{n.event_description}</div>
+                        <div className="text-[14px] font-medium text-[#1C1C1E] truncate">{n.event_description}</div>
                         <div className="flex items-center gap-1 mt-0.5">
                           <Clock size={10} className="text-slate-300" />
-                          <span className="text-[11px] text-slate-400">{formatRelative(n.created_at)} · {n.project_name}</span>
+                          <span className="text-[11px] text-[#1C1C1E]">{formatRelative(n.created_at)} · {n.project_name}</span>
                         </div>
                       </div>
                       <ChevronRight size={15} className="text-slate-300 flex-shrink-0" />
@@ -216,14 +216,14 @@ export default function FieldHome() {
                 return (
                   <div key={v.id} className="px-4 py-3.5">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-[11px] font-mono font-semibold text-indigo-500">{varNum}</span>
+                      <span className="text-[11px] font-mono font-semibold text-[#1C1C1E]">{varNum}</span>
                       <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${sc.color}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
                         {sc.label}
                       </span>
                     </div>
-                    <div className="text-[14px] font-medium text-slate-800 truncate">{v.title}</div>
-                    <div className="text-[11px] text-slate-400 mt-0.5 truncate">{v.project_name}</div>
+                    <div className="text-[14px] font-medium text-[#1C1C1E] truncate">{v.title}</div>
+                    <div className="text-[12px] text-[#1C1C1E] mt-0.5 truncate">{v.project_name}</div>
                   </div>
                 );
               })
