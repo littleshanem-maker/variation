@@ -496,10 +496,10 @@ function buildNoticeHtml(
   const eventDateFormatted = formatDocDateOnly(notice.event_date + 'T00:00:00');
   const issuedFormatted = notice.issued_at ? formatDocDate(notice.issued_at) : '—';
 
-  const costCheck = notice.cost_flag ? '☑' : '☐';
-  const costClear = notice.cost_flag ? '☐' : '☑';
-  const timeCheck = notice.time_flag ? '☑' : '☐';
-  const timeClear = notice.time_flag ? '☐' : '☑';
+  const costAnswer = notice.cost_flag ? 'Yes' : 'No';
+  const timeAnswer = notice.time_flag ? 'Yes' : 'No';
+  const costColour = notice.cost_flag ? '#1C1C1E' : '#6B7280';
+  const timeColour = notice.time_flag ? '#1C1C1E' : '#6B7280';
 
   return `
     <div class="doc-header">
@@ -544,17 +544,17 @@ function buildNoticeHtml(
     <div style="margin-bottom:32px;">
       <table style="width:auto; border-collapse:collapse;">
         <tr>
-          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Cost Implication</td>
-          <td style="padding:6px 0; font-size:10pt;">
-            ${costCheck} Yes &nbsp;&nbsp; ${costClear} No
-            ${notice.cost_flag && (notice as any).cost_items?.length > 0 ? `<span style="margin-left:12px; font-size:9pt; color:#6B7280;">(see breakdown below)</span>` : ''}
+          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Cost Impact</td>
+          <td style="padding:6px 0; font-size:10pt; font-weight:600; color:${costColour};">
+            ${costAnswer}
+            ${notice.cost_flag && (notice as any).cost_items?.length > 0 ? `<span style="margin-left:12px; font-size:9pt; font-weight:400; color:#6B7280;">(see breakdown below)</span>` : ''}
           </td>
         </tr>
         <tr>
-          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Time Implication</td>
-          <td style="padding:6px 0; font-size:10pt;">
-            ${timeCheck} Yes &nbsp;&nbsp; ${timeClear} No
-            ${notice.time_flag && notice.estimated_days != null ? `<span style="margin-left:12px; font-weight:600; color:#1C1C1E;">${notice.estimated_days} ${notice.time_implication_unit === 'hours' ? `hour${notice.estimated_days !== 1 ? 's' : ''}` : `day${notice.estimated_days !== 1 ? 's' : ''}`}</span>` : ''}
+          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Time Impact</td>
+          <td style="padding:6px 0; font-size:10pt; font-weight:600; color:${timeColour};">
+            ${timeAnswer}
+            ${notice.time_flag && notice.estimated_days != null ? `<span style="margin-left:12px; color:#1C1C1E;">${notice.estimated_days} ${notice.time_implication_unit === 'hours' ? `hour${notice.estimated_days !== 1 ? 's' : ''}` : `day${notice.estimated_days !== 1 ? 's' : ''}`}</span>` : ''}
           </td>
         </tr>
         ${notice.contract_clause ? `
