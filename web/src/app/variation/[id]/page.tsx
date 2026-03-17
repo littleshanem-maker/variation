@@ -55,6 +55,7 @@ export default function VariationDetail() {
   const [rejectionFiles, setRejectionFiles] = useState<File[]>([]);
   const [revisions, setRevisions] = useState<Variation[]>([]);
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [sendStage, setSendStage] = useState<'idle' | 'pdf' | 'sending'>('idle');
 
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -402,7 +403,24 @@ export default function VariationDetail() {
       const clientEmail = variation.client_email || '';
 
       if (clientEmail) {
-        // Send via Resend — no PDF attachment (approve/reject buttons in email body)
+        // Generate PDF first
+        setSendStage('pdf');
+        let pdfBase64: string | null = null;
+        try {
+          const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
+          const blob = await htmlToPdfBlob(html, css);
+          const reader = new FileReader();
+          pdfBase64 = await new Promise<string>((resolve, reject) => {
+            reader.onload = () => resolve((reader.result as string).split(',')[1]);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+        } catch {
+          // PDF failed — send without attachment rather than blocking
+          pdfBase64 = null;
+        }
+
+        setSendStage('sending');
         const res = await fetch('/api/send-variation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -410,7 +428,7 @@ export default function VariationDetail() {
             variationId: variation.id,
             approvalToken: variation.approval_token,
             toEmail: clientEmail,
-            pdfBase64: null,
+            pdfBase64,
             filename,
             subject,
             companyName: company?.name || '',
@@ -437,8 +455,9 @@ export default function VariationDetail() {
           .eq('id', variation.id)
           .single();
         if (refreshed) setVariation(refreshed);
-        setSuccessMsg(`Email sent to ${clientEmail}`);
+        setSuccessMsg(`Email sent to ${clientEmail}${pdfBase64 ? ' with PDF attached' : ''}`);
         setTimeout(() => setSuccessMsg(null), 5000);
+        setSendStage('idle');
         return;
       }
 
@@ -454,6 +473,7 @@ export default function VariationDetail() {
       setSaveError(err instanceof Error ? err.message : 'Failed to send email. Please try again.');
     } finally {
       setSendingEmail(false);
+      setSendStage('idle');
     }
   }
 
@@ -567,7 +587,7 @@ export default function VariationDetail() {
                       className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
                     >
                       <Send size={14} />
-                      {sendingEmail ? 'Sending…' : 'Send to Client'}
+                      {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : 'Send to Client'}
                     </button>
                   ) : (
                     <div className="flex flex-wrap items-center gap-2">
