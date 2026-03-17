@@ -919,11 +919,19 @@ export default function VariationDetail() {
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider">{getVariationNumber(variation)}</div>
-                    {(variation.revision_number ?? 0) > 0 && (
+                    {editing ? (
+                      <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-indigo-500 px-1.5 py-0.5 rounded">
+                        {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0) + 1} — Draft` : 'Draft'}
+                      </span>
+                    ) : variation.status === 'draft' ? (
+                      <span className="text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
+                        Draft
+                      </span>
+                    ) : (variation.revision_number ?? 0) > 0 ? (
                       <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">
                         Rev {variation.revision_number}
                       </span>
-                    )}
+                    ) : null}
                   </div>
                   <h2 className="text-[22px] font-bold text-[#1C1C1E] truncate">{variation.title}</h2>
                   <p className="text-[13px] text-[#6B7280] mt-1 truncate">{project.name} · {project.client}</p>
