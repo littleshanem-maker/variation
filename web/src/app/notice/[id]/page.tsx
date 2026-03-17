@@ -701,7 +701,7 @@ export default function NoticeDetail() {
                 {notice.notice_number}
                 {editing ? (
                   <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-white bg-indigo-500 px-1.5 py-0.5 rounded">
-                    Rev {(notice.revision_number ?? 0) + 1} (Draft)
+                    Rev {revisions.length} (Draft)
                   </span>
                 ) : (notice.revision_number ?? 0) > 0 ? (
                   <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">
