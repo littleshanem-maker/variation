@@ -353,8 +353,8 @@ export default function NoticeDetail() {
       await supabase.from('variation_notices').update(updatePayload).eq('id', notice.id);
       setNotice(prev => prev ? { ...prev, client_email: toEmail, cc_emails: ccEmail || undefined, revision_number: newRevision } : prev);
 
-      // Snapshot this revision — always insert fresh row (never upsert/overwrite)
-      await supabase.from('notice_revisions').insert({
+      // Snapshot this revision
+      const { error: revInsertError } = await supabase.from('notice_revisions').insert({
         notice_id: notice.id,
         revision_number: newRevision,
         event_description: notice.event_description,
@@ -371,6 +371,10 @@ export default function NoticeDetail() {
         sent_cc: ccEmail || null,
         sent_at: new Date().toISOString(),
       });
+      if (revInsertError) {
+        console.error('[notice revision insert error]', revInsertError);
+        throw new Error(`Revision save failed: ${revInsertError.message}`);
+      }
 
       // Generate PDF
       let pdfBase64: string | null = null;
