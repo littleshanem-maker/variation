@@ -90,10 +90,10 @@ export async function POST(req: NextRequest) {
           <td style="padding:32px;">
             <p style="margin:0 0 16px;color:#111827;font-size:15px;line-height:1.6;">${greeting}</p>
             <p style="margin:0 0 16px;color:#374151;font-size:14px;line-height:1.6;">
-              Please find attached <strong>${varRef}</strong> submitted by <strong>${companyName}</strong>.
+              <strong>${varRef}</strong> has been submitted by <strong>${companyName}</strong> for your review.
             </p>
             <p style="margin:0 0 24px;color:#374151;font-size:14px;line-height:1.6;">
-              Please review the attached PDF and indicate your response below.
+              Please review the variation details and indicate your response below.
             </p>
             <!-- Approve / Reject buttons -->
             <table cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
