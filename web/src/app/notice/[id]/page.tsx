@@ -698,7 +698,16 @@ export default function NoticeDetail() {
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
               <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1">
-                {notice.notice_number}{(notice.revision_number ?? 0) > 0 && <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">Rev {notice.revision_number}</span>}
+                {notice.notice_number}
+                {editing ? (
+                  <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-white bg-indigo-500 px-1.5 py-0.5 rounded">
+                    Rev {(notice.revision_number ?? 0) + 1} (Draft)
+                  </span>
+                ) : (notice.revision_number ?? 0) > 0 ? (
+                  <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">
+                    Rev {notice.revision_number}
+                  </span>
+                ) : null}
               </div>
               <h2 className="text-xl font-semibold text-[#1C1C1E]">Variation Notice</h2>
               <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
