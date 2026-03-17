@@ -52,6 +52,7 @@ export default function NoticeDetail() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [sendingEmail, setSendingEmail] = useState(false);
   const [sendStage, setSendStage] = useState<'idle' | 'pdf' | 'sending'>('idle');
+  const [hasPendingDraft, setHasPendingDraft] = useState(false);
   // Inline client email entry for Send to Client
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [clientEmailInput, setClientEmailInput] = useState('');
@@ -181,6 +182,7 @@ export default function NoticeDetail() {
     setNewFiles([]);
     setSaveError(null);
     setEditing(true);
+    setHasPendingDraft(true);
   }
 
   async function handleSaveEdit() {
@@ -423,6 +425,7 @@ export default function NoticeDetail() {
       setShowEmailInput(false);
       setClientEmailInput('');
       setCcEmailInput('');
+      setHasPendingDraft(false);
       const toList2 = toEmail.split(',').map(e => e.trim()).filter(Boolean);
       const sentTo = toList2.length > 1 ? `${toList2.length} recipients` : toList2[0];
       setSuccessMsg(`Email sent to ${sentTo}${pdfBase64 ? ' with PDF' : ''}`);
@@ -672,9 +675,9 @@ export default function NoticeDetail() {
                   <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-indigo-500 px-1.5 py-0.5 rounded">
                     {revisions.length > 0 ? `Rev ${revisions.length} — Draft` : 'Draft'}
                   </span>
-                ) : notice.status === 'draft' ? (
+                ) : (notice.status === 'draft' || hasPendingDraft) ? (
                   <span className="text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
-                    Draft
+                    {hasPendingDraft && revisions.length > 0 ? `Rev ${revisions.length} — Draft` : 'Draft'}
                   </span>
                 ) : (notice.revision_number ?? 0) > 0 ? (
                   <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">
