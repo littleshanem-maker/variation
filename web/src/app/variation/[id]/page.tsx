@@ -58,6 +58,7 @@ export default function VariationDetail() {
   const [sendStage, setSendStage] = useState<'idle' | 'pdf' | 'sending'>('idle');
 
   const [editing, setEditing] = useState(false);
+  const [hasPendingDraft, setHasPendingDraft] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
@@ -92,7 +93,7 @@ export default function VariationDetail() {
     setEditEotDays(variation.eot_days_claimed != null ? String(variation.eot_days_claimed) : '');
     setEditTimeUnit((variation.time_implication_unit as 'days' | 'hours') || 'days');
     setNewFiles([]);
-    setEditing(true);
+    setEditing(true); setHasPendingDraft(true);
   }
 
   async function handleSave() {
@@ -256,7 +257,7 @@ export default function VariationDetail() {
     setEditClientEmail(variation.client_email || '');
     setNewFiles([]);
     setRevisingMode(true);
-    setEditing(true);
+    setEditing(true); setHasPendingDraft(true);
   }
 
   async function handleAdvanceStatus(newStatus: string) {
@@ -382,7 +383,7 @@ export default function VariationDetail() {
       setEditClientEmail(v.client_email || '');
       setEditEotDays(v.eot_days_claimed != null ? String(v.eot_days_claimed) : '');
       setEditTimeUnit((v.time_implication_unit as 'days' | 'hours') || 'days');
-      setEditing(true);
+      setEditing(true); setHasPendingDraft(true);
     }
   }
 
@@ -457,6 +458,7 @@ export default function VariationDetail() {
         if (refreshed) setVariation(refreshed);
         setSuccessMsg(`Email sent to ${clientEmail}${pdfBase64 ? ' with PDF attached' : ''}`);
         setTimeout(() => setSuccessMsg(null), 5000);
+        setHasPendingDraft(false);
         setSendStage('idle');
         return;
       }
@@ -923,7 +925,7 @@ export default function VariationDetail() {
                       <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-indigo-500 px-1.5 py-0.5 rounded">
                         {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0) + 1} — Draft` : 'Draft'}
                       </span>
-                    ) : variation.status === 'draft' ? (
+                    ) : (variation.status === 'draft' || hasPendingDraft) ? (
                       <span className="text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
                         Draft
                       </span>
