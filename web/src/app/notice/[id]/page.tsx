@@ -336,21 +336,13 @@ export default function NoticeDetail() {
     try {
       const supabase = createClient();
 
-      // Always fetch fresh revision_number from DB to avoid stale local state
-      const { data: freshNotice } = await supabase
-        .from('variation_notices')
-        .select('revision_number, status')
-        .eq('id', notice.id)
-        .single();
-
-      // Check if any revision snapshots exist — if none, this is the first send (Rev 0)
+      // New revision = count of existing snapshots (0 snapshots = Rev 0, 1 = Rev 1, etc.)
       const { count: revCount } = await supabase
         .from('notice_revisions')
         .select('id', { count: 'exact', head: true })
         .eq('notice_id', notice.id);
 
-      const currentRevision = freshNotice?.revision_number ?? 0;
-      const newRevision = (revCount && revCount > 0) ? currentRevision + 1 : 0;
+      const newRevision = revCount ?? 0;
 
       // Always save revision_number + client emails
       const updatePayload: Record<string, unknown> = {
