@@ -49,7 +49,12 @@ export default function NoticeDetail() {
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [sendingEmail, setSendingEmail] = useState(false);
+  const [sendStage, setSendStage] = useState<'idle' | 'pdf' | 'sending'>('idle');
+  // Inline client email entry for Send to Client
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [clientEmailInput, setClientEmailInput] = useState('');
 
   useEffect(() => { loadNotice(); }, [id]);
 
@@ -307,6 +312,74 @@ export default function NoticeDetail() {
     }
   }
 
+  async function handleSendToClient(emailOverride?: string) {
+    if (!notice || !project) return;
+    const toEmail = emailOverride || notice.client_email || '';
+    if (!toEmail) { setShowEmailInput(true); return; }
+
+    setSendingEmail(true);
+    setSaveError(null);
+    setSendStage('pdf');
+    try {
+      // Save client email to notice if new
+      if (toEmail !== notice.client_email) {
+        const supabase = createClient();
+        await supabase.from('variation_notices').update({ client_email: toEmail }).eq('id', notice.id);
+        setNotice(prev => prev ? { ...prev, client_email: toEmail } : prev);
+      }
+
+      // Generate PDF
+      let pdfBase64: string | null = null;
+      try {
+        const { html, css } = getNoticeHtmlForPdf(notice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
+        const blob = await htmlToPdfBlob(html, css);
+        const reader = new FileReader();
+        pdfBase64 = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve((reader.result as string).split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      } catch { pdfBase64 = null; }
+
+      setSendStage('sending');
+      const { subject, filename } = getNoticeEmailMeta(notice, project);
+      const res = await fetch('/api/send-notice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          noticeId: notice.id,
+          toEmail,
+          pdfBase64,
+          filename,
+          subject,
+          companyName: company?.name || '',
+          senderEmail: sender.email,
+          senderName: sender.name,
+          noticeNumber: notice.notice_number,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Send failed (${res.status})`);
+      }
+
+      // Mark as issued if still draft
+      if (notice.status === 'draft') await handleIssue();
+
+      setShowEmailInput(false);
+      setClientEmailInput('');
+      setSuccessMsg(`Email sent to ${toEmail}${pdfBase64 ? ' with PDF' : ''}`);
+      setTimeout(() => setSuccessMsg(null), 5000);
+    } catch (err) {
+      console.error('Send to client failed:', err);
+      setSaveError(err instanceof Error ? err.message : 'Failed to send. Please try again.');
+    } finally {
+      setSendingEmail(false);
+      setSendStage('idle');
+    }
+  }
+
   async function handleSendEmail() {
     if (!notice || !project) return;
     setSendingEmail(true);
@@ -387,56 +460,80 @@ export default function NoticeDetail() {
             </svg>
             <span className="truncate">Back to {project.name}</span>
           </Link>
+          {successMsg && (
+            <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5L6.5 11.5L3 8" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              {successMsg}
+            </div>
+          )}
+          {saveError && !editing && (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
+              ⚠️ {saveError}
+            </div>
+          )}
           {!editing && (
-            <div className="flex flex-wrap items-center gap-2">
-              {canIssue && (
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Submit to Client — primary action */}
+                {!isField && (
+                  <button
+                    onClick={() => notice?.client_email ? handleSendToClient() : setShowEmailInput(v => !v)}
+                    disabled={sendingEmail}
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-40 shadow-sm whitespace-nowrap"
+                  >
+                    <Send size={14} />
+                    {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : notice?.client_email ? 'Send to Client' : 'Submit to Client'}
+                  </button>
+                )}
+                {/* PDF */}
                 <button
-                  onClick={handleIssue}
-                  disabled={advancing}
-                  className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors duration-[120ms] disabled:opacity-40 shadow-sm whitespace-nowrap"
+                  onClick={handleSendEmail}
+                  disabled={sendingEmail}
+                  className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
                 >
-                  <Send size={14} />
-                  {advancing ? '…' : 'Submitted to Client'}
+                  <FileText size={14} />
+                  {sendingEmail && sendStage === 'idle' ? 'Building…' : 'PDF'}
                 </button>
-              )}
-              <button
-                onClick={handleSendEmail}
-                disabled={sendingEmail}
-                className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-              >
-                {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
-              </button>
-              <button
-                onClick={handleDownloadPdf}
-                disabled={sendingEmail}
-                className="hidden md:inline-flex px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-              >
-                {sendingEmail ? '…' : '⬇ Download PDF'}
-              </button>
-              {!isField && (
-                <button
-                  onClick={startEditing}
-                  className="px-3 py-1.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                >
-                  Edit
-                </button>
-              )}
-              {canAcknowledge && (
-                <button
-                  onClick={handleAcknowledge}
-                  disabled={advancing}
-                  className="px-3 py-1.5 text-[13px] font-medium text-[#3D6B5E] border border-[#4A7C6F] rounded-lg hover:bg-[#F0F7F4] transition-colors disabled:opacity-40 whitespace-nowrap"
-                >
-                  {advancing ? '…' : 'Mark Acknowledged'}
-                </button>
-              )}
-              {canDelete && (
-                <button
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="px-3 py-1.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap"
-                >
-                  Delete
-                </button>
+                {/* Edit */}
+                {!isField && (
+                  <button
+                    onClick={startEditing}
+                    className="px-3 py-2 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                  >
+                    Edit
+                  </button>
+                )}
+                {/* Delete */}
+                {canDelete && (
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+              {/* Inline client email input */}
+              {showEmailInput && !notice?.client_email && (
+                <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                  <input
+                    type="email"
+                    value={clientEmailInput}
+                    onChange={e => setClientEmailInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter' && clientEmailInput.trim()) handleSendToClient(clientEmailInput.trim()); }}
+                    placeholder="Client email address"
+                    autoFocus
+                    className="flex-1 px-3 py-1.5 text-[13px] border border-slate-200 rounded-md focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
+                  />
+                  <button
+                    onClick={() => { if (clientEmailInput.trim()) handleSendToClient(clientEmailInput.trim()); }}
+                    disabled={!clientEmailInput.trim() || sendingEmail}
+                    className="px-3 py-1.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-40 transition-colors whitespace-nowrap"
+                  >
+                    Send
+                  </button>
+                  <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); }} className="text-slate-400 hover:text-slate-600 text-[13px]">Cancel</button>
+                </div>
               )}
             </div>
           )}

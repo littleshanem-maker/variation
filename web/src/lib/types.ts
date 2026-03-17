@@ -122,6 +122,7 @@ export interface VariationNotice {
   issued_at?: string;
   acknowledged_at?: string;
   response_due_date?: string; // ISO date (YYYY-MM-DD)
+  client_email?: string;
   created_at: string;
   updated_at: string;
 }
