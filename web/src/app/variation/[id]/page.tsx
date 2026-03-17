@@ -47,6 +47,7 @@ export default function VariationDetail() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [revisingMode, setRevisingMode] = useState(false);
   // Dispute reason flow
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
@@ -437,6 +438,15 @@ export default function VariationDetail() {
         if (variation.status === 'draft') {
           await handleAdvanceStatus('submitted');
         }
+        // Refresh variation to show updated client_email + approval status
+        const { data: refreshed } = await createClient()
+          .from('variations')
+          .select('*')
+          .eq('id', variation.id)
+          .single();
+        if (refreshed) setVariation(refreshed);
+        setSuccessMsg(`Email sent to ${clientEmail}`);
+        setTimeout(() => setSuccessMsg(null), 5000);
         setSendingEmail(false);
         return;
       }
@@ -542,6 +552,12 @@ export default function VariationDetail() {
             <span className="truncate">{fromDashboard ? 'Back to Risk Overview' : `Back to ${project.name}`}</span>
           </Link>
           {!editing && (
+            {successMsg && (
+              <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5L6.5 11.5L3 8" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                {successMsg}
+              </div>
+            )}
             <div className="hidden md:block space-y-3">
               {/* Step 1 — Draft: Submit to Client */}
               {isDraft && !isField && (
