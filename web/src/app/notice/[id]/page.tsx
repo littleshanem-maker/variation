@@ -201,6 +201,8 @@ export default function NoticeDetail() {
       time_implication_unit: editTimeUnit,
       cost_flag: editCostFlag,
       cost_items: editCostFlag ? editCostItems : [],
+      // If already issued/acknowledged, revert to draft so Draft badge persists on reload
+      status: (notice.status === 'issued' || notice.status === 'acknowledged') ? 'draft' : notice.status,
       updated_at: new Date().toISOString(),
     }).eq('id', notice.id);
     if (error) {
