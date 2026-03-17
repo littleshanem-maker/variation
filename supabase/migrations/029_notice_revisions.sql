@@ -32,7 +32,7 @@ CREATE POLICY "Users can view notice revisions for their company"
     notice_id IN (
       SELECT id FROM public.variation_notices
       WHERE company_id IN (
-        SELECT company_id FROM public.team_members WHERE user_id = auth.uid()
+        SELECT company_id FROM public.company_members WHERE user_id = auth.uid()
       )
     )
   );
@@ -43,7 +43,7 @@ CREATE POLICY "Users can insert notice revisions for their company"
     notice_id IN (
       SELECT id FROM public.variation_notices
       WHERE company_id IN (
-        SELECT company_id FROM public.team_members WHERE user_id = auth.uid()
+        SELECT company_id FROM public.company_members WHERE user_id = auth.uid()
       )
     )
   );
