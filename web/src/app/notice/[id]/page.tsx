@@ -474,15 +474,15 @@ export default function NoticeDetail() {
           {!editing && (
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                {/* Submit to Client — primary action */}
+                {/* Submit to Client — always opens email confirmation first */}
                 {!isField && (
                   <button
-                    onClick={() => notice?.client_email ? handleSendToClient() : setShowEmailInput(v => !v)}
+                    onClick={() => { setClientEmailInput(notice?.client_email || ''); setShowEmailInput(true); }}
                     disabled={sendingEmail}
                     className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-40 shadow-sm whitespace-nowrap"
                   >
                     <Send size={14} />
-                    {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : notice?.client_email ? 'Send to Client' : 'Submit to Client'}
+                    {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : 'Submit to Client'}
                   </button>
                 )}
                 {/* PDF */}
@@ -514,7 +514,7 @@ export default function NoticeDetail() {
                 )}
               </div>
               {/* Inline client email input */}
-              {showEmailInput && !notice?.client_email && (
+              {showEmailInput && (
                 <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg">
                   <input
                     type="email"
