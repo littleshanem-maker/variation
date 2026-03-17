@@ -408,6 +408,7 @@ export default function VariationDetail() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             variationId: variation.id,
+            approvalToken: variation.approval_token,
             toEmail: clientEmail,
             pdfBase64: null,
             filename,
@@ -415,6 +416,8 @@ export default function VariationDetail() {
             companyName: company?.name || '',
             senderEmail: sender.email,
             senderName: sender.name,
+            variationNumber: variation.variation_number,
+            sequenceNumber: variation.sequence_number,
           }),
         });
 

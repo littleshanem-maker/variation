@@ -12,6 +12,7 @@ export async function POST(req: NextRequest) {
   try {
     const {
       variationId,
+      approvalToken,
       toEmail,
       toName,
       pdfBase64,
@@ -20,42 +21,53 @@ export async function POST(req: NextRequest) {
       companyName,
       senderEmail,
       senderName,
+      variationNumber,
+      sequenceNumber,
     } = await req.json() as {
       variationId: string;
+      approvalToken?: string;
       toEmail: string;
       toName?: string;
-      pdfBase64: string;
+      pdfBase64?: string | null;
       filename: string;
       subject: string;
       companyName: string;
       senderEmail: string;
       senderName?: string;
+      variationNumber?: string;
+      sequenceNumber?: number;
     };
 
     if (!variationId || !toEmail || !subject || !companyName || !senderEmail) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Fetch the approval token for this variation
-    // Use the anon key — the token is needed for the approve/reject URL
-    const supabase = createSupabaseBrowserClient();
-    const { data: variation, error: varError } = await supabase
-      .from('variations')
-      .select('approval_token, variation_number, sequence_number')
-      .eq('id', variationId)
-      .single();
+    // Use token passed from client — avoids RLS issues server-side
+    // Fall back to DB fetch only if token not provided
+    let resolvedToken = approvalToken;
+    let resolvedVarRef = variationNumber ?? (sequenceNumber ? `VAR-${String(sequenceNumber).padStart(3, '0')}` : 'VAR');
 
-    if (varError || !variation) {
-      console.error('[send-variation] Failed to fetch variation:', varError);
-      return NextResponse.json({ error: 'Variation not found' }, { status: 404 });
+    if (!resolvedToken) {
+      const supabase = createSupabaseBrowserClient();
+      const { data: v, error: varError } = await supabase
+        .from('variations')
+        .select('approval_token, variation_number, sequence_number')
+        .eq('id', variationId)
+        .single();
+      if (varError || !v) {
+        console.error('[send-variation] Failed to fetch variation:', varError);
+        return NextResponse.json({ error: 'Variation not found' }, { status: 404 });
+      }
+      resolvedToken = v.approval_token;
+      resolvedVarRef = v.variation_number ?? `VAR-${String(v.sequence_number).padStart(3, '0')}`;
     }
 
-    const approveUrl = `${APP_URL}/api/variation-response?token=${variation.approval_token}&action=approve`;
-    const rejectUrl = `${APP_URL}/api/variation-response?token=${variation.approval_token}&action=reject`;
+    const approveUrl = `${APP_URL}/api/variation-response?token=${resolvedToken}&action=approve`;
+    const rejectUrl = `${APP_URL}/api/variation-response?token=${resolvedToken}&action=reject`;
 
     const fromAddress = `${companyName} via Variation Shield <noreply@${FROM_DOMAIN}>`;
     const greeting = toName ? `Dear ${toName},` : 'Dear Sir/Madam,';
-    const varRef = variation.variation_number ?? `VAR-${String(variation.sequence_number).padStart(3, '0')}`;
+    const varRef = resolvedVarRef;
 
     const htmlBody = `
 <!DOCTYPE html>
@@ -138,7 +150,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Update client_email on the variation record
-    await supabase
+    await createSupabaseBrowserClient()
       .from('variations')
       .update({ client_email: toEmail })
       .eq('id', variationId);
