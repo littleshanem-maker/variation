@@ -662,9 +662,9 @@ export default function NoticeDetail() {
 
         {/* Progress Stepper — hidden for field users */}
         {!editing && !isField && (() => {
-          const isIssued = notice.status === 'issued' || notice.status === 'acknowledged';
+          const isIssued = !editing && (notice.status === 'issued' || notice.status === 'acknowledged');
           const steps = [
-            { label: 'Draft', done: true, current: notice.status === 'draft' },
+            { label: 'Draft', done: true, current: editing || notice.status === 'draft' },
             { label: 'Submitted to Client', done: isIssued, current: isIssued },
           ];
           return (
