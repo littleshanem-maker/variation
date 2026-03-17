@@ -508,7 +508,7 @@ function buildNoticeHtml(
         <div class="doc-title">Variation Notice</div>
       </div>
       <div class="doc-meta">
-        <div class="meta-row" style="font-size:14pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(notice.notice_number)}</div>
+        <div class="meta-row" style="font-size:14pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(notice.notice_number)}${(notice.revision_number ?? 0) > 0 ? ` <span style="font-size:10pt; font-weight:600; background:#1B365D; color:#fff; padding:2px 6px; border-radius:3px; vertical-align:middle;">Rev ${notice.revision_number}</span>` : ''}</div>
         <div class="meta-row">Issued: ${issuedFormatted}</div>
         <div class="meta-row">Status: <strong style="text-transform:capitalize;">${notice.status}</strong></div>
       </div>
@@ -669,7 +669,7 @@ function buildNoticeHtml(
         ${VS_LOGO_SVG_16}
         <span>Variation Shield</span>
       </div>
-      <div>${escapeHtml(notice.notice_number)} · ${escapeHtml(project.name)}</div>
+      <div>${escapeHtml(notice.notice_number)}${(notice.revision_number ?? 0) > 0 ? ` Rev ${notice.revision_number}` : ''} · ${escapeHtml(project.name)}</div>
     </div>
   `;
 }
@@ -687,7 +687,8 @@ export function printNotice(
   docUrls?: Record<string, string>
 ) {
   const html = buildNoticeHtml(notice, project, companyName, sender, companyInfo, documents, docUrls);
-  openHtml(html, `${notice.notice_number} - Variation Notice`);
+  const revSuffix = (notice.revision_number ?? 0) > 0 ? ` Rev ${notice.revision_number}` : '';
+  openHtml(html, `${notice.notice_number}${revSuffix} - Variation Notice`);
 }
 
 // ------------------------------------------------------------------
