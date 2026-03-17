@@ -13,7 +13,7 @@ import { printNotice, getNoticeHtmlForPdf } from '@/lib/print';
 import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
 import { getNoticeEmailMeta } from '@/lib/email';
 import { useRole } from '@/lib/role';
-import type { VariationNotice, Project, Variation, Document } from '@/lib/types';
+import type { VariationNotice, Project, Variation, Document, NoticeRevision } from '@/lib/types';
 import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
 
 export default function NoticeDetail() {
@@ -56,6 +56,9 @@ export default function NoticeDetail() {
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [clientEmailInput, setClientEmailInput] = useState('');
   const [ccEmailInput, setCcEmailInput] = useState('');
+  // Revision history
+  const [revisions, setRevisions] = useState<NoticeRevision[]>([]);
+  const [generatingRevPdf, setGeneratingRevPdf] = useState<number | null>(null);
 
   useEffect(() => { loadNotice(); }, [id]);
 
@@ -111,6 +114,14 @@ export default function NoticeDetail() {
       }
       setDocUrls(urls);
     }
+
+    // Load revision history
+    const { data: revData } = await supabase
+      .from('notice_revisions')
+      .select('*')
+      .eq('notice_id', id)
+      .order('revision_number', { ascending: false });
+    setRevisions(revData || []);
 
     setLoading(false);
   }
@@ -332,6 +343,25 @@ export default function NoticeDetail() {
       await supabase.from('variation_notices').update(updatePayload).eq('id', notice.id);
       setNotice(prev => prev ? { ...prev, client_email: toEmail, cc_emails: ccEmail || undefined, revision_number: newRevision } : prev);
 
+      // Snapshot this revision
+      await supabase.from('notice_revisions').upsert({
+        notice_id: notice.id,
+        revision_number: newRevision,
+        event_description: notice.event_description,
+        event_date: notice.event_date,
+        contract_clause: notice.contract_clause,
+        issued_by_name: notice.issued_by_name,
+        issued_by_email: notice.issued_by_email,
+        time_flag: notice.time_flag,
+        estimated_days: notice.estimated_days,
+        time_implication_unit: notice.time_implication_unit,
+        cost_flag: notice.cost_flag,
+        cost_items: notice.cost_items,
+        sent_to: toEmail,
+        sent_cc: ccEmail || null,
+        sent_at: new Date().toISOString(),
+      }, { onConflict: 'notice_id,revision_number' });
+
       // Generate PDF
       let pdfBase64: string | null = null;
       try {
@@ -383,6 +413,9 @@ export default function NoticeDetail() {
       const sentTo = toList2.length > 1 ? `${toList2.length} recipients` : toList2[0];
       setSuccessMsg(`Email sent to ${sentTo}${pdfBase64 ? ' with PDF' : ''}`);
       setTimeout(() => setSuccessMsg(null), 5000);
+      // Refresh revision list
+      const { data: revData } = await supabase.from('notice_revisions').select('*').eq('notice_id', notice.id).order('revision_number', { ascending: false });
+      setRevisions(revData || []);
     } catch (err) {
       console.error('Send to client failed:', err);
       setSaveError(err instanceof Error ? err.message : 'Failed to send. Please try again.');
@@ -904,6 +937,78 @@ export default function NoticeDetail() {
             </div>
           )}
         </div>}
+
+        {/* Revision History — office/admin only */}
+        {!isField && revisions.length > 0 && (
+          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Revision History</h3>
+            <div className="space-y-2">
+              {revisions.map((rev) => (
+                <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-slate-50 rounded-md border border-slate-100">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#1B365D] px-2 py-0.5 rounded flex-shrink-0">
+                      {rev.revision_number === 0 ? 'Original' : `Rev ${rev.revision_number}`}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="text-[13px] text-[#1C1C1E] truncate">
+                        Sent to {rev.sent_to}
+                      </div>
+                      {rev.sent_cc && (
+                        <div className="text-[11px] text-slate-400 truncate">CC: {rev.sent_cc}</div>
+                      )}
+                      <div className="text-[11px] text-slate-400">
+                        {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      if (!project) return;
+                      setGeneratingRevPdf(rev.revision_number);
+                      try {
+                        // Build a notice-like object from the snapshot
+                        const snapNotice: VariationNotice = {
+                          ...notice,
+                          event_description: rev.event_description || notice.event_description,
+                          event_date: rev.event_date || notice.event_date,
+                          contract_clause: rev.contract_clause ?? notice.contract_clause,
+                          issued_by_name: rev.issued_by_name ?? notice.issued_by_name,
+                          issued_by_email: rev.issued_by_email ?? notice.issued_by_email,
+                          time_flag: rev.time_flag ?? notice.time_flag,
+                          estimated_days: rev.estimated_days ?? notice.estimated_days,
+                          time_implication_unit: (rev.time_implication_unit as 'days' | 'hours') ?? notice.time_implication_unit,
+                          cost_flag: rev.cost_flag ?? notice.cost_flag,
+                          cost_items: rev.cost_items ?? notice.cost_items,
+                          revision_number: rev.revision_number,
+                        };
+                        const { html, css } = getNoticeHtmlForPdf(snapNotice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
+                        const blob = await htmlToPdfBlob(html, css);
+                        const { filename } = getNoticeEmailMeta(snapNotice, project);
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        setTimeout(() => URL.revokeObjectURL(url), 10000);
+                      } catch (err) {
+                        console.error('Rev PDF failed:', err);
+                      } finally {
+                        setGeneratingRevPdf(null);
+                      }
+                    }}
+                    disabled={generatingRevPdf === rev.revision_number}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-slate-600 border border-slate-200 rounded-md hover:bg-white transition-colors disabled:opacity-50 flex-shrink-0 ml-3"
+                  >
+                    <FileText size={13} />
+                    {generatingRevPdf === rev.revision_number ? 'Building…' : 'PDF'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Delete Confirmation Modal */}

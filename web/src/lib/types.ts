@@ -128,6 +128,25 @@ export interface VariationNotice {
   updated_at: string;
 }
 
+export interface NoticeRevision {
+  id: string;
+  notice_id: string;
+  revision_number: number;
+  event_description?: string;
+  event_date?: string;
+  contract_clause?: string;
+  issued_by_name?: string;
+  issued_by_email?: string;
+  time_flag?: boolean;
+  estimated_days?: number;
+  time_implication_unit?: string;
+  cost_flag?: boolean;
+  cost_items?: Array<{ id: string; description: string; qty: number | ''; unit: string; rate: number | ''; total: number }>;
+  sent_to?: string;
+  sent_cc?: string;
+  sent_at?: string;
+}
+
 export interface PhotoEvidence {
   id: string;
   variation_id: string;
