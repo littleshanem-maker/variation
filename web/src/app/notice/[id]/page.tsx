@@ -660,51 +660,24 @@ export default function NoticeDetail() {
           )}
         </div>
 
-        {/* Progress Stepper — hidden for field users */}
-        {!editing && !isField && (() => {
-          const isIssued = !editing && (notice.status === 'issued' || notice.status === 'acknowledged');
-          const steps = [
-            { label: 'Draft', done: true, current: editing || notice.status === 'draft' },
-            { label: 'Submitted to Client', done: isIssued, current: isIssued },
-          ];
-          return (
-            <div className="flex items-center gap-0 bg-white border border-[#E5E7EB] rounded-md px-4 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-              {steps.map((step, i) => (
-                <div key={step.label} className="flex items-center flex-1 min-w-0">
-                  <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${
-                      step.done && !step.current ? 'bg-emerald-500 text-white'
-                      : step.current && i === 0 ? 'bg-indigo-600 text-white'
-                      : step.current ? 'bg-emerald-500 text-white'
-                      : 'bg-slate-100 text-slate-400'
-                    }`}>
-                      {step.done && !step.current ? '✓' : step.current && i > 0 ? '✓' : i + 1}
-                    </div>
-                    <span className={`text-[10px] font-medium text-center leading-tight hidden sm:block ${
-                      step.done ? 'text-emerald-600' : step.current ? 'text-indigo-600' : 'text-slate-400'
-                    }`}>{step.label}</span>
-                  </div>
-                  {i < steps.length - 1 && (
-                    <div className={`h-[2px] flex-1 mx-1 ${isIssued ? 'bg-emerald-300' : 'bg-slate-200'}`} />
-                  )}
-                </div>
-              ))}
-            </div>
-          );
-        })()}
+
 
         {/* Header Card */}
         <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
-              <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1">
+              <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1 flex items-center gap-2 flex-wrap">
                 {notice.notice_number}
                 {editing ? (
-                  <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-white bg-indigo-500 px-1.5 py-0.5 rounded">
-                    Rev {revisions.length} (Draft)
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-indigo-500 px-1.5 py-0.5 rounded">
+                    {revisions.length > 0 ? `Rev ${revisions.length} — Draft` : 'Draft'}
+                  </span>
+                ) : notice.status === 'draft' ? (
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
+                    Draft
                   </span>
                 ) : (notice.revision_number ?? 0) > 0 ? (
-                  <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">
                     Rev {notice.revision_number}
                   </span>
                 ) : null}
