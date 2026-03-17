@@ -321,12 +321,14 @@ export default function NoticeDetail() {
     setSaveError(null);
     setSendStage('pdf');
     try {
-      // Save client email to notice if new
-      if (toEmail !== notice.client_email) {
-        const supabase = createClient();
-        await supabase.from('variation_notices').update({ client_email: toEmail }).eq('id', notice.id);
-        setNotice(prev => prev ? { ...prev, client_email: toEmail } : prev);
-      }
+      // Save client email + increment revision if re-sending to an already-issued notice
+      const supabase = createClient();
+      const alreadyIssued = notice.status === 'issued' || notice.status === 'acknowledged';
+      const newRevision = alreadyIssued ? (notice.revision_number ?? 0) + 1 : notice.revision_number ?? 0;
+      const updatePayload: Record<string, unknown> = { client_email: toEmail };
+      if (alreadyIssued) updatePayload.revision_number = newRevision;
+      await supabase.from('variation_notices').update(updatePayload).eq('id', notice.id);
+      setNotice(prev => prev ? { ...prev, client_email: toEmail, revision_number: newRevision } : prev);
 
       // Generate PDF
       let pdfBase64: string | null = null;
