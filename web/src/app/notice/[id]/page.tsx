@@ -343,11 +343,14 @@ export default function NoticeDetail() {
         .eq('id', notice.id)
         .single();
 
+      // Check if any revision snapshots exist — if none, this is the first send (Rev 0)
+      const { count: revCount } = await supabase
+        .from('notice_revisions')
+        .select('id', { count: 'exact', head: true })
+        .eq('notice_id', notice.id);
+
       const currentRevision = freshNotice?.revision_number ?? 0;
-      const freshStatus = freshNotice?.status ?? notice.status;
-      // First send = rev 0, every subsequent send increments
-      const alreadySent = (freshStatus === 'issued' || freshStatus === 'acknowledged');
-      const newRevision = alreadySent ? currentRevision + 1 : 0;
+      const newRevision = (revCount && revCount > 0) ? currentRevision + 1 : 0;
 
       // Always save revision_number + client emails
       const updatePayload: Record<string, unknown> = {
@@ -698,21 +701,8 @@ export default function NoticeDetail() {
         <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
-              <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1 flex items-center gap-2 flex-wrap">
-                {notice.notice_number}
-                {(notice.revision_number ?? 0) > 0 && (
-                  <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">Rev {notice.revision_number}</span>
-                )}
-                {(notice.status === 'issued' || notice.status === 'acknowledged') && !editing && (
-                  <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
-                    Next send → Rev {(notice.revision_number ?? 0) + 1}
-                  </span>
-                )}
-                {editing && (
-                  <span className="text-[10px] font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded">
-                    Editing Rev {notice.revision_number ?? 0} → will create Rev {(notice.revision_number ?? 0) + 1} on send
-                  </span>
-                )}
+              <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1">
+                {notice.notice_number}{(notice.revision_number ?? 0) > 0 && <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">Rev {notice.revision_number}</span>}
               </div>
               <h2 className="text-xl font-semibold text-[#1C1C1E]">Variation Notice</h2>
               <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
