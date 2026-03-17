@@ -487,7 +487,7 @@ export default function NoticeDetail() {
                 )}
                 {/* PDF */}
                 <button
-                  onClick={handleSendEmail}
+                  onClick={handleDownloadPdf}
                   disabled={sendingEmail}
                   className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
                 >
