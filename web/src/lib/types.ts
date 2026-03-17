@@ -91,6 +91,12 @@ export interface Variation {
   claim_type?: 'cost' | 'time' | 'cost_and_time';
   eot_days_claimed?: number;
   basis_of_valuation?: 'agreement' | 'contract_rates' | 'daywork' | 'reasonable_rates';
+  client_email?: string;
+  approval_token?: string;
+  approval_token_expires_at?: string;
+  client_approval_response?: 'approved' | 'rejected' | null;
+  client_approval_comment?: string | null;
+  client_approved_at?: string | null;
   created_at: string;
   updated_at: string;
 }

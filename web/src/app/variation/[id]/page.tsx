@@ -67,6 +67,7 @@ export default function VariationDetail() {
   const [editNotes, setEditNotes] = useState('');
   const [editReferenceDoc, setEditReferenceDoc] = useState('');
   const [editDueDate, setEditDueDate] = useState('');
+  const [editClientEmail, setEditClientEmail] = useState('');
   const [editEotDays, setEditEotDays] = useState('');
   const [editTimeUnit, setEditTimeUnit] = useState<'days' | 'hours'>('days');
   const [newFiles, setNewFiles] = useState<File[]>([]);
@@ -85,6 +86,7 @@ export default function VariationDetail() {
     setEditNotes(variation.notes || '');
     setEditReferenceDoc(variation.reference_doc || '');
     setEditDueDate(variation.response_due_date || '');
+    setEditClientEmail(variation.client_email || '');
     setEditEotDays(variation.eot_days_claimed != null ? String(variation.eot_days_claimed) : '');
     setEditTimeUnit((variation.time_implication_unit as 'days' | 'hours') || 'days');
     setNewFiles([]);
@@ -127,6 +129,7 @@ export default function VariationDetail() {
           cost_items: editCostItems,
           notes: editNotes.trim() || null,
           response_due_date: editDueDate || null,
+          client_email: editClientEmail.trim() || null,
           eot_days_claimed: editEotDays ? parseFloat(editEotDays) : null,
           time_implication_unit: editEotDays ? editTimeUnit : null,
           status: 'draft',
@@ -172,6 +175,7 @@ export default function VariationDetail() {
       notes: editNotes.trim() || null,
       reference_doc: editReferenceDoc.trim() || null,
       response_due_date: editDueDate || null,
+      client_email: editClientEmail.trim() || null,
       eot_days_claimed: editEotDays ? parseFloat(editEotDays) : null,
       time_implication_unit: editEotDays ? editTimeUnit : null,
     }).eq('id', variation.id);
@@ -247,6 +251,7 @@ export default function VariationDetail() {
     setEditNotes(variation.notes || '');
     setEditReferenceDoc(variation.reference_doc || '');
     setEditDueDate(variation.response_due_date || '');
+    setEditClientEmail(variation.client_email || '');
     setNewFiles([]);
     setRevisingMode(true);
     setEditing(true);
@@ -372,6 +377,7 @@ export default function VariationDetail() {
       setEditNotes(v.notes || '');
       setEditReferenceDoc(v.reference_doc || '');
       setEditDueDate(v.response_due_date || '');
+      setEditClientEmail(v.client_email || '');
       setEditEotDays(v.eot_days_claimed != null ? String(v.eot_days_claimed) : '');
       setEditTimeUnit((v.time_implication_unit as 'days' | 'hours') || 'days');
       setEditing(true);
@@ -393,14 +399,56 @@ export default function VariationDetail() {
       const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
       const blob = await htmlToPdfBlob(html, css);
       const { subject, body, filename } = getVariationEmailMeta(variation, project);
-      // Include non-image attachments (PDFs etc) as separate files
+
+      // If we have a client email address, send server-side via Resend
+      const clientEmail = variation.client_email || '';
+      if (clientEmail) {
+        const reader = new FileReader();
+        const base64 = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => {
+            const result = reader.result as string;
+            resolve(result.split(',')[1]); // strip data:application/pdf;base64,
+          };
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+
+        const res = await fetch('/api/send-variation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            variationId: variation.id,
+            toEmail: clientEmail,
+            pdfBase64: base64,
+            filename,
+            subject,
+            companyName: company?.name || '',
+            senderEmail: sender.email,
+            senderName: sender.name,
+          }),
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to send email');
+        }
+
+        // Also mark as submitted if still draft
+        if (variation.status === 'draft') {
+          await handleAdvanceStatus('submitted');
+        }
+        setSendingEmail(false);
+        return;
+      }
+
+      // Fallback: mailto flow (mobile or no client email set)
       const attachmentUrls = documents
         .filter(d => !d.file_type.startsWith('image/') && docUrls[d.id])
         .map(d => ({ url: docUrls[d.id], filename: d.file_name, mimeType: d.file_type }));
       await shareOrDownloadPdf(blob, filename, subject, body, attachmentUrls);
     } catch (err) {
       console.error('Email send failed:', err);
-      setSaveError('PDF generation failed. Try reducing the number of photos, or try again.');
+      setSaveError('Failed to send email. Please try again or use Export & Share.');
     } finally {
       setSendingEmail(false);
     }
@@ -498,14 +546,25 @@ export default function VariationDetail() {
               {/* Step 1 — Draft: Submit to Client */}
               {isDraft && !isField && (
                 <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    onClick={() => handleAdvanceStatus('submitted')}
-                    disabled={advancingStatus}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
-                  >
-                    <Send size={14} />
-                    {advancingStatus ? 'Saving…' : 'Submitted to Client'}
-                  </button>
+                  {variation.client_email ? (
+                    <button
+                      onClick={handleSendEmail}
+                      disabled={sendingEmail || advancingStatus}
+                      className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
+                    >
+                      <Send size={14} />
+                      {sendingEmail ? 'Sending…' : 'Send to Client'}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleAdvanceStatus('submitted')}
+                      disabled={advancingStatus}
+                      className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
+                    >
+                      <Send size={14} />
+                      {advancingStatus ? 'Saving…' : 'Submitted to Client'}
+                    </button>
+                  )}
                   <button
                     onClick={handleSendEmail}
                     disabled={sendingEmail}
@@ -811,6 +870,11 @@ export default function VariationDetail() {
                 <input type="date" required value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className={inputClass} />
                 <p className="text-[11px] text-slate-500 mt-1">Date by which a response to this variation is required</p>
               </div>
+              <div>
+                <label className={labelClass}>Client Email</label>
+                <input type="email" value={editClientEmail} onChange={e => setEditClientEmail(e.target.value)} className={inputClass} placeholder="e.g. engineer@clientcompany.com.au" />
+                <p className="text-[11px] text-slate-500 mt-1">If set, Submit to Client will email the variation directly with Approve/Reject buttons</p>
+              </div>
             </div>
           ) : (
             <>
@@ -859,6 +923,12 @@ export default function VariationDetail() {
                   <div>
                     <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Reference Document</div>
                     <div className="text-[15px] text-[#1C1C1E] mt-1 truncate">{variation.reference_doc}</div>
+                  </div>
+                )}
+                {variation.client_email && (
+                  <div>
+                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Client Email</div>
+                    <div className="text-[15px] text-[#1C1C1E] mt-1 break-all">{variation.client_email}</div>
                   </div>
                 )}
                 {variation.response_due_date && (() => {
@@ -1084,6 +1154,35 @@ export default function VariationDetail() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Client Email Approval Status */}
+        {variation.client_approval_response && (
+          <div className={`rounded-md border p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${
+            variation.client_approval_response === 'approved'
+              ? 'bg-emerald-50 border-emerald-200'
+              : 'bg-red-50 border-red-200'
+          }`}>
+            <div className="flex items-center gap-2 mb-1">
+              {variation.client_approval_response === 'approved' ? (
+                <>
+                  <CheckCircle size={15} className="text-emerald-600" />
+                  <span className="text-[13px] font-semibold text-emerald-700">Approved via email</span>
+                </>
+              ) : (
+                <>
+                  <XCircle size={15} className="text-red-600" />
+                  <span className="text-[13px] font-semibold text-red-700">Rejected via email</span>
+                </>
+              )}
+              {variation.client_approved_at && (
+                <span className="text-[11px] text-slate-400 ml-1">{formatDateTime(variation.client_approved_at)}</span>
+              )}
+            </div>
+            {variation.client_approval_comment && (
+              <p className="text-[12px] text-slate-600 mt-1 pl-5">"{variation.client_approval_comment}"</p>
+            )}
           </div>
         )}
 
