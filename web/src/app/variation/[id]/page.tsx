@@ -396,31 +396,20 @@ export default function VariationDetail() {
   async function handleSendEmail() {
     if (!variation || !project) return;
     setSendingEmail(true);
+    setSaveError(null);
     try {
-      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
-      const blob = await htmlToPdfBlob(html, css);
       const { subject, body, filename } = getVariationEmailMeta(variation, project);
-
-      // If we have a client email address, send server-side via Resend
       const clientEmail = variation.client_email || '';
-      if (clientEmail) {
-        const reader = new FileReader();
-        const base64 = await new Promise<string>((resolve, reject) => {
-          reader.onload = () => {
-            const result = reader.result as string;
-            resolve(result.split(',')[1]); // strip data:application/pdf;base64,
-          };
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
 
+      if (clientEmail) {
+        // Send via Resend — no PDF attachment (approve/reject buttons in email body)
         const res = await fetch('/api/send-variation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             variationId: variation.id,
             toEmail: clientEmail,
-            pdfBase64: base64,
+            pdfBase64: null,
             filename,
             subject,
             companyName: company?.name || '',
@@ -430,15 +419,15 @@ export default function VariationDetail() {
         });
 
         if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || 'Failed to send email');
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || `Send failed (${res.status})`);
         }
 
-        // Also mark as submitted if still draft
+        // Mark as submitted if still draft
         if (variation.status === 'draft') {
           await handleAdvanceStatus('submitted');
         }
-        // Refresh variation to show updated client_email + approval status
+        // Refresh variation so approval status updates
         const { data: refreshed } = await createClient()
           .from('variations')
           .select('*')
@@ -447,18 +436,19 @@ export default function VariationDetail() {
         if (refreshed) setVariation(refreshed);
         setSuccessMsg(`Email sent to ${clientEmail}`);
         setTimeout(() => setSuccessMsg(null), 5000);
-        setSendingEmail(false);
         return;
       }
 
-      // Fallback: mailto flow (mobile or no client email set)
+      // Fallback: mailto / share flow (no client email set)
+      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
+      const blob = await htmlToPdfBlob(html, css);
       const attachmentUrls = documents
         .filter(d => !d.file_type.startsWith('image/') && docUrls[d.id])
         .map(d => ({ url: docUrls[d.id], filename: d.file_name, mimeType: d.file_type }));
       await shareOrDownloadPdf(blob, filename, subject, body, attachmentUrls);
     } catch (err) {
       console.error('Email send failed:', err);
-      setSaveError('Failed to send email. Please try again or use Export & Share.');
+      setSaveError(err instanceof Error ? err.message : 'Failed to send email. Please try again.');
     } finally {
       setSendingEmail(false);
     }
@@ -551,13 +541,18 @@ export default function VariationDetail() {
             </svg>
             <span className="truncate">{fromDashboard ? 'Back to Risk Overview' : `Back to ${project.name}`}</span>
           </Link>
+          {successMsg && (
+            <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5L6.5 11.5L3 8" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              {successMsg}
+            </div>
+          )}
+          {saveError && !editing && (
+            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
+              ⚠️ {saveError}
+            </div>
+          )}
           {!editing && (
-            {successMsg && (
-              <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5L6.5 11.5L3 8" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                {successMsg}
-              </div>
-            )}
             <div className="hidden md:block space-y-3">
               {/* Step 1 — Draft: Submit to Client */}
               {isDraft && !isField && (

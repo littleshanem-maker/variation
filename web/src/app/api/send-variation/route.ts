@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       senderName?: string;
     };
 
-    if (!variationId || !toEmail || !pdfBase64 || !subject || !companyName || !senderEmail) {
+    if (!variationId || !toEmail || !subject || !companyName || !senderEmail) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -129,12 +129,7 @@ export async function POST(req: NextRequest) {
       replyTo: senderEmail,
       subject,
       html: htmlBody,
-      attachments: [
-        {
-          filename,
-          content: pdfBase64,
-        },
-      ],
+      ...(pdfBase64 ? { attachments: [{ filename, content: pdfBase64 }] } : {}),
     });
 
     if (error) {
