@@ -334,17 +334,32 @@ export default function NoticeDetail() {
     setSaveError(null);
     setSendStage('pdf');
     try {
-      // Save client email + cc + increment revision if re-sending to an already-issued notice
       const supabase = createClient();
-      const alreadyIssued = notice.status === 'issued' || notice.status === 'acknowledged';
-      const newRevision = alreadyIssued ? (notice.revision_number ?? 0) + 1 : notice.revision_number ?? 0;
-      const updatePayload: Record<string, unknown> = { client_email: toEmail, cc_emails: ccEmail || null };
-      if (alreadyIssued) updatePayload.revision_number = newRevision;
+
+      // Always fetch fresh revision_number from DB to avoid stale local state
+      const { data: freshNotice } = await supabase
+        .from('variation_notices')
+        .select('revision_number, status')
+        .eq('id', notice.id)
+        .single();
+
+      const currentRevision = freshNotice?.revision_number ?? 0;
+      const freshStatus = freshNotice?.status ?? notice.status;
+      // First send = rev 0, every subsequent send increments
+      const alreadySent = (freshStatus === 'issued' || freshStatus === 'acknowledged');
+      const newRevision = alreadySent ? currentRevision + 1 : 0;
+
+      // Always save revision_number + client emails
+      const updatePayload: Record<string, unknown> = {
+        client_email: toEmail,
+        cc_emails: ccEmail || null,
+        revision_number: newRevision,
+      };
       await supabase.from('variation_notices').update(updatePayload).eq('id', notice.id);
       setNotice(prev => prev ? { ...prev, client_email: toEmail, cc_emails: ccEmail || undefined, revision_number: newRevision } : prev);
 
-      // Snapshot this revision
-      await supabase.from('notice_revisions').upsert({
+      // Snapshot this revision — always insert fresh row (never upsert/overwrite)
+      await supabase.from('notice_revisions').insert({
         notice_id: notice.id,
         revision_number: newRevision,
         event_description: notice.event_description,
@@ -360,7 +375,7 @@ export default function NoticeDetail() {
         sent_to: toEmail,
         sent_cc: ccEmail || null,
         sent_at: new Date().toISOString(),
-      }, { onConflict: 'notice_id,revision_number' });
+      });
 
       // Generate PDF
       let pdfBase64: string | null = null;
@@ -413,9 +428,8 @@ export default function NoticeDetail() {
       const sentTo = toList2.length > 1 ? `${toList2.length} recipients` : toList2[0];
       setSuccessMsg(`Email sent to ${sentTo}${pdfBase64 ? ' with PDF' : ''}`);
       setTimeout(() => setSuccessMsg(null), 5000);
-      // Refresh revision list
-      const { data: revData } = await supabase.from('notice_revisions').select('*').eq('notice_id', notice.id).order('revision_number', { ascending: false });
-      setRevisions(revData || []);
+      // Reload full notice + revision list so state is always fresh from DB
+      await loadNotice();
     } catch (err) {
       console.error('Send to client failed:', err);
       setSaveError(err instanceof Error ? err.message : 'Failed to send. Please try again.');
@@ -684,7 +698,22 @@ export default function NoticeDetail() {
         <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
-              <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1">{notice.notice_number}{(notice.revision_number ?? 0) > 0 && <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">Rev {notice.revision_number}</span>}</div>
+              <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1 flex items-center gap-2 flex-wrap">
+                {notice.notice_number}
+                {(notice.revision_number ?? 0) > 0 && (
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">Rev {notice.revision_number}</span>
+                )}
+                {(notice.status === 'issued' || notice.status === 'acknowledged') && !editing && (
+                  <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
+                    Next send → Rev {(notice.revision_number ?? 0) + 1}
+                  </span>
+                )}
+                {editing && (
+                  <span className="text-[10px] font-medium text-indigo-700 bg-indigo-50 border border-indigo-200 px-1.5 py-0.5 rounded">
+                    Editing Rev {notice.revision_number ?? 0} → will create Rev {(notice.revision_number ?? 0) + 1} on send
+                  </span>
+                )}
+              </div>
               <h2 className="text-xl font-semibold text-[#1C1C1E]">Variation Notice</h2>
               <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
             </div>
