@@ -55,6 +55,7 @@ export default function NoticeDetail() {
   // Inline client email entry for Send to Client
   const [showEmailInput, setShowEmailInput] = useState(false);
   const [clientEmailInput, setClientEmailInput] = useState('');
+  const [ccEmailInput, setCcEmailInput] = useState('');
 
   useEffect(() => { loadNotice(); }, [id]);
 
@@ -312,23 +313,24 @@ export default function NoticeDetail() {
     }
   }
 
-  async function handleSendToClient(emailOverride?: string) {
+  async function handleSendToClient(toOverride?: string, ccOverride?: string) {
     if (!notice || !project) return;
-    const toEmail = emailOverride || notice.client_email || '';
+    const toEmail = toOverride || notice.client_email || '';
+    const ccEmail = ccOverride ?? ccEmailInput;
     if (!toEmail) { setShowEmailInput(true); return; }
 
     setSendingEmail(true);
     setSaveError(null);
     setSendStage('pdf');
     try {
-      // Save client email + increment revision if re-sending to an already-issued notice
+      // Save client email + cc + increment revision if re-sending to an already-issued notice
       const supabase = createClient();
       const alreadyIssued = notice.status === 'issued' || notice.status === 'acknowledged';
       const newRevision = alreadyIssued ? (notice.revision_number ?? 0) + 1 : notice.revision_number ?? 0;
-      const updatePayload: Record<string, unknown> = { client_email: toEmail };
+      const updatePayload: Record<string, unknown> = { client_email: toEmail, cc_emails: ccEmail || null };
       if (alreadyIssued) updatePayload.revision_number = newRevision;
       await supabase.from('variation_notices').update(updatePayload).eq('id', notice.id);
-      setNotice(prev => prev ? { ...prev, client_email: toEmail, revision_number: newRevision } : prev);
+      setNotice(prev => prev ? { ...prev, client_email: toEmail, cc_emails: ccEmail || undefined, revision_number: newRevision } : prev);
 
       // Generate PDF
       let pdfBase64: string | null = null;
@@ -344,13 +346,18 @@ export default function NoticeDetail() {
       } catch { pdfBase64 = null; }
 
       setSendStage('sending');
-      const { subject, filename } = getNoticeEmailMeta(notice, project);
+      const updatedNotice = { ...notice, revision_number: newRevision };
+      const { subject, filename } = getNoticeEmailMeta(updatedNotice, project);
+      // TO: split comma-separated into array
+      const toList = toEmail.split(',').map(e => e.trim()).filter(Boolean);
+      const ccList = ccEmail ? ccEmail.split(',').map(e => e.trim()).filter(Boolean) : [];
       const res = await fetch('/api/send-notice', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           noticeId: notice.id,
-          toEmail,
+          toEmails: toList,
+          ccEmails: ccList,
           pdfBase64,
           filename,
           subject,
@@ -371,7 +378,10 @@ export default function NoticeDetail() {
 
       setShowEmailInput(false);
       setClientEmailInput('');
-      setSuccessMsg(`Email sent to ${toEmail}${pdfBase64 ? ' with PDF' : ''}`);
+      setCcEmailInput('');
+      const toList2 = toEmail.split(',').map(e => e.trim()).filter(Boolean);
+      const sentTo = toList2.length > 1 ? `${toList2.length} recipients` : toList2[0];
+      setSuccessMsg(`Email sent to ${sentTo}${pdfBase64 ? ' with PDF' : ''}`);
       setTimeout(() => setSuccessMsg(null), 5000);
     } catch (err) {
       console.error('Send to client failed:', err);
@@ -479,7 +489,7 @@ export default function NoticeDetail() {
                 {/* Submit to Client — always opens email confirmation first */}
                 {!isField && (
                   <button
-                    onClick={() => { setClientEmailInput(notice?.client_email || ''); setShowEmailInput(true); }}
+                    onClick={() => { setClientEmailInput(notice?.client_email || ''); setCcEmailInput(notice?.cc_emails || ''); setShowEmailInput(true); }}
                     disabled={sendingEmail}
                     className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-40 shadow-sm whitespace-nowrap"
                   >
@@ -517,24 +527,39 @@ export default function NoticeDetail() {
               </div>
               {/* Inline client email input */}
               {showEmailInput && (
-                <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                  <input
-                    type="email"
-                    value={clientEmailInput}
-                    onChange={e => setClientEmailInput(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter' && clientEmailInput.trim()) handleSendToClient(clientEmailInput.trim()); }}
-                    placeholder="Client email address"
-                    autoFocus
-                    className="flex-1 px-3 py-1.5 text-[13px] border border-slate-200 rounded-md focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
-                  />
-                  <button
-                    onClick={() => { if (clientEmailInput.trim()) handleSendToClient(clientEmailInput.trim()); }}
-                    disabled={!clientEmailInput.trim() || sendingEmail}
-                    className="px-3 py-1.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-40 transition-colors whitespace-nowrap"
-                  >
-                    Send
-                  </button>
-                  <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); }} className="text-slate-400 hover:text-slate-600 text-[13px]">Cancel</button>
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1">To <span className="text-slate-400 normal-case font-normal">(comma-separate multiple)</span></label>
+                    <input
+                      type="text"
+                      value={clientEmailInput}
+                      onChange={e => setClientEmailInput(e.target.value)}
+                      placeholder="client@company.com, engineer@company.com"
+                      autoFocus
+                      className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1">CC <span className="text-slate-400 normal-case font-normal">(optional — internal team)</span></label>
+                    <input
+                      type="text"
+                      value={ccEmailInput}
+                      onChange={e => setCcEmailInput(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter' && clientEmailInput.trim()) handleSendToClient(clientEmailInput.trim(), ccEmailInput.trim()); }}
+                      placeholder="you@yourcompany.com"
+                      className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 pt-1">
+                    <button
+                      onClick={() => { if (clientEmailInput.trim()) handleSendToClient(clientEmailInput.trim(), ccEmailInput.trim()); }}
+                      disabled={!clientEmailInput.trim() || sendingEmail}
+                      className="px-4 py-1.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-40 transition-colors whitespace-nowrap"
+                    >
+                      Send
+                    </button>
+                    <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-slate-400 hover:text-slate-600">Cancel</button>
+                  </div>
                 </div>
               )}
             </div>

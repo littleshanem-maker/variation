@@ -122,7 +122,8 @@ export interface VariationNotice {
   issued_at?: string;
   acknowledged_at?: string;
   response_due_date?: string; // ISO date (YYYY-MM-DD)
-  client_email?: string;
+  client_email?: string;   // comma-separated TO addresses
+  cc_emails?: string;      // comma-separated CC addresses
   created_at: string;
   updated_at: string;
 }

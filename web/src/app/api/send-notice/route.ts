@@ -10,8 +10,8 @@ export async function POST(req: NextRequest) {
   try {
     const {
       noticeId,
-      toEmail,
-      toName,
+      toEmails,
+      ccEmails,
       pdfBase64,
       filename,
       subject,
@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
       noticeNumber,
     } = await req.json() as {
       noticeId: string;
-      toEmail: string;
-      toName?: string;
+      toEmails: string[];
+      ccEmails?: string[];
       pdfBase64?: string | null;
       filename: string;
       subject: string;
@@ -32,13 +32,13 @@ export async function POST(req: NextRequest) {
       noticeNumber?: string;
     };
 
-    if (!noticeId || !toEmail || !subject || !companyName || !senderEmail) {
+    if (!noticeId || !toEmails?.length || !subject || !companyName || !senderEmail) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
     const fromAddress = `${companyName} via Variation Shield <noreply@${FROM_DOMAIN}>`;
-    const greeting = toName ? `Dear ${toName},` : 'Dear Sir/Madam,';
     const ref = noticeNumber ?? 'Variation Notice';
+    const greeting = 'Dear Sir/Madam,';
 
     const htmlBody = `
 <!DOCTYPE html>
@@ -85,7 +85,8 @@ export async function POST(req: NextRequest) {
 
     const { data, error } = await resend.emails.send({
       from: fromAddress,
-      to: toEmail,
+      to: toEmails,
+      ...(ccEmails && ccEmails.length > 0 ? { cc: ccEmails } : {}),
       replyTo: senderEmail,
       subject,
       html: htmlBody,
