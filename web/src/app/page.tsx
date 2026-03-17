@@ -62,7 +62,7 @@ export default function Dashboard() {
   async function loadData() {
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) { setError('not_authenticated'); setLoading(false); return; }
+    if (!session) { window.location.replace('/login'); return; }
 
     const { data: projectsData, error: pErr } = await supabase
       .from('projects').select('*').eq('is_active', true).order('created_at', { ascending: false });

@@ -78,7 +78,7 @@ export default function SettingsPage() {
   async function handleSignOut() {
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push('/login');
+    window.location.replace('/login');
   }
 
   async function handleSaveDisplayName() {

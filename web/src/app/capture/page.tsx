@@ -91,7 +91,7 @@ function CapturePageContent() {
   async function loadProfile() {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) { window.location.replace('/login'); return; }
 
     // Try display_name from company_members first (set via Settings)
     const { data: member } = await supabase
