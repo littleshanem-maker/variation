@@ -567,14 +567,17 @@ export default function VariationDetail() {
                       {sendingEmail ? 'Sending…' : 'Send to Client'}
                     </button>
                   ) : (
-                    <button
-                      onClick={() => handleAdvanceStatus('submitted')}
-                      disabled={advancingStatus}
-                      className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
-                    >
-                      <Send size={14} />
-                      {advancingStatus ? 'Saving…' : 'Submitted to Client'}
-                    </button>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={() => handleAdvanceStatus('submitted')}
+                        disabled={advancingStatus}
+                        className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
+                      >
+                        <Send size={14} />
+                        {advancingStatus ? 'Saving…' : 'Submit to Client'}
+                      </button>
+                      <span className="text-[12px] text-slate-400 italic">Add a client email in Edit to send via email</span>
+                    </div>
                   )}
                   <button
                     onClick={handleSendEmail}
@@ -1390,7 +1393,7 @@ export default function VariationDetail() {
                 className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl disabled:opacity-40 transition-colors active:bg-indigo-700"
               >
                 <Send size={15} />
-                {advancingStatus ? 'Saving…' : 'Submitted to Client'}
+                {advancingStatus ? 'Saving…' : 'Submit to Client'}
               </button>
               <div className="grid grid-cols-2 gap-2">
                 <button onClick={startEditing} className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
