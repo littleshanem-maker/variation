@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
 
   const { data: variation, error } = await supabase
     .from('variations')
-    .select('id, variation_number, sequence_number, status, approval_token_expires_at, client_approval_response, requestor_email, projects(name, client)')
+    .select('id, variation_number, sequence_number, status, approval_token_expires_at, client_approval_response, requestor_email, project_id')
     .eq('approval_token', token)
     .single();
 
@@ -72,9 +72,7 @@ export async function GET(req: NextRequest) {
   }
 
   const varRef = variation.variation_number ?? `VAR-${String(variation.sequence_number).padStart(3, '0')}`;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const proj = Array.isArray(variation.projects) ? (variation.projects as any[])[0] : (variation.projects as any);
-  const projectName = proj?.name ?? 'Unknown Project';
+  const projectName = 'Project';
 
   if (action === 'approve') {
     await supabase
@@ -129,7 +127,7 @@ export async function POST(req: NextRequest) {
 
     const { data: variation, error } = await supabase
       .from('variations')
-      .select('id, variation_number, sequence_number, status, approval_token_expires_at, requestor_email, projects(name, client)')
+      .select('id, variation_number, sequence_number, status, approval_token_expires_at, requestor_email, project_id')
       .eq('approval_token', token)
       .single();
 
@@ -143,9 +141,7 @@ export async function POST(req: NextRequest) {
     }
 
     const varRef = variation.variation_number ?? `VAR-${String(variation.sequence_number).padStart(3, '0')}`;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const proj = Array.isArray(variation.projects) ? (variation.projects as any[])[0] : (variation.projects as any);
-    const projectName = proj?.name ?? 'Unknown Project';
+    const projectName = 'Project';
 
     await supabase
       .from('variations')
