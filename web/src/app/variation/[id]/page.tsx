@@ -1172,8 +1172,11 @@ export default function VariationDetail() {
                   <span className="text-[13px] font-semibold text-red-700">Rejected via email</span>
                 </>
               )}
+              {variation.client_email && (
+                <span className="text-[11px] text-slate-500">by {variation.client_email}</span>
+              )}
               {variation.client_approved_at && (
-                <span className="text-[11px] text-slate-400 ml-1">{formatDateTime(variation.client_approved_at)}</span>
+                <span className="text-[11px] text-slate-400">{formatDateTime(variation.client_approved_at)}</span>
               )}
             </div>
             {variation.client_approval_comment && (

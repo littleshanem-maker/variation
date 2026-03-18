@@ -74,9 +74,7 @@ export async function GET(req: NextRequest) {
     // Notify Shane
     const projectName = proj?.name ?? 'Unknown Project';
     const clientName = proj?.client ?? '';
-    await sendTelegramNotification(
-      `✅ ${varRef} approved by client\n${projectName}${clientName ? ` (${clientName})` : ''}`
-    );
+    // No Telegram notification — approval status visible in app
 
     return NextResponse.redirect(`${APP_URL}/variation-response/approved?ref=${encodeURIComponent(varRef)}`);
   }
@@ -141,9 +139,7 @@ export async function POST(req: NextRequest) {
 
     const projectName = proj?.name ?? 'Unknown Project';
     const clientName = proj?.client ?? '';
-    await sendTelegramNotification(
-      `❌ ${varRef} rejected by client\n${projectName}${clientName ? ` (${clientName})` : ''}${comment ? `\nReason: "${comment}"` : ''}`
-    );
+    // No Telegram notification — rejection status visible in app
 
     return NextResponse.json({ ok: true });
   } catch (err) {
