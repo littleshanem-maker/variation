@@ -75,9 +75,9 @@ export default function NotificationsPage() {
               <p className="text-[13px] text-slate-500">{notifications.length} unseen</p>
               <button
                 onClick={handleMarkAllSeen}
-                className="text-[12px] font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
               >
-                Mark all as seen
+                <CheckCircle size={13} className="text-emerald-500" /> Mark all as seen
               </button>
             </div>
             <div className="space-y-2">
