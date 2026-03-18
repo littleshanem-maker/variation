@@ -73,7 +73,7 @@ export default function LandingPage() {
           </div>
 
           <p className="mt-5 text-sm text-white/30">
-            Setup in 5 minutes · 30-day money-back guarantee · $299/mo
+            Setup in 5 minutes · 30-day money-back guarantee · <span className="text-amber-400/70">$299/mo founding member rate (was $499)</span>
           </p>
         </div>
       </section>
@@ -200,12 +200,18 @@ export default function LandingPage() {
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Simple. No surprises.</h2>
           <p className="text-white/50 mb-12">One plan. Everything included. Cancel anytime.</p>
 
-          <div className="bg-white/[0.04] border border-white/[0.1] rounded-2xl p-8 text-left">
-            <div className="flex items-baseline gap-2 mb-1">
+          <div className="bg-white/[0.04] border border-indigo-500/30 rounded-2xl p-8 text-left relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-t-2xl" />
+            <div className="inline-flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/25 rounded-full px-3 py-1 text-xs font-bold text-amber-400 uppercase tracking-wider mb-5">
+              ⭐ Founding Member — Limited Spots
+            </div>
+            <div className="flex items-baseline gap-3 mb-1">
+              <span className="text-2xl font-medium text-white/30 line-through decoration-red-400">$499</span>
               <span className="text-5xl font-extrabold">$299</span>
               <span className="text-white/40 text-lg">/month</span>
             </div>
-            <p className="text-white/40 text-sm mb-8">30-day money-back guarantee. No lock-in.</p>
+            <p className="text-amber-400/80 text-sm font-semibold mb-1">🔒 Price locked for life — never increases</p>
+            <p className="text-white/30 text-xs mb-8">30-day money-back guarantee. No lock-in. Cancel anytime.</p>
 
             <ul className="space-y-3 mb-8">
               {[
