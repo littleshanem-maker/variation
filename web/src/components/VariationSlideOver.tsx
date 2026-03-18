@@ -337,47 +337,22 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
 
               {/* Step 2: Submitted */}
               {isSubmitted && !showDisputeInput && (
-                <>
-                  <button
-                    onClick={() => advanceStatus('approved')}
-                    disabled={acting}
-                    className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[14px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
-                  >
-                    <CheckCircle size={15} />
-                    {acting ? '…' : 'Mark as Approved'}
-                  </button>
-                  <div className="grid grid-cols-3 gap-2">
-                    <button
-                      onClick={() => setShowDisputeInput(true)}
-                      disabled={acting}
-                      className="flex items-center justify-center gap-1.5 px-2 py-2.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors"
-                    >
-                      <XCircle size={14} /> Dispute
-                    </button>
-                    <button
-                      onClick={() => advanceStatus('draft')}
-                      disabled={acting}
-                      className="flex items-center justify-center gap-1.5 px-2 py-2.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                    >
-                      <RotateCcw size={13} /> Withdraw
-                    </button>
-                    <button
-                      onClick={handleSendPdf}
-                      disabled={sendingPdf}
-                      className="flex items-center justify-center gap-1.5 px-2 py-2.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
-                    >
-                      <FileText size={13} />
-                      {sendingPdf ? '…' : 'PDF'}
-                    </button>
-                  </div>
+                <div className="grid grid-cols-2 gap-2">
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1 text-[12px] text-slate-400 hover:text-slate-700 transition-colors py-1"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                     onClick={onClose}
                   >
-                    Full detail <ArrowUpRight size={12} />
+                    <ArrowUpRight size={14} /> View Variation
                   </Link>
-                </>
+                  <Link
+                    href={`/variation/${variation.id}`}
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+                    onClick={onClose}
+                  >
+                    <Pencil size={14} /> Revise &amp; Resubmit
+                  </Link>
+                </div>
               )}
 
               {/* Step 3: Disputed */}
