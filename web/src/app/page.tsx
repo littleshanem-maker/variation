@@ -26,17 +26,19 @@ export default function LandingPage() {
           </div>
           <span className="font-bold text-[15px] tracking-tight">Variation Shield</span>
         </Link>
-        <div className="hidden md:flex items-center gap-8 text-sm text-white/60">
-          <a href="#features" className="hover:text-white transition-colors">Features</a>
-          <a href="#how-it-works" className="hover:text-white transition-colors">How it works</a>
-          <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-          <Link href="/calculator" className="hover:text-white transition-colors">ROI Calculator</Link>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link href="/login" className="text-sm font-semibold text-white/80 hover:text-white border border-white/20 hover:border-white/40 px-4 py-2 rounded-lg transition-all hidden md:block">Login</Link>
-          <Link href="/signup" className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
-            Start Free Trial
-          </Link>
+        <div className="flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-6 text-sm text-white/60">
+            <a href="#features" className="hover:text-white transition-colors">Features</a>
+            <a href="#how-it-works" className="hover:text-white transition-colors">How it works</a>
+            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+            <Link href="/calculator" className="hover:text-white transition-colors">ROI Calculator</Link>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="text-sm font-semibold text-white/80 hover:text-white border border-white/20 hover:border-white/40 px-4 py-2 rounded-lg transition-all hidden md:block">Login</Link>
+            <Link href="/signup" className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
+              Start Free Trial
+            </Link>
+          </div>
         </div>
       </nav>
 

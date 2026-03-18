@@ -89,7 +89,7 @@ nav {
 }
 .nav-logo-text { font-size: 15px; font-weight: 700; color: #F1F5F9; letter-spacing: -0.02em; }
 
-.nav-links { display: flex; align-items: center; gap: 32px; }
+.nav-links { display: flex; align-items: center; gap: 24px; }
 .nav-links a { text-decoration: none; color: rgba(255,255,255,0.55); font-size: 14px; font-weight: 500; transition: color 0.2s; }
 .nav-links a:hover { color: #F1F5F9; }
 .nav-links a.active { color: #F1F5F9; font-weight: 600; }
@@ -872,13 +872,17 @@ footer {
     </div>
     <span class="nav-logo-text">Variation Shield</span>
   </a>
-  <div class="nav-links">
-    <a href="/#features">Features</a>
-    <a href="/#how-it-works">How it works</a>
-    <a href="/#pricing">Pricing</a>
-    <a href="/calculator" class="active">Calculator</a>
-    <a href="/login" style="font-weight:500;">Login</a>
-    <a href="/signup" class="nav-cta">Start Free Trial</a>
+  <div style="display:flex;align-items:center;gap:24px;">
+    <div class="nav-links">
+      <a href="/#features">Features</a>
+      <a href="/#how-it-works">How it works</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="/calculator" class="active">Calculator</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="/login" style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.2);padding:9px 16px;border-radius:8px;text-decoration:none;transition:all 0.2s;">Login</a>
+      <a href="/signup" class="nav-cta">Start Free Trial</a>
+    </div>
   </div>
   <button class="nav-hamburger" aria-label="Menu" onclick="toggleMobileMenu()">
     <span></span><span></span><span></span>
