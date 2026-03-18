@@ -7,7 +7,7 @@ import AppShell from '@/components/AppShell';
 import TopBar from '@/components/TopBar';
 import StatusBadge from '@/components/StatusBadge';
 import { createClient } from '@/lib/supabase';
-import { Send, FileText } from 'lucide-react';
+import { Send, FileText, CheckCircle } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { printNotice, getNoticeHtmlForPdf } from '@/lib/print';
 import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
@@ -564,6 +564,21 @@ export default function NoticeDetail() {
                     className="px-3 py-2 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                   >
                     Edit
+                  </button>
+                )}
+                {/* Mark as Acknowledged by Client */}
+                {canAcknowledge && (
+                  <button
+                    onClick={handleAcknowledge}
+                    disabled={advancing}
+                    className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors disabled:opacity-40 whitespace-nowrap"
+                  >
+                    <CheckCircle size={14} /> {advancing ? '…' : 'Mark as Acknowledged by Client'}
+                  </button>
+                )}
+                {notice.status === 'acknowledged' && (
+                  <button disabled className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg opacity-80 cursor-default whitespace-nowrap">
+                    <CheckCircle size={14} /> Acknowledged by Client
                   </button>
                 )}
                 {/* Delete */}

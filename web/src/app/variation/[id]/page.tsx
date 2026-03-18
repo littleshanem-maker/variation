@@ -691,12 +691,7 @@ export default function VariationDetail() {
                 {!isField && !isDisputed && (
                   <button onClick={startEditing} className="px-3 py-2 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">Edit</button>
                 )}
-                {/* Withdraw (submitted only) */}
-                {isSubmitted && !isField && (
-                  <button onClick={() => handleAdvanceStatus('draft')} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium text-slate-400 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors" title="Withdraw and return to draft">
-                    <RotateCcw size={12} /> Withdraw
-                  </button>
-                )}
+
                 {/* Delete */}
                 {canDelete && (
                   <button onClick={() => setShowDeleteConfirm(true)} className="px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap">Delete</button>
@@ -762,7 +757,7 @@ export default function VariationDetail() {
         {isSubmitted && !editing && (
           <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-[13px] text-amber-700 font-medium">
             <Lock size={14} className="flex-shrink-0" />
-            Submitted to client and locked. Use <span className="font-semibold">Withdraw</span> to pull back and edit.
+            Submitted to client. Use Edit to make changes and resubmit.
           </div>
         )}
         {isDisputed && !editing && variation.notes?.startsWith('DISPUTE REASON:') && (
@@ -1481,9 +1476,7 @@ export default function VariationDetail() {
                 >
                   Rejected
                 </button>
-                <button onClick={() => handleAdvanceStatus('draft')} disabled={advancingStatus} className="flex items-center justify-center gap-1 px-2 py-2.5 text-[12px] font-medium text-slate-400 border border-slate-200 rounded-xl">
-                  Withdraw
-                </button>
+
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}

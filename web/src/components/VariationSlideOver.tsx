@@ -177,7 +177,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
               {isSubmitted && (
                 <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-[12px] text-amber-700 font-medium">
                   <Lock size={12} className="flex-shrink-0" />
-                  Submitted — fields locked. Withdraw to edit.
+                  Submitted to client.
                 </div>
               )}
               {isDisputed && (
