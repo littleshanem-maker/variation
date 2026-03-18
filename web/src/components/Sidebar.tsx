@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Logo from './Logo';
 import { usePathname } from 'next/navigation';
 import { useRole } from '@/lib/role';
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase';
 import type { UserRole } from '@/lib/types';
 import {
   LayoutDashboard,
@@ -12,6 +14,7 @@ import {
   Users,
   Settings,
   Zap,
+  Bell,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -34,6 +37,21 @@ const nav: NavItem[] = [
 export default function Sidebar() {
   const pathname = usePathname();
   const { role, company } = useRole();
+  const [notifCount, setNotifCount] = useState(0);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      // Count recent approved/disputed changes in last 7 days
+      supabase
+        .from('status_changes')
+        .select('id', { count: 'exact', head: true })
+        .in('to_status', ['approved', 'disputed'])
+        .gte('changed_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .then(({ count }) => setNotifCount(count ?? 0));
+    });
+  }, [pathname]); // re-check when navigation happens
 
   const visibleNav = nav.filter(item => !item.roles || item.roles.includes(role));
 
@@ -97,6 +115,33 @@ export default function Sidebar() {
             );
           })}
         </nav>
+
+        {/* Notifications */}
+        {role !== 'field' && (
+          <div className="px-3 pb-2">
+            <Link
+              href="/notifications"
+              className={`relative flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ease-out ${
+                pathname === '/notifications'
+                  ? 'text-white font-semibold'
+                  : 'text-white/40 hover:text-white/75 hover:bg-white/[0.04] font-medium'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                {pathname === '/notifications' && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-indigo-500 rounded-r" />
+                )}
+                <Bell size={15} strokeWidth={pathname === '/notifications' ? 2.2 : 1.8} className={pathname === '/notifications' ? 'text-white' : 'text-white/50'} />
+                Notifications
+              </div>
+              {notifCount > 0 && (
+                <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-rose-500 text-white rounded-full">
+                  {notifCount > 99 ? '99+' : notifCount}
+                </span>
+              )}
+            </Link>
+          </div>
+        )}
 
         {/* Footer */}
         <div className="px-6 py-4">
