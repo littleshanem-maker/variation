@@ -653,12 +653,24 @@ export default function VariationDetail() {
                 {/* Status-specific actions */}
                 {isSubmitted && !isField && (
                   <>
-                    <button onClick={() => handleAdvanceStatus('approved')} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm">
-                      <CheckCircle size={14} /> {advancingStatus ? '…' : 'Approved'}
-                    </button>
-                    <button onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors">
-                      <XCircle size={14} /> Rejected
-                    </button>
+                    {variation.client_approval_response === 'approved' ? (
+                      <button disabled className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg opacity-80 cursor-default">
+                        <CheckCircle size={14} /> Approved by Client
+                      </button>
+                    ) : (
+                      <button onClick={() => handleAdvanceStatus('approved')} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm">
+                        <CheckCircle size={14} /> {advancingStatus ? '…' : 'Mark as Approved by Client'}
+                      </button>
+                    )}
+                    {variation.client_approval_response === 'rejected' ? (
+                      <button disabled className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg opacity-80 cursor-default">
+                        <XCircle size={14} /> Rejected by Client
+                      </button>
+                    ) : (
+                      <button onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors">
+                        <XCircle size={14} /> Mark as Rejected by Client
+                      </button>
+                    )}
                   </>
                 )}
                 {isDisputed && !isField && (
