@@ -27,11 +27,12 @@ interface NavItem {
 }
 
 const nav: NavItem[] = [
-  { label: 'Dashboard',          href: '/',          icon: LayoutDashboard },
-  { label: 'Variation Register', href: '/variations', icon: ClipboardList,  roles: ['admin', 'office'] },
-  { label: 'Archived Projects',  href: '/archived',  icon: Archive,         roles: ['admin', 'office'] },
-  { label: 'Team',               href: '/team',       icon: Users,           roles: ['admin'] },
-  { label: 'Settings',           href: '/settings',  icon: Settings },
+  { label: 'Dashboard',          href: '/',               icon: LayoutDashboard },
+  { label: 'Variation Register', href: '/variations',     icon: ClipboardList,  roles: ['admin', 'office'] },
+  { label: 'Archived Projects',  href: '/archived',       icon: Archive,        roles: ['admin', 'office'] },
+  { label: 'Team',               href: '/team',           icon: Users,          roles: ['admin'] },
+  { label: 'Notifications',      href: '/notifications',  icon: Bell,           roles: ['admin', 'office'] },
+  { label: 'Settings',           href: '/settings',       icon: Settings },
 ];
 
 export default function Sidebar() {
@@ -43,15 +44,15 @@ export default function Sidebar() {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return;
-      // Count recent approved/disputed changes in last 7 days
+      // Count variations currently in approved/disputed status changed by client via email
       supabase
         .from('status_changes')
-        .select('id', { count: 'exact', head: true })
+        .select('variation_id', { count: 'exact', head: true })
         .in('to_status', ['approved', 'disputed'])
-        .gte('changed_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
+        .eq('changed_by', 'client-email')
         .then(({ count }) => setNotifCount(count ?? 0));
     });
-  }, [pathname]); // re-check when navigation happens
+  }, [pathname]);
 
   const visibleNav = nav.filter(item => !item.roles || item.roles.includes(role));
 
@@ -95,53 +96,32 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                
-                className={`relative flex items-center gap-2.5 px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ease-out ${
+                className={`relative flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ease-out ${
                   active
                     ? 'text-white font-semibold'
                     : 'text-white/40 hover:text-white/75 hover:bg-white/[0.04] font-medium'
                 }`}
               >
-                {active && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-indigo-500 rounded-r" />
+                <div className="flex items-center gap-2.5">
+                  {active && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-indigo-500 rounded-r" />
+                  )}
+                  <Icon
+                    size={15}
+                    strokeWidth={active ? 2.2 : 1.8}
+                    className={active ? 'text-white' : 'text-white/50'}
+                  />
+                  {item.label}
+                </div>
+                {item.href === '/notifications' && notifCount > 0 && (
+                  <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-rose-500 text-white rounded-full">
+                    {notifCount > 99 ? '99+' : notifCount}
+                  </span>
                 )}
-                <Icon
-                  size={15}
-                  strokeWidth={active ? 2.2 : 1.8}
-                  className={active ? 'text-white' : 'text-white/50'}
-                />
-                {item.label}
               </Link>
             );
           })}
         </nav>
-
-        {/* Notifications */}
-        {role !== 'field' && (
-          <div className="px-3 pb-2">
-            <Link
-              href="/notifications"
-              className={`relative flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ease-out ${
-                pathname === '/notifications'
-                  ? 'text-white font-semibold'
-                  : 'text-white/40 hover:text-white/75 hover:bg-white/[0.04] font-medium'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                {pathname === '/notifications' && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-indigo-500 rounded-r" />
-                )}
-                <Bell size={15} strokeWidth={pathname === '/notifications' ? 2.2 : 1.8} className={pathname === '/notifications' ? 'text-white' : 'text-white/50'} />
-                Notifications
-              </div>
-              {notifCount > 0 && (
-                <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-rose-500 text-white rounded-full">
-                  {notifCount > 99 ? '99+' : notifCount}
-                </span>
-              )}
-            </Link>
-          </div>
-        )}
 
         {/* Footer */}
         <div className="px-6 py-4">
