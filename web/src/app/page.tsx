@@ -90,7 +90,7 @@ export default function LandingPage() {
       </div>
 
       {/* THE PROBLEM */}
-      <section className="py-24 px-6">
+      <section className="py-16 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-indigo-400 text-xs font-bold tracking-widest uppercase mb-3">Sound familiar?</p>
@@ -114,8 +114,8 @@ export default function LandingPage() {
                 body: 'Every undocumented variation becomes a negotiation when leverage is gone. You did the work. You deserve the money. But you can\'t prove the instruction.',
               },
             ].map((p) => (
-              <div key={p.n} className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-8">
-                <div className="text-xs font-bold tracking-widest uppercase text-indigo-400/60 mb-5">{p.n}</div>
+              <div key={p.n} className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-8 text-center flex flex-col items-center">
+                <div className="text-5xl font-extrabold text-indigo-500/25 mb-4 leading-none">{p.n}</div>
                 <h3 className="text-lg font-bold mb-3">{p.title}</h3>
                 <p className="text-white/50 text-sm leading-relaxed">{p.body}</p>
               </div>
@@ -140,7 +140,7 @@ export default function LandingPage() {
                   <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
                 </svg>
               </div>
-              <p className="text-[10px] font-bold tracking-widest uppercase text-indigo-400/50 mb-3">Step 01</p>
+              <p className="text-sm font-bold tracking-widest uppercase text-indigo-400/60 mb-3">Step 01</p>
               <h3 className="text-base font-bold mb-3">Capture on site</h3>
               <p className="text-white/45 text-sm leading-relaxed">Open the app. Add photos, description, cost and time impact. Under 60 seconds. Works offline — syncs when back in range.</p>
             </div>
@@ -151,7 +151,7 @@ export default function LandingPage() {
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
                 </svg>
               </div>
-              <p className="text-[10px] font-bold tracking-widest uppercase text-indigo-400/50 mb-3">Step 02</p>
+              <p className="text-sm font-bold tracking-widest uppercase text-indigo-400/60 mb-3">Step 02</p>
               <h3 className="text-base font-bold mb-3">Send to your client</h3>
               <p className="text-white/45 text-sm leading-relaxed">Generate a professional PDF and send it directly from the app. The client approves or rejects via a secure link — no phone calls needed.</p>
             </div>
@@ -162,7 +162,7 @@ export default function LandingPage() {
                   <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
                 </svg>
               </div>
-              <p className="text-[10px] font-bold tracking-widest uppercase text-indigo-400/50 mb-3">Step 03</p>
+              <p className="text-sm font-bold tracking-widest uppercase text-indigo-400/60 mb-3">Step 03</p>
               <h3 className="text-base font-bold mb-3">Track to payment</h3>
               <p className="text-white/45 text-sm leading-relaxed">Every variation tracked from draft to approved to paid. Your PM sees everything in real time. No chasing. No arguing at final account.</p>
             </div>
