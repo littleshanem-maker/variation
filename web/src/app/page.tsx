@@ -132,19 +132,40 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight">From site to signed in 60 seconds</h2>
             <p className="text-white/50 mt-4 max-w-lg mx-auto">No complex workflows. No training required. Three steps and the variation is documented before you walk to the next task.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { step: '1', icon: '📸', title: 'Capture on site', body: 'Open the app. Add photos, description, cost and time impact. Takes under 60 seconds. Works offline — syncs when you\'re back in range.' },
-              { step: '2', icon: '📄', title: 'Send to your client', body: 'Generate a professional PDF variation request and send it directly from the app. The client gets a link to approve or reject — no phone calls needed.' },
-              { step: '3', icon: '✅', title: 'Track to payment', body: 'Every variation tracked from draft to approved to paid. Your PM sees everything in real time. No chasing. No arguing. No surprises at final account.' },
-            ].map((s) => (
-              <div key={s.step} className="relative">
-                <div className="w-10 h-10 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm mb-5">{s.step}</div>
-                <div className="text-3xl mb-4">{s.icon}</div>
-                <h3 className="text-lg font-bold mb-2">{s.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{s.body}</p>
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Step 1 */}
+            <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-8 text-center flex flex-col items-center">
+              <div className="w-12 h-12 rounded-xl bg-indigo-600/15 border border-indigo-500/20 flex items-center justify-center mb-6">
+                <svg width="22" height="22" fill="none" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+                </svg>
               </div>
-            ))}
+              <p className="text-[10px] font-bold tracking-widest uppercase text-indigo-400/50 mb-3">Step 01</p>
+              <h3 className="text-base font-bold mb-3">Capture on site</h3>
+              <p className="text-white/45 text-sm leading-relaxed">Open the app. Add photos, description, cost and time impact. Under 60 seconds. Works offline — syncs when back in range.</p>
+            </div>
+            {/* Step 2 */}
+            <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-8 text-center flex flex-col items-center">
+              <div className="w-12 h-12 rounded-xl bg-indigo-600/15 border border-indigo-500/20 flex items-center justify-center mb-6">
+                <svg width="22" height="22" fill="none" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+                </svg>
+              </div>
+              <p className="text-[10px] font-bold tracking-widest uppercase text-indigo-400/50 mb-3">Step 02</p>
+              <h3 className="text-base font-bold mb-3">Send to your client</h3>
+              <p className="text-white/45 text-sm leading-relaxed">Generate a professional PDF and send it directly from the app. The client approves or rejects via a secure link — no phone calls needed.</p>
+            </div>
+            {/* Step 3 */}
+            <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-8 text-center flex flex-col items-center">
+              <div className="w-12 h-12 rounded-xl bg-indigo-600/15 border border-indigo-500/20 flex items-center justify-center mb-6">
+                <svg width="22" height="22" fill="none" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                  <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+              </div>
+              <p className="text-[10px] font-bold tracking-widest uppercase text-indigo-400/50 mb-3">Step 03</p>
+              <h3 className="text-base font-bold mb-3">Track to payment</h3>
+              <p className="text-white/45 text-sm leading-relaxed">Every variation tracked from draft to approved to paid. Your PM sees everything in real time. No chasing. No arguing at final account.</p>
+            </div>
           </div>
         </div>
       </section>
