@@ -400,35 +400,33 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
 
               {/* Step 3: Disputed */}
               {isDisputed && !showDisputeInput && (
-                <>
+                <div className="grid grid-cols-2 gap-2">
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[14px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    onClick={onClose}
+                  >
+                    <ArrowUpRight size={14} /> View Variation
+                  </Link>
+                  <Link
+                    href={`/variation/${variation.id}`}
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
                     onClick={onClose}
                   >
                     <Pencil size={14} /> Revise &amp; Resubmit
                   </Link>
-                  <button
-                    onClick={handleSendPdf}
-                    disabled={sendingPdf}
-                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
-                  >
-                    <FileText size={13} />
-                    {sendingPdf ? 'Building…' : 'PDF / Send'}
-                  </button>
-                </>
+                </div>
               )}
 
-              {/* Resolved (approved/paid/rejected) */}
+              {/* Resolved (approved/paid) */}
               {isResolved && !showDisputeInput && (
-                <button
-                  onClick={handleSendPdf}
-                  disabled={sendingPdf}
-                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
+                <Link
+                  href={`/variation/${variation.id}`}
+                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                  onClick={onClose}
                 >
-                  <FileText size={13} />
-                  {sendingPdf ? 'Building…' : 'PDF / Send'}
-                </button>
+                  <ArrowUpRight size={14} /> View Variation
+                </Link>
               )}
             </SheetFooter>
           </>
