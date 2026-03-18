@@ -33,7 +33,7 @@ export default function LandingPage() {
           <Link href="/calculator" className="hover:text-white transition-colors">ROI Calculator</Link>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/login" className="text-sm text-white/60 hover:text-white transition-colors hidden md:block">Login</Link>
+          <Link href="/login" className="text-sm font-semibold text-white/80 hover:text-white border border-white/20 hover:border-white/40 px-4 py-2 rounded-lg transition-all hidden md:block">Login</Link>
           <Link href="/signup" className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
             Start Free Trial
           </Link>
