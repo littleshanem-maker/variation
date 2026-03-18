@@ -27,7 +27,7 @@ interface NavItem {
 }
 
 const nav: NavItem[] = [
-  { label: 'Dashboard',          href: '/',               icon: LayoutDashboard },
+  { label: 'Dashboard',          href: '/dashboard',      icon: LayoutDashboard },
   { label: 'Variation Register', href: '/variations',     icon: ClipboardList,  roles: ['admin', 'office'] },
   { label: 'Archived Projects',  href: '/archived',       icon: Archive,        roles: ['admin', 'office'] },
   { label: 'Team',               href: '/team',           icon: Users,          roles: ['admin'] },
@@ -96,7 +96,7 @@ export default function Sidebar() {
         <nav className="flex-1 px-3 pt-1 space-y-0.5">
           {visibleNav.map((item) => {
             const Icon = item.icon;
-            const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+            const active = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
             return (
               <Link
                 key={item.href}
