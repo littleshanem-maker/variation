@@ -15,7 +15,7 @@ import { printVariation, getVariationHtmlForPdf } from '@/lib/print';
 import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
 import { getVariationEmailMeta } from '@/lib/email';
 import { useRole } from '@/lib/role';
-import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice } from '@/lib/types';
+import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice, VariationRequestRevision } from '@/lib/types';
 import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight, FileText } from 'lucide-react';
 
 const EDITABLE_STATUSES = ['draft', 'captured'];
@@ -56,6 +56,13 @@ export default function VariationDetail() {
   const [revisions, setRevisions] = useState<Variation[]>([]);
   const [sendingEmail, setSendingEmail] = useState(false);
   const [sendStage, setSendStage] = useState<'idle' | 'pdf' | 'sending'>('idle');
+  // Send to client flow
+  const [showEmailInput, setShowEmailInput] = useState(false);
+  const [clientEmailInput, setClientEmailInput] = useState('');
+  const [ccEmailInput, setCcEmailInput] = useState('');
+  // Variation request revisions (send history)
+  const [varRevisions, setVarRevisions] = useState<VariationRequestRevision[]>([]);
+  const [generatingRevPdf, setGeneratingRevPdf] = useState<number | null>(null);
 
   const [editing, setEditing] = useState(false);
   const [hasPendingDraft, setHasPendingDraft] = useState(false);
@@ -365,6 +372,14 @@ export default function VariationDetail() {
       setPhotoUrls(urls);
     }
 
+    // Load send revision history
+    const { data: vrRevData } = await supabase
+      .from('variation_request_revisions')
+      .select('*')
+      .eq('variation_id', id)
+      .order('revision_number', { ascending: false });
+    setVarRevisions((vrRevData || []) as VariationRequestRevision[]);
+
     setLoading(false);
 
     // Auto-open edit mode when arriving from notice conversion (only fires once)
@@ -395,75 +410,121 @@ export default function VariationDetail() {
     }
   }
 
-  async function handleSendEmail() {
+  async function handleSendToClient(toOverride?: string, ccOverride?: string) {
     if (!variation || !project) return;
+    const toEmail = toOverride || variation.client_email || '';
+    const ccEmail = ccOverride ?? ccEmailInput;
+    if (!toEmail) { setShowEmailInput(true); return; }
+
     setSendingEmail(true);
     setSaveError(null);
+    setSendStage('pdf');
     try {
-      const { subject, body, filename } = getVariationEmailMeta(variation, project);
-      const clientEmail = variation.client_email || '';
+      const supabase = createClient();
 
-      if (clientEmail) {
-        // Generate PDF first
+      // Count existing snapshots — that IS the new revision number
+      const { count: revCount } = await supabase
+        .from('variation_request_revisions')
+        .select('id', { count: 'exact', head: true })
+        .eq('variation_id', variation.id);
+      const newRevision = revCount ?? 0;
+
+      // Save client email + cc to variation
+      await supabase.from('variations').update({
+        client_email: toEmail,
+        cc_emails: ccEmail || null,
+      }).eq('id', variation.id);
+
+      // Snapshot this revision
+      const { error: snapError } = await supabase.from('variation_request_revisions').insert({
+        variation_id: variation.id,
+        revision_number: newRevision,
+        title: variation.title,
+        description: variation.description,
+        estimated_value: variation.estimated_value,
+        cost_items: variation.cost_items,
+        status: variation.status,
+        client_email: toEmail,
+        response_due_date: variation.response_due_date,
+        sent_to: toEmail,
+        sent_cc: ccEmail || null,
+        sent_at: new Date().toISOString(),
+      });
+      if (snapError) throw new Error(`Revision save failed: ${snapError.message}`);
+
+      // Generate PDF
+      let pdfBase64: string | null = null;
+      try {
         setSendStage('pdf');
-        let pdfBase64: string | null = null;
-        try {
-          const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
-          const blob = await htmlToPdfBlob(html, css);
-          const reader = new FileReader();
-          pdfBase64 = await new Promise<string>((resolve, reject) => {
-            reader.onload = () => resolve((reader.result as string).split(',')[1]);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-          });
-        } catch {
-          // PDF failed — send without attachment rather than blocking
-          pdfBase64 = null;
-        }
-
-        setSendStage('sending');
-        const res = await fetch('/api/send-variation', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            variationId: variation.id,
-            approvalToken: variation.approval_token,
-            toEmail: clientEmail,
-            pdfBase64,
-            filename,
-            subject,
-            companyName: company?.name || '',
-            senderEmail: sender.email,
-            senderName: sender.name,
-            variationNumber: variation.variation_number,
-            sequenceNumber: variation.sequence_number,
-          }),
+        const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
+        const blob = await htmlToPdfBlob(html, css);
+        const reader = new FileReader();
+        pdfBase64 = await new Promise<string>((resolve, reject) => {
+          reader.onload = () => resolve((reader.result as string).split(',')[1]);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
         });
+      } catch { pdfBase64 = null; }
 
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          throw new Error(err.error || `Send failed (${res.status})`);
-        }
+      setSendStage('sending');
+      const { subject, filename } = getVariationEmailMeta(variation, project);
+      const toList = toEmail.split(',').map(e => e.trim()).filter(Boolean);
+      const ccList = ccEmail ? ccEmail.split(',').map(e => e.trim()).filter(Boolean) : [];
 
-        // Mark as submitted if still draft
-        if (variation.status === 'draft') {
-          await handleAdvanceStatus('submitted');
-        }
-        // Refresh variation so approval status updates
-        const { data: refreshed } = await createClient()
-          .from('variations')
-          .select('*')
-          .eq('id', variation.id)
-          .single();
-        if (refreshed) setVariation(refreshed);
-        setSuccessMsg(`Email sent to ${clientEmail}${pdfBase64 ? ' with PDF attached' : ''}`);
-        setTimeout(() => setSuccessMsg(null), 5000);
-        setHasPendingDraft(false);
-        setSendStage('idle');
-        return;
+      const res = await fetch('/api/send-variation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          variationId: variation.id,
+          approvalToken: variation.approval_token,
+          toEmails: toList,
+          ccEmails: ccList,
+          pdfBase64,
+          filename,
+          subject,
+          companyName: company?.name || '',
+          senderEmail: sender.email,
+          senderName: sender.name,
+          variationNumber: variation.variation_number,
+          sequenceNumber: variation.sequence_number,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Send failed (${res.status})`);
       }
 
-      // Fallback: mailto / share flow (no client email set)
+      // Mark as submitted if still draft
+      if (variation.status === 'draft') {
+        await handleAdvanceStatus('submitted');
+      }
+
+      setShowEmailInput(false);
+      setClientEmailInput('');
+      setCcEmailInput('');
+      setHasPendingDraft(false);
+      const sentTo = toList.length > 1 ? `${toList.length} recipients` : toList[0];
+      setSuccessMsg(`Email sent to ${sentTo}${pdfBase64 ? ' with PDF' : ''}`);
+      setTimeout(() => setSuccessMsg(null), 5000);
+
+      // Reload to get fresh revision list + variation state
+      await loadVariation();
+    } catch (err) {
+      console.error('Send to client failed:', err);
+      setSaveError(err instanceof Error ? err.message : 'Failed to send. Please try again.');
+    } finally {
+      setSendingEmail(false);
+      setSendStage('idle');
+    }
+  }
+
+  async function handleSendEmail() {
+    // Fallback: share/download PDF (no client email flow)
+    if (!variation || !project) return;
+    setSendingEmail(true);
+    try {
+      const { subject, body, filename } = getVariationEmailMeta(variation, project);
       const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
       const blob = await htmlToPdfBlob(html, css);
       const attachmentUrls = documents
@@ -471,11 +532,9 @@ export default function VariationDetail() {
         .map(d => ({ url: docUrls[d.id], filename: d.file_name, mimeType: d.file_type }));
       await shareOrDownloadPdf(blob, filename, subject, body, attachmentUrls);
     } catch (err) {
-      console.error('Email send failed:', err);
-      setSaveError(err instanceof Error ? err.message : 'Failed to send email. Please try again.');
+      console.error('PDF share failed:', err);
     } finally {
       setSendingEmail(false);
-      setSendStage('idle');
     }
   }
 
@@ -578,184 +637,74 @@ export default function VariationDetail() {
             </div>
           )}
           {!editing && (
-            <div className="hidden md:block space-y-3">
-              {/* Step 1 — Draft: Submit to Client */}
-              {isDraft && !isField && (
-                <div className="flex flex-wrap items-center gap-2">
-                  {variation.client_email ? (
-                    <button
-                      onClick={handleSendEmail}
-                      disabled={sendingEmail || advancingStatus}
-                      className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
-                    >
-                      <Send size={14} />
-                      {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : 'Send to Client'}
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Submit to Client — always opens email confirmation */}
+                {!isField && (
+                  <button
+                    onClick={() => { setClientEmailInput(variation.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
+                    disabled={sendingEmail}
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm whitespace-nowrap"
+                  >
+                    <Send size={14} />
+                    {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : 'Submit to Client'}
+                  </button>
+                )}
+                {/* Status-specific actions */}
+                {isSubmitted && !isField && (
+                  <>
+                    <button onClick={() => handleAdvanceStatus('approved')} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm">
+                      <CheckCircle size={14} /> {advancingStatus ? '…' : 'Approved'}
                     </button>
-                  ) : (
-                    <div className="flex flex-wrap items-center gap-2">
-                      <button
-                        onClick={() => handleAdvanceStatus('submitted')}
-                        disabled={advancingStatus}
-                        className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
-                      >
-                        <Send size={14} />
-                        {advancingStatus ? 'Saving…' : 'Submit to Client'}
-                      </button>
-                      <span className="text-[12px] text-slate-400 italic">Add a client email in Edit to send via email</span>
-                    </div>
-                  )}
-                  <button
-                    onClick={handleSendEmail}
-                    disabled={sendingEmail}
-                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
-                  </button>
-                  <button
-                    onClick={handleDownloadPdf}
-                    disabled={sendingEmail}
-                    className="hidden md:inline-flex px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {sendingEmail ? '…' : '⬇ Download PDF'}
-                  </button>
-                  <button
-                    onClick={startEditing}
-                    className="px-3 py-1.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                  >
-                    Edit
-                  </button>
-                  {canDelete && (
-                    <button
-                      onClick={() => setShowDeleteConfirm(true)}
-                      className="px-3 py-1.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors"
-                    >
-                      Delete
+                    <button onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors">
+                      <XCircle size={14} /> Rejected
                     </button>
-                  )}
-                </div>
-              )}
-
-              {/* Step 2 — Submitted to Client: Approved / Rejected */}
-              {isSubmitted && !isField && (
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    onClick={() => handleAdvanceStatus('approved')}
-                    disabled={advancingStatus}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
-                  >
-                    <CheckCircle size={14} /> {advancingStatus ? '…' : 'Approved by Client'}
-                  </button>
-                  <button
-                    onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }}
-                    disabled={advancingStatus}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors"
-                  >
-                    <XCircle size={14} /> Rejected by Client
-                  </button>
-                  <button
-                    onClick={handleSendEmail}
-                    disabled={sendingEmail}
-                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
-                  </button>
-                  <button
-                    onClick={handleDownloadPdf}
-                    disabled={sendingEmail}
-                    className="hidden md:inline-flex px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {sendingEmail ? '…' : '⬇ Download PDF'}
-                  </button>
-                  {/* Withdraw & Edit — escape hatch, subtle */}
-                  <button
-                    onClick={() => handleAdvanceStatus('draft')}
-                    disabled={advancingStatus}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-slate-400 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                    title="Withdraw and return to draft for editing"
-                  >
-                    <RotateCcw size={12} /> Withdraw
-                  </button>
-                </div>
-              )}
-
-              {/* Step 3 — Rejected: Revise */}
-              {isDisputed && !isField && (
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    onClick={startRevising}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
-                  >
+                  </>
+                )}
+                {isDisputed && !isField && (
+                  <button onClick={startRevising} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm">
                     <ArrowUpRight size={14} /> Revise
                   </button>
-                  <button
-                    onClick={handleSendEmail}
-                    disabled={sendingEmail}
-                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
-                  </button>
-                  <button
-                    onClick={handleDownloadPdf}
-                    disabled={sendingEmail}
-                    className="hidden md:inline-flex px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {sendingEmail ? '…' : '⬇ Download PDF'}
-                  </button>
-                </div>
-              )}
-
-              {/* Step 4 — Approved by Client: Mark as Paid */}
-              {variation.status === 'approved' && !isField && (
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    onClick={() => handleAdvanceStatus('paid')}
-                    disabled={advancingStatus}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
-                  >
+                )}
+                {variation.status === 'approved' && !isField && (
+                  <button onClick={() => handleAdvanceStatus('paid')} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg disabled:opacity-40 transition-colors shadow-sm">
                     <CheckCircle size={14} /> {advancingStatus ? '…' : 'Mark as Paid'}
                   </button>
-                  <button
-                    onClick={handleSendEmail}
-                    disabled={sendingEmail}
-                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
+                )}
+                {/* PDF */}
+                <button onClick={handleDownloadPdf} disabled={sendingEmail} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap">
+                  <FileText size={14} /> {sendingEmail && sendStage === 'idle' ? 'Building…' : 'PDF'}
+                </button>
+                {/* Edit */}
+                {!isField && (
+                  <button onClick={startEditing} className="px-3 py-2 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">Edit</button>
+                )}
+                {/* Withdraw (submitted only) */}
+                {isSubmitted && !isField && (
+                  <button onClick={() => handleAdvanceStatus('draft')} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium text-slate-400 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors" title="Withdraw and return to draft">
+                    <RotateCcw size={12} /> Withdraw
                   </button>
-                  <button
-                    onClick={handleDownloadPdf}
-                    disabled={sendingEmail}
-                    className="hidden md:inline-flex px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {sendingEmail ? '…' : '⬇ Download PDF'}
-                  </button>
-                  {canRevise && (
-                    <button
-                      onClick={startRevising}
-                      className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                    >
-                      ↩ Revise
-                    </button>
-                  )}
-                </div>
-              )}
-
-              {/* Paid / other terminal states */}
-              {variation.status === 'paid' && !isField && (
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    onClick={handleSendEmail}
-                    disabled={sendingEmail}
-                    className="px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {sendingEmail ? 'Preparing…' : '📎 Export & Share PDF'}
-                  </button>
-                  <button
-                    onClick={handleDownloadPdf}
-                    disabled={sendingEmail}
-                    className="hidden md:inline-flex px-3 py-1.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
-                  >
-                    {sendingEmail ? '…' : '⬇ Download PDF'}
-                  </button>
+                )}
+                {/* Delete */}
+                {canDelete && (
+                  <button onClick={() => setShowDeleteConfirm(true)} className="px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap">Delete</button>
+                )}
+              </div>
+              {/* Inline To/CC email input */}
+              {showEmailInput && (
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1">To <span className="text-slate-400 normal-case font-normal">(comma-separate multiple)</span></label>
+                    <input type="text" value={clientEmailInput} onChange={e => setClientEmailInput(e.target.value)} placeholder="client@company.com, engineer@company.com" autoFocus className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md focus:ring-1 focus:ring-indigo-500 outline-none bg-white" />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1">CC <span className="text-slate-400 normal-case font-normal">(optional — internal team)</span></label>
+                    <input type="text" value={ccEmailInput} onChange={e => setCcEmailInput(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && clientEmailInput.trim()) handleSendToClient(clientEmailInput.trim(), ccEmailInput.trim()); }} placeholder="you@yourcompany.com" className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md focus:ring-1 focus:ring-indigo-500 outline-none bg-white" />
+                  </div>
+                  <div className="flex items-center gap-2 pt-1">
+                    <button onClick={() => { if (clientEmailInput.trim()) handleSendToClient(clientEmailInput.trim(), ccEmailInput.trim()); }} disabled={!clientEmailInput.trim() || sendingEmail} className="px-4 py-1.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-40 transition-colors">Send</button>
+                    <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-slate-400 hover:text-slate-600">Cancel</button>
+                  </div>
                 </div>
               )}
             </div>
@@ -1380,6 +1329,64 @@ export default function VariationDetail() {
                 Confirm Rejection
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Send Revision History */}
+      {!isField && varRevisions.length > 0 && (
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] mx-4 md:mx-8 mb-4 max-w-4xl">
+          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Send History</h3>
+          <div className="space-y-2">
+            {varRevisions.map((rev) => (
+              <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-slate-50 rounded-md border border-slate-100">
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#1B365D] px-2 py-0.5 rounded flex-shrink-0">
+                    {rev.revision_number === 0 ? 'Original' : `Rev ${rev.revision_number}`}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-[13px] text-[#1C1C1E] truncate">Sent to {rev.sent_to}</div>
+                    {rev.sent_cc && <div className="text-[11px] text-slate-400 truncate">CC: {rev.sent_cc}</div>}
+                    <div className="text-[11px] text-slate-400">
+                      {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={async () => {
+                    if (!project) return;
+                    setGeneratingRevPdf(rev.revision_number);
+                    try {
+                      const snapVar: Variation = {
+                        ...variation,
+                        title: rev.title || variation.title,
+                        description: rev.description || variation.description,
+                        estimated_value: rev.estimated_value ?? variation.estimated_value,
+                        cost_items: rev.cost_items ?? variation.cost_items,
+                        status: rev.status || variation.status,
+                        client_email: rev.client_email ?? variation.client_email,
+                        response_due_date: rev.response_due_date ?? variation.response_due_date,
+                      };
+                      const { html, css } = getVariationHtmlForPdf(snapVar, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
+                      const blob = await htmlToPdfBlob(html, css);
+                      const { filename } = getVariationEmailMeta(snapVar, project);
+                      const revFilename = filename.replace('.pdf', rev.revision_number > 0 ? `-Rev${rev.revision_number}.pdf` : '-Original.pdf');
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url; a.download = revFilename;
+                      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                      setTimeout(() => URL.revokeObjectURL(url), 10000);
+                    } catch (err) { console.error('Rev PDF failed:', err); }
+                    finally { setGeneratingRevPdf(null); }
+                  }}
+                  disabled={generatingRevPdf === rev.revision_number}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-slate-600 border border-slate-200 rounded-md hover:bg-white transition-colors disabled:opacity-50 flex-shrink-0 ml-3"
+                >
+                  <FileText size={13} />
+                  {generatingRevPdf === rev.revision_number ? 'Building…' : 'PDF'}
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       )}

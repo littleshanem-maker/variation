@@ -92,6 +92,7 @@ export interface Variation {
   eot_days_claimed?: number;
   basis_of_valuation?: 'agreement' | 'contract_rates' | 'daywork' | 'reasonable_rates';
   client_email?: string;
+  cc_emails?: string;
   approval_token?: string;
   approval_token_expires_at?: string;
   client_approval_response?: 'approved' | 'rejected' | null;
@@ -126,6 +127,22 @@ export interface VariationNotice {
   cc_emails?: string;      // comma-separated CC addresses
   created_at: string;
   updated_at: string;
+}
+
+export interface VariationRequestRevision {
+  id: string;
+  variation_id: string;
+  revision_number: number;
+  title?: string;
+  description?: string;
+  estimated_value?: number;
+  cost_items?: Array<{ id: string; description: string; qty: number | ''; unit: string; rate: number | ''; total: number }>;
+  status?: string;
+  client_email?: string;
+  response_due_date?: string;
+  sent_to?: string;
+  sent_cc?: string;
+  sent_at?: string;
 }
 
 export interface NoticeRevision {

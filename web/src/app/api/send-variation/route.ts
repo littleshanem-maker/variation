@@ -14,6 +14,8 @@ export async function POST(req: NextRequest) {
       variationId,
       approvalToken,
       toEmail,
+      toEmails: toEmailsRaw,
+      ccEmails,
       toName,
       pdfBase64,
       filename,
@@ -26,7 +28,9 @@ export async function POST(req: NextRequest) {
     } = await req.json() as {
       variationId: string;
       approvalToken?: string;
-      toEmail: string;
+      toEmail?: string;
+      toEmails?: string[];
+      ccEmails?: string[];
       toName?: string;
       pdfBase64?: string | null;
       filename: string;
@@ -38,7 +42,10 @@ export async function POST(req: NextRequest) {
       sequenceNumber?: number;
     };
 
-    if (!variationId || !toEmail || !subject || !companyName || !senderEmail) {
+    // Support both toEmail (legacy) and toEmails (array)
+    const toEmails = toEmailsRaw ?? (toEmail ? [toEmail] : []);
+
+    if (!variationId || !toEmails.length || !subject || !companyName || !senderEmail) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -137,7 +144,8 @@ export async function POST(req: NextRequest) {
 
     const { data, error } = await resend.emails.send({
       from: fromAddress,
-      to: toEmail,
+      to: toEmails,
+      ...(ccEmails && ccEmails.length > 0 ? { cc: ccEmails } : {}),
       replyTo: senderEmail,
       subject,
       html: htmlBody,
@@ -152,7 +160,7 @@ export async function POST(req: NextRequest) {
     // Update client_email on the variation record
     await createSupabaseBrowserClient()
       .from('variations')
-      .update({ client_email: toEmail })
+      .update({ client_email: toEmails.join(', ') })
       .eq('id', variationId);
 
     return NextResponse.json({ ok: true, id: data?.id });
