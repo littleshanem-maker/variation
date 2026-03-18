@@ -44,12 +44,11 @@ export default function Sidebar() {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return;
-      // Count variations currently in approved/disputed status changed by client via email
+      // Count variations approved or disputed by client (client_approval_response set)
       supabase
-        .from('status_changes')
-        .select('variation_id', { count: 'exact', head: true })
-        .in('to_status', ['approved', 'disputed'])
-        .eq('changed_by', 'client-email')
+        .from('variations')
+        .select('id', { count: 'exact', head: true })
+        .in('client_approval_response', ['approved', 'rejected'])
         .then(({ count }) => setNotifCount(count ?? 0));
     });
   }, [pathname]);
