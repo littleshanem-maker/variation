@@ -1205,7 +1205,11 @@ export default function VariationDetail() {
                     {sc.from_status && <span className="text-[#9CA3AF]">→</span>}
                     <StatusBadge status={sc.to_status} />
                   </div>
-                  {sc.changed_by && <span className="text-[#6B7280]">by {sc.changed_by}</span>}
+                  {sc.changed_by && (
+                    <span className={`text-[12px] ${sc.changed_by === 'client-email' ? 'text-indigo-600 font-medium' : 'text-[#6B7280]'}`}>
+                      {sc.changed_by === 'client-email' ? '🔗 via client email link' : `by ${sc.changed_by}`}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
