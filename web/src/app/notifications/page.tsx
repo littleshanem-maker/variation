@@ -61,7 +61,7 @@ export default function NotificationsPage() {
   return (
     <AppShell>
       <TopBar title="Notifications" />
-      <div className="p-4 md:p-8 max-w-3xl">
+      <div className="p-4 md:p-8 ">
         {loading ? (
           <div className="flex items-center justify-center h-48 text-slate-400 text-sm">Loading…</div>
         ) : notifications.length === 0 ? (

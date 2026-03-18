@@ -172,7 +172,7 @@ function NewRequestForm() {
   return (
     <AppShell>
       <TopBar title="New Variation Request" />
-      <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-2xl">
+      <div className="p-4 md:p-8 space-y-4 md:space-y-5 ">
 
         {/* Back + title */}
         <div>

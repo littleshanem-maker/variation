@@ -63,7 +63,7 @@ export default function NoticesPage() {
   return (
     <AppShell>
       <TopBar title="Variation Notices" />
-      <div className="p-4 md:p-8 space-y-4 max-w-4xl">
+      <div className="p-4 md:p-8 space-y-4 ">
 
         {/* Status tabs */}
         <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide">

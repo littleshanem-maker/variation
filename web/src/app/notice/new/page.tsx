@@ -150,7 +150,7 @@ function NewNoticeForm() {
   return (
     <AppShell>
       <TopBar title="New Variation Notice" />
-      <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-2xl">
+      <div className="p-4 md:p-8 space-y-4 md:space-y-5 ">
         <div>
           <Link
             href={preselectedProjectId ? `/project/${preselectedProjectId}` : '/'}

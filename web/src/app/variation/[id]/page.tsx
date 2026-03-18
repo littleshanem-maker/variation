@@ -613,7 +613,7 @@ export default function VariationDetail() {
   return (
     <AppShell>
       <TopBar title="Variation Request" />
-      <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-4xl">
+      <div className="p-4 md:p-8 space-y-4 md:space-y-5 ">
         {/* Back + Actions */}
         <div className="space-y-3">
           <Link
@@ -1349,7 +1349,7 @@ export default function VariationDetail() {
 
       {/* Send Revision History */}
       {!isField && varRevisions.length > 0 && (
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] mx-4 md:mx-8 mb-4 max-w-4xl">
+        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] mx-4 md:mx-8 mb-4 ">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Send History</h3>
           <div className="space-y-2">
             {varRevisions.map((rev) => (

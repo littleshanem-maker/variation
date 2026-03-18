@@ -511,7 +511,7 @@ export default function NoticeDetail() {
   return (
     <AppShell>
       <TopBar title="Variation Notice" />
-      <div className="p-4 md:p-8 space-y-4 md:space-y-5 max-w-4xl">
+      <div className="p-4 md:p-8 space-y-4 md:space-y-5 ">
         {/* Back + Actions */}
         <div className="space-y-3">
           <Link
