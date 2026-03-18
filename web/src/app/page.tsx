@@ -115,7 +115,7 @@ export default function LandingPage() {
               },
             ].map((p) => (
               <div key={p.n} className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-8">
-                <div className="text-5xl font-black text-red-500/20 mb-4 font-mono">{p.n}</div>
+                <div className="text-xs font-bold tracking-widest uppercase text-indigo-400/60 mb-5">{p.n}</div>
                 <h3 className="text-lg font-bold mb-3">{p.title}</h3>
                 <p className="text-white/50 text-sm leading-relaxed">{p.body}</p>
               </div>
