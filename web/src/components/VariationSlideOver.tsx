@@ -174,13 +174,30 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
               <SheetDescription>{project?.name} · {project?.client}</SheetDescription>
 
               {/* Status banner */}
-              {isSubmitted && (
+              {isSubmitted && !variation.client_approval_response && (
                 <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-[12px] text-amber-700 font-medium">
                   <Lock size={12} className="flex-shrink-0" />
-                  Submitted to client.
+                  Awaiting client response.
                 </div>
               )}
-              {isDisputed && (
+              {isSubmitted && variation.client_approval_response === 'approved' && (
+                <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-lg text-[12px] text-emerald-700 font-medium">
+                  <CheckCircle size={12} className="flex-shrink-0" />
+                  ✅ Approved by client via email link
+                  {variation.client_approved_at && <span className="text-emerald-500 font-normal ml-1">· {new Date(variation.client_approved_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'short' })}</span>}
+                </div>
+              )}
+              {isDisputed && variation.client_approval_response === 'rejected' && (
+                <div className="flex flex-col gap-1 mt-3 px-3 py-2 bg-rose-50 border border-rose-200 rounded-lg text-[12px] text-rose-700 font-medium">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle size={12} className="flex-shrink-0" />
+                    ❌ Rejected by client via email link
+                    {variation.client_approved_at && <span className="text-rose-400 font-normal">· {new Date(variation.client_approved_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'short' })}</span>}
+                  </div>
+                  {variation.client_approval_comment && <div className="text-[11px] text-rose-600 font-normal pl-4">"{variation.client_approval_comment}"</div>}
+                </div>
+              )}
+              {isDisputed && !variation.client_approval_response && (
                 <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-rose-50 border border-rose-200 rounded-lg text-[12px] text-rose-700 font-medium">
                   <AlertTriangle size={12} className="flex-shrink-0" />
                   Disputed — revise and resubmit.

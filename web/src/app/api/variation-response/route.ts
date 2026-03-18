@@ -1,20 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createBrowserClient } from '@/lib/supabase';
+import { Resend } from 'resend';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.leveragedsystems.com.au';
+const FROM_DOMAIN = process.env.RESEND_FROM_DOMAIN || 'leveragedsystems.com.au';
+const resend = new Resend(process.env.RESEND_API_KEY || 'test_key_placeholder');
 
-async function sendTelegramNotification(message: string) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId) return;
+async function notifyPM(opts: {
+  toEmail: string;
+  varRef: string;
+  projectName: string;
+  action: 'approved' | 'rejected';
+  comment?: string;
+  variationId: string;
+}) {
+  const { toEmail, varRef, projectName, action, comment, variationId } = opts;
+  if (!toEmail || !process.env.RESEND_API_KEY) return;
+
+  const subject = action === 'approved'
+    ? `✅ ${varRef} approved by client — ${projectName}`
+    : `❌ ${varRef} rejected by client — ${projectName}`;
+
+  const bodyHtml = action === 'approved'
+    ? `<p>Good news — <strong>${varRef}</strong> has been <strong style="color:#16a34a;">approved by the client</strong> via the email link.</p>
+       <p>Project: ${projectName}</p>
+       <p><a href="${APP_URL}/variation/${variationId}" style="color:#4f46e5;">View variation →</a></p>
+       <p style="color:#6b7280;font-size:12px;">Log in to mark as paid when the invoice is raised.</p>`
+    : `<p><strong>${varRef}</strong> has been <strong style="color:#dc2626;">rejected by the client</strong> via the email link.</p>
+       <p>Project: ${projectName}</p>
+       ${comment ? `<p>Reason: <em>"${comment}"</em></p>` : ''}
+       <p><a href="${APP_URL}/variation/${variationId}" style="color:#4f46e5;">View variation →</a></p>
+       <p style="color:#6b7280;font-size:12px;">Log in to revise and resubmit.</p>`;
+
   try {
-    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: chatId, text: message }),
+    await resend.emails.send({
+      from: `Variation Shield <noreply@${FROM_DOMAIN}>`,
+      to: toEmail,
+      subject,
+      html: `<!DOCTYPE html><html><body style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:32px;">${bodyHtml}</body></html>`,
     });
-  } catch {
-    // Never block response on notification failure
+  } catch (err) {
+    console.error('[variation-response] PM notify error:', err);
   }
 }
 
@@ -30,10 +56,9 @@ export async function GET(req: NextRequest) {
 
   const supabase = createBrowserClient();
 
-  // Look up variation by token
   const { data: variation, error } = await supabase
     .from('variations')
-    .select('id, variation_number, sequence_number, status, approval_token_expires_at, client_approval_response, projects(name, client)')
+    .select('id, variation_number, sequence_number, status, approval_token_expires_at, client_approval_response, requestor_email, projects(name, client)')
     .eq('approval_token', token)
     .single();
 
@@ -41,7 +66,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${APP_URL}/variation-response/expired`);
   }
 
-  // Check expiry
   const expiresAt = variation.approval_token_expires_at ? new Date(variation.approval_token_expires_at) : null;
   if (expiresAt && expiresAt < new Date()) {
     return NextResponse.redirect(`${APP_URL}/variation-response/expired`);
@@ -50,9 +74,9 @@ export async function GET(req: NextRequest) {
   const varRef = variation.variation_number ?? `VAR-${String(variation.sequence_number).padStart(3, '0')}`;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const proj = Array.isArray(variation.projects) ? (variation.projects as any[])[0] : (variation.projects as any);
+  const projectName = proj?.name ?? 'Unknown Project';
 
   if (action === 'approve') {
-    // Update variation immediately
     await supabase
       .from('variations')
       .update({
@@ -62,7 +86,6 @@ export async function GET(req: NextRequest) {
       })
       .eq('approval_token', token);
 
-    // Log status change
     await supabase.from('status_changes').insert({
       variation_id: variation.id,
       from_status: variation.status,
@@ -71,18 +94,20 @@ export async function GET(req: NextRequest) {
       note: 'Approved via email link',
     });
 
-    // Notify Shane
-    const projectName = proj?.name ?? 'Unknown Project';
-    const clientName = proj?.client ?? '';
-    await sendTelegramNotification(
-      `✅ *${varRef} approved by client*\nProject: ${projectName}${clientName ? ` (${clientName})` : ''}\n\nLog in to mark as paid when invoice is raised.`
-    );
+    // Email the PM
+    if (variation.requestor_email) {
+      await notifyPM({
+        toEmail: variation.requestor_email,
+        varRef, projectName,
+        action: 'approved',
+        variationId: variation.id,
+      });
+    }
 
     return NextResponse.redirect(`${APP_URL}/variation-response/approved?ref=${encodeURIComponent(varRef)}`);
   }
 
   if (action === 'reject') {
-    // Redirect to reject form page (needs a comment)
     return NextResponse.redirect(
       `${APP_URL}/variation-response/reject?token=${token}&ref=${encodeURIComponent(varRef)}`
     );
@@ -104,7 +129,7 @@ export async function POST(req: NextRequest) {
 
     const { data: variation, error } = await supabase
       .from('variations')
-      .select('id, variation_number, sequence_number, status, approval_token_expires_at, projects(name, client)')
+      .select('id, variation_number, sequence_number, status, approval_token_expires_at, requestor_email, projects(name, client)')
       .eq('approval_token', token)
       .single();
 
@@ -120,6 +145,7 @@ export async function POST(req: NextRequest) {
     const varRef = variation.variation_number ?? `VAR-${String(variation.sequence_number).padStart(3, '0')}`;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const proj = Array.isArray(variation.projects) ? (variation.projects as any[])[0] : (variation.projects as any);
+    const projectName = proj?.name ?? 'Unknown Project';
 
     await supabase
       .from('variations')
@@ -139,11 +165,16 @@ export async function POST(req: NextRequest) {
       note: comment ? `Rejected via email: ${comment}` : 'Rejected via email link',
     });
 
-    const projectName = proj?.name ?? 'Unknown Project';
-    const clientName = proj?.client ?? '';
-    await sendTelegramNotification(
-      `❌ *${varRef} rejected by client*\nProject: ${projectName}${clientName ? ` (${clientName})` : ''}${comment ? `\nReason: "${comment}"` : ''}\n\nLog in to revise and resubmit.`
-    );
+    // Email the PM
+    if (variation.requestor_email) {
+      await notifyPM({
+        toEmail: variation.requestor_email,
+        varRef, projectName,
+        action: 'rejected',
+        comment,
+        variationId: variation.id,
+      });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (err) {
