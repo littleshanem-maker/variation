@@ -30,7 +30,7 @@ export default function LandingPage() {
           <a href="#features" className="hover:text-white transition-colors">Features</a>
           <a href="#how-it-works" className="hover:text-white transition-colors">How it works</a>
           <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-          <Link href="https://leveragedsystems.com.au/calculator.html" className="hover:text-white transition-colors">ROI Calculator</Link>
+          <Link href="/calculator" className="hover:text-white transition-colors">ROI Calculator</Link>
         </div>
         <div className="flex items-center gap-3">
           <Link href="/login" className="text-sm text-white/60 hover:text-white transition-colors hidden md:block">Login</Link>
