@@ -179,15 +179,41 @@ export default function LandingPage() {
           </div>
           <div className="grid md:grid-cols-2 gap-5">
             {[
-              { icon: '📸', title: '60-Second Capture', body: 'Photo, description, cost breakdown. Captured on site before you walk to the next task. Time-stamped automatically.' },
-              { icon: '📧', title: 'Send to Client', body: 'Professional variation requests sent directly from the app via email. Client approves or rejects with one click — tracked in your dashboard.' },
-              { icon: '🖨️', title: 'Print-Ready PDFs', body: 'Variation registers and requests that look like they came from a Tier 1 contractor. The kind the client\'s commercial team processes first.' },
-              { icon: '👷', title: 'Field + Office Roles', body: 'Supervisors capture on site — no dollar values visible. PMs see everything in the office dashboard. Right information to the right people.' },
-              { icon: '📶', title: 'Works Offline', body: 'No site Wi-Fi? No problem. Capture offline, sync automatically when you\'re back in range. Nothing gets lost.' },
-              { icon: '📊', title: 'Real-Time Dashboard', body: 'Every variation across every project — approved, submitted, disputed — at a glance. Know exactly where your money stands.' },
+              {
+                title: '60-Second Capture',
+                body: 'Photo, description, cost breakdown. Captured on site before you walk to the next task. Time-stamped automatically.',
+                icon: <svg width="20" height="20" fill="none" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>,
+              },
+              {
+                title: 'Send to Client',
+                body: 'Professional variation requests sent directly from the app via email. Client approves or rejects with one click — tracked in your dashboard.',
+                icon: <svg width="20" height="20" fill="none" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
+              },
+              {
+                title: 'Print-Ready PDFs',
+                body: "Variation registers and requests that look like they came from a Tier 1 contractor. The kind the client's commercial team processes first.",
+                icon: <svg width="20" height="20" fill="none" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>,
+              },
+              {
+                title: 'Field + Office Roles',
+                body: 'Supervisors capture on site — no dollar values visible. PMs see everything in the office dashboard. Right information to the right people.',
+                icon: <svg width="20" height="20" fill="none" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+              },
+              {
+                title: 'Works Offline',
+                body: "No site Wi-Fi? No problem. Capture offline, sync automatically when you're back in range. Nothing gets lost.",
+                icon: <svg width="20" height="20" fill="none" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>,
+              },
+              {
+                title: 'Real-Time Dashboard',
+                body: 'Every variation across every project — approved, submitted, disputed — at a glance. Know exactly where your money stands.',
+                icon: <svg width="20" height="20" fill="none" stroke="#818cf8" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
+              },
             ].map((f) => (
-              <div key={f.title} className="bg-white/[0.03] hover:bg-white/[0.05] border border-white/[0.08] rounded-2xl p-7 transition-colors">
-                <div className="text-2xl mb-4">{f.icon}</div>
+              <div key={f.title} className="bg-white/[0.03] hover:bg-white/[0.05] border border-white/[0.08] rounded-2xl p-7 text-center flex flex-col items-center transition-colors">
+                <div className="w-11 h-11 rounded-xl bg-indigo-600/15 border border-indigo-500/20 flex items-center justify-center mb-5">
+                  {f.icon}
+                </div>
                 <h3 className="font-bold text-base mb-2">{f.title}</h3>
                 <p className="text-white/50 text-sm leading-relaxed">{f.body}</p>
               </div>
