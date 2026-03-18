@@ -663,7 +663,7 @@ export default function VariationDetail() {
                 )}
                 {isDisputed && !isField && (
                   <button onClick={startRevising} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm">
-                    <ArrowUpRight size={14} /> Revise
+                    <ArrowUpRight size={14} /> Revise &amp; Resubmit
                   </button>
                 )}
                 {variation.status === 'approved' && !isField && (
@@ -675,8 +675,8 @@ export default function VariationDetail() {
                 <button onClick={handleDownloadPdf} disabled={sendingEmail} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap">
                   <FileText size={14} /> {sendingEmail && sendStage === 'idle' ? 'Building…' : 'PDF'}
                 </button>
-                {/* Edit */}
-                {!isField && (
+                {/* Edit — hidden when disputed */}
+                {!isField && !isDisputed && (
                   <button onClick={startEditing} className="px-3 py-2 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">Edit</button>
                 )}
                 {/* Withdraw (submitted only) */}
