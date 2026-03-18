@@ -135,7 +135,7 @@ function JoinForm() {
     }
 
     // Redirect to dashboard
-    router.push('/');
+    router.push('/dashboard');
     router.refresh();
   }
 
@@ -168,7 +168,7 @@ function JoinForm() {
       return;
     }
 
-    router.push('/');
+    router.push('/dashboard');
     router.refresh();
   }
 

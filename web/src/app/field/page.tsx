@@ -68,7 +68,7 @@ export default function FieldHome() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!roleLoading && !isField) router.replace('/');
+    if (!roleLoading && !isField) router.replace('/dashboard');
   }, [isField, roleLoading]);
 
   useEffect(() => { loadData(); }, []);

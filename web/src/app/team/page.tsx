@@ -51,7 +51,7 @@ export default function TeamPage() {
   useEffect(() => {
     if (roleLoading) return;
     if (!isAdmin) {
-      router.push('/');
+      router.push('/dashboard');
       return;
     }
     if (companyId) {

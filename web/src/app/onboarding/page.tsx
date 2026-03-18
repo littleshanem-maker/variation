@@ -349,7 +349,7 @@ export default function OnboardingPage() {
                 {creatingProject ? 'Creating…' : 'Create project →'}
               </button>
               <button
-                onClick={() => router.push('/')}
+                onClick={() => router.push('/dashboard')}
                 className="w-full py-2.5 rounded-lg text-sm font-medium"
                 style={{ color: '#6B7280', backgroundColor: 'transparent' }}
               >

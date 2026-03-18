@@ -69,7 +69,7 @@ function ProjectDetailContent() {
     const supabase = createClient();
     const { error } = await supabase.from('projects').delete().eq('id', project.id);
     if (!error) {
-      router.push('/');
+      router.push('/dashboard');
     } else {
       setDeleting(false);
       setShowDeleteConfirm(false);
@@ -94,7 +94,7 @@ function ProjectDetailContent() {
     const supabase = createClient();
     const { error } = await supabase.from('projects').update({ is_active: false }).eq('id', project.id);
     if (!error) {
-      router.push('/');
+      router.push('/dashboard');
     } else {
       setArchiving(false);
       setShowArchiveConfirm(false);
