@@ -44,12 +44,18 @@ export default function Sidebar() {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return;
-      // Count variations approved or disputed by client (client_approval_response set)
+      // Count unseen client responses (exclude IDs stored in localStorage)
       supabase
         .from('variations')
-        .select('id', { count: 'exact', head: true })
+        .select('id')
         .in('client_approval_response', ['approved', 'rejected'])
-        .then(({ count }) => setNotifCount(count ?? 0));
+        .then(({ data }) => {
+          if (!data) return;
+          try {
+            const seen = new Set(JSON.parse(localStorage.getItem('vs_seen_notifications') || '[]'));
+            setNotifCount(data.filter((v: any) => !seen.has(v.id)).length);
+          } catch { setNotifCount(data.length); }
+        });
     });
   }, [pathname]);
 
