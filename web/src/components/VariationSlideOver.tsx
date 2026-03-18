@@ -317,40 +317,22 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
             <SheetFooter className="flex-col items-stretch gap-2">
               {/* Step 1: Draft */}
               {isDraft && !showDisputeInput && (
-                <>
-                  <button
-                    onClick={() => advanceStatus('submitted')}
-                    disabled={acting}
-                    className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[14px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm"
-                  >
-                    <ArrowUpRight size={15} />
-                    {acting ? 'Saving…' : 'Mark as Submitted'}
-                  </button>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Link
-                      href={`/variation/${variation.id}`}
-                      className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
-                      onClick={onClose}
-                    >
-                      <Pencil size={13} /> Edit
-                    </Link>
-                    <button
-                      onClick={handleSendPdf}
-                      disabled={sendingPdf}
-                      className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-lg hover:bg-indigo-100 disabled:opacity-50 transition-colors"
-                    >
-                      <FileText size={13} />
-                      {sendingPdf ? 'Building…' : 'PDF / Send'}
-                    </button>
-                  </div>
+                <div className="grid grid-cols-2 gap-2">
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1 text-[12px] text-slate-400 hover:text-slate-700 transition-colors py-1"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                     onClick={onClose}
                   >
-                    Full detail <ArrowUpRight size={12} />
+                    <ArrowUpRight size={14} /> View Variation
                   </Link>
-                </>
+                  <Link
+                    href={`/variation/${variation.id}`}
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+                    onClick={onClose}
+                  >
+                    <Pencil size={14} /> Revise &amp; Resubmit
+                  </Link>
+                </div>
               )}
 
               {/* Step 2: Submitted */}
