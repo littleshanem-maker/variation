@@ -347,36 +347,38 @@ function CapturePageContent() {
 
   // ── SUCCESS OVERLAY — shown over the form ───────────────────
   const SuccessOverlay = result ? (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm px-4 pb-8">
-      <div className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden">
-        {/* Green header */}
-        <div className="bg-emerald-500 px-6 pt-8 pb-6 text-center">
-          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-5">
+      <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden">
+        {/* Compact success row */}
+        <div className="bg-emerald-500 px-5 py-5 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 6 9 17l-5-5"/>
             </svg>
           </div>
-          <h2 className="text-white font-bold text-xl mb-1">Notice Captured</h2>
-          <p className="text-emerald-100 text-sm">
-            {new Date(result.capturedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short' })}
-          </p>
+          <div>
+            <div className="text-white font-bold text-[16px] leading-tight">Notice Captured</div>
+            <div className="text-emerald-100 text-[12px] mt-0.5">
+              {new Date(result.capturedAt).toLocaleString('en-AU', { timeStyle: 'short', dateStyle: 'short' })}
+            </div>
+          </div>
         </div>
         {/* Detail */}
-        <div className="px-6 py-5 text-center border-b border-slate-100">
-          <div className="text-2xl font-bold text-slate-900 mb-1">{result.variationNumber}</div>
-          <div className="text-sm text-slate-500">{result.projectName}</div>
+        <div className="px-5 py-4 text-center border-b border-slate-100">
+          <div className="text-[22px] font-bold text-slate-900">{result.variationNumber}</div>
+          <div className="text-[13px] text-slate-500 mt-0.5">{result.projectName}</div>
         </div>
         {/* Actions */}
-        <div className="px-6 py-5 flex flex-col gap-3">
+        <div className="px-5 py-4 flex flex-col gap-2">
           <button
             onClick={handleCaptureAnother}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl text-base transition-colors"
+            className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl text-[15px] transition-colors active:bg-indigo-700"
           >
             Capture Another
           </button>
           <Link
             href={`/notice/${result.variationId}`}
-            className="block w-full text-center text-slate-500 font-medium py-3 text-sm"
+            className="block w-full text-center text-slate-400 font-medium py-2 text-[13px]"
           >
             View Notice →
           </Link>
