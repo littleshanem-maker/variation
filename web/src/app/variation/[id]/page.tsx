@@ -509,6 +509,35 @@ export default function VariationDetail() {
       setSuccessMsg(`Email sent to ${sentTo}${pdfBase64 ? ' with PDF' : ''}`);
       setTimeout(() => setSuccessMsg(null), 5000);
 
+      // Save sent emails to client_contacts for future autofill (client-side — needs auth session)
+      if (company?.id) {
+        const supabase = createClient();
+        const allSent = [...toList, ...ccList];
+        for (const email of allSent) {
+          if (!email || !email.includes('@')) continue;
+          const cleanEmail = email.toLowerCase().trim();
+          const { data: existing } = await supabase
+            .from('client_contacts')
+            .select('id, use_count')
+            .eq('company_id', company.id)
+            .eq('email', cleanEmail)
+            .single();
+          if (existing) {
+            await supabase.from('client_contacts').update({
+              use_count: (existing.use_count || 1) + 1,
+              last_used: new Date().toISOString(),
+            }).eq('id', existing.id);
+          } else {
+            await supabase.from('client_contacts').insert({
+              company_id: company.id,
+              email: cleanEmail,
+              use_count: 1,
+              last_used: new Date().toISOString(),
+            });
+          }
+        }
+      }
+
       // Reload to get fresh revision list + variation state
       await loadVariation();
     } catch (err) {

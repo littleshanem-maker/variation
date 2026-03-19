@@ -669,7 +669,7 @@ function buildNoticeHtml(
         ${VS_LOGO_SVG_16}
         <span>Variation Shield</span>
       </div>
-      <div>${escapeHtml(notice.notice_number)}${(notice.revision_number ?? 0) > 0 ? ` Rev ${notice.revision_number}` : ''} · ${escapeHtml(project.name)}</div>
+      <div>${escapeHtml(notice.notice_number)}${(notice.revision_number ?? 0) > 0 ? ` Rev ${notice.revision_number}` : ''}</div>
     </div>
   `;
 }
@@ -1003,7 +1003,7 @@ function buildVariationHtml(
         ${VS_LOGO_SVG_16}
         <span>Variation Shield</span>
       </div>
-      <div>${escapeHtml(varNumber)} · Ref: ${variation.evidence_hash?.substring(0,8) || ''}</div>
+      <div>${escapeHtml(varNumber)}${(variation.revision_number ?? 0) > 0 ? ` Rev ${variation.revision_number}` : ''}</div>
     </div>
   `;
 }

@@ -164,48 +164,7 @@ export async function POST(req: NextRequest) {
       .update({ client_email: toEmails.join(', ') })
       .eq('id', variationId);
 
-    // Save sent-to emails to client_contacts for future autofill
-    try {
-      const { data: varData } = await supabase
-        .from('variations')
-        .select('project_id')
-        .eq('id', variationId)
-        .single();
-      if (varData?.project_id) {
-        const { data: projectData } = await supabase
-          .from('projects')
-          .select('company_id')
-          .eq('id', varData.project_id)
-          .single();
-        if (projectData?.company_id) {
-          const allEmails = [...toEmails, ...(ccEmails || [])];
-          for (const email of allEmails) {
-            if (!email || !email.includes('@')) continue;
-            const cleanEmail = email.toLowerCase().trim();
-            // Try upsert — if row exists, update last_used; use_count handled by DB trigger or manual update
-            const { data: existing } = await supabase
-              .from('client_contacts')
-              .select('id, use_count')
-              .eq('company_id', projectData.company_id)
-              .eq('email', cleanEmail)
-              .single();
-            if (existing) {
-              await supabase.from('client_contacts').update({
-                use_count: (existing.use_count || 1) + 1,
-                last_used: new Date().toISOString(),
-              }).eq('id', existing.id);
-            } else {
-              await supabase.from('client_contacts').insert({
-                company_id: projectData.company_id,
-                email: cleanEmail,
-                use_count: 1,
-                last_used: new Date().toISOString(),
-              });
-            }
-          }
-        }
-      }
-    } catch { /* non-fatal — don't break send */ }
+    // Note: client_contacts saved client-side after successful send (needs auth session for RLS)
 
     return NextResponse.json({ ok: true, id: data?.id });
   } catch (err) {
