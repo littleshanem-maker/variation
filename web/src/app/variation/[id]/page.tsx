@@ -1423,7 +1423,8 @@ export default function VariationDetail() {
                         description: rev.description || variation.description,
                         estimated_value: rev.estimated_value ?? variation.estimated_value,
                         cost_items: rev.cost_items ?? variation.cost_items,
-                        status: rev.status || variation.status,
+                        status: 'submitted', // snapshot = what was sent = always submitted
+                        revision_number: rev.revision_number, // use snapshot's revision number
                         client_email: rev.client_email ?? variation.client_email,
                         response_due_date: rev.response_due_date ?? variation.response_due_date,
                       };
