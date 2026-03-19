@@ -21,14 +21,14 @@ export default function LandingPage() {
 
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0F1117]/90 backdrop-blur border-b border-white/[0.06]">
-        <Link href="https://variationshield.com.au" className="flex items-center gap-2.5">
+        <a href="https://variationshield.com.au" className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
           </div>
           <span className="font-bold text-[15px] tracking-tight">Variation Shield</span>
-        </Link>
+        </a>
         <div className="flex items-center gap-6">
           <div className="hidden md:flex items-center gap-6 text-sm text-white/60">
             <a href="#features" className="hover:text-white transition-colors">Features</a>
@@ -38,9 +38,9 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm font-semibold text-white/80 hover:text-white border border-white/20 hover:border-white/40 px-4 py-2 rounded-lg transition-all hidden md:block">Login</Link>
-            <Link href="/signup" className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors hidden md:block">
+            <a href="https://buy.stripe.com/fZufZh10hb7Y2KwdhdfrW01" className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors hidden md:block">
               Get Started
-            </Link>
+            </a>
             <MobileMenuButton />
           </div>
         </div>
@@ -70,10 +70,10 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/signup" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/25">
+            <a href="https://buy.stripe.com/fZufZh10hb7Y2KwdhdfrW01" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/25">
               Get Started — 30-Day Guarantee
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </Link>
+            </a>
             <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors">
               Book a 15-min Demo
             </DemoButton>
@@ -284,10 +284,10 @@ export default function LandingPage() {
               ))}
             </ul>
 
-            <Link href="/signup" className="flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/20">
+            <a href="https://buy.stripe.com/fZufZh10hb7Y2KwdhdfrW01" className="flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/20">
               Get Started — 30-Day Guarantee
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </Link>
+            </a>
             <p className="text-center text-white/30 text-xs mt-3">30-day money-back guarantee</p>
           </div>
 
@@ -307,10 +307,10 @@ export default function LandingPage() {
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Stop leaving money on the table</h2>
           <p className="text-white/50 text-lg mb-10">Set up in 5 minutes. Capture your first variation today.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/signup" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/25">
+            <a href="https://buy.stripe.com/fZufZh10hb7Y2KwdhdfrW01" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/25">
               Get Started — 30-Day Guarantee
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </Link>
+            </a>
             <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors">
               Book a Demo
             </DemoButton>
@@ -333,7 +333,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-6">
             <Link href="/login" className="hover:text-white/60 transition-colors">Login</Link>
-            <Link href="/signup" className="hover:text-white/60 transition-colors">Sign Up</Link>
+            <a href="https://buy.stripe.com/fZufZh10hb7Y2KwdhdfrW01" className="hover:text-white/60 transition-colors">Sign Up</a>
             <a href="https://leveragedsystems.com.au" className="hover:text-white/60 transition-colors">Leveraged Systems</a>
           </div>
           <div>© 2026 Leveraged Systems. All rights reserved.</div>
