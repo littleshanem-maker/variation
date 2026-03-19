@@ -131,28 +131,7 @@ export default function Sidebar() {
           })}
         </nav>
 
-        {/* Trial countdown */}
-        {company?.created_at && (() => {
-          const trialEnd = new Date(company.created_at);
-          trialEnd.setDate(trialEnd.getDate() + 30);
-          const daysLeft = Math.ceil((trialEnd.getTime() - Date.now()) / 86400000);
-          const isExpiring = daysLeft <= 7;
-          const isExpired = daysLeft <= 0;
-          if (isExpired) return (
-            <div className="mx-4 mb-3 px-3 py-2.5 rounded-lg bg-rose-900/30 border border-rose-700/40">
-              <div className="text-[11px] font-semibold text-rose-400">Trial expired</div>
-              <div className="text-[10px] text-rose-400/70 mt-0.5">Contact us to continue</div>
-            </div>
-          );
-          return (
-            <div className={`mx-4 mb-3 px-3 py-2.5 rounded-lg ${isExpiring ? 'bg-amber-900/30 border border-amber-700/40' : 'bg-white/[0.04] border border-white/[0.06]'}`}>
-              <div className={`text-[11px] font-semibold ${isExpiring ? 'text-amber-400' : 'text-white/50'}`}>
-                {daysLeft} day{daysLeft !== 1 ? 's' : ''} left in trial
-              </div>
-              <div className={`text-[10px] mt-0.5 ${isExpiring ? 'text-amber-400/70' : 'text-white/30'}`}>30-day free trial</div>
-            </div>
-          );
-        })()}
+
         {/* Footer */}
         <div className="px-3 py-4 space-y-1">
           <button
