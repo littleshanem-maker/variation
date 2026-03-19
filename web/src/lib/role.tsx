@@ -71,7 +71,8 @@ export function RoleProvider({ children }: { children: ReactNode }) {
       .from('company_members')
       .select('id, company_id, user_id, role, is_active, invited_at, accepted_at')
       .eq('user_id', session.user.id)
-      .eq('is_active', true);
+      .eq('is_active', true)
+      .order('accepted_at', { ascending: false, nullsFirst: false });
 
     if (memberError) {
       console.error('Failed to fetch memberships:', memberError);
@@ -93,7 +94,18 @@ export function RoleProvider({ children }: { children: ReactNode }) {
 
     const companyMap = new Map((companyData || []).map((c: any) => [c.id, c]));
 
-    const mapped: CompanyMembership[] = memberData.map((m: any) => ({
+    const roleRank: Record<string, number> = { admin: 3, office: 2, field: 1 };
+
+    // Deduplicate by company_id — keep highest role per company
+    const bestByCompany = new Map<string, any>();
+    for (const m of memberData) {
+      const existing = bestByCompany.get(m.company_id);
+      if (!existing || (roleRank[m.role] ?? 0) > (roleRank[existing.role] ?? 0)) {
+        bestByCompany.set(m.company_id, m);
+      }
+    }
+
+    const mapped: CompanyMembership[] = [...bestByCompany.values()].map((m: any) => ({
       id: m.id,
       company_id: m.company_id,
       user_id: m.user_id,
