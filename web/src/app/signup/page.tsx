@@ -23,6 +23,9 @@ export default function SignupPage() {
 
     const supabase = createClient();
 
+    // Sign out any existing session first to avoid company cross-contamination
+    await supabase.auth.signOut();
+
     // 1. Create auth user
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,

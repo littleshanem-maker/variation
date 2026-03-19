@@ -194,7 +194,7 @@ export default function OnboardingPage() {
                   className={inputClass}
                   onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
                   onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
-                  placeholder="e.g. GEM Fire Service Pty Ltd"
+                  placeholder="e.g. Company Pty Ltd"
                   autoFocus
                 />
               </div>
@@ -276,7 +276,7 @@ export default function OnboardingPage() {
                 onClick={handleSaveAndNext}
                 disabled={saving || !companyName.trim()}
                 className="w-full py-3 rounded-lg text-sm font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ backgroundColor: '#1B365D' }}
+                style={{ backgroundColor: '#4f46e5' }}
                 onMouseEnter={e => { if (!saving) (e.currentTarget).style.backgroundColor = '#24466F'; }}
                 onMouseLeave={e => { (e.currentTarget).style.backgroundColor = '#1B365D'; }}
               >
@@ -342,7 +342,7 @@ export default function OnboardingPage() {
                 onClick={handleCreateProject}
                 disabled={creatingProject || !projectName.trim()}
                 className="w-full py-3 rounded-lg text-sm font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ backgroundColor: '#1B365D' }}
+                style={{ backgroundColor: '#4f46e5' }}
                 onMouseEnter={e => { if (!creatingProject) (e.currentTarget).style.backgroundColor = '#24466F'; }}
                 onMouseLeave={e => { (e.currentTarget).style.backgroundColor = '#1B365D'; }}
               >
