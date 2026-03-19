@@ -453,8 +453,8 @@ export default function VariationDetail() {
       });
       if (snapError) throw new Error(`Revision save failed: ${snapError.message}`);
 
-      // Generate PDF — use patched variation with correct revision number
-      const variationForPdf = { ...variation, revision_number: newRevision };
+      // Generate PDF — use patched variation with correct revision number and status
+      const variationForPdf = { ...variation, revision_number: newRevision, status: 'submitted' };
       let pdfBase64: string | null = null;
       try {
         setSendStage('pdf');
