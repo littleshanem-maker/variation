@@ -1,19 +1,31 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
 import Logo from '@/components/Logo';
 
-export default function SignupPage() {
+const STRIPE_CHECKOUT = 'https://buy.stripe.com/fZufZh10hb7Y2KwdhdfrW01';
+
+function SignupContent() {
+  const [mode, setMode] = useState<'choose' | 'form'>('choose');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [paid, setPaid] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get('paid') === 'true') {
+      setPaid(true);
+      setMode('form');
+    }
+  }, [searchParams]);
 
   async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
@@ -22,17 +34,12 @@ export default function SignupPage() {
     setError(null);
 
     const supabase = createClient();
-
-    // Sign out any existing session first to avoid company cross-contamination
     await supabase.auth.signOut();
 
-    // 1. Create auth user
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { full_name: fullName.trim() },
-      },
+      options: { data: { full_name: fullName.trim() } },
     });
 
     if (authError) {
@@ -48,7 +55,6 @@ export default function SignupPage() {
       return;
     }
 
-    // 2 & 3. Create company + membership via server-side RPC (bypasses RLS)
     const companyId = crypto.randomUUID();
     const { error: provisionError } = await supabase.rpc('provision_new_account', {
       p_company_id: companyId,
@@ -61,7 +67,6 @@ export default function SignupPage() {
       return;
     }
 
-    // 4. Redirect to onboarding
     router.push('/onboarding');
     router.refresh();
   }
@@ -86,83 +91,135 @@ export default function SignupPage() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <Logo size={64} className="mb-5" />
-          <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#1C1C1E' }}>
-            Create your account
+          <h1 className="text-2xl font-semibold tracking-tight text-center" style={{ color: '#1C1C1E' }}>
+            {mode === 'form' ? 'Create your account' : 'Get started'}
           </h1>
-          <p className="text-sm mt-1.5" style={{ color: '#6B7280' }}>
-            Start capturing variations in 60 seconds
+          <p className="text-sm mt-1.5 text-center" style={{ color: '#6B7280' }}>
+            {mode === 'form' ? 'Start capturing variations in 60 seconds' : 'Choose how you want to get started'}
           </p>
         </div>
 
-        {/* Error */}
-        {error && (
-          <div className="mb-5 px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B25B4E' }}>
-            {error}
+        {mode === 'choose' && (
+          <div className="space-y-3">
+            {/* Subscribe option */}
+            <a
+              href={STRIPE_CHECKOUT}
+              className="block w-full rounded-xl text-white text-sm font-semibold text-center transition-colors"
+              style={{ backgroundColor: '#1B365D', padding: '16px 20px' }}
+            >
+              <div className="text-base font-bold mb-0.5">Subscribe — $299/mo</div>
+              <div className="text-xs font-normal" style={{ color: 'rgba(255,255,255,0.6)' }}>
+                Founding rate · locked for life · 30-day guarantee
+              </div>
+            </a>
+
+            <div className="flex items-center gap-3 py-1">
+              <div className="flex-1 h-px" style={{ backgroundColor: '#D1D5DB' }} />
+              <span className="text-xs" style={{ color: '#9CA3AF' }}>or</span>
+              <div className="flex-1 h-px" style={{ backgroundColor: '#D1D5DB' }} />
+            </div>
+
+            {/* Trial/invited option */}
+            <button
+              onClick={() => setMode('form')}
+              className="block w-full rounded-xl text-sm font-semibold text-center transition-colors"
+              style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', padding: '16px 20px', color: '#1C1C1E' }}
+            >
+              <div className="font-bold mb-0.5">I have trial access</div>
+              <div className="text-xs font-normal" style={{ color: '#6B7280' }}>
+                Invited by a team member or given direct access
+              </div>
+            </button>
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleSignup} className="space-y-4">
-          <div>
-            <input
-              type="text"
-              value={fullName}
-              onChange={e => setFullName(e.target.value)}
-              style={inputBase}
-              onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-              onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
-              placeholder="Full name"
-              required
-              autoFocus
-            />
-          </div>
-          <div>
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              style={inputBase}
-              onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-              onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
-              placeholder="Work email"
-              required
-            />
-          </div>
-          <div className="relative">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              style={{ ...inputBase, paddingRight: '48px' }}
-              onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-              onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
-              placeholder="Password (min. 6 characters)"
-              minLength={6}
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(v => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium"
-              style={{ color: '#6B7280' }}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
+        {mode === 'form' && (
+          <>
+            {paid && (
+              <div className="mb-5 px-4 py-3 rounded-lg text-sm flex items-center gap-2" style={{ backgroundColor: '#F0FDF4', border: '1px solid rgba(34,197,94,0.2)', color: '#16a34a' }}>
+                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+                Payment confirmed — create your account below
+              </div>
+            )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-50"
-            style={{ backgroundColor: loading ? '#1B365D' : '#1B365D' }}
-            onMouseEnter={e => { if (!loading) (e.target as HTMLElement).style.backgroundColor = '#24466F'; }}
-            onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#1B365D'; }}
-          >
-            {loading ? 'Creating account…' : 'Create account'}
-          </button>
-        </form>
+            {error && (
+              <div className="mb-5 px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B25B4E' }}>
+                {error}
+              </div>
+            )}
 
-        {/* Login link */}
+            <form onSubmit={handleSignup} className="space-y-4">
+              <div>
+                <input
+                  type="text"
+                  value={fullName}
+                  onChange={e => setFullName(e.target.value)}
+                  style={inputBase}
+                  onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+                  placeholder="Full name"
+                  required
+                  autoFocus
+                />
+              </div>
+              <div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  style={inputBase}
+                  onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+                  placeholder="Work email"
+                  required
+                />
+              </div>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  style={{ ...inputBase, paddingRight: '48px' }}
+                  onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+                  placeholder="Password (min. 6 characters)"
+                  minLength={6}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(v => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium"
+                  style={{ color: '#6B7280' }}
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-50"
+                style={{ backgroundColor: '#1B365D' }}
+                onMouseEnter={e => { if (!loading) (e.target as HTMLElement).style.backgroundColor = '#24466F'; }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#1B365D'; }}
+              >
+                {loading ? 'Creating account…' : 'Create account'}
+              </button>
+            </form>
+
+            {!paid && (
+              <button
+                onClick={() => setMode('choose')}
+                className="mt-4 w-full text-center text-sm"
+                style={{ color: '#9CA3AF' }}
+              >
+                ← Back
+              </button>
+            )}
+          </>
+        )}
+
         <p className="mt-6 text-center text-sm" style={{ color: '#6B7280' }}>
           Already have an account?{' '}
           <Link href="/login" className="font-medium" style={{ color: '#1B365D' }}>
@@ -172,5 +229,13 @@ export default function SignupPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense>
+      <SignupContent />
+    </Suspense>
   );
 }
