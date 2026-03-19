@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import MobileMenuButton from './MobileMenuButton';
+import MobileNav from './MobileNav';
 
 export const metadata: Metadata = {
   title: 'Variation Shield — Every Variation. Documented. Paid.',
@@ -38,32 +40,11 @@ export default function LandingPage() {
             <Link href="/signup" className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors hidden md:block">
               Start Free Trial
             </Link>
-            {/* Mobile menu button */}
-            <button
-              className="md:hidden flex flex-col gap-1.5 p-2"
-              onClick={() => {
-                const m = document.getElementById('mobile-nav');
-                if (m) m.classList.toggle('hidden');
-              }}
-              aria-label="Menu"
-            >
-              <span className="block w-5 h-0.5 bg-white/70 rounded"></span>
-              <span className="block w-5 h-0.5 bg-white/70 rounded"></span>
-              <span className="block w-5 h-0.5 bg-white/70 rounded"></span>
-            </button>
+            <MobileMenuButton />
           </div>
         </div>
       </nav>
-
-      {/* Mobile nav dropdown */}
-      <div id="mobile-nav" className="hidden md:hidden fixed top-[60px] left-0 right-0 z-50 bg-[#0F1117]/98 backdrop-blur border-b border-white/[0.08] flex flex-col py-4 px-6 gap-1">
-        <a href="#features" className="py-3 text-sm text-white/60 border-b border-white/[0.06]" onClick={() => document.getElementById('mobile-nav')?.classList.add('hidden')}>Features</a>
-        <a href="#how-it-works" className="py-3 text-sm text-white/60 border-b border-white/[0.06]" onClick={() => document.getElementById('mobile-nav')?.classList.add('hidden')}>How it works</a>
-        <a href="#pricing" className="py-3 text-sm text-white/60 border-b border-white/[0.06]" onClick={() => document.getElementById('mobile-nav')?.classList.add('hidden')}>Pricing</a>
-        <Link href="/calculator" className="py-3 text-sm text-white/60 border-b border-white/[0.06]" onClick={() => document.getElementById('mobile-nav')?.classList.add('hidden')}>ROI Calculator</Link>
-        <Link href="/login" className="py-3 text-sm text-white/60 border-b border-white/[0.06]">Login</Link>
-        <Link href="/signup" className="mt-2 w-full text-center bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-3 rounded-lg transition-colors">Start Free Trial</Link>
-      </div>
+      <MobileNav />
 
       {/* HERO */}
       <section className="relative flex flex-col items-center justify-center text-center px-6 pt-40 pb-24 overflow-hidden">
