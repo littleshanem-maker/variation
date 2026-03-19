@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import MobileMenuButton from './MobileMenuButton';
 import MobileNav from './MobileNav';
+import DemoButton from '@/components/DemoButton';
 
 export const metadata: Metadata = {
   title: 'Variation Shield — Every Variation. Documented. Paid.',
@@ -73,9 +74,9 @@ export default function LandingPage() {
               Get Started — 30-Day Guarantee
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
-            <Link href="https://leveragedsystems.com.au/schedule" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors">
+            <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors">
               Book a 15-min Demo
-            </Link>
+            </DemoButton>
           </div>
 
           <p className="mt-5 text-sm text-white/50">
@@ -310,9 +311,9 @@ export default function LandingPage() {
               Get Started — 30-Day Guarantee
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
-            <Link href="https://leveragedsystems.com.au/schedule" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors">
+            <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors">
               Book a Demo
-            </Link>
+            </DemoButton>
           </div>
         </div>
       </section>
