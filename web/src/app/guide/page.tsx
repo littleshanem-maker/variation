@@ -3,71 +3,9 @@ import Link from 'next/link';
 import Logo from '@/components/Logo';
 
 export const metadata: Metadata = {
-  title: 'How to Use Variation Shield — Field Guide',
-  description: 'Step-by-step guide for capturing variations on site with Variation Shield.',
+  title: 'Save Variation Shield to Your Phone — Quick Setup',
+  description: 'Add Variation Shield to your phone\'s home screen for one-tap access on site.',
 };
-
-const steps = [
-  {
-    number: '01',
-    title: 'Log in',
-    body: 'Open variationshield.com.au on your phone and tap Log in. Use the email and password your manager sent you. You\'ll land straight on the capture screen.',
-    tip: null,
-  },
-  {
-    number: '02',
-    title: 'Select your project',
-    body: 'At the top of the screen, tap the project name. Pick the job you\'re working on. If you only have one project, it\'ll be pre-selected.',
-    tip: null,
-  },
-  {
-    number: '03',
-    title: 'Describe the variation',
-    body: 'In the big text box, write what extra work was instructed. Be specific — include what was done, where, and why it\'s outside the original scope. One sentence is enough.',
-    tip: 'Example: "Site supervisor instructed additional excavation of 2m³ at grid D4 due to unexpected rock — not in original scope."',
-  },
-  {
-    number: '04',
-    title: 'Take a photo',
-    body: 'Tap "Add photo" and take a photo of the work, the site condition, or the instruction. This is your evidence — it matters.',
-    tip: 'A photo of a text message, whiteboard note, or site condition is better than nothing.',
-  },
-  {
-    number: '05',
-    title: 'Add more details (optional)',
-    body: 'Tap "Add more details" to record who instructed it, the date/time it happened, and your name. The more you fill in, the stronger the claim.',
-    tip: null,
-  },
-  {
-    number: '06',
-    title: 'Submit',
-    body: 'Tap "Submit Variation". That\'s it. The variation is logged with a timestamp and sent to the office dashboard. Your manager will handle the rest.',
-    tip: 'You\'ll see a confirmation screen with a reference number. Screenshot it if you want a record.',
-  },
-];
-
-const faqs = [
-  {
-    q: 'What if I don\'t have internet on site?',
-    a: 'Submit as soon as you get signal. The timestamp records when the work happened, not when you submitted — as long as you fill in the date/time field.',
-  },
-  {
-    q: 'Do I need to install an app?',
-    a: 'No. Variation Shield runs in your phone\'s browser. Open variationshield.com.au and log in. You can save it to your home screen for quick access.',
-  },
-  {
-    q: 'What if I make a mistake?',
-    a: 'Submit it anyway and let your manager know. They can edit or withdraw it from the dashboard.',
-  },
-  {
-    q: 'Can I see the variations I\'ve submitted?',
-    a: 'Yes — tap the home icon at the bottom of the screen to see a read-only list of all variations on your project.',
-  },
-  {
-    q: 'What counts as a variation?',
-    a: 'Any work you\'re asked to do that wasn\'t in the original scope. If someone on site tells you to do something extra — even verbally — capture it.',
-  },
-];
 
 export default function GuidePage() {
   return (
@@ -87,93 +25,107 @@ export default function GuidePage() {
       <div className="max-w-lg mx-auto px-6 py-12">
 
         {/* Header */}
-        <div className="mb-12">
+        <div className="mb-10">
           <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full px-3 py-1 text-xs font-semibold text-indigo-400 mb-4">
-            📱 Field Guide
+            📱 Quick Setup
           </div>
           <h1 className="text-3xl font-bold tracking-tight mb-3">
-            How to capture a variation on site
+            Save Variation Shield to your home screen
           </h1>
           <p className="text-white/50 text-base leading-relaxed">
-            Takes under 60 seconds. No paperwork, no email chains — just open your phone, describe what happened, and submit.
+            Takes 30 seconds. Once it's on your home screen, you can open it on site just like any other app — no browser, no typing URLs.
           </p>
         </div>
 
-        {/* Steps */}
-        <div className="space-y-6 mb-16">
-          {steps.map((step) => (
-            <div key={step.number} className="flex gap-5">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center">
-                <span className="text-xs font-bold text-indigo-400">{step.number}</span>
-              </div>
-              <div className="pt-1.5 pb-2">
-                <h2 className="text-base font-bold mb-1.5">{step.title}</h2>
-                <p className="text-white/60 text-sm leading-relaxed mb-2">{step.body}</p>
-                {step.tip && (
-                  <div className="bg-amber-500/5 border border-amber-500/15 rounded-lg px-3 py-2.5 text-xs text-amber-400/80 leading-relaxed">
-                    💡 {step.tip}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Save to home screen callout */}
-        <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5 mb-12">
-          <h3 className="font-bold text-sm mb-1">📌 Save Variation Shield to your home screen</h3>
-          <p className="text-white/50 text-sm leading-relaxed mb-4">One-tap access on site — no typing URLs, no hunting through apps.</p>
-
-          <div className="space-y-5">
-            {/* iPhone */}
-            <div>
-              <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-2">iPhone (Safari)</p>
-              <ol className="space-y-1.5 text-sm text-white/60">
-                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">1.</span><span>Open <span className="text-white/80">Safari</span> and go to <span className="text-white/80">variationshield.com.au</span></span></li>
-                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">2.</span><span>Tap the <span className="text-white/80">Share button</span> at the bottom of the screen (the box with an arrow pointing up)</span></li>
-                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">3.</span><span>Scroll down and tap <span className="text-white/80">"Add to Home Screen"</span></span></li>
-                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">4.</span><span>Tap <span className="text-white/80">Add</span> — the icon will appear on your home screen</span></li>
-              </ol>
-            </div>
-
-            <div className="h-px bg-white/[0.06]" />
-
-            {/* Android */}
-            <div>
-              <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-2">Android (Chrome)</p>
-              <ol className="space-y-1.5 text-sm text-white/60">
-                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">1.</span><span>Open <span className="text-white/80">Chrome</span> and go to <span className="text-white/80">variationshield.com.au</span></span></li>
-                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">2.</span><span>Tap the <span className="text-white/80">three dots menu</span> (⋮) in the top right corner</span></li>
-                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">3.</span><span>Tap <span className="text-white/80">"Add to Home screen"</span></span></li>
-                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">4.</span><span>Tap <span className="text-white/80">Add</span> — the icon will appear on your home screen</span></li>
-              </ol>
-            </div>
+        {/* iPhone */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-base">🍎</div>
+            <h2 className="text-lg font-bold">iPhone</h2>
           </div>
+          <ol className="space-y-5">
+            <li className="flex gap-4">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-400">1</span>
+              <div>
+                <p className="text-sm font-semibold mb-0.5">Open Safari</p>
+                <p className="text-white/50 text-sm leading-relaxed">This only works in Safari — not Chrome or Firefox. Go to <span className="text-white/80">variationshield.com.au</span> and make sure the page has fully loaded.</p>
+              </div>
+            </li>
+            <li className="flex gap-4">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-400">2</span>
+              <div>
+                <p className="text-sm font-semibold mb-0.5">Tap the Share button</p>
+                <p className="text-white/50 text-sm leading-relaxed">Look for the icon at the bottom centre of the screen — it looks like a box with an arrow pointing upward. Tap it.</p>
+              </div>
+            </li>
+            <li className="flex gap-4">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-400">3</span>
+              <div>
+                <p className="text-sm font-semibold mb-0.5">Tap "Add to Home Screen"</p>
+                <p className="text-white/50 text-sm leading-relaxed">A menu slides up from the bottom. Scroll down through the options until you see <span className="text-white/80">"Add to Home Screen"</span> with a plus icon. Tap it.</p>
+              </div>
+            </li>
+            <li className="flex gap-4">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-400">4</span>
+              <div>
+                <p className="text-sm font-semibold mb-0.5">Tap "Add"</p>
+                <p className="text-white/50 text-sm leading-relaxed">A confirmation screen appears showing the icon and the name. Tap <span className="text-white/80">Add</span> in the top right. The Variation Shield icon will now appear on your home screen.</p>
+              </div>
+            </li>
+          </ol>
         </div>
 
-        {/* FAQ */}
+        <div className="h-px bg-white/[0.06] mb-8" />
+
+        {/* Android */}
         <div className="mb-12">
-          <h2 className="text-lg font-bold mb-5">Common questions</h2>
-          <div className="space-y-5">
-            {faqs.map((faq) => (
-              <div key={faq.q} className="border-b border-white/[0.06] pb-5 last:border-0">
-                <p className="font-semibold text-sm mb-1.5">{faq.q}</p>
-                <p className="text-white/50 text-sm leading-relaxed">{faq.a}</p>
-              </div>
-            ))}
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-8 h-8 rounded-lg bg-white/[0.06] flex items-center justify-center text-base">🤖</div>
+            <h2 className="text-lg font-bold">Android</h2>
           </div>
+          <ol className="space-y-5">
+            <li className="flex gap-4">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-400">1</span>
+              <div>
+                <p className="text-sm font-semibold mb-0.5">Open Chrome</p>
+                <p className="text-white/50 text-sm leading-relaxed">Go to <span className="text-white/80">variationshield.com.au</span> and wait for the page to load fully.</p>
+              </div>
+            </li>
+            <li className="flex gap-4">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-400">2</span>
+              <div>
+                <p className="text-sm font-semibold mb-0.5">Tap the three-dot menu</p>
+                <p className="text-white/50 text-sm leading-relaxed">In the top right corner of Chrome, tap the three vertical dots (⋮). A dropdown menu will appear.</p>
+              </div>
+            </li>
+            <li className="flex gap-4">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-400">3</span>
+              <div>
+                <p className="text-sm font-semibold mb-0.5">Tap "Add to Home screen"</p>
+                <p className="text-white/50 text-sm leading-relaxed">Find and tap <span className="text-white/80">"Add to Home screen"</span> in the menu. On some Android phones this may appear as <span className="text-white/80">"Install app"</span> — both do the same thing.</p>
+              </div>
+            </li>
+            <li className="flex gap-4">
+              <span className="flex-shrink-0 w-7 h-7 rounded-full bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-400">4</span>
+              <div>
+                <p className="text-sm font-semibold mb-0.5">Tap "Add"</p>
+                <p className="text-white/50 text-sm leading-relaxed">Confirm by tapping <span className="text-white/80">Add</span> on the prompt that appears. The icon will be added to your home screen immediately.</p>
+              </div>
+            </li>
+          </ol>
         </div>
 
         {/* CTA */}
-        <div className="text-center">
+        <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center">
+          <p className="text-white/50 text-sm mb-4">Once it's on your home screen, tap it to log in and you're ready to go.</p>
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors"
+            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors"
           >
-            Log in and capture your first variation
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Log in to Variation Shield
+            <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </Link>
-          <p className="mt-4 text-white/30 text-xs">Need help? Email <a href="mailto:shane@variationshield.com.au" className="underline hover:text-white/60">shane@variationshield.com.au</a></p>
+          <p className="mt-4 text-white/20 text-xs">Questions? <a href="mailto:shane@variationshield.com.au" className="underline hover:text-white/50">shane@variationshield.com.au</a></p>
         </div>
 
       </div>
