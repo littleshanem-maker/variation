@@ -275,10 +275,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleSaveAndNext}
                 disabled={saving || !companyName.trim()}
-                className="w-full py-3 rounded-lg text-sm font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ backgroundColor: '#4f46e5' }}
-                onMouseEnter={e => { if (!saving) (e.currentTarget).style.backgroundColor = '#24466F'; }}
-                onMouseLeave={e => { (e.currentTarget).style.backgroundColor = '#1B365D'; }}
+                className="w-full py-3 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? 'Saving…' : 'Next →'}
               </button>
@@ -341,10 +338,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleCreateProject}
                 disabled={creatingProject || !projectName.trim()}
-                className="w-full py-3 rounded-lg text-sm font-semibold text-white disabled:opacity-50 transition-colors"
-                style={{ backgroundColor: '#4f46e5' }}
-                onMouseEnter={e => { if (!creatingProject) (e.currentTarget).style.backgroundColor = '#24466F'; }}
-                onMouseLeave={e => { (e.currentTarget).style.backgroundColor = '#1B365D'; }}
+                className="w-full py-3 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
               >
                 {creatingProject ? 'Creating…' : 'Create project →'}
               </button>
