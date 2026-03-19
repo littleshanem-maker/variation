@@ -1520,7 +1520,13 @@ export default function VariationDetail() {
                 >
                   Rejected
                 </button>
-
+                <button
+                  onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
+                  disabled={sendingEmail}
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+                >
+                  <Send size={14} /> {sendingEmail ? '…' : 'Resend'}
+                </button>
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}
