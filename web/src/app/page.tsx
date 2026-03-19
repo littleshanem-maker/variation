@@ -38,7 +38,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm font-semibold text-white/80 hover:text-white border border-white/20 hover:border-white/40 px-4 py-2 rounded-lg transition-all hidden md:block">Login</Link>
             <Link href="/signup" className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors hidden md:block">
-              Start Free Trial
+              Get Started
             </Link>
             <MobileMenuButton />
           </div>
@@ -70,7 +70,7 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/signup" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/25">
-              Start Free Trial — No Card Required
+              Get Started — 30-Day Guarantee
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
             <Link href="https://leveragedsystems.com.au/schedule" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors">
@@ -79,7 +79,7 @@ export default function LandingPage() {
           </div>
 
           <p className="mt-5 text-sm text-white/50">
-            Setup in 5 minutes · 30-day money-back guarantee · <span className="text-amber-400">$299/mo founding member rate (was $499)</span>
+            Setup in 5 minutes · 30-day money-back guarantee · <span className="text-amber-400">$299/mo founding rate · goes to $499/mo when this period closes</span>
           </p>
         </div>
       </section>
@@ -259,11 +259,11 @@ export default function LandingPage() {
               ⭐ Founding Member — Limited Spots
             </div>
             <div className="flex items-baseline gap-3 mb-1">
-              <span className="text-2xl font-medium text-white/30 line-through decoration-red-400">$499</span>
               <span className="text-5xl font-extrabold">$299</span>
               <span className="text-white/40 text-lg">/month</span>
             </div>
-            <p className="text-amber-400/80 text-sm font-semibold mb-1">🔒 Price locked for life — never increases</p>
+            <p className="text-amber-400/80 text-sm font-semibold mb-1">⭐ Founding member rate — locked at $299/mo for life</p>
+            <p className="text-white/50 text-xs mb-1">Price goes to $499/mo when this period closes</p>
             <p className="text-white/30 text-xs mb-8">30-day money-back guarantee. No lock-in. Cancel anytime.</p>
 
             <ul className="space-y-3 mb-8">
@@ -284,10 +284,10 @@ export default function LandingPage() {
             </ul>
 
             <Link href="/signup" className="flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/20">
-              Start Free Trial
+              Get Started — 30-Day Guarantee
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
-            <p className="text-center text-white/30 text-xs mt-3">No credit card required to start</p>
+            <p className="text-center text-white/30 text-xs mt-3">30-day money-back guarantee</p>
           </div>
 
           <div className="mt-6 flex items-center justify-center gap-2 text-sm text-white/30">
@@ -307,7 +307,7 @@ export default function LandingPage() {
           <p className="text-white/50 text-lg mb-10">Set up in 5 minutes. Capture your first variation today.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/signup" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/25">
-              Start Free Trial — No Card Required
+              Get Started — 30-Day Guarantee
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
             <Link href="https://leveragedsystems.com.au/schedule" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors">

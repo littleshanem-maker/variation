@@ -14,7 +14,7 @@ export default function MobileNav() {
       <a href="#pricing" className="py-3.5 text-sm text-white/60 border-b border-white/[0.06] active:text-white" onClick={close}>Pricing</a>
       <Link href="/calculator" className="py-3.5 text-sm text-white/60 border-b border-white/[0.06] active:text-white" onClick={close}>ROI Calculator</Link>
       <Link href="/login" className="py-3.5 text-sm text-white/60 border-b border-white/[0.06] active:text-white">Login</Link>
-      <Link href="/signup" className="my-3 w-full text-center bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-lg">Start Free Trial</Link>
+      <Link href="/signup" className="my-3 w-full text-center bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-lg">Get Started</Link>
     </div>
   );
 }
