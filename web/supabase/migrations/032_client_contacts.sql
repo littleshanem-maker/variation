@@ -18,8 +18,8 @@ CREATE POLICY "Users can manage their company contacts"
   ON public.client_contacts
   FOR ALL
   USING (company_id IN (
-    SELECT company_id FROM public.user_roles WHERE user_id = auth.uid()
+    SELECT company_id FROM public.company_members WHERE user_id = auth.uid() AND is_active = true
   ))
   WITH CHECK (company_id IN (
-    SELECT company_id FROM public.user_roles WHERE user_id = auth.uid()
+    SELECT company_id FROM public.company_members WHERE user_id = auth.uid() AND is_active = true
   ));
