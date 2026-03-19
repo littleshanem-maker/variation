@@ -407,6 +407,7 @@ export default function VariationDetail() {
 
   function handlePrint() {
     if (variation && project) {
+      // Always use latest revision_number from DB (variation state is fresh after loadVariation)
       printVariation(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
     }
   }
@@ -573,7 +574,11 @@ export default function VariationDetail() {
     if (!variation || !project) return;
     setSendingEmail(true);
     try {
-      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
+      // Fetch fresh variation data to ensure revision_number and status are current
+      const supabase = createClient();
+      const { data: freshVar } = await supabase.from('variations').select('*').eq('id', variation.id).single();
+      const varForPdf = freshVar || variation;
+      const { html, css } = getVariationHtmlForPdf(varForPdf as typeof variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
       const blob = await htmlToPdfBlob(html, css);
       const { filename } = getVariationEmailMeta(variation, project);
       const url = URL.createObjectURL(blob);
