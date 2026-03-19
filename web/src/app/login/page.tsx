@@ -152,9 +152,9 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm" style={{ color: '#6B7280' }}>
           Don't have an account?{' '}
-          <Link href="/signup" className="font-medium" style={{ color: '#1B365D' }}>
+          <a href="https://buy.stripe.com/fZufZh10hb7Y2KwdhdfrW01" className="font-medium" style={{ color: '#1B365D' }}>
             Sign up
-          </Link>
+          </a>
         </p>
 
         <p className="text-center text-xs mt-8" style={{ color: '#C4C9D0' }}>
