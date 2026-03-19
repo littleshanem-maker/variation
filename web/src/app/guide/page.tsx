@@ -121,11 +121,33 @@ export default function GuidePage() {
 
         {/* Save to home screen callout */}
         <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5 mb-12">
-          <h3 className="font-bold text-sm mb-2">📌 Save to your home screen</h3>
-          <p className="text-white/50 text-sm leading-relaxed mb-3">Get one-tap access — no typing the URL every time.</p>
-          <div className="space-y-2 text-sm text-white/60">
-            <div className="flex gap-2"><span className="text-white/30">iPhone:</span><span>Tap the Share button in Safari → "Add to Home Screen"</span></div>
-            <div className="flex gap-2"><span className="text-white/30">Android:</span><span>Tap the menu (⋮) in Chrome → "Add to Home Screen"</span></div>
+          <h3 className="font-bold text-sm mb-1">📌 Save Variation Shield to your home screen</h3>
+          <p className="text-white/50 text-sm leading-relaxed mb-4">One-tap access on site — no typing URLs, no hunting through apps.</p>
+
+          <div className="space-y-5">
+            {/* iPhone */}
+            <div>
+              <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-2">iPhone (Safari)</p>
+              <ol className="space-y-1.5 text-sm text-white/60">
+                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">1.</span><span>Open <span className="text-white/80">Safari</span> and go to <span className="text-white/80">variationshield.com.au</span></span></li>
+                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">2.</span><span>Tap the <span className="text-white/80">Share button</span> at the bottom of the screen (the box with an arrow pointing up)</span></li>
+                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">3.</span><span>Scroll down and tap <span className="text-white/80">"Add to Home Screen"</span></span></li>
+                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">4.</span><span>Tap <span className="text-white/80">Add</span> — the icon will appear on your home screen</span></li>
+              </ol>
+            </div>
+
+            <div className="h-px bg-white/[0.06]" />
+
+            {/* Android */}
+            <div>
+              <p className="text-xs font-bold text-white/40 uppercase tracking-wider mb-2">Android (Chrome)</p>
+              <ol className="space-y-1.5 text-sm text-white/60">
+                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">1.</span><span>Open <span className="text-white/80">Chrome</span> and go to <span className="text-white/80">variationshield.com.au</span></span></li>
+                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">2.</span><span>Tap the <span className="text-white/80">three dots menu</span> (⋮) in the top right corner</span></li>
+                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">3.</span><span>Tap <span className="text-white/80">"Add to Home screen"</span></span></li>
+                <li className="flex gap-2"><span className="text-indigo-400 font-bold flex-shrink-0">4.</span><span>Tap <span className="text-white/80">Add</span> — the icon will appear on your home screen</span></li>
+              </ol>
+            </div>
           </div>
         </div>
 
