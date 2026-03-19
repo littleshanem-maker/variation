@@ -50,20 +50,20 @@ export default function LandingPage() {
       <section className="relative flex flex-col items-center justify-center text-center px-6 pt-40 pb-24 overflow-hidden">
         {/* background glow */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-indigo-600/10 rounded-full blur-[120px]" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-indigo-600/8 rounded-full blur-[100px]" />
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-indigo-600/10 border border-indigo-500/20 rounded-full px-4 py-1.5 text-xs font-semibold text-indigo-400 uppercase tracking-widest mb-8">
+          <div className="inline-flex items-center gap-2 bg-indigo-600/20 border border-indigo-500/30 rounded-full px-4 py-1.5 text-xs font-semibold text-indigo-300 uppercase tracking-widest mb-8">
             Built for Australian Subcontractors
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05] mb-6">
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.05] mb-6 text-white">
             Every variation.<br />
             <span className="text-indigo-400">Documented. Paid.</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed mb-10">
+          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed mb-10">
             Capture scope changes in 60 seconds on site — photos, timestamps, cost breakdown, client signature.
             Send professional variation requests directly from the app. Stop losing money at payment time.
           </p>
@@ -78,8 +78,8 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          <p className="mt-5 text-sm text-white/30">
-            Setup in 5 minutes · 30-day money-back guarantee · <span className="text-amber-400/70">$299/mo founding member rate (was $499)</span>
+          <p className="mt-5 text-sm text-white/50">
+            Setup in 5 minutes · 30-day money-back guarantee · <span className="text-amber-400">$299/mo founding member rate (was $499)</span>
           </p>
         </div>
       </section>
