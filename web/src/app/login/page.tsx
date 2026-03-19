@@ -141,15 +141,13 @@ export default function LoginPage() {
         </form>
 
         <div className="text-center mt-5">
-          <a
-            href="#"
+          <Link
+            href="/forgot-password"
             className="text-sm font-medium transition-colors"
             style={{ color: '#1B365D' }}
-            onMouseEnter={e => (e.target as HTMLElement).style.color = '#24466F'}
-            onMouseLeave={e => (e.target as HTMLElement).style.color = '#1B365D'}
           >
             Forgot Password?
-          </a>
+          </Link>
         </div>
 
         <p className="mt-6 text-center text-sm" style={{ color: '#6B7280' }}>
