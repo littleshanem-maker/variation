@@ -19,14 +19,14 @@ export default function MobileBottomNav() {
   const [fabOpen, setFabOpen] = useState(false);
 
   const tabs = [
-    { label: 'Dashboard', href: '/', icon: LayoutDashboard, roles: [] },
+    { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: [] },
     { label: 'Register', href: '/variations', icon: ClipboardList, roles: ['admin', 'office'] },
     { label: 'Notices',  href: '/notices',   icon: FileText,      roles: ['admin', 'office'] },
     { label: 'Settings', href: '/settings', icon: Settings, roles: [] },
   ].filter(t => t.roles.length === 0 || t.roles.includes(role));
 
   const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname.startsWith(href);
+    href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
 
   // Hide FAB on detail pages that have their own sticky action bar
   const hideFab = /^\/(variation|notice)\/[^/]+$/.test(pathname);
