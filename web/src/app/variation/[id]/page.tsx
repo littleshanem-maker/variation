@@ -1482,7 +1482,7 @@ export default function VariationDetail() {
           {isDraft && (
             <>
               <button
-                onClick={() => handleAdvanceStatus('submitted')}
+                onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
                 disabled={advancingStatus}
                 className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl disabled:opacity-40 transition-colors active:bg-indigo-700"
               >
