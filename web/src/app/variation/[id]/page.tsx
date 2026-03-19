@@ -453,11 +453,12 @@ export default function VariationDetail() {
       });
       if (snapError) throw new Error(`Revision save failed: ${snapError.message}`);
 
-      // Generate PDF
+      // Generate PDF — use patched variation with correct revision number
+      const variationForPdf = { ...variation, revision_number: newRevision };
       let pdfBase64: string | null = null;
       try {
         setSendStage('pdf');
-        const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
+        const { html, css } = getVariationHtmlForPdf(variationForPdf, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
         const blob = await htmlToPdfBlob(html, css);
         const reader = new FileReader();
         pdfBase64 = await new Promise<string>((resolve, reject) => {
