@@ -377,16 +377,15 @@ export default function Dashboard() {
 
             {projects.length === 0 ? (
               <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-12 text-center">
-                <div className="text-4xl mb-4">🛡️</div>
+                <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
                 <h3 className="text-[18px] font-semibold text-[#1C1C1E] mb-2">Welcome to Variation Shield</h3>
                 <p className="text-[14px] text-[#6B7280] mb-1">Start by creating your first project.</p>
                 <p className="text-[14px] text-[#6B7280] mb-8">Then capture a variation in under 60 seconds.</p>
                 <Link
                   href="/onboarding"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[14px] font-semibold text-white transition-colors"
-                  style={{ backgroundColor: '#1B365D' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#24466F'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.backgroundColor = '#1B365D'; }}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[14px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
                 >
                   Create your first project →
                 </Link>
