@@ -57,6 +57,7 @@ export interface Project {
   contract_number?: string;
   is_active: boolean;
   notice_required?: boolean;
+  client_email?: string;
   created_at: string;
   updated_at: string;
 }
