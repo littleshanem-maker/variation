@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const fromAddress = `${companyName} via Variation Shield <noreply@${FROM_DOMAIN}>`;
+    const fromAddress = `${companyName} via Variation Shield <shane@${FROM_DOMAIN}>`;
     const ref = noticeNumber ?? 'Variation Notice';
     const greeting = 'Dear Sir/Madam,';
 

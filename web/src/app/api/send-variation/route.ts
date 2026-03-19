@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
     const approveUrl = `${APP_URL}/api/variation-response?token=${resolvedToken}&action=approve`;
     const rejectUrl = `${APP_URL}/api/variation-response?token=${resolvedToken}&action=reject`;
 
-    const fromAddress = `${companyName} via Variation Shield <noreply@${FROM_DOMAIN}>`;
+    const fromAddress = `${companyName} via Variation Shield <shane@${FROM_DOMAIN}>`;
     const greeting = toName ? `Dear ${toName},` : 'Dear Sir/Madam,';
     const varRef = resolvedVarRef;
 
