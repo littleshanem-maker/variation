@@ -15,6 +15,7 @@ import { getNoticeEmailMeta } from '@/lib/email';
 import { useRole } from '@/lib/role';
 import type { VariationNotice, Project, Variation, Document, NoticeRevision } from '@/lib/types';
 import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
+import EmailAutocomplete from '@/components/EmailAutocomplete';
 
 export default function NoticeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -432,6 +433,24 @@ export default function NoticeDetail() {
       const sentTo = toList2.length > 1 ? `${toList2.length} recipients` : toList2[0];
       setSuccessMsg(`Email sent to ${sentTo}${pdfBase64 ? ' with PDF' : ''}`);
       setTimeout(() => setSuccessMsg(null), 5000);
+
+      // Save sent emails to client_contacts for autofill
+      if (company?.id) {
+        const supabase = createClient();
+        const ccList2 = ccEmail ? ccEmail.split(',').map(e => e.trim()).filter(Boolean) : [];
+        const allSent = [...toList2, ...ccList2];
+        for (const email of allSent) {
+          if (!email || !email.includes('@')) continue;
+          const cleanEmail = email.toLowerCase().trim();
+          const { data: existing } = await supabase.from('client_contacts').select('id, use_count').eq('company_id', company.id).eq('email', cleanEmail).single();
+          if (existing) {
+            await supabase.from('client_contacts').update({ use_count: (existing.use_count || 1) + 1, last_used: new Date().toISOString() }).eq('id', existing.id);
+          } else {
+            await supabase.from('client_contacts').insert({ company_id: company.id, email: cleanEmail, use_count: 1, last_used: new Date().toISOString() });
+          }
+        }
+      }
+
       // Reload full notice + revision list so state is always fresh from DB
       await loadNotice();
     } catch (err) {
@@ -594,28 +613,24 @@ export default function NoticeDetail() {
               {/* Inline client email input */}
               {showEmailInput && (
                 <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
-                  <div>
-                    <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1">To <span className="text-slate-400 normal-case font-normal">(comma-separate multiple)</span></label>
-                    <input
-                      type="text"
-                      value={clientEmailInput}
-                      onChange={e => setClientEmailInput(e.target.value)}
-                      placeholder="client@company.com, engineer@company.com"
-                      autoFocus
-                      className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1">CC <span className="text-slate-400 normal-case font-normal">(optional — internal team)</span></label>
-                    <input
-                      type="text"
-                      value={ccEmailInput}
-                      onChange={e => setCcEmailInput(e.target.value)}
-                      onKeyDown={e => { if (e.key === 'Enter' && clientEmailInput.trim()) handleSendToClient(clientEmailInput.trim(), ccEmailInput.trim()); }}
-                      placeholder="you@yourcompany.com"
-                      className="w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
-                    />
-                  </div>
+                  <EmailAutocomplete
+                    value={clientEmailInput}
+                    onChange={setClientEmailInput}
+                    placeholder="client@company.com, engineer@company.com"
+                    autoFocus
+                    companyId={company?.id || null}
+                    label="To"
+                    labelSuffix="(comma-separate multiple)"
+                  />
+                  <EmailAutocomplete
+                    value={ccEmailInput}
+                    onChange={setCcEmailInput}
+                    onKeyDown={e => { if (e.key === 'Enter' && clientEmailInput.trim()) handleSendToClient(clientEmailInput.trim(), ccEmailInput.trim()); }}
+                    placeholder="you@yourcompany.com"
+                    companyId={company?.id || null}
+                    label="CC"
+                    labelSuffix="(optional — internal team)"
+                  />
                   <div className="flex items-center gap-2 pt-1">
                     <button
                       onClick={() => { if (clientEmailInput.trim()) handleSendToClient(clientEmailInput.trim(), ccEmailInput.trim()); }}

@@ -819,7 +819,7 @@ function buildVariationHtml(
         <div class="doc-title">Variation Request</div>
       </div>
       <div class="doc-meta">
-        <div class="meta-row" style="font-size:11pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(varNumber)}</div>
+        <div class="meta-row" style="font-size:11pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(varNumber)}${(variation.revision_number ?? 0) > 0 ? ` Rev ${variation.revision_number}` : ''}</div>
         <div class="meta-row">Date: ${formatDocDate(variation.captured_at)}</div>
         <div class="meta-row">Status: <strong>${status}</strong></div>
       </div>
@@ -929,7 +929,7 @@ function buildVariationHtml(
       <table style="width:100%; border-collapse:collapse; font-size:9pt;">
         <tr>
           <td style="padding:4px 0; color:#6B7280; width:160px; vertical-align:top;">Variation No.</td>
-          <td style="padding:4px 0; font-weight:600; color:#1C1C1E;">${escapeHtml(varNumber)}</td>
+          <td style="padding:4px 0; font-weight:600; color:#1C1C1E;">${escapeHtml(varNumber)}${(variation.revision_number ?? 0) > 0 ? ` Rev ${variation.revision_number}` : ''}</td>
           <td style="padding:4px 0; color:#6B7280; width:160px; vertical-align:top;">Captured</td>
           <td style="padding:4px 0; color:#1C1C1E;">${formatDocDate(variation.captured_at)}</td>
         </tr>
