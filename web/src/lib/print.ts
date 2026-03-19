@@ -508,9 +508,9 @@ function buildNoticeHtml(
         <div class="doc-title">Variation Notice</div>
       </div>
       <div class="doc-meta">
-        <div class="meta-row" style="font-size:14pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(notice.notice_number)}${(notice.revision_number ?? 0) > 0 ? ` <span style="font-size:10pt; font-weight:600; background:#1B365D; color:#fff; padding:2px 6px; border-radius:3px; vertical-align:middle;">Rev ${notice.revision_number}</span>` : ''}</div>
-        <div class="meta-row">Issued: ${issuedFormatted}</div>
-        <div class="meta-row">Status: <strong style="text-transform:capitalize;">${notice.status}</strong></div>
+        <div class="meta-row" style="font-size:11pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(notice.notice_number)}${(notice.revision_number ?? 0) > 0 ? ` Rev ${notice.revision_number}` : ''}</div>
+        <div class="meta-row">Date: ${issuedFormatted}</div>
+        <div class="meta-row">Status: <strong>Issued</strong></div>
       </div>
     </div>
 

@@ -381,10 +381,11 @@ export default function NoticeDetail() {
         throw new Error(`Revision save failed: ${revInsertError.message}`);
       }
 
-      // Generate PDF
+      // Generate PDF — patch status and revision_number to match what was sent
+      const noticeForPdf = { ...notice, status: 'issued', revision_number: newRevision };
       let pdfBase64: string | null = null;
       try {
-        const { html, css } = getNoticeHtmlForPdf(notice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
+        const { html, css } = getNoticeHtmlForPdf(noticeForPdf as typeof notice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
         const blob = await htmlToPdfBlob(html, css);
         const reader = new FileReader();
         pdfBase64 = await new Promise<string>((resolve, reject) => {
@@ -1012,6 +1013,7 @@ export default function NoticeDetail() {
                           cost_flag: rev.cost_flag ?? notice.cost_flag,
                           cost_items: rev.cost_items ?? notice.cost_items,
                           revision_number: rev.revision_number,
+                          status: 'issued', // snapshot = always issued
                         };
                         const { html, css } = getNoticeHtmlForPdf(snapNotice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
                         const blob = await htmlToPdfBlob(html, css);
