@@ -345,49 +345,45 @@ function CapturePageContent() {
     setOccurredAt(local);
   }
 
-  // ── SUCCESS CARD ────────────────────────────────────────────
-  if (result) {
-    return (
-      <div className="min-h-screen bg-[#F8F8F6] flex flex-col">
-        <CaptureHeader />
-        <div className="flex-1 flex items-start justify-center px-4 pt-12 pb-8">
-          <div className="w-full max-w-lg">
-            <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
-              <div className="text-4xl mb-3">✓</div>
-              <h2 className="text-xl font-semibold text-green-800 mb-1">
-                Variation Notice captured
-              </h2>
-              <p className="text-3xl font-bold text-green-900 mb-1">{result.variationNumber}</p>
-              <p className="text-sm text-green-700 mb-6">{result.projectName}</p>
-              <p className="text-xs text-green-600 mb-8">
-                {new Date(result.capturedAt).toLocaleString('en-AU', {
-                  dateStyle: 'medium',
-                  timeStyle: 'short',
-                })}
-              </p>
-              <div className="flex flex-col gap-3">
-                <Link
-                  href={`/notice/${result.variationId}`}
-                  className="block w-full border border-green-300 text-green-800 font-medium py-3 px-4 rounded-lg text-sm hover:bg-green-100 transition-colors"
-                >
-                  View Notice →
-                </Link>
-                <button
-                  onClick={handleCaptureAnother}
-                  className="w-full bg-[#E85D1A] hover:bg-[#C94E14] text-white font-semibold py-4 px-6 rounded-xl text-base transition-colors"
-                >
-                  Capture Another Notice
-                </button>
-              </div>
-            </div>
-            <p className="text-center text-xs text-[#9CA3AF] mt-6">
-              <Link href="/" className="hover:underline">← Back to Dashboard</Link>
-            </p>
+  // ── SUCCESS OVERLAY — shown over the form ───────────────────
+  const SuccessOverlay = result ? (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm px-4 pb-8">
+      <div className="w-full max-w-sm bg-white rounded-3xl shadow-2xl overflow-hidden">
+        {/* Green header */}
+        <div className="bg-emerald-500 px-6 pt-8 pb-6 text-center">
+          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 6 9 17l-5-5"/>
+            </svg>
           </div>
+          <h2 className="text-white font-bold text-xl mb-1">Notice Captured</h2>
+          <p className="text-emerald-100 text-sm">
+            {new Date(result.capturedAt).toLocaleString('en-AU', { dateStyle: 'medium', timeStyle: 'short' })}
+          </p>
+        </div>
+        {/* Detail */}
+        <div className="px-6 py-5 text-center border-b border-slate-100">
+          <div className="text-2xl font-bold text-slate-900 mb-1">{result.variationNumber}</div>
+          <div className="text-sm text-slate-500">{result.projectName}</div>
+        </div>
+        {/* Actions */}
+        <div className="px-6 py-5 flex flex-col gap-3">
+          <button
+            onClick={handleCaptureAnother}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl text-base transition-colors"
+          >
+            Capture Another
+          </button>
+          <Link
+            href={`/notice/${result.variationId}`}
+            className="block w-full text-center text-slate-500 font-medium py-3 text-sm"
+          >
+            View Notice →
+          </Link>
         </div>
       </div>
-    );
-  }
+    </div>
+  ) : null;
 
   // Derive the onboarding project object (for display name)
   const onboardingProject = isOnboarding && onboardingProjectId
@@ -397,6 +393,7 @@ function CapturePageContent() {
   // ── FORM ────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#F8F8F6] flex flex-col pb-20">
+      {SuccessOverlay}
       <CaptureHeader />
 
       <div className="flex-1 flex items-start justify-center px-4 pt-4 pb-6">
@@ -745,17 +742,28 @@ export default function CapturePage() {
 }
 
 function CaptureHeader() {
+  const { company } = useRole();
   return (
-    <header className="bg-[#1B365D] text-white px-4 py-4 flex items-center gap-3">
-      <Image
-        src="/variation-shield-logo.jpg"
-        alt="Variation Shield"
-        width={28}
-        height={28}
-        className="rounded-md object-cover"
-      />
-      <span className="font-semibold text-[15px] tracking-tight">Quick Notice</span>
-      <span className="ml-auto text-white/40 text-xs">⚡ Quick mode</span>
+    <header className="bg-slate-900 text-white px-5 pt-12 pb-5">
+      <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <span className="font-semibold text-[14px] text-white/90 tracking-tight">{company?.name || 'Variation Shield'}</span>
+        </div>
+        <Link href="/settings" className="p-1.5 rounded-lg bg-white/[0.08] text-white/50 hover:text-white transition-colors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </Link>
+      </div>
+      <div className="mt-4">
+        <h1 className="text-[22px] font-bold text-white tracking-tight leading-tight">Capture a Notice</h1>
+        <p className="text-[13px] text-white/40 mt-0.5">Record a site instruction before you move on</p>
+      </div>
     </header>
   );
 }
