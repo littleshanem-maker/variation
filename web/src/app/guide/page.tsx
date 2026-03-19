@@ -48,7 +48,7 @@ export default function GuidePage() {
               <span className="flex-shrink-0 w-6 text-lg font-black text-indigo-400 leading-none pt-0.5">1</span>
               <div>
                 <p className="text-sm font-semibold mb-0.5">Open Safari</p>
-                <p className="text-white/50 text-sm leading-relaxed">This only works in Safari — not Chrome or Firefox. Go to <span className="text-white/80">variationshield.com.au</span> and make sure the page has fully loaded.</p>
+                <p className="text-white/50 text-sm leading-relaxed">This only works in Safari — not Chrome or Firefox. Go to <span className="text-white/80">variationshield.com.au/login</span> and make sure the page has fully loaded.</p>
               </div>
             </li>
             <li className="flex gap-4">
@@ -88,7 +88,7 @@ export default function GuidePage() {
               <span className="flex-shrink-0 w-6 text-lg font-black text-indigo-400 leading-none pt-0.5">1</span>
               <div>
                 <p className="text-sm font-semibold mb-0.5">Open Chrome</p>
-                <p className="text-white/50 text-sm leading-relaxed">Go to <span className="text-white/80">variationshield.com.au</span> and wait for the page to load fully.</p>
+                <p className="text-white/50 text-sm leading-relaxed">Go to <span className="text-white/80">variationshield.com.au/login</span> and wait for the page to load fully.</p>
               </div>
             </li>
             <li className="flex gap-4">
