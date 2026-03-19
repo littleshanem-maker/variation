@@ -675,15 +675,23 @@ export default function VariationDetail() {
           {!editing && (
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-2">
-                {/* Submit to Client — always opens email confirmation */}
+                {/* Submit to Client — opens email form, or sends if form already open */}
                 {!isField && (
                   <button
-                    onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
+                    onClick={() => {
+                      if (showEmailInput && clientEmailInput.trim()) {
+                        handleSendToClient(clientEmailInput.trim(), ccEmailInput.trim());
+                      } else {
+                        setClientEmailInput(variation.client_email || project?.client_email || '');
+                        setCcEmailInput(variation.cc_emails || '');
+                        setShowEmailInput(true);
+                      }
+                    }}
                     disabled={sendingEmail}
                     className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm whitespace-nowrap"
                   >
                     <Send size={14} />
-                    {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : 'Submit to Client'}
+                    {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : showEmailInput ? 'Send' : 'Submit to Client'}
                   </button>
                 )}
                 {/* Status-specific actions */}
