@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRole } from '@/lib/role';
+import FeedbackModal from './FeedbackModal';
 import {
   LayoutDashboard,
   ClipboardList,
@@ -11,12 +12,14 @@ import {
   Plus,
   FileText,
   X,
+  MessageSquare,
 } from 'lucide-react';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
   const { role } = useRole();
   const [fabOpen, setFabOpen] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   const tabs = [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: [] },
@@ -75,6 +78,8 @@ export default function MobileBottomNav() {
         }
       </button>}
 
+      <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
+
       {/* Bottom nav bar */}
       <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-[#020617] border-t border-white/[0.08] flex items-stretch h-16 safe-area-inset-bottom">
         {tabs.map(tab => {
@@ -101,6 +106,13 @@ export default function MobileBottomNav() {
             </Link>
           );
         })}
+        <button
+          onClick={() => setFeedbackOpen(true)}
+          className="flex-1 flex flex-col items-center justify-center gap-1 py-1 text-white/35 hover:text-white/60 transition-colors"
+        >
+          <MessageSquare size={22} strokeWidth={1.8} />
+          <span className="text-[10px] font-medium tracking-wide leading-none">Feedback</span>
+        </button>
       </nav>
     </>
   );

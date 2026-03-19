@@ -7,6 +7,7 @@ import { useRole } from '@/lib/role';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase';
 import type { UserRole } from '@/lib/types';
+import FeedbackModal from './FeedbackModal';
 import {
   LayoutDashboard,
   ClipboardList,
@@ -15,6 +16,7 @@ import {
   Settings,
   Zap,
   Bell,
+  MessageSquare,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -39,6 +41,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { role, company } = useRole();
   const [notifCount, setNotifCount] = useState(0);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -151,10 +154,21 @@ export default function Sidebar() {
           );
         })()}
         {/* Footer */}
-        <div className="px-6 py-4">
-          <div className="text-[11px] text-white/40 capitalize">{role} access</div>
+        <div className="px-3 py-4 space-y-1">
+          <button
+            onClick={() => setFeedbackOpen(true)}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-medium text-white/40 hover:text-white/75 hover:bg-white/[0.04] transition-colors"
+          >
+            <MessageSquare size={15} strokeWidth={1.8} className="text-white/50" />
+            Feedback
+          </button>
+          <div className="px-3 pt-1">
+            <div className="text-[11px] text-white/25 capitalize">{role} access</div>
+          </div>
         </div>
       </aside>
+
+      <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
     </>
   );
 }
