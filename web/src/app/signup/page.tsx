@@ -101,35 +101,16 @@ function SignupContent() {
 
         {mode === 'choose' && (
           <div className="space-y-3">
-            {/* Subscribe option */}
             <a
               href={STRIPE_CHECKOUT}
               className="block w-full rounded-xl text-white text-sm font-semibold text-center transition-colors"
-              style={{ backgroundColor: '#1B365D', padding: '16px 20px' }}
+              style={{ backgroundColor: '#4f46e5', padding: '16px 20px' }}
             >
               <div className="text-base font-bold mb-0.5">Subscribe — $299/mo</div>
               <div className="text-xs font-normal" style={{ color: 'rgba(255,255,255,0.6)' }}>
                 Founding rate · locked for life · 30-day guarantee
               </div>
             </a>
-
-            <div className="flex items-center gap-3 py-1">
-              <div className="flex-1 h-px" style={{ backgroundColor: '#D1D5DB' }} />
-              <span className="text-xs" style={{ color: '#9CA3AF' }}>or</span>
-              <div className="flex-1 h-px" style={{ backgroundColor: '#D1D5DB' }} />
-            </div>
-
-            {/* Trial/invited option */}
-            <button
-              onClick={() => setMode('form')}
-              className="block w-full rounded-xl text-sm font-semibold text-center transition-colors"
-              style={{ backgroundColor: '#FFFFFF', border: '1px solid #E5E7EB', padding: '16px 20px', color: '#1C1C1E' }}
-            >
-              <div className="font-bold mb-0.5">I have trial access</div>
-              <div className="text-xs font-normal" style={{ color: '#6B7280' }}>
-                Invited by a team member or given direct access
-              </div>
-            </button>
           </div>
         )}
 
@@ -208,15 +189,7 @@ function SignupContent() {
               </button>
             </form>
 
-            {!paid && (
-              <button
-                onClick={() => setMode('choose')}
-                className="mt-4 w-full text-center text-sm"
-                style={{ color: '#9CA3AF' }}
-              >
-                ← Back
-              </button>
-            )}
+
           </>
         )}
 
