@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
 import Logo from '@/components/Logo';
 
-const STRIPE_CHECKOUT = 'https://buy.stripe.com/fZufZh10hb7Y2KwdhdfrW01';
+const STRIPE_CHECKOUT = 'https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02';
 
 function SignupContent() {
   const [mode, setMode] = useState<'choose' | 'form'>('choose');
