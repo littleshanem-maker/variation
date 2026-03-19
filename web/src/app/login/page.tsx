@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
@@ -12,6 +12,8 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   async function handleLogin(e: React.FormEvent) {
@@ -19,8 +21,12 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
+    // Read directly from DOM to handle browser autofill (which bypasses React onChange)
+    const emailVal = emailRef.current?.value || email;
+    const passwordVal = passwordRef.current?.value || password;
+
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email: emailVal, password: passwordVal });
 
     if (error) {
       setError(error.message);
@@ -63,6 +69,7 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <input
+              ref={emailRef}
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -81,6 +88,7 @@ export default function LoginPage() {
           </div>
           <div className="relative">
             <input
+              ref={passwordRef}
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={e => setPassword(e.target.value)}
