@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
               className="w-full rounded-lg text-base font-semibold transition-all"
               style={{
                 padding: '12px',
-                backgroundColor: '#1B365D',
+                backgroundColor: '#4f46e5',
                 color: '#FFFFFF',
                 border: 'none',
                 cursor: loading || !email ? 'not-allowed' : 'pointer',

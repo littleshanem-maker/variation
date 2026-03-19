@@ -126,15 +126,15 @@ export default function LoginPage() {
             className="w-full rounded-lg text-base font-semibold transition-all"
             style={{
               padding: '12px',
-              backgroundColor: '#1B365D',
+              backgroundColor: '#4f46e5',
               color: '#FFFFFF',
               border: 'none',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.5 : 1,
               boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
             }}
-            onMouseEnter={e => { if (!loading) (e.target as HTMLElement).style.backgroundColor = '#24466F'; }}
-            onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#1B365D'; }}
+            onMouseEnter={e => { if (!loading) (e.target as HTMLElement).style.backgroundColor = '#4338ca'; }}
+            onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#4f46e5'; }}
           >
             {loading ? 'Signing in...' : 'Log In'}
           </button>

@@ -2,7 +2,7 @@
   "name": "Variation Shield",
   "short_name": "VS",
   "description": "Capture and manage variation notices on-site",
-  "start_url": "/",
+  "start_url": "/login",
   "display": "standalone",
   "background_color": "#4f46e5",
   "theme_color": "#0F1117",
