@@ -460,7 +460,11 @@ export default function VariationDetail() {
       try {
         setSendStage('pdf');
         const { html, css } = getVariationHtmlForPdf(variationForPdf, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
-        const blob = await htmlToPdfBlob(html, css);
+        // Get signed URLs for PDF attachments to merge into the document
+        const pdfAttachmentUrls = documents
+          .filter(d => d.file_type === 'application/pdf' && docUrls[d.id])
+          .map(d => docUrls[d.id]);
+        const blob = await htmlToPdfBlob(html, css, pdfAttachmentUrls);
         const reader = new FileReader();
         pdfBase64 = await new Promise<string>((resolve, reject) => {
           reader.onload = () => resolve((reader.result as string).split(',')[1]);
@@ -579,7 +583,10 @@ export default function VariationDetail() {
       const { data: freshVar } = await supabase.from('variations').select('*').eq('id', variation.id).single();
       const varForPdf = freshVar || variation;
       const { html, css } = getVariationHtmlForPdf(varForPdf as typeof variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
-      const blob = await htmlToPdfBlob(html, css);
+      const pdfAttachmentUrls = documents
+        .filter(d => d.file_type === 'application/pdf' && docUrls[d.id])
+        .map(d => docUrls[d.id]);
+      const blob = await htmlToPdfBlob(html, css, pdfAttachmentUrls);
       const { filename } = getVariationEmailMeta(variation, project);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');

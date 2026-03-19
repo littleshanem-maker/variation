@@ -386,7 +386,10 @@ export default function NoticeDetail() {
       let pdfBase64: string | null = null;
       try {
         const { html, css } = getNoticeHtmlForPdf(noticeForPdf as typeof notice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
-        const blob = await htmlToPdfBlob(html, css);
+        const pdfAttachmentUrls = documents
+          .filter(d => d.file_type === 'application/pdf' && docUrls[d.id])
+          .map(d => docUrls[d.id]);
+        const blob = await htmlToPdfBlob(html, css, pdfAttachmentUrls);
         const reader = new FileReader();
         pdfBase64 = await new Promise<string>((resolve, reject) => {
           reader.onload = () => resolve((reader.result as string).split(',')[1]);
@@ -487,7 +490,10 @@ export default function NoticeDetail() {
     setSendingEmail(true);
     try {
       const { html, css } = getNoticeHtmlForPdf(notice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
-      const blob = await htmlToPdfBlob(html, css);
+      const pdfAttachmentUrls = documents
+        .filter(d => d.file_type === 'application/pdf' && docUrls[d.id])
+        .map(d => docUrls[d.id]);
+      const blob = await htmlToPdfBlob(html, css, pdfAttachmentUrls);
       const { filename } = getNoticeEmailMeta(notice, project);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');

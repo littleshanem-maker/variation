@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   // Dynamic imports — avoid bundling in client builds
@@ -12,7 +12,11 @@ export async function POST(req: NextRequest) {
   let browser: any = null;
 
   try {
-    const { html, css } = await req.json();
+    const { html, css, attachmentPdfUrls } = await req.json() as {
+      html: string;
+      css: string;
+      attachmentPdfUrls?: string[]; // signed URLs of PDF attachments to merge
+    };
 
     if (!html || !css) {
       return NextResponse.json({ error: 'html and css required' }, { status: 400 });
@@ -55,7 +59,7 @@ export async function POST(req: NextRequest) {
 
     await Promise.race([page.setContent(fullHtml, { waitUntil: 'networkidle0' }), timeoutPromise]);
 
-    const pdfBuffer = await Promise.race([
+    const mainPdfBuffer = await Promise.race([
       page.pdf({
         format: 'A4',
         printBackground: true,
@@ -64,12 +68,50 @@ export async function POST(req: NextRequest) {
       timeoutPromise,
     ]) as Buffer;
 
-    return new NextResponse(Buffer.from(pdfBuffer), {
+    // If no PDF attachments, return main PDF directly
+    if (!attachmentPdfUrls || attachmentPdfUrls.length === 0) {
+      return new NextResponse(Buffer.from(mainPdfBuffer), {
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': 'inline; filename="variation.pdf"',
+        },
+      });
+    }
+
+    // Merge attachment PDFs using pdf-lib
+    const { PDFDocument } = await import('pdf-lib');
+
+    const mergedDoc = await PDFDocument.create();
+
+    // Add main PDF pages first
+    const mainDoc = await PDFDocument.load(mainPdfBuffer);
+    const mainPages = await mergedDoc.copyPages(mainDoc, mainDoc.getPageIndices());
+    mainPages.forEach(p => mergedDoc.addPage(p));
+
+    // Fetch and append each attachment PDF
+    for (const url of attachmentPdfUrls) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const buf = await res.arrayBuffer();
+        const attachDoc = await PDFDocument.load(buf);
+        const attachPages = await mergedDoc.copyPages(attachDoc, attachDoc.getPageIndices());
+        attachPages.forEach(p => mergedDoc.addPage(p));
+      } catch (err) {
+        console.error('[generate-pdf] Failed to merge attachment:', url, err);
+        // Non-fatal — skip this attachment
+      }
+    }
+
+    const mergedBytes = await mergedDoc.save();
+
+    return new NextResponse(Buffer.from(mergedBytes), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': 'inline; filename="variation.pdf"',
       },
     });
+
   } catch (err) {
     console.error('PDF generation error:', err);
     return NextResponse.json(
