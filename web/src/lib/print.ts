@@ -654,12 +654,12 @@ function buildNoticeHtml(
 
     ${buildAttachmentsSection(documents || [], docUrls || {})}
 
-    <div style="margin-top:32px; padding:16px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB; margin-bottom:24px;">
-      <div style="font-size:9pt; color:#6B7280; margin-bottom:8px;">TO: ${escapeHtml(project.client)}</div>
-      <div style="font-size:10pt; line-height:1.6; margin-bottom:10px;">
+    <div style="margin-top:16px; padding:12px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB; margin-bottom:16px;">
+      <div style="font-size:8pt; color:#6B7280; margin-bottom:6px;">TO: ${escapeHtml(project.client)}</div>
+      <div style="font-size:7.5pt; line-height:1.5; color:#374151; margin-bottom:6px;">
         ${getNoticeLanguage(companyInfo?.preferredStandard)}
       </div>
-      <div style="font-size:9pt; color:#6B7280; line-height:1.5;">
+      <div style="font-size:7pt; color:#9CA3AF; line-height:1.5;">
         The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
       </div>
     </div>
