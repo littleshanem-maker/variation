@@ -51,13 +51,5 @@ body {
     font-size: 16px !important;
   }
 
-  /* Mobile: force all body text to black unless explicitly overridden by status/badge classes */
-  p, span, label, div, li, td, th, a:not([class*="text-white"]):not([class*="text-indigo"]):not([class*="text-emerald"]):not([class*="text-amber"]):not([class*="text-rose"]):not([class*="text-blue"]) {
-    color: #1C1C1E;
-  }
 
-  /* Preserve intentional light text on dark backgrounds */
-  .bg-slate-900 *, .bg-indigo-600 *, .bg-emerald-500 *, [class*="bg-[#1B365D]"] * {
-    color: inherit;
-  }
 }
