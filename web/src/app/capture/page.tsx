@@ -451,7 +451,7 @@ function CapturePageContent() {
               ) : projects.length === 0 ? (
                 <div className="text-sm text-[#6B7280] py-2">
                   No active projects found.{' '}
-                  <Link href="/" className="underline text-[#1B365D]">Create one on the dashboard</Link>.
+                  <Link href="/dashboard" className="underline text-[#1B365D]">Create one on the dashboard</Link>.
                 </div>
               ) : projects.length === 1 ? (
                 <div className="px-4 py-3 bg-[#F3F4F6] rounded-lg text-sm text-[#1C1C1E] font-medium">
@@ -705,9 +705,11 @@ function CapturePageContent() {
             </form>
           </div>
 
-          <p className="text-center text-xs text-[#9CA3AF] mt-6">
-            <Link href="/" className="hover:underline">← Back to Dashboard</Link>
-          </p>
+          {!isField && (
+            <p className="text-center text-xs text-[#9CA3AF] mt-6">
+              <Link href="/dashboard" className="hover:underline">← Back to Dashboard</Link>
+            </p>
+          )}
         </div>
       </div>
 
