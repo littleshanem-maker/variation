@@ -68,10 +68,10 @@ export default function Sidebar() {
       <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[240px] bg-[#020617] text-white flex-col z-50">
         {/* Logo */}
         <div className="px-6 py-6">
-          <div className="flex items-center gap-3">
+          <a href="https://variationshield.com.au" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <Logo size={32} />
             <span className="font-semibold text-[15px] tracking-tight">Variation Shield</span>
-          </div>
+          </a>
           {company && (
             <div className="mt-2 text-[11px] text-white/40 truncate">{company.name}</div>
           )}
