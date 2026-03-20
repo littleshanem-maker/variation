@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Paperclip, X, CheckCircle } from 'lucide-react';
 import { useRole } from '@/lib/role';
-import { createClient } from '@/lib/supabase';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -11,7 +10,7 @@ interface FeedbackModalProps {
 }
 
 export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
-  const { company } = useRole();
+  const { company, userId } = useRole();
   const [message, setMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -51,13 +50,10 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
     setError('');
 
     try {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-
       const fd = new FormData();
       fd.append('message', message.trim());
-      fd.append('userName', user?.user_metadata?.full_name || user?.email || 'Unknown');
-      fd.append('userEmail', user?.email || '');
+      fd.append('userName', company?.name ? `User at ${company.name}` : 'Unknown');
+      fd.append('userEmail', '');
       fd.append('companyName', company?.name || '');
       if (file) fd.append('attachment', file);
 
