@@ -25,6 +25,21 @@ function CapturePageContent() {
 
   const { companyId, isField, isLoading: roleLoading, userId } = useRole();
 
+  // Early auth gate — render nothing until session is confirmed, redirect immediately if not authed
+  const [authChecked, setAuthChecked] = useState(false);
+  useEffect(() => {
+    async function checkAuth() {
+      const supabase = createClient();
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        window.location.replace('/login');
+        return;
+      }
+      setAuthChecked(true);
+    }
+    checkAuth();
+  }, []);
+
   // Projects
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState('');
@@ -344,6 +359,9 @@ function CapturePageContent() {
       .slice(0, 16);
     setOccurredAt(local);
   }
+
+  // Block render until auth is confirmed
+  if (!authChecked) return null;
 
   // ── SUCCESS OVERLAY — shown over the form ───────────────────
   const SuccessOverlay = result ? (
