@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY || 'test_key_placeholder');
 const FROM_DOMAIN = process.env.RESEND_FROM_DOMAIN || 'variationshield.com.au';
-const NOTIFY_EMAIL = process.env.DEMO_NOTIFY_EMAIL || 'shane@variationshield.com.au';
+const NOTIFY_EMAIL = process.env.DEMO_NOTIFY_EMAIL || 'shane@leveragedsystems.com.au';
 
 export async function POST(req: NextRequest) {
   try {
