@@ -81,7 +81,7 @@ export default function MobileBottomNav() {
       <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 
       {/* Bottom nav bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-[#020617] border-t border-white/[0.08] flex items-stretch h-16 safe-area-inset-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-[#0f172a] border-t border-white/[0.08] flex items-stretch h-16 safe-area-inset-bottom">
         {tabs.map(tab => {
           const Icon = tab.icon;
           const active = isActive(tab.href);

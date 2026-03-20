@@ -89,7 +89,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
     >
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
 
-      <div className="relative w-full sm:max-w-md bg-[#0f1117] border border-white/[0.1] rounded-t-2xl sm:rounded-2xl shadow-2xl">
+      <div className="relative w-full sm:max-w-md bg-[#1a2338] border border-white/[0.1] rounded-t-2xl sm:rounded-2xl shadow-2xl">
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.12]">

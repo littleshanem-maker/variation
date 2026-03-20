@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function GuidePage() {
   return (
-    <div className="min-h-screen bg-[#0F1117] text-white">
+    <div className="min-h-screen bg-[#1a2338] text-white">
 
       {/* Nav */}
       <nav className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">

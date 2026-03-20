@@ -8,7 +8,7 @@ export default function MobileNav() {
   }
 
   return (
-    <div id="mobile-nav" className="hidden md:hidden fixed top-[64px] left-0 right-0 z-50 bg-[#0F1117] border-b border-white/[0.08] flex flex-col py-2 px-6 gap-0 shadow-xl">
+    <div id="mobile-nav" className="hidden md:hidden fixed top-[64px] left-0 right-0 z-50 bg-[#1a2338] border-b border-white/[0.08] flex flex-col py-2 px-6 gap-0 shadow-xl">
       <a href="#features" className="py-3.5 text-sm text-white/60 border-b border-white/[0.06] active:text-white" onClick={close}>Features</a>
       <a href="#how-it-works" className="py-3.5 text-sm text-white/60 border-b border-white/[0.06] active:text-white" onClick={close}>How it works</a>
       <a href="#pricing" className="py-3.5 text-sm text-white/60 border-b border-white/[0.06] active:text-white" onClick={close}>Pricing</a>

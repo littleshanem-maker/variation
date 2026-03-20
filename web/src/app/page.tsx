@@ -17,10 +17,10 @@ export const metadata: Metadata = {
 
 export default function LandingPage() {
   return (
-    <div id="top" className="min-h-screen bg-[#0F1117] text-white font-sans">
+    <div id="top" className="min-h-screen bg-[#1a2338] text-white font-sans">
 
       {/* NAV */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#0F1117]/90 backdrop-blur border-b border-white/[0.06]">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#1a2338]/90 backdrop-blur border-b border-white/[0.10]">
         <a href="https://variationshield.com.au" className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -79,15 +79,15 @@ export default function LandingPage() {
             </DemoButton>
           </div>
 
-          <p className="mt-5 text-sm text-white/50">
+          <p className="mt-5 text-sm text-white/65">
             Setup in 5 minutes · 30-day money-back guarantee · <span className="text-amber-400">$299/mo founding rate · goes to $499/mo when this period closes</span>
           </p>
         </div>
       </section>
 
       {/* SOCIAL PROOF BAR */}
-      <div className="border-y border-white/[0.06] bg-white/[0.02] py-5 px-6">
-        <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-x-10 gap-y-3 text-sm text-white/40 text-center">
+      <div className="border-y border-white/[0.10] bg-white/[0.02] py-5 px-6">
+        <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-x-10 gap-y-3 text-sm text-white/60 text-center">
           <span className="flex items-center gap-2"><span className="text-green-400">✓</span> 60-second site capture</span>
           <span className="flex items-center gap-2"><span className="text-green-400">✓</span> Send to client from the app</span>
           <span className="flex items-center gap-2"><span className="text-green-400">✓</span> Professional PDF reports</span>
@@ -124,7 +124,7 @@ export default function LandingPage() {
               <div key={p.n} className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-8 text-center flex flex-col items-center">
                 <div className="text-5xl font-extrabold text-indigo-500/25 mb-4 leading-none">{p.n}</div>
                 <h3 className="text-lg font-bold mb-3">{p.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{p.body}</p>
+                <p className="text-white/65 text-sm leading-relaxed">{p.body}</p>
               </div>
             ))}
           </div>
@@ -132,12 +132,12 @@ export default function LandingPage() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="py-24 px-6 bg-white/[0.02] border-y border-white/[0.06]" id="how-it-works">
+      <section className="py-24 px-6 bg-white/[0.02] border-y border-white/[0.10]" id="how-it-works">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-indigo-400 text-xs font-bold tracking-widest uppercase mb-3">The system</p>
             <h2 className="text-3xl md:text-5xl font-bold tracking-tight">From site to signed in 60 seconds</h2>
-            <p className="text-white/50 mt-4 max-w-lg mx-auto">No complex workflows. No training required. Three steps and the variation is documented before you walk to the next task.</p>
+            <p className="text-white/65 mt-4 max-w-lg mx-auto">No complex workflows. No training required. Three steps and the variation is documented before you walk to the next task.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {/* Step 1 */}
@@ -222,7 +222,7 @@ export default function LandingPage() {
                   {f.icon}
                 </div>
                 <h3 className="font-bold text-base mb-2">{f.title}</h3>
-                <p className="text-white/50 text-sm leading-relaxed">{f.body}</p>
+                <p className="text-white/65 text-sm leading-relaxed">{f.body}</p>
               </div>
             ))}
           </div>
@@ -230,7 +230,7 @@ export default function LandingPage() {
       </section>
 
       {/* CREDIBILITY */}
-      <section className="py-24 px-6 bg-white/[0.02] border-y border-white/[0.06]">
+      <section className="py-24 px-6 bg-white/[0.02] border-y border-white/[0.10]">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-indigo-400 text-xs font-bold tracking-widest uppercase mb-6">Why this exists</p>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-8">Built from the other side of the desk</h2>
@@ -242,7 +242,7 @@ export default function LandingPage() {
           </div>
           <div className="mt-10 pt-8 border-t border-white/[0.08]">
             <div className="font-bold text-lg">Shane Little</div>
-            <div className="text-white/40 text-sm mt-1">Founder, Leveraged Systems · 15 years Tier 1 & 2 project management</div>
+            <div className="text-white/60 text-sm mt-1">Founder, Leveraged Systems · 15 years Tier 1 & 2 project management</div>
           </div>
         </div>
       </section>
@@ -252,7 +252,7 @@ export default function LandingPage() {
         <div className="max-w-lg mx-auto text-center">
           <p className="text-indigo-400 text-xs font-bold tracking-widest uppercase mb-3">Pricing</p>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">Simple. No surprises.</h2>
-          <p className="text-white/50 mb-12">One plan. Everything included. Cancel anytime.</p>
+          <p className="text-white/65 mb-12">One plan. Everything included. Cancel anytime.</p>
 
           <div className="bg-white/[0.04] border border-indigo-500/30 rounded-2xl p-8 text-left relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-t-2xl" />
@@ -261,10 +261,10 @@ export default function LandingPage() {
             </div>
             <div className="flex items-baseline gap-3 mb-1">
               <span className="text-5xl font-extrabold">$299</span>
-              <span className="text-white/40 text-lg">/month</span>
+              <span className="text-white/60 text-lg">/month</span>
             </div>
             <p className="text-amber-400/80 text-sm font-semibold mb-1">⭐ Founding member rate — locked at $299/mo for life</p>
-            <p className="text-white/50 text-xs mb-1">Price goes to $499/mo when this period closes</p>
+            <p className="text-white/65 text-xs mb-1">Price goes to $499/mo when this period closes</p>
             <p className="text-white/30 text-xs mb-8">30-day money-back guarantee. No lock-in. Cancel anytime.</p>
 
             <ul className="space-y-3 mb-8">
@@ -305,7 +305,7 @@ export default function LandingPage() {
         </div>
         <div className="relative z-10 max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Stop leaving money on the table</h2>
-          <p className="text-white/50 text-lg mb-10">Set up in 5 minutes. Capture your first variation today.</p>
+          <p className="text-white/65 text-lg mb-10">Set up in 5 minutes. Capture your first variation today.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/25">
               Get Started — 30-Day Guarantee
@@ -319,7 +319,7 @@ export default function LandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-white/[0.06] px-6 py-8">
+      <footer className="border-t border-white/[0.10] px-6 py-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-white/30">
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-indigo-600 rounded flex items-center justify-center">
@@ -327,7 +327,7 @@ export default function LandingPage() {
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
             </div>
-            <span className="font-semibold text-white/50">Variation Shield</span>
+            <span className="font-semibold text-white/65">Variation Shield</span>
             <span className="text-white/20">by</span>
             <a href="https://leveragedsystems.com.au" className="hover:text-white/60 transition-colors">Leveraged Systems</a>
           </div>

@@ -68,7 +68,7 @@ export default function Sidebar() {
     <>
 
       {/* Sidebar panel */}
-      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[240px] bg-[#020617] text-white flex-col z-50">
+      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[240px] bg-[#0f172a] text-white flex-col z-50">
         {/* Logo */}
         <div className="px-6 py-6">
           <a href="https://variationshield.com.au" className="flex items-center gap-3 hover:opacity-80 transition-opacity">

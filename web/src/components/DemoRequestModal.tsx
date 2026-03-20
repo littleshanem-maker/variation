@@ -66,7 +66,7 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 
       {/* Modal */}
-      <div className="relative w-full max-w-md bg-[#0f1117] border border-white/[0.1] rounded-2xl shadow-2xl p-8">
+      <div className="relative w-full max-w-md bg-[#1a2338] border border-white/[0.1] rounded-2xl shadow-2xl p-8">
         {/* Close */}
         <button
           onClick={onClose}
