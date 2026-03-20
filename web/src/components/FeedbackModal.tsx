@@ -50,17 +50,30 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
     setError('');
 
     try {
-      const fd = new FormData();
-      fd.append('message', message.trim());
-      fd.append('userName', company?.name ? `User at ${company.name}` : 'Unknown');
-      fd.append('userEmail', '');
-      fd.append('companyName', company?.name || '');
-      if (file) fd.append('attachment', file);
+      console.log('[FeedbackModal] submitting feedback...');
+      const payload = {
+        message: message.trim(),
+        userName: company?.name ? `User at ${company.name}` : (userId ? `User ${userId.slice(0, 8)}` : 'Unknown'),
+        userEmail: '',
+        companyName: company?.name || '',
+      };
+      console.log('[FeedbackModal] payload:', JSON.stringify({ ...payload, message: payload.message.slice(0, 50) }));
 
-      const res = await fetch('/api/feedback', { method: 'POST', body: fd });
-      if (!res.ok) throw new Error('Failed');
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      console.log('[FeedbackModal] response status:', res.status);
+      if (!res.ok) {
+        const errBody = await res.text().catch(() => '');
+        console.error('[FeedbackModal] response error body:', errBody);
+        throw new Error(`Failed: ${res.status}`);
+      }
       setSubmitted(true);
-    } catch {
+    } catch (err) {
+      console.error('[FeedbackModal] caught error:', err);
       setError('Something went wrong — please try again.');
     } finally {
       setLoading(false);

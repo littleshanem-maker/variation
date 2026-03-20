@@ -9,72 +9,58 @@ const NOTIFY_EMAIL = process.env.DEMO_NOTIFY_EMAIL || 'shane@variationshield.com
 
 export async function POST(req: NextRequest) {
   console.log('[feedback] POST received');
+  console.log('[feedback] RESEND_API_KEY set:', !!process.env.RESEND_API_KEY);
+  console.log('[feedback] NOTIFY_EMAIL:', NOTIFY_EMAIL);
+  console.log('[feedback] FROM_DOMAIN:', FROM_DOMAIN);
 
   try {
-    const formData = await req.formData();
-    const message = formData.get('message') as string | null;
-    const userName = (formData.get('userName') as string | null) || 'Unknown';
-    const userEmail = (formData.get('userEmail') as string | null) || '';
-    const companyName = (formData.get('companyName') as string | null) || '';
-    const file = formData.get('attachment') as File | null;
+    const body = await req.json();
+    console.log('[feedback] body parsed:', JSON.stringify({ ...body, message: body.message?.slice(0, 50) }));
 
-    console.log('[feedback] fields — userName:', userName, 'company:', companyName, 'hasFile:', !!file, 'messageLen:', message?.length ?? 0);
+    const { message, userName = 'Unknown', userEmail = '', companyName = '' } = body;
 
     if (!message?.trim()) {
+      console.log('[feedback] missing message — returning 400');
       return NextResponse.json({ error: 'Message required' }, { status: 400 });
     }
 
-    let attachmentBase64: string | null = null;
-    let attachmentName: string | null = null;
+    console.log('[feedback] sending email via Resend...');
+    const submittedAt = new Date().toLocaleString('en-AU', {
+      timeZone: 'Australia/Melbourne',
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    });
 
-    if (file && file.size > 0) {
-      attachmentName = file.name;
-      const arrayBuffer = await file.arrayBuffer();
-      attachmentBase64 = Buffer.from(arrayBuffer).toString('base64');
+    const emailResult = await resend.emails.send({
+      from: `Variation Shield <hello@${FROM_DOMAIN}>`,
+      to: NOTIFY_EMAIL,
+      subject: `💬 Feedback — ${userName}${companyName ? `, ${companyName}` : ''}`,
+      html: `
+        <div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#0f1117;color:#f1f5f9;border-radius:12px;">
+          <div style="margin-bottom:20px;">
+            <span style="background:#4f46e5;color:white;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.05em;">PRODUCT FEEDBACK</span>
+          </div>
+          <h2 style="margin:0 0 4px;font-size:18px;font-weight:700;">${userName}</h2>
+          <p style="margin:0 0 20px;color:#64748b;font-size:13px;">${companyName}${userEmail ? ` · ${userEmail}` : ''}</p>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px 20px;margin-bottom:20px;">
+            <p style="margin:0;font-size:14px;line-height:1.7;color:#cbd5e1;white-space:pre-wrap;">${message.trim()}</p>
+          </div>
+          <p style="font-size:12px;color:#475569;margin-top:16px;">${submittedAt} AEDT</p>
+        </div>
+      `,
+    });
+
+    console.log('[feedback] Resend result:', JSON.stringify(emailResult));
+
+    if (emailResult.error) {
+      console.error('[feedback] Resend error:', emailResult.error);
+      return NextResponse.json({ error: 'Email delivery failed', detail: emailResult.error }, { status: 500 });
     }
 
-    if (process.env.RESEND_API_KEY) {
-      const submittedAt = new Date().toLocaleString('en-AU', {
-        timeZone: 'Australia/Melbourne',
-        dateStyle: 'medium',
-        timeStyle: 'short',
-      });
-
-      try {
-        const result = await resend.emails.send({
-          from: `Variation Shield <hello@${FROM_DOMAIN}>`,
-          to: NOTIFY_EMAIL,
-          subject: `💬 Feedback — ${userName}${companyName ? `, ${companyName}` : ''}`,
-          attachments: attachmentBase64 && attachmentName ? [{
-            filename: attachmentName,
-            content: attachmentBase64,
-          }] : [],
-          html: `
-            <div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#0f1117;color:#f1f5f9;border-radius:12px;">
-              <div style="margin-bottom:20px;">
-                <span style="background:#4f46e5;color:white;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.05em;">PRODUCT FEEDBACK</span>
-              </div>
-              <h2 style="margin:0 0 4px;font-size:18px;font-weight:700;">${userName}</h2>
-              <p style="margin:0 0 20px;color:#64748b;font-size:13px;">${companyName}${userEmail ? ` · ${userEmail}` : ''}</p>
-              <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px 20px;margin-bottom:20px;">
-                <p style="margin:0;font-size:14px;line-height:1.7;color:#cbd5e1;white-space:pre-wrap;">${message.trim()}</p>
-              </div>
-              <p style="font-size:12px;color:#475569;margin-top:16px;">${submittedAt} AEDT</p>
-            </div>
-          `,
-        });
-        console.log('[feedback] Resend result:', JSON.stringify(result));
-      } catch (resendErr) {
-        console.error('[feedback] Resend send failed:', resendErr);
-        throw resendErr;
-      }
-    } else {
-      console.warn('[feedback] RESEND_API_KEY not set — email skipped');
-    }
-
+    console.log('[feedback] email sent successfully, id:', emailResult.data?.id);
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error('[feedback] POST error:', err);
+    console.error('[feedback] caught error:', err);
     return NextResponse.json({ error: 'Failed to submit' }, { status: 500 });
   }
 }

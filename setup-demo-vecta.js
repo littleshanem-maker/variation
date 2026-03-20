@@ -75,8 +75,8 @@ async function run() {
   const user = await getOrCreateAccount();
   if (!user) { console.error('❌ Could not get user'); process.exit(1); }
 
-  const { data: members } = await supabase.from('company_members').select('company_id').eq('user_id', user.id);
-  if (!members?.length) { console.error('❌ No company found'); process.exit(1); }
+  const { data: members } = await supabase.from('company_members').select('company_id').eq('user_id', user.id).eq('is_active', true);
+  if (!members?.length) { console.error('❌ No active company found'); process.exit(1); }
   const companyId = members[0].company_id;
   console.log('🏢 Company ID:', companyId);
 
