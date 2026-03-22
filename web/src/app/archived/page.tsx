@@ -71,7 +71,7 @@ export default function ArchivedProjects() {
       <TopBar title="Archived Projects" />
       <div className="p-4 md:p-8 space-y-5 md:space-y-6">
         <div>
-          <Link href="/" className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">
+          <Link href="/dashboard" className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors duration-[120ms]">
             ← Back to Dashboard
           </Link>
           <div className="mt-3">

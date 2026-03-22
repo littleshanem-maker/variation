@@ -444,7 +444,7 @@ function CapturePageContent() {
           {!isOnboarding && !roleLoading && !isField && (
             <div className="mb-4 px-4 py-2.5 bg-[#FDF8ED] border border-[#C8943E]/40 rounded-lg text-xs text-[#92722E]">
               Quick notice mode — for the full register,{' '}
-              <Link href="/" className="underline">go to Dashboard</Link>.
+              <Link href="/dashboard" className="underline">go to Dashboard</Link>.
             </div>
           )}
 

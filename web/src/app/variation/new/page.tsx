@@ -177,7 +177,7 @@ function NewRequestForm() {
         {/* Back + title */}
         <div>
           <Link
-            href="/"
+            href="/dashboard"
             className="hidden md:flex items-center gap-2 w-full bg-white border border-[#E5E7EB] rounded-md px-4 py-3 text-[14px] font-semibold text-[#1B365D] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="flex-shrink-0">
@@ -199,7 +199,7 @@ function NewRequestForm() {
               {loadingProjects ? (
                 <div className="h-9 bg-slate-100 rounded-md animate-pulse" />
               ) : projects.length === 0 ? (
-                <p className="text-[13px] text-[#6B7280] py-1">No active projects. <Link href="/" className="underline text-[#1B365D]">Create one on the dashboard</Link>.</p>
+                <p className="text-[13px] text-[#6B7280] py-1">No active projects. <Link href="/dashboard" className="underline text-[#1B365D]">Create one on the dashboard</Link>.</p>
               ) : projects.length === 1 ? (
                 <div className="px-3 py-2 bg-slate-50 rounded-md text-[14px] text-[#1C1C1E] font-medium border border-[#E5E7EB]">
                   {projects[0].name}
@@ -336,7 +336,7 @@ function NewRequestForm() {
           {/* Actions */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <Link
-              href="/"
+              href="/dashboard"
               className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms] text-center"
             >
               Cancel
