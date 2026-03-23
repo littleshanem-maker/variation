@@ -26,6 +26,14 @@ function ExpiredContent() {
               Please contact them directly if you need to provide input.
             </p>
           </>
+        ) : reason === 'already-responded' ? (
+          <>
+            <h1 className="text-2xl font-bold text-gray-900 mb-3">Already Responded</h1>
+            <p className="text-gray-500 text-sm leading-relaxed">
+              You have already {params.get('prior') === 'approved' ? 'approved' : 'responded to'} this variation.
+              Your response has been recorded. Please contact the contractor if you need to amend your response.
+            </p>
+          </>
         ) : (
           <>
             <h1 className="text-2xl font-bold text-gray-900 mb-3">Link Expired</h1>

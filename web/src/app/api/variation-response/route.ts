@@ -78,6 +78,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${APP_URL}/variation-response/expired`);
   }
 
+  // Block if already responded — one response only
+  if (variation.client_approval_response) {
+    return NextResponse.redirect(`${APP_URL}/variation-response/expired?reason=already-responded&prior=${variation.client_approval_response}`);
+  }
+
   // Block CC recipients — only the primary To recipient(s) can respond
   if (respondentEmail && variation.cc_emails) {
     const ccList = variation.cc_emails.split(',').map((e: string) => e.trim().toLowerCase());
@@ -118,7 +123,7 @@ export async function POST(req: NextRequest) {
 
     const { data: variation, error } = await supabase
       .from('variations')
-      .select('id, variation_number, sequence_number, status, approval_token_expires_at, requestor_email, project_id, cc_emails')
+      .select('id, variation_number, sequence_number, status, approval_token_expires_at, requestor_email, project_id, cc_emails, client_approval_response')
       .eq('approval_token', token)
       .single();
 
@@ -129,6 +134,11 @@ export async function POST(req: NextRequest) {
     const expiresAt = variation.approval_token_expires_at ? new Date(variation.approval_token_expires_at) : null;
     if (expiresAt && expiresAt < new Date()) {
       return NextResponse.json({ error: 'Token expired' }, { status: 410 });
+    }
+
+    // Block if already responded
+    if (variation.client_approval_response) {
+      return NextResponse.json({ error: 'You have already responded to this variation' }, { status: 409 });
     }
 
     // Block CC recipients
