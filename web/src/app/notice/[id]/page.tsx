@@ -630,7 +630,7 @@ export default function NoticeDetail() {
                 )}
                 {/* Refresh */}
                 {!isField && (
-                  <button onClick={() => loadNotice()} className="px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap">
+                  <button onClick={() => window.location.reload()} className="px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap">
                     Refresh
                   </button>
                 )}
