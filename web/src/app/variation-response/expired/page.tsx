@@ -28,10 +28,9 @@ function ExpiredContent() {
           </>
         ) : reason === 'already-responded' ? (
           <>
-            <h1 className="text-2xl font-bold text-gray-900 mb-3">Already Responded</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-3">This variation has already been actioned</h1>
             <p className="text-gray-500 text-sm leading-relaxed">
-              You have already {params.get('prior') === 'approved' ? 'approved' : 'responded to'} this variation.
-              Your response has been recorded. Please contact the contractor if you need to amend your response.
+              Your response has been recorded. If you need to amend it, please contact the contractor directly.
             </p>
           </>
         ) : (
