@@ -1262,14 +1262,34 @@ export default function VariationDetail() {
         )}
 
         {/* Status History — unified timeline: status changes + sends + approvals */}
-        {(statusHistory.length > 0 || varRevisions.length > 0) && !isField && (() => {
+        {(statusHistory.length > 0 || varRevisions.length > 0 || !!variation.client_approval_response) && !isField && (() => {
           // Build unified timeline entries
           type TimelineEntry =
             | { kind: 'status'; id: string; at: string; fromStatus: string | null; toStatus: string; by: string | null; notes: string | null }
             | { kind: 'send'; id: string; at: string; rev: typeof varRevisions[0] };
 
+          // Synthesise client approval/rejection entry directly from variation fields
+          // (status_changes insert may fail for unauthenticated client email links due to RLS)
+          const clientResponseEntry: TimelineEntry | null =
+            variation.client_approval_response && variation.client_approved_at
+              ? {
+                  kind: 'status',
+                  id: 'client-response',
+                  at: variation.client_approved_at,
+                  fromStatus: 'submitted',
+                  toStatus: variation.client_approval_response === 'approved' ? 'approved' : 'disputed',
+                  by: 'client-email',
+                  notes: null,
+                }
+              : null;
+
+          // Deduplicate: if status_changes already has a client-email entry at same time, prefer the synthesised one
+          const filteredStatusHistory = statusHistory.filter(sc =>
+            !(sc.changed_by === 'client-email' && clientResponseEntry)
+          );
+
           const entries: TimelineEntry[] = [
-            ...statusHistory.map(sc => ({
+            ...filteredStatusHistory.map(sc => ({
               kind: 'status' as const,
               id: sc.id,
               at: sc.changed_at,
@@ -1278,6 +1298,7 @@ export default function VariationDetail() {
               by: sc.changed_by ?? null,
               notes: sc.notes ?? null,
             })),
+            ...(clientResponseEntry ? [clientResponseEntry] : []),
             ...varRevisions.map(rev => ({
               kind: 'send' as const,
               id: rev.id,
