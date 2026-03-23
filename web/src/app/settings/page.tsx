@@ -12,6 +12,12 @@ export default function SettingsPage() {
   const [displayName, setDisplayName] = useState('');
   const [savingName, setSavingName] = useState(false);
   const [nameSaved, setNameSaved] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [passwordSaved, setPasswordSaved] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [companyName, setCompanyName] = useState('');
   const [companyAbn, setCompanyAbn] = useState('');
   const [companyAddress, setCompanyAddress] = useState('');
@@ -79,6 +85,27 @@ export default function SettingsPage() {
     const supabase = createClient();
     await supabase.auth.signOut();
     window.location.replace('/login');
+  }
+
+  async function handleChangePassword() {
+    setPasswordError(null);
+    if (newPassword !== confirmPassword) { setPasswordError('Passwords do not match'); return; }
+    if (newPassword.length < 8) { setPasswordError('Password must be at least 8 characters'); return; }
+    setChangingPassword(true);
+    const supabase = createClient();
+    // Re-authenticate first
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user?.email) { setPasswordError('Session error — please sign out and back in'); setChangingPassword(false); return; }
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email: session.user.email, password: currentPassword });
+    if (signInError) { setPasswordError('Current password is incorrect'); setChangingPassword(false); return; }
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) { setPasswordError(error.message); setChangingPassword(false); return; }
+    setPasswordSaved(true);
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setChangingPassword(false);
+    setTimeout(() => setPasswordSaved(false), 3000);
   }
 
   async function handleSaveDisplayName() {
@@ -166,6 +193,42 @@ export default function SettingsPage() {
                   </button>
                 </div>
                 <p className="text-[12px] text-[#9CA3AF] mt-1">Used as &ldquo;Issued By&rdquo; on new notices.</p>
+              </div>
+
+              {/* Change Password */}
+              <div className="pt-1 border-t border-[#F0F0EE]">
+                <label className="block text-[12px] font-medium text-[#6B7280] uppercase tracking-wider mb-2 mt-3">Change Password</label>
+                <div className="space-y-2">
+                  <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={e => setCurrentPassword(e.target.value)}
+                    placeholder="Current password"
+                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md bg-white text-[#1C1C1E] focus:outline-none focus:ring-1 focus:ring-[#1B365D]"
+                  />
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    placeholder="New password"
+                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md bg-white text-[#1C1C1E] focus:outline-none focus:ring-1 focus:ring-[#1B365D]"
+                  />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    placeholder="Confirm new password"
+                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md bg-white text-[#1C1C1E] focus:outline-none focus:ring-1 focus:ring-[#1B365D]"
+                  />
+                  {passwordError && <p className="text-[12px] text-red-600">{passwordError}</p>}
+                  <button
+                    onClick={handleChangePassword}
+                    disabled={changingPassword || !currentPassword || !newPassword || !confirmPassword}
+                    className="w-full py-2 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
+                  >
+                    {passwordSaved ? '✓ Password updated' : changingPassword ? 'Updating…' : 'Update Password'}
+                  </button>
+                </div>
               </div>
 
               <button
