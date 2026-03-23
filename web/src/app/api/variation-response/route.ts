@@ -27,6 +27,7 @@ async function notifyPM(opts: {
   const bodyHtml = action === 'approved'
     ? `<p>Good news — <strong>${varRef}</strong> has been <strong style="color:#16a34a;">approved</strong> via the email link.</p>
        <p>Approved by: ${responder}</p>
+       ${comment ? `<p>Approver's comment: <em>"${comment}"</em></p>` : ''}
        <p>Project: ${projectName}</p>
        <p><a href="${APP_URL}/variation/${variationId}" style="color:#4f46e5;">View variation →</a></p>
        <p style="color:#6b7280;font-size:12px;">Log in to mark as paid when the invoice is raised.</p>`
@@ -89,36 +90,10 @@ export async function GET(req: NextRequest) {
   const projectName = 'Project';
 
   if (action === 'approve') {
-    await supabase
-      .from('variations')
-      .update({
-        status: 'approved',
-        client_approval_response: 'approved',
-        client_approved_at: new Date().toISOString(),
-        client_approved_by_email: respondentEmail ?? null,
-      })
-      .eq('approval_token', token);
-
-    await supabase.from('status_changes').insert({
-      variation_id: variation.id,
-      from_status: variation.status,
-      to_status: 'approved',
-      changed_by: 'client-email',
-      note: respondentEmail ? `Approved via email link by ${respondentEmail}` : 'Approved via email link',
-    });
-
-    // Email the PM
-    if (variation.requestor_email) {
-      await notifyPM({
-        toEmail: variation.requestor_email,
-        varRef, projectName,
-        action: 'approved',
-        variationId: variation.id,
-        respondentEmail: respondentEmail ?? undefined,
-      });
-    }
-
-    return NextResponse.redirect(`${APP_URL}/variation-response/approved?ref=${encodeURIComponent(varRef)}`);
+    // Redirect to intermediate form so approver can add a comment
+    return NextResponse.redirect(
+      `${APP_URL}/variation-response/approve?token=${token}&ref=${encodeURIComponent(varRef)}${respondentEmail ? `&respondent=${encodeURIComponent(respondentEmail)}` : ''}`
+    );
   }
 
   if (action === 'reject') {
@@ -133,7 +108,7 @@ export async function GET(req: NextRequest) {
 // POST: Handle reject form submission
 export async function POST(req: NextRequest) {
   try {
-    const { token, comment, respondentEmail: bodyRespondentEmail } = await req.json() as { token: string; comment?: string; respondentEmail?: string };
+    const { token, action: bodyAction, comment, respondentEmail: bodyRespondentEmail } = await req.json() as { token: string; action?: string; comment?: string; respondentEmail?: string };
 
     if (!token) {
       return NextResponse.json({ error: 'Missing token' }, { status: 400 });
@@ -167,6 +142,44 @@ export async function POST(req: NextRequest) {
     const varRef = variation.variation_number ?? `VAR-${String(variation.sequence_number).padStart(3, '0')}`;
     const projectName = 'Project';
 
+    // Handle approve action from the intermediate form
+    if (bodyAction === 'approve') {
+      await supabase
+        .from('variations')
+        .update({
+          status: 'approved',
+          client_approval_response: 'approved',
+          client_approval_comment: comment || null,
+          client_approved_at: new Date().toISOString(),
+          client_approved_by_email: bodyRespondentEmail ?? null,
+        })
+        .eq('approval_token', token);
+
+      await supabase.from('status_changes').insert({
+        variation_id: variation.id,
+        from_status: variation.status,
+        to_status: 'approved',
+        changed_by: 'client-email',
+        note: bodyRespondentEmail
+          ? `Approved via email by ${bodyRespondentEmail}${comment ? `: ${comment}` : ''}`
+          : comment ? `Approved via email: ${comment}` : 'Approved via email link',
+      });
+
+      if (variation.requestor_email) {
+        await notifyPM({
+          toEmail: variation.requestor_email,
+          varRef, projectName,
+          action: 'approved',
+          comment,
+          variationId: variation.id,
+          respondentEmail: bodyRespondentEmail ?? undefined,
+        });
+      }
+
+      return NextResponse.json({ ok: true });
+    }
+
+    // Default: reject
     await supabase
       .from('variations')
       .update({

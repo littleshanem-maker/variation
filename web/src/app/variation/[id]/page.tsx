@@ -1253,7 +1253,10 @@ export default function VariationDetail() {
               )}
             </div>
             {variation.client_approval_comment && (
-              <p className="text-[12px] text-slate-600 mt-1 pl-5">"{variation.client_approval_comment}"</p>
+              <p className="text-[12px] text-slate-600 mt-1 pl-5">
+                <span className="font-medium text-slate-500">Comment: </span>
+                &ldquo;{variation.client_approval_comment}&rdquo;
+              </p>
             )}
           </div>
         )}
