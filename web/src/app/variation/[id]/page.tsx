@@ -340,7 +340,14 @@ export default function VariationDetail() {
     const { data: vn } = await supabase.from('voice_notes').select('*').eq('variation_id', id).order('captured_at');
     setVoiceNotes(vn || []);
 
-    const { data: sc } = await supabase.from('status_changes').select('*').eq('variation_id', id).order('changed_at');
+    // Load status_changes for ALL revisions in this chain, not just current
+    const allRevisionIds = (revData ?? []).map((r: { id: string }) => r.id);
+    const idsToQuery = allRevisionIds.length > 0 ? allRevisionIds : [id];
+    const { data: sc } = await supabase
+      .from('status_changes')
+      .select('*')
+      .in('variation_id', idsToQuery)
+      .order('changed_at');
     setStatusHistory(sc || []);
 
     const { data: docs } = await supabase.from('documents').select('*').eq('variation_id', id).order('uploaded_at');
@@ -373,12 +380,12 @@ export default function VariationDetail() {
       setPhotoUrls(urls);
     }
 
-    // Load send revision history
+    // Load send revision history for ALL revisions in this chain
     const { data: vrRevData } = await supabase
       .from('variation_request_revisions')
       .select('*')
-      .eq('variation_id', id)
-      .order('revision_number', { ascending: false });
+      .in('variation_id', idsToQuery)
+      .order('revision_number', { ascending: true });
     setVarRevisions((vrRevData || []) as VariationRequestRevision[]);
 
     setLoading(false);
@@ -1262,30 +1269,31 @@ export default function VariationDetail() {
         )}
 
         {/* Status History — unified timeline: status changes + sends + approvals */}
-        {(statusHistory.length > 0 || varRevisions.length > 0 || !!variation.client_approval_response) && !isField && (() => {
+        {(statusHistory.length > 0 || varRevisions.length > 0 || revisions.some(r => r.client_approval_response)) && !isField && (() => {
           // Build unified timeline entries
           type TimelineEntry =
             | { kind: 'status'; id: string; at: string; fromStatus: string | null; toStatus: string; by: string | null; notes: string | null }
             | { kind: 'send'; id: string; at: string; rev: typeof varRevisions[0] };
 
-          // Synthesise client approval/rejection entry directly from variation fields
+          // Synthesise client approval/rejection entries from ALL revisions in the chain
           // (status_changes insert may fail for unauthenticated client email links due to RLS)
-          const clientResponseEntry: TimelineEntry | null =
-            variation.client_approval_response && variation.client_approved_at
-              ? {
-                  kind: 'status',
-                  id: 'client-response',
-                  at: variation.client_approved_at,
-                  fromStatus: 'submitted',
-                  toStatus: variation.client_approval_response === 'approved' ? 'approved' : 'disputed',
-                  by: 'client-email',
-                  notes: null,
-                }
-              : null;
+          const clientResponseEntries: TimelineEntry[] = revisions
+            .filter(r => r.client_approval_response && r.client_approved_at)
+            .map(r => ({
+              kind: 'status' as const,
+              id: `client-response-${r.id}`,
+              at: r.client_approved_at!,
+              fromStatus: 'submitted',
+              toStatus: r.client_approval_response === 'approved' ? 'approved' : 'disputed',
+              by: 'client-email',
+              notes: r.client_approved_by_email
+                ? `${r.client_approval_response === 'approved' ? '✅ Approved' : '❌ Rejected'} by ${r.client_approved_by_email}${r.client_approval_comment ? ` — "${r.client_approval_comment}"` : ''}`
+                : r.client_approval_comment ? `"${r.client_approval_comment}"` : null,
+            }));
 
-          // Deduplicate: if status_changes already has a client-email entry at same time, prefer the synthesised one
+          // Deduplicate: remove status_changes client-email entries that are already covered by synthesised entries
           const filteredStatusHistory = statusHistory.filter(sc =>
-            !(sc.changed_by === 'client-email' && clientResponseEntry)
+            !(sc.changed_by === 'client-email')
           );
 
           const entries: TimelineEntry[] = [
@@ -1298,7 +1306,7 @@ export default function VariationDetail() {
               by: sc.changed_by ?? null,
               notes: sc.notes ?? null,
             })),
-            ...(clientResponseEntry ? [clientResponseEntry] : []),
+            ...clientResponseEntries,
             ...varRevisions.map(rev => ({
               kind: 'send' as const,
               id: rev.id,
@@ -1341,22 +1349,13 @@ export default function VariationDetail() {
                           {entry.fromStatus && <StatusBadge status={entry.fromStatus} />}
                           {entry.fromStatus && <span className="text-[#9CA3AF]">→</span>}
                           <StatusBadge status={entry.toStatus} />
-                          {entry.by && (
-                            <span className={`text-[12px] ${isClientApproval ? 'text-indigo-600 font-medium' : 'text-[#6B7280]'}`}>
-                              {isApproval
-                                ? `✅ Approved by client${variation.client_approved_by_email ? ` (${variation.client_approved_by_email})` : ''}`
-                                : isRejection
-                                ? `❌ Rejected by client${variation.client_approved_by_email ? ` (${variation.client_approved_by_email})` : ''}`
-                                : entry.by === 'client-email'
-                                ? '🔗 via client email link'
-                                : `by ${entry.by}`}
-                            </span>
+                          {entry.by && !isClientApproval && (
+                            <span className="text-[12px] text-[#6B7280]">by {entry.by}</span>
                           )}
                         </div>
-                        {(isApproval || isRejection) && variation.client_approval_comment && (
-                          <div className="text-[12px] text-slate-500 pl-1">
-                            <span className="font-medium">Comment:</span> &ldquo;{variation.client_approval_comment}&rdquo;
-                          </div>
+                        {/* Client approval/rejection detail from notes field */}
+                        {isClientApproval && entry.notes && (
+                          <div className="text-[12px] text-slate-600 pl-1">{entry.notes}</div>
                         )}
                         {entry.notes && !isClientApproval && (
                           <div className="text-[11px] text-slate-400 pl-1">{entry.notes}</div>
