@@ -26,7 +26,7 @@ export default function LoginPage() {
     const passwordVal = passwordRef.current?.value || password;
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email: emailVal, password: passwordVal });
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({ email: emailVal, password: passwordVal });
 
     if (error) {
       setError(error.message);
@@ -34,7 +34,20 @@ export default function LoginPage() {
       return;
     }
 
-    window.location.replace('/dashboard');
+    // Check role to route directly — avoids dashboard→field redirect flash
+    try {
+      const { data: membership } = await supabase
+        .from('company_members')
+        .select('role')
+        .eq('user_id', signInData.user.id)
+        .eq('is_active', true)
+        .limit(1)
+        .single();
+      const role = membership?.role ?? 'field';
+      window.location.replace(role === 'field' ? '/field' : '/dashboard');
+    } catch {
+      window.location.replace('/dashboard');
+    }
   }
 
   return (
