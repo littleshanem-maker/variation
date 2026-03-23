@@ -64,7 +64,7 @@ export default function VariationDetail() {
   const [ccEmailInput, setCcEmailInput] = useState('');
   // Variation request revisions (send history)
   const [varRevisions, setVarRevisions] = useState<VariationRequestRevision[]>([]);
-  const [generatingRevPdf, setGeneratingRevPdf] = useState<number | null>(null);
+  const [generatingRevPdf, setGeneratingRevPdf] = useState<string | null>(null);
 
   const [editing, setEditing] = useState(false);
   const [hasPendingDraft, setHasPendingDraft] = useState(false);
@@ -1538,7 +1538,7 @@ export default function VariationDetail() {
                 <button
                   onClick={async () => {
                     if (!project) return;
-                    setGeneratingRevPdf(rev.revision_number);
+                    setGeneratingRevPdf(rev.id);
                     try {
                       const snapVar: Variation = {
                         ...variation,
@@ -1546,8 +1546,8 @@ export default function VariationDetail() {
                         description: rev.description || variation.description,
                         estimated_value: rev.estimated_value ?? variation.estimated_value,
                         cost_items: rev.cost_items ?? variation.cost_items,
-                        status: 'submitted', // snapshot = what was sent = always submitted
-                        revision_number: rev.revision_number, // use snapshot's revision number
+                        status: 'submitted',
+                        revision_number: parentRevNum, // use parent variation's revision number
                         client_email: rev.client_email ?? variation.client_email,
                         response_due_date: rev.response_due_date ?? variation.response_due_date,
                       };
@@ -1563,11 +1563,11 @@ export default function VariationDetail() {
                     } catch (err) { console.error('Rev PDF failed:', err); }
                     finally { setGeneratingRevPdf(null); }
                   }}
-                  disabled={generatingRevPdf === rev.revision_number}
+                  disabled={generatingRevPdf === rev.id}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-slate-600 border border-slate-200 rounded-md hover:bg-white transition-colors disabled:opacity-50 flex-shrink-0 ml-3"
                 >
                   <FileText size={13} />
-                  {generatingRevPdf === rev.revision_number ? 'Building…' : 'PDF'}
+                  {generatingRevPdf === rev.id ? 'Building…' : 'PDF'}
                 </button>
               </div>
               );
