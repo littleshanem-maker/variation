@@ -979,10 +979,30 @@ export default function NoticeDetail() {
           )}
         </div>}
 
-        {/* Revision History — office/admin only */}
+        {/* Status History — office/admin only */}
         {!isField && revisions.length > 0 && (
           <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Revision History</h3>
+            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Status History</h3>
+            <div className="space-y-3 mb-4">
+              {revisions.slice().sort((a, b) => new Date(a.sent_at ?? 0).getTime() - new Date(b.sent_at ?? 0).getTime()).map((rev) => (
+                <div key={rev.id + '-timeline'} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
+                  <div className="text-[#9CA3AF] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">
+                    {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
+                  </div>
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-indigo-600 px-2 py-0.5 rounded flex-shrink-0">
+                      📧 Issued
+                    </span>
+                    <span className="text-[12px] text-[#1C1C1E] truncate">
+                      {rev.revision_number === 0 ? 'Original' : `Rev ${rev.revision_number}`} → {rev.sent_to}
+                      {rev.sent_cc ? ` (CC: ${rev.sent_cc})` : ''}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="border-t border-[#F0F0EE] pt-3">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-[#9CA3AF] mb-2">Download sent versions</div>
             <div className="space-y-2">
               {revisions.map((rev) => (
                 <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-slate-50 rounded-md border border-slate-100">
@@ -1048,6 +1068,7 @@ export default function NoticeDetail() {
                   </button>
                 </div>
               ))}
+            </div>
             </div>
           </div>
         )}

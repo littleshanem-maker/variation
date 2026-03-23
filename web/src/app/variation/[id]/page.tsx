@@ -1261,29 +1261,93 @@ export default function VariationDetail() {
           </div>
         )}
 
-        {/* Status History */}
-        {statusHistory.length > 0 && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Status History</h3>
-            <div className="space-y-2.5">
-              {statusHistory.map(sc => (
-                <div key={sc.id} className="flex flex-wrap items-center gap-2 md:gap-4 text-[13px]">
-                  <div className="text-[#9CA3AF] tabular-nums text-[12px]">{formatDateTime(sc.changed_at)}</div>
-                  <div className="flex items-center gap-2">
-                    {sc.from_status && <StatusBadge status={sc.from_status} />}
-                    {sc.from_status && <span className="text-[#9CA3AF]">→</span>}
-                    <StatusBadge status={sc.to_status} />
-                  </div>
-                  {sc.changed_by && (
-                    <span className={`text-[12px] ${sc.changed_by === 'client-email' ? 'text-indigo-600 font-medium' : 'text-[#6B7280]'}`}>
-                      {sc.changed_by === 'client-email' ? '🔗 via client email link' : `by ${sc.changed_by}`}
-                    </span>
-                  )}
-                </div>
-              ))}
+        {/* Status History — unified timeline: status changes + sends + approvals */}
+        {(statusHistory.length > 0 || varRevisions.length > 0) && !isField && (() => {
+          // Build unified timeline entries
+          type TimelineEntry =
+            | { kind: 'status'; id: string; at: string; fromStatus: string | null; toStatus: string; by: string | null; notes: string | null }
+            | { kind: 'send'; id: string; at: string; rev: typeof varRevisions[0] };
+
+          const entries: TimelineEntry[] = [
+            ...statusHistory.map(sc => ({
+              kind: 'status' as const,
+              id: sc.id,
+              at: sc.changed_at,
+              fromStatus: sc.from_status ?? null,
+              toStatus: sc.to_status,
+              by: sc.changed_by ?? null,
+              notes: sc.notes ?? null,
+            })),
+            ...varRevisions.map(rev => ({
+              kind: 'send' as const,
+              id: rev.id,
+              at: rev.sent_at ?? '',
+              rev,
+            })),
+          ].sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
+
+          return (
+            <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+              <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Status History</h3>
+              <div className="space-y-3">
+                {entries.map(entry => {
+                  if (entry.kind === 'send') {
+                    const rev = entry.rev;
+                    return (
+                      <div key={entry.id} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
+                        <div className="text-[#9CA3AF] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-indigo-600 px-2 py-0.5 rounded flex-shrink-0">
+                            📧 Sent
+                          </span>
+                          <span className="text-[12px] text-[#1C1C1E] truncate">
+                            {rev.revision_number === 0 ? 'Original' : `Rev ${rev.revision_number}`} → {rev.sent_to}
+                            {rev.sent_cc ? ` (CC: ${rev.sent_cc})` : ''}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  }
+                  // status entry
+                  const isClientApproval = entry.by === 'client-email';
+                  const isApproval = entry.toStatus === 'approved' && isClientApproval;
+                  const isRejection = entry.toStatus === 'disputed' && isClientApproval;
+                  return (
+                    <div key={entry.id} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
+                      <div className="text-[#9CA3AF] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
+                      <div className="flex flex-col gap-1 flex-1 min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {entry.fromStatus && <StatusBadge status={entry.fromStatus} />}
+                          {entry.fromStatus && <span className="text-[#9CA3AF]">→</span>}
+                          <StatusBadge status={entry.toStatus} />
+                          {entry.by && (
+                            <span className={`text-[12px] ${isClientApproval ? 'text-indigo-600 font-medium' : 'text-[#6B7280]'}`}>
+                              {isApproval
+                                ? `✅ Approved by client${variation.client_approved_by_email ? ` (${variation.client_approved_by_email})` : ''}`
+                                : isRejection
+                                ? `❌ Rejected by client${variation.client_approved_by_email ? ` (${variation.client_approved_by_email})` : ''}`
+                                : entry.by === 'client-email'
+                                ? '🔗 via client email link'
+                                : `by ${entry.by}`}
+                            </span>
+                          )}
+                        </div>
+                        {(isApproval || isRejection) && variation.client_approval_comment && (
+                          <div className="text-[12px] text-slate-500 pl-1">
+                            <span className="font-medium">Comment:</span> &ldquo;{variation.client_approval_comment}&rdquo;
+                          </div>
+                        )}
+                        {entry.notes && !isClientApproval && (
+                          <div className="text-[11px] text-slate-400 pl-1">{entry.notes}</div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
         {/* Revision History */}
         {revisions.length > 1 && (
           <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
@@ -1416,10 +1480,10 @@ export default function VariationDetail() {
         </div>
       )}
 
-      {/* Send Revision History */}
+      {/* Sent Versions — PDF downloads for each sent revision */}
       {!isField && varRevisions.length > 0 && (
         <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] mx-4 md:mx-8 mb-4 ">
-          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Send History</h3>
+          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Sent Versions</h3>
           <div className="space-y-2">
             {varRevisions.map((rev) => (
               <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-slate-50 rounded-md border border-slate-100">
