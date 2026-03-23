@@ -418,11 +418,14 @@ nav {
 }
 
 .roi-conclusion {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--green);
   font-weight: 600;
-  text-align: right;
-  flex-shrink: 0;
+  text-align: center;
+  width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  margin-top: 8px;
 }
 
 /* ─── LEAD CAPTURE SECTION ─── */
@@ -930,7 +933,7 @@ footer {
 
       <div class="input-group">
         <label class="input-label" for="revenueSlider">Annual revenue</label>
-        <p class="input-description">Your total annual turnover across all projects. Used to estimate your variation pool.</p>
+        <p class="input-description">Total revenue across all your jobs this year.</p>
         <div class="slider-container">
           <input type="range" class="slider" id="revenueSlider" min="1000000" max="50000000" value="10000000" step="500000">
         </div>
@@ -942,7 +945,7 @@ footer {
 
       <div class="input-group">
         <label class="input-label" for="variationRateSlider">Variations as % of revenue</label>
-        <p class="input-description">Industry average is 4–10%. Higher on brownfield, shutdown, and complex projects.</p>
+        <p class="input-description">How often do variation claims come up on your jobs? Typical range is 4–10%.</p>
         <div class="slider-container">
           <input type="range" class="slider" id="variationRateSlider" min="1" max="15" value="5" step="1">
         </div>
@@ -954,7 +957,7 @@ footer {
 
       <div class="input-group">
         <label class="input-label" for="unrecoveredSlider">% of variations that go unagreed or disputed</label>
-        <p class="input-description">What share of your variation claims get pushed back, reduced, or never paid? Industry data puts it at 55–65%.</p>
+        <p class="input-description">How many of your claims get pushed back, cut down, or never paid?</p>
         <div class="slider-container">
           <input type="range" class="slider" id="unrecoveredSlider" min="10" max="80" value="60" step="5">
         </div>
@@ -966,10 +969,9 @@ footer {
     </div>
 
     <!-- Source footnote inside left column -->
-    <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
-      <p style="font-size: 12px; color: #94a3b8; line-height: 1.6; margin: 0;">
-        <strong style="color: #cbd5e1;">About these defaults:</strong>
-        5% variation rate: KPMG/AIQS benchmarks. 60% unagreed: SOPA adjudication data — 59% of claims are rejected, reduced, or discounted. Root cause: documentation quality.
+    <div style="margin-top: 16px; padding: 12px 16px; background: rgba(255,255,255,0.04); border-radius: 8px;">
+      <p style="font-size: 11px; color: #64748b; line-height: 1.6; margin: 0; overflow-wrap: break-word; word-break: break-word;">
+        Defaults based on KPMG/AIQS (variation rate) and NSW Fair Trading SOPA data (59% of claims rejected or discounted). Root cause: poor documentation.
       </p>
     </div>
     </div><!-- end left col -->
@@ -984,27 +986,27 @@ footer {
 
       <div class="results-grid">
         <div class="result-card">
-          <div class="result-label">Annual Variation Throughput</div>
+          <div class="result-label">Total variation claims</div>
           <div class="result-value neutral" id="revenueAtRisk">$0</div>
-          <div class="result-description">Total value of all variations your team handles in a year</div>
+          <div class="result-description">What your team claims in variations each year</div>
         </div>
 
         <div class="result-card">
-          <div class="result-label">Current Annual Loss</div>
+          <div class="result-label">Lost every year</div>
           <div class="result-value negative" id="currentLeakage">$0</div>
-          <div class="result-description">What you're losing to disputed and unagreed variations right now</div>
+          <div class="result-description">Variations that get disputed, rejected, or never paid</div>
         </div>
 
         <div class="result-card">
-          <div class="result-label">Recoverable with Documentation</div>
+          <div class="result-label">You could get back</div>
           <div class="result-value positive" id="recoverable">$0</div>
-          <div class="result-description">Conservative estimate of what a proper evidence chain would let you recover</div>
+          <div class="result-description">What better documentation would recover — conservative estimate</div>
         </div>
 
         <div class="result-card highlight-card">
-          <div class="result-label">Cost of Variation Shield</div>
+          <div class="result-label">Cost to fix it</div>
           <div class="result-value amber">$3,588/yr</div>
-          <div class="result-description">$299/mo founding member rate (was $499) — locked for life</div>
+          <div class="result-description">$299/mo — founding member rate, locked for life</div>
         </div>
       </div>
 
@@ -1211,9 +1213,9 @@ function calculate() {
     results.roiRatio.textContent = roiRatio.toFixed(1) + 'x';
     results.roiRatio.className = 'roi-item-value positive';
     if (roiRatio >= 10) {
-      results.roiConclusion.textContent = 'Every dollar you spend on Variation Shield returns ' + roiRatio.toFixed(0) + 'x in recoverable revenue.';
+      results.roiConclusion.textContent = roiRatio.toFixed(0) + 'x return on every dollar spent.';
     } else if (roiRatio >= 3) {
-      results.roiConclusion.textContent = 'Variation Shield pays for itself ' + roiRatio.toFixed(1) + 'x over in the first year.';
+      results.roiConclusion.textContent = 'Pays for itself ' + roiRatio.toFixed(1) + 'x in year one.';
     } else {
       results.roiConclusion.textContent = 'Variation Shield pays for itself.';
     }
