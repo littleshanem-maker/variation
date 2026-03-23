@@ -595,12 +595,6 @@ export default function NoticeDetail() {
                   <FileText size={14} />
                   {sendingEmail && sendStage === 'idle' ? 'Building…' : 'PDF'}
                 </button>
-                {/* Refresh */}
-                {!isField && (
-                  <button onClick={() => loadNotice()} className="px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap" title="Refresh">
-                    ↻
-                  </button>
-                )}
                 {/* Edit */}
                 {!isField && (
                   <button
@@ -632,6 +626,12 @@ export default function NoticeDetail() {
                     className="px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap"
                   >
                     Delete
+                  </button>
+                )}
+                {/* Refresh */}
+                {!isField && (
+                  <button onClick={() => loadNotice()} className="px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap">
+                    Refresh
                   </button>
                 )}
               </div>
