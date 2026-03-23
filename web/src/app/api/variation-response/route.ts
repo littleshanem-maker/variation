@@ -13,20 +13,25 @@ async function notifyPM(opts: {
   action: 'approved' | 'rejected';
   comment?: string;
   variationId: string;
+  respondentEmail?: string;
 }) {
-  const { toEmail, varRef, projectName, action, comment, variationId } = opts;
+  const { toEmail, varRef, projectName, action, comment, variationId, respondentEmail } = opts;
   if (!toEmail || !process.env.RESEND_API_KEY) return;
 
+  const responder = respondentEmail ? `<strong>${respondentEmail}</strong>` : 'the client';
+
   const subject = action === 'approved'
-    ? `✅ ${varRef} approved by client — ${projectName}`
-    : `❌ ${varRef} rejected by client — ${projectName}`;
+    ? `✅ ${varRef} approved by ${respondentEmail ?? 'client'} — ${projectName}`
+    : `❌ ${varRef} rejected by ${respondentEmail ?? 'client'} — ${projectName}`;
 
   const bodyHtml = action === 'approved'
-    ? `<p>Good news — <strong>${varRef}</strong> has been <strong style="color:#16a34a;">approved by the client</strong> via the email link.</p>
+    ? `<p>Good news — <strong>${varRef}</strong> has been <strong style="color:#16a34a;">approved</strong> via the email link.</p>
+       <p>Approved by: ${responder}</p>
        <p>Project: ${projectName}</p>
        <p><a href="${APP_URL}/variation/${variationId}" style="color:#4f46e5;">View variation →</a></p>
        <p style="color:#6b7280;font-size:12px;">Log in to mark as paid when the invoice is raised.</p>`
-    : `<p><strong>${varRef}</strong> has been <strong style="color:#dc2626;">rejected by the client</strong> via the email link.</p>
+    : `<p><strong>${varRef}</strong> has been <strong style="color:#dc2626;">rejected</strong> via the email link.</p>
+       <p>Rejected by: ${responder}</p>
        <p>Project: ${projectName}</p>
        ${comment ? `<p>Reason: <em>"${comment}"</em></p>` : ''}
        <p><a href="${APP_URL}/variation/${variationId}" style="color:#4f46e5;">View variation →</a></p>
@@ -49,6 +54,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const token = searchParams.get('token');
   const action = searchParams.get('action');
+  const respondentEmail = searchParams.get('respondent') ? decodeURIComponent(searchParams.get('respondent')!) : null;
 
   if (!token || !action || !['approve', 'reject'].includes(action)) {
     return NextResponse.redirect(`${APP_URL}/variation-response/expired`);
@@ -58,7 +64,7 @@ export async function GET(req: NextRequest) {
 
   const { data: variation, error } = await supabase
     .from('variations')
-    .select('id, variation_number, sequence_number, status, approval_token_expires_at, client_approval_response, requestor_email, project_id')
+    .select('id, variation_number, sequence_number, status, approval_token_expires_at, client_approval_response, requestor_email, project_id, client_email, cc_emails')
     .eq('approval_token', token)
     .single();
 
@@ -71,6 +77,14 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(`${APP_URL}/variation-response/expired`);
   }
 
+  // Block CC recipients — only the primary To recipient(s) can respond
+  if (respondentEmail && variation.cc_emails) {
+    const ccList = variation.cc_emails.split(',').map((e: string) => e.trim().toLowerCase());
+    if (ccList.includes(respondentEmail.toLowerCase())) {
+      return NextResponse.redirect(`${APP_URL}/variation-response/expired?reason=cc`);
+    }
+  }
+
   const varRef = variation.variation_number ?? `VAR-${String(variation.sequence_number).padStart(3, '0')}`;
   const projectName = 'Project';
 
@@ -81,6 +95,7 @@ export async function GET(req: NextRequest) {
         status: 'approved',
         client_approval_response: 'approved',
         client_approved_at: new Date().toISOString(),
+        client_approved_by_email: respondentEmail ?? null,
       })
       .eq('approval_token', token);
 
@@ -89,7 +104,7 @@ export async function GET(req: NextRequest) {
       from_status: variation.status,
       to_status: 'approved',
       changed_by: 'client-email',
-      note: 'Approved via email link',
+      note: respondentEmail ? `Approved via email link by ${respondentEmail}` : 'Approved via email link',
     });
 
     // Email the PM
@@ -99,6 +114,7 @@ export async function GET(req: NextRequest) {
         varRef, projectName,
         action: 'approved',
         variationId: variation.id,
+        respondentEmail: respondentEmail ?? undefined,
       });
     }
 
@@ -107,7 +123,7 @@ export async function GET(req: NextRequest) {
 
   if (action === 'reject') {
     return NextResponse.redirect(
-      `${APP_URL}/variation-response/reject?token=${token}&ref=${encodeURIComponent(varRef)}`
+      `${APP_URL}/variation-response/reject?token=${token}&ref=${encodeURIComponent(varRef)}&respondent=${encodeURIComponent(respondentEmail ?? '')}`
     );
   }
 
@@ -117,7 +133,7 @@ export async function GET(req: NextRequest) {
 // POST: Handle reject form submission
 export async function POST(req: NextRequest) {
   try {
-    const { token, comment } = await req.json() as { token: string; comment?: string };
+    const { token, comment, respondentEmail: bodyRespondentEmail } = await req.json() as { token: string; comment?: string; respondentEmail?: string };
 
     if (!token) {
       return NextResponse.json({ error: 'Missing token' }, { status: 400 });
@@ -127,7 +143,7 @@ export async function POST(req: NextRequest) {
 
     const { data: variation, error } = await supabase
       .from('variations')
-      .select('id, variation_number, sequence_number, status, approval_token_expires_at, requestor_email, project_id')
+      .select('id, variation_number, sequence_number, status, approval_token_expires_at, requestor_email, project_id, cc_emails')
       .eq('approval_token', token)
       .single();
 
@@ -140,6 +156,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Token expired' }, { status: 410 });
     }
 
+    // Block CC recipients
+    if (bodyRespondentEmail && variation.cc_emails) {
+      const ccList = variation.cc_emails.split(',').map((e: string) => e.trim().toLowerCase());
+      if (ccList.includes(bodyRespondentEmail.toLowerCase())) {
+        return NextResponse.json({ error: 'CC recipients cannot respond to variations' }, { status: 403 });
+      }
+    }
+
     const varRef = variation.variation_number ?? `VAR-${String(variation.sequence_number).padStart(3, '0')}`;
     const projectName = 'Project';
 
@@ -150,6 +174,7 @@ export async function POST(req: NextRequest) {
         client_approval_response: 'rejected',
         client_approval_comment: comment || null,
         client_approved_at: new Date().toISOString(),
+        client_approved_by_email: bodyRespondentEmail ?? null,
       })
       .eq('approval_token', token);
 
@@ -158,7 +183,9 @@ export async function POST(req: NextRequest) {
       from_status: variation.status,
       to_status: 'disputed',
       changed_by: 'client-email',
-      note: comment ? `Rejected via email: ${comment}` : 'Rejected via email link',
+      note: bodyRespondentEmail
+        ? `Rejected via email by ${bodyRespondentEmail}${comment ? `: ${comment}` : ''}`
+        : comment ? `Rejected via email: ${comment}` : 'Rejected via email link',
     });
 
     // Email the PM
@@ -169,6 +196,7 @@ export async function POST(req: NextRequest) {
         action: 'rejected',
         comment,
         variationId: variation.id,
+        respondentEmail: bodyRespondentEmail ?? undefined,
       });
     }
 

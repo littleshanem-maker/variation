@@ -69,12 +69,58 @@ export async function POST(req: NextRequest) {
       resolvedVarRef = v.variation_number ?? `VAR-${String(v.sequence_number).padStart(3, '0')}`;
     }
 
-    const approveUrl = `${APP_URL}/api/variation-response?token=${resolvedToken}&action=approve`;
-    const rejectUrl = `${APP_URL}/api/variation-response?token=${resolvedToken}&action=reject`;
+    // Encode the primary recipient email so we can verify who clicked
+    const primaryEmail = encodeURIComponent(toEmails[0]);
+    const approveUrl = `${APP_URL}/api/variation-response?token=${resolvedToken}&action=approve&respondent=${primaryEmail}`;
+    const rejectUrl = `${APP_URL}/api/variation-response?token=${resolvedToken}&action=reject&respondent=${primaryEmail}`;
 
     const fromAddress = `${companyName} via Variation Shield <shane@${FROM_DOMAIN}>`;
     const greeting = toName ? `Dear ${toName},` : 'Dear Sir/Madam,';
     const varRef = resolvedVarRef;
+
+    // CC-only email body — no approve/reject buttons
+    const ccHtmlBody = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:32px 0;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
+        <tr>
+          <td style="background:#0f172a;padding:20px 32px;text-align:left;">
+            <span style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:-0.3px;">
+              <span style="color:#7c3aed;">⬡</span> Variation Shield
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px;">
+            <p style="margin:0 0 16px;color:#111827;font-size:15px;line-height:1.6;">You have been CC'd on this variation.</p>
+            <p style="margin:0 0 16px;color:#374151;font-size:14px;line-height:1.6;">
+              <strong>${varRef}</strong> has been submitted by <strong>${companyName}</strong> for review.
+            </p>
+            <p style="margin:0 0 24px;color:#374151;font-size:14px;line-height:1.6;">
+              This is a copy for your records. Only the primary recipient can approve or reject this variation.
+            </p>
+            <p style="margin:0;color:#6b7280;font-size:12px;line-height:1.5;">
+              The full variation details are included in the attached PDF.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 32px;">
+            <p style="margin:0;color:#9ca3af;font-size:11px;line-height:1.5;">
+              Sent via <a href="https://variationshield.com.au" style="color:#7c3aed;text-decoration:none;">Variation Shield</a> on behalf of ${companyName}.
+              This variation was submitted on ${new Date().toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: 'numeric' })}.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
 
     const htmlBody = `
 <!DOCTYPE html>
@@ -142,26 +188,41 @@ export async function POST(req: NextRequest) {
 </body>
 </html>`;
 
+    // Send primary email to To recipients (with approve/reject buttons)
     const { data, error } = await resend.emails.send({
       from: fromAddress,
       to: toEmails,
-      ...(ccEmails && ccEmails.length > 0 ? { cc: ccEmails } : {}),
       replyTo: senderEmail,
       subject,
       html: htmlBody,
       ...(pdfBase64 ? { attachments: [{ filename, content: pdfBase64 }] } : {}),
     });
 
+    // Send separate CC-only email without approve/reject buttons
+    if (!error && ccEmails && ccEmails.length > 0) {
+      await resend.emails.send({
+        from: fromAddress,
+        to: ccEmails,
+        replyTo: senderEmail,
+        subject: `[CC] ${subject}`,
+        html: ccHtmlBody,
+        ...(pdfBase64 ? { attachments: [{ filename, content: pdfBase64 }] } : {}),
+      });
+    }
+
     if (error) {
       console.error('[send-variation] Resend error:', error);
       return NextResponse.json({ error: 'Failed to send email', detail: error }, { status: 500 });
     }
 
-    // Update client_email on the variation record
+    // Update client_email and cc_emails on the variation record
     const supabase = createSupabaseBrowserClient();
     await supabase
       .from('variations')
-      .update({ client_email: toEmails.join(', ') })
+      .update({
+        client_email: toEmails.join(', '),
+        cc_emails: ccEmails && ccEmails.length > 0 ? ccEmails.join(', ') : null,
+      })
       .eq('id', variationId);
 
     // Note: client_contacts saved client-side after successful send (needs auth session for RLS)

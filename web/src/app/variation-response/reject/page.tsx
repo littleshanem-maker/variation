@@ -6,6 +6,7 @@ function RejectForm() {
   const params = useSearchParams();
   const token = params.get('token') || '';
   const ref = params.get('ref') || 'Variation';
+  const respondentEmail = params.get('respondent') || '';
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -19,7 +20,7 @@ function RejectForm() {
       const res = await fetch('/api/variation-response', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, comment }),
+        body: JSON.stringify({ token, comment, respondentEmail }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -90,7 +91,7 @@ function RejectForm() {
           <p className="text-center text-gray-400 text-xs">
             Changed your mind?{' '}
             <a
-              href={`/api/variation-response?token=${token}&action=approve`}
+              href={`/api/variation-response?token=${token}&action=approve${respondentEmail ? `&respondent=${encodeURIComponent(respondentEmail)}` : ''}`}
               className="text-emerald-600 hover:underline"
             >
               Approve instead

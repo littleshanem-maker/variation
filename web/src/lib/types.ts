@@ -99,6 +99,7 @@ export interface Variation {
   client_approval_response?: 'approved' | 'rejected' | null;
   client_approval_comment?: string | null;
   client_approved_at?: string | null;
+  client_approved_by_email?: string | null;
   created_at: string;
   updated_at: string;
 }
