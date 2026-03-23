@@ -382,7 +382,7 @@ export default function NoticeDetail() {
       }
 
       // Generate PDF — patch status and revision_number to match what was sent
-      const noticeForPdf = { ...notice, status: 'issued', revision_number: newRevision };
+      const noticeForPdf = { ...notice, status: 'issued', revision_number: newRevision, issued_at: new Date().toISOString() };
       let pdfBase64: string | null = null;
       try {
         const { html, css } = getNoticeHtmlForPdf(noticeForPdf as typeof notice, project, company?.name || '', sender, noticeCompanyInfo, documents, docUrls);
