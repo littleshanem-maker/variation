@@ -45,6 +45,7 @@ export default function VariationDetail() {
   const [sender, setSender] = useState<{ name: string; email: string }>({ name: '', email: '' });
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showClientWarning, setShowClientWarning] = useState<'edit' | 'delete' | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -633,6 +634,8 @@ export default function VariationDetail() {
   const isSubmitted = variation.status === 'submitted';
   const isDraft = EDITABLE_STATUSES.includes(variation.status);
   const isDisputed = variation.status === 'disputed';
+  // True when sent to client and awaiting their response
+  const awaitingClientResponse = isSubmitted && !!variation.client_email && !variation.client_approval_response;
 
   const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow";
   const labelClass = "block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1";
@@ -745,14 +748,27 @@ export default function VariationDetail() {
                 <button onClick={handleDownloadPdf} disabled={sendingEmail} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap">
                   <FileText size={14} /> {sendingEmail && sendStage === 'idle' ? 'Building…' : 'PDF'}
                 </button>
+                {/* Refresh */}
+                {!isField && (
+                  <button onClick={() => loadVariation()} className="px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap" title="Refresh">
+                    ↻
+                  </button>
+                )}
+
                 {/* Edit — hidden when disputed */}
                 {!isField && !isDisputed && (
-                  <button onClick={startEditing} className="px-3 py-2 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">Edit</button>
+                  <button
+                    onClick={() => awaitingClientResponse ? setShowClientWarning('edit') : startEditing()}
+                    className="px-3 py-2 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                  >Edit</button>
                 )}
 
                 {/* Delete */}
                 {canDelete && (
-                  <button onClick={() => setShowDeleteConfirm(true)} className="px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap">Delete</button>
+                  <button
+                    onClick={() => awaitingClientResponse ? setShowClientWarning('delete') : setShowDeleteConfirm(true)}
+                    className="px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap"
+                  >Delete</button>
                 )}
               </div>
               {/* Inline To/CC email input */}
@@ -1557,6 +1573,43 @@ export default function VariationDetail() {
               </div>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Awaiting Client Response Warning Modal */}
+      {showClientWarning && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowClientWarning(null)}>
+          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <h3 className="text-[15px] font-semibold text-[#1C1C1E]">Awaiting client response</h3>
+            </div>
+            <p className="text-[14px] text-[#6B7280] mb-1">
+              This variation has been submitted to <strong className="text-[#1C1C1E]">{variation.client_email}</strong> and you're still waiting on their response.
+            </p>
+            <p className="text-[13px] text-[#9CA3AF] mb-5">
+              {showClientWarning === 'edit'
+                ? 'Editing and resubmitting will replace the current version. The client\'s existing email link will no longer work.'
+                : 'Deleting will permanently remove this variation. The client will not be notified.'}
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowClientWarning(null)}
+                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors"
+              >Cancel</button>
+              <button
+                onClick={() => {
+                  if (showClientWarning === 'edit') { setShowClientWarning(null); startEditing(); }
+                  else { setShowClientWarning(null); setShowDeleteConfirm(true); }
+                }}
+                className={`px-4 py-1.5 text-[13px] font-semibold text-white rounded-lg transition-colors ${showClientWarning === 'delete' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-amber-600 hover:bg-amber-700'}`}
+              >
+                {showClientWarning === 'edit' ? 'Edit anyway' : 'Delete anyway'}
+              </button>
+            </div>
           </div>
         </div>
       )}

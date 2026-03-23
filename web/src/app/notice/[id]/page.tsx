@@ -33,6 +33,7 @@ export default function NoticeDetail() {
   const [advancing, setAdvancing] = useState(false);
   const [converting, setConverting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showClientWarning, setShowClientWarning] = useState<'edit' | 'delete' | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
@@ -531,6 +532,8 @@ export default function NoticeDetail() {
   const canAcknowledge = !isField && notice.status === 'issued';
   const canCreateVR = !isField && notice.status === 'issued' && !linkedVariation;
   const canDelete = !isField && !linkedVariation;
+  // True when sent to client and still awaiting acknowledgement
+  const awaitingClientResponse = notice.status === 'issued' && !!notice.client_email && !notice.acknowledged_at;
 
   const labelClass = "block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1";
 
@@ -592,10 +595,16 @@ export default function NoticeDetail() {
                   <FileText size={14} />
                   {sendingEmail && sendStage === 'idle' ? 'Building…' : 'PDF'}
                 </button>
+                {/* Refresh */}
+                {!isField && (
+                  <button onClick={() => loadNotice()} className="px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap" title="Refresh">
+                    ↻
+                  </button>
+                )}
                 {/* Edit */}
                 {!isField && (
                   <button
-                    onClick={startEditing}
+                    onClick={() => awaitingClientResponse ? setShowClientWarning('edit') : startEditing()}
                     className="px-3 py-2 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
                   >
                     Edit
@@ -619,7 +628,7 @@ export default function NoticeDetail() {
                 {/* Delete */}
                 {canDelete && (
                   <button
-                    onClick={() => setShowDeleteConfirm(true)}
+                    onClick={() => awaitingClientResponse ? setShowClientWarning('delete') : setShowDeleteConfirm(true)}
                     className="px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap"
                   >
                     Delete
@@ -1073,6 +1082,40 @@ export default function NoticeDetail() {
           </div>
         )}
       </div>
+
+      {/* Awaiting Client Response Warning Modal */}
+      {showClientWarning && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowClientWarning(null)}>
+          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <h3 className="text-[15px] font-semibold text-[#1C1C1E]">Awaiting client acknowledgement</h3>
+            </div>
+            <p className="text-[14px] text-[#6B7280] mb-1">
+              This notice has been sent to <strong className="text-[#1C1C1E]">{notice.client_email}</strong> and hasn&apos;t been acknowledged yet.
+            </p>
+            <p className="text-[13px] text-[#9CA3AF] mb-5">
+              {showClientWarning === 'edit'
+                ? 'Editing and reissuing will replace the current version. The client will need to be resent the updated notice.'
+                : 'Deleting will permanently remove this notice. The client will not be notified.'}
+            </p>
+            <div className="flex justify-end gap-2">
+              <button onClick={() => setShowClientWarning(null)} className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors">Cancel</button>
+              <button
+                onClick={() => {
+                  if (showClientWarning === 'edit') { setShowClientWarning(null); startEditing(); }
+                  else { setShowClientWarning(null); setShowDeleteConfirm(true); }
+                }}
+                className={`px-4 py-1.5 text-[13px] font-semibold text-white rounded-lg transition-colors ${showClientWarning === 'delete' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-amber-600 hover:bg-amber-700'}`}
+              >
+                {showClientWarning === 'edit' ? 'Edit anyway' : 'Delete anyway'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
