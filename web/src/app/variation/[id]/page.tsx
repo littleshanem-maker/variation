@@ -956,10 +956,6 @@ export default function VariationDetail() {
                       <span className="text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
                         Draft
                       </span>
-                    ) : (variation.revision_number ?? 0) > 0 ? (
-                      <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">
-                        Rev {variation.revision_number}
-                      </span>
                     ) : null}
                   </div>
                   <h2 className="text-[22px] font-bold text-[#1C1C1E] truncate">{variation.title}</h2>
