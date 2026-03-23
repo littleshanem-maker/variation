@@ -1326,7 +1326,7 @@ export default function VariationDetail() {
                             📧 Sent
                           </span>
                           <span className="text-[12px] text-[#1C1C1E] truncate">
-                            {rev.revision_number === 0 ? 'Original' : `Rev ${rev.revision_number}`} → {rev.sent_to}
+                            {(() => { const p = revisions.find(r => r.id === rev.variation_id); const n = p?.revision_number ?? 0; return n === 0 ? 'Original' : `Rev ${n}`; })()} → {rev.sent_to}
                             {rev.sent_cc ? ` (CC: ${rev.sent_cc})` : ''}
                           </span>
                         </div>
@@ -1501,11 +1501,16 @@ export default function VariationDetail() {
         <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] mx-4 md:mx-8 mb-4 ">
           <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Sent Versions</h3>
           <div className="space-y-2">
-            {varRevisions.map((rev) => (
+            {varRevisions.map((rev) => {
+              // Look up the parent variation's revision_number to get the correct label
+              const parentVariation = revisions.find(r => r.id === rev.variation_id);
+              const parentRevNum = parentVariation?.revision_number ?? 0;
+              const revLabel = parentRevNum === 0 ? 'Original' : `Rev ${parentRevNum}`;
+              return (
               <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-slate-50 rounded-md border border-slate-100">
                 <div className="flex items-center gap-3 min-w-0">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#1B365D] px-2 py-0.5 rounded flex-shrink-0">
-                    {rev.revision_number === 0 ? 'Original' : `Rev ${rev.revision_number}`}
+                    {revLabel}
                   </span>
                   <div className="min-w-0">
                     <div className="text-[13px] text-[#1C1C1E] truncate">Sent to {rev.sent_to}</div>
@@ -1534,7 +1539,7 @@ export default function VariationDetail() {
                       const { html, css } = getVariationHtmlForPdf(snapVar, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
                       const blob = await htmlToPdfBlob(html, css);
                       const { filename } = getVariationEmailMeta(snapVar, project);
-                      const revFilename = filename.replace('.pdf', rev.revision_number > 0 ? `-Rev${rev.revision_number}.pdf` : '-Original.pdf');
+                      const revFilename = filename.replace('.pdf', parentRevNum > 0 ? `-Rev${parentRevNum}.pdf` : '-Original.pdf');
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement('a');
                       a.href = url; a.download = revFilename;
@@ -1550,7 +1555,8 @@ export default function VariationDetail() {
                   {generatingRevPdf === rev.revision_number ? 'Building…' : 'PDF'}
                 </button>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
