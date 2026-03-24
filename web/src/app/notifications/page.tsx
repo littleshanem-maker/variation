@@ -8,24 +8,26 @@ import { createClient } from '@/lib/supabase';
 import { CheckCircle, XCircle, Clock, ArrowUpRight } from 'lucide-react';
 import { formatDateTime } from '@/lib/utils';
 
-const SEEN_KEY = 'vs_seen_notifications';
+// Scoped to user ID — prevents bleed between accounts in the same browser
+function getSeenKey(userId: string) { return `vs_seen_notifications_${userId}`; }
 
-function getSeenIds(): Set<string> {
+function getSeenIds(userId: string): Set<string> {
   if (typeof window === 'undefined') return new Set();
-  try { return new Set(JSON.parse(localStorage.getItem(SEEN_KEY) || '[]')); }
+  try { return new Set(JSON.parse(localStorage.getItem(getSeenKey(userId)) || '[]')); }
   catch { return new Set(); }
 }
 
-function markSeen(ids: string[]) {
-  const seen = getSeenIds();
+function markSeen(userId: string, ids: string[]) {
+  const seen = getSeenIds(userId);
   ids.forEach(id => seen.add(id));
-  localStorage.setItem(SEEN_KEY, JSON.stringify([...seen]));
+  localStorage.setItem(getSeenKey(userId), JSON.stringify([...seen]));
 }
 
 export default function NotificationsPage() {
   const router = useRouter();
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState<string>('');
 
   useEffect(() => { loadNotifications(); }, []);
 
@@ -34,6 +36,9 @@ export default function NotificationsPage() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { window.location.replace('/login'); return; }
 
+    const uid = session.user.id;
+    setUserId(uid);
+
     const { data } = await supabase
       .from('variations')
       .select('id, variation_number, sequence_number, title, client_approval_response, client_approval_comment, client_approved_at, projects(name)')
@@ -41,20 +46,19 @@ export default function NotificationsPage() {
       .order('client_approved_at', { ascending: false })
       .limit(50);
 
-    const seen = getSeenIds();
-    // Only show unseen
+    const seen = getSeenIds(uid);
     setNotifications((data || []).filter((v: any) => !seen.has(v.id)));
     setLoading(false);
   }
 
   function handleClick(v: any) {
-    markSeen([v.id]);
+    markSeen(userId, [v.id]);
     setNotifications(prev => prev.filter(n => n.id !== v.id));
     router.push(`/variation/${v.id}`);
   }
 
   function handleMarkAllSeen() {
-    markSeen(notifications.map(n => n.id));
+    markSeen(userId, notifications.map(n => n.id));
     setNotifications([]);
   }
 

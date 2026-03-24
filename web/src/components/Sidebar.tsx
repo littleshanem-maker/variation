@@ -50,18 +50,22 @@ export default function Sidebar() {
     const supabase = createClient();
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) return;
-      // Count unseen client responses (exclude IDs stored in localStorage)
-      supabase
-        .from('variations')
-        .select('id')
-        .in('client_approval_response', ['approved', 'rejected'])
-        .then(({ data }) => {
-          if (!data) return;
-          try {
-            const seen = new Set(JSON.parse(localStorage.getItem('vs_seen_notifications') || '[]'));
-            setNotifCount(data.filter((v: any) => !seen.has(v.id)).length);
-          } catch { setNotifCount(data.length); }
-        });
+      // Count unseen client responses — scoped to user ID to prevent cross-account bleed
+      supabase.auth.getSession().then(({ data: { session: s } }) => {
+        if (!s) return;
+        const seenKey = `vs_seen_notifications_${s.user.id}`;
+        supabase
+          .from('variations')
+          .select('id')
+          .in('client_approval_response', ['approved', 'rejected'])
+          .then(({ data }) => {
+            if (!data) return;
+            try {
+              const seen = new Set(JSON.parse(localStorage.getItem(seenKey) || '[]'));
+              setNotifCount(data.filter((v: any) => !seen.has(v.id)).length);
+            } catch { setNotifCount(data.length); }
+          });
+      });
     });
   }, [pathname]);
 
