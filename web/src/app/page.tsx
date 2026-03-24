@@ -71,7 +71,7 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/25">
-              Get Started — 30-Day Guarantee
+              Get Started — Nothing to Lose
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
             <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors">
@@ -80,7 +80,7 @@ export default function LandingPage() {
           </div>
 
           <p className="mt-5 text-sm text-white/65">
-            Setup in 5 minutes · 30-day money-back guarantee · <span className="text-amber-400">$299/mo founding rate · goes to $499/mo when this period closes</span>
+            Setup in 5 minutes · If it doesn't save you more than it costs in 30 days, you pay nothing · <span className="text-amber-400">$299/mo founding rate · goes to $499/mo when this period closes</span>
           </p>
         </div>
       </section>
@@ -265,7 +265,7 @@ export default function LandingPage() {
             </div>
             <p className="text-amber-400/80 text-sm font-semibold mb-1">⭐ Founding member rate — locked at $299/mo for life</p>
             <p className="text-white/65 text-xs mb-1">Price goes to $499/mo when this period closes</p>
-            <p className="text-white/30 text-xs mb-8">30-day money-back guarantee. No lock-in. Cancel anytime.</p>
+            <p className="text-white/30 text-xs mb-8">If it doesn't save you more than it costs in 30 days, you pay nothing. No lock-in. Cancel anytime.</p>
 
             <ul className="space-y-3 mb-8">
               {[
@@ -285,7 +285,7 @@ export default function LandingPage() {
             </ul>
 
             <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="flex items-center justify-center gap-2 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/20">
-              Get Started — 30-Day Guarantee
+              Get Started — Nothing to Lose
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
             <p className="text-center text-white/30 text-xs mt-3">30-day money-back guarantee</p>
@@ -293,7 +293,7 @@ export default function LandingPage() {
 
           <div className="mt-6 flex items-center justify-center gap-2 text-sm text-white/30">
             <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            If you don&apos;t recover more than you spend in 30 days, we refund your first month
+            The average subcontractor loses $187,000/yr to undocumented variations. Variation Shield is $299/mo. If it doesn&apos;t save you more than it costs in 30 days, I&apos;ll refund every cent. No forms. Just tell me.
           </div>
         </div>
       </section>
@@ -308,7 +308,7 @@ export default function LandingPage() {
           <p className="text-white/65 text-lg mb-10">Set up in 5 minutes. Capture your first variation today.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/25">
-              Get Started — 30-Day Guarantee
+              Get Started — Nothing to Lose
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
             <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-semibold px-8 py-4 rounded-xl text-base transition-colors">
