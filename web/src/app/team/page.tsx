@@ -32,6 +32,7 @@ interface PendingInvite {
 export default function TeamPage() {
   const router = useRouter();
   const { isAdmin, companyId, company, isLoading: roleLoading } = useRole();
+  const isFree = (company?.plan ?? 'free') === 'free';
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [invites, setInvites] = useState<PendingInvite[]>([]);
   const [loading, setLoading] = useState(true);
@@ -199,12 +200,21 @@ export default function TeamPage() {
             <h2 className="text-xl font-semibold text-[#1C1C1E]">Team</h2>
             <p className="text-[13px] text-[#6B7280] mt-1">{company?.name} · {members.filter(m => m.is_active).length} active members</p>
           </div>
-          <button
-            onClick={() => setShowInvite(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
-          >
-            + Invite Member
-          </button>
+          {isFree ? (
+            <a
+              href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors"
+            >
+              🔒 Field accounts available on Pro →
+            </a>
+          ) : (
+            <button
+              onClick={() => setShowInvite(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+            >
+              + Invite Member
+            </button>
+          )}
         </div>
 
         {/* Active Members */}

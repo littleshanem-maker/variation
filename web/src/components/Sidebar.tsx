@@ -42,6 +42,9 @@ export default function Sidebar() {
   const { role, company } = useRole();
   const [notifCount, setNotifCount] = useState(0);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [varCount, setVarCount] = useState(0);
+  const [varLimit, setVarLimit] = useState<number | null>(null);
+  const plan = company?.plan ?? null;
 
   useEffect(() => {
     const supabase = createClient();
@@ -61,6 +64,13 @@ export default function Sidebar() {
         });
     });
   }, [pathname]);
+
+  // Fetch variation count for free plan users
+  useEffect(() => {
+    if (!company?.id || company.plan !== 'free') return;
+    setVarCount(company.variation_count ?? 0);
+    setVarLimit(company.variation_limit ?? null);
+  }, [company]);
 
   const visibleNav = nav.filter(item => !item.roles || item.roles.includes(role));
 
@@ -131,6 +141,40 @@ export default function Sidebar() {
           })}
         </nav>
 
+
+        {/* Free tier usage counter */}
+        {plan === 'free' && varLimit !== null && (
+          <div className="px-4 pb-2">
+            <div className={`rounded-lg px-3 py-2.5 text-[11px] ${
+              varCount >= varLimit
+                ? 'bg-red-500/10 border border-red-500/20'
+                : varCount >= varLimit - 1
+                ? 'bg-amber-500/10 border border-amber-500/20'
+                : 'bg-white/[0.04] border border-white/[0.08]'
+            }`}>
+              <div className={`font-semibold mb-1 ${
+                varCount >= varLimit ? 'text-red-400' : varCount >= varLimit - 1 ? 'text-amber-400' : 'text-white/60'
+              }`}>
+                {varCount} / {varLimit} variations used
+              </div>
+              <div className="w-full bg-white/10 rounded-full h-1 mb-2">
+                <div
+                  className={`h-1 rounded-full transition-all ${
+                    varCount >= varLimit ? 'bg-red-400' : varCount >= varLimit - 1 ? 'bg-amber-400' : 'bg-indigo-400'
+                  }`}
+                  style={{ width: `${Math.min(100, (varCount / varLimit) * 100)}%` }}
+                />
+              </div>
+              {varCount >= varLimit ? (
+                <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="text-red-400 hover:text-red-300 font-semibold">
+                  Upgrade to capture more →
+                </a>
+              ) : (
+                <span className="text-white/30">{varLimit - varCount} remaining</span>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Footer */}
         <div className="px-3 py-4 space-y-1">

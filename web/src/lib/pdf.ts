@@ -2,11 +2,11 @@
  * Renders an HTML string to a PDF blob via the server-side /api/generate-pdf route.
  * Uses Puppeteer + Chromium — respects CSS page-break-inside: avoid so rows never split.
  */
-export async function htmlToPdfBlob(htmlContent: string, cssContent: string, attachmentPdfUrls?: string[]): Promise<Blob> {
+export async function htmlToPdfBlob(htmlContent: string, cssContent: string, attachmentPdfUrls?: string[], isFree?: boolean): Promise<Blob> {
   const res = await fetch('/api/generate-pdf', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ html: htmlContent, css: cssContent, attachmentPdfUrls }),
+    body: JSON.stringify({ html: htmlContent, css: cssContent, attachmentPdfUrls, isFree }),
   });
 
   if (!res.ok) {

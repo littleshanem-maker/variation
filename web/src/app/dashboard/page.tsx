@@ -42,6 +42,10 @@ export default function Dashboard() {
   const [newProjectClient, setNewProjectClient] = useState('');
   const [creatingProject, setCreatingProject] = useState(false);
   const [noVariationsBannerDismissed, setNoVariationsBannerDismissed] = useState(false);
+  const [onboardingDismissed, setOnboardingDismissed] = useState(false);
+  const [companyPlan, setCompanyPlan] = useState<'free' | 'pro' | null>(null);
+  const [variationCount, setVariationCount] = useState(0);
+  const [variationLimit, setVariationLimit] = useState<number | null>(null);
 
   // Global filters
   const [filterProject, setFilterProject] = useState<string>('all');
@@ -88,6 +92,33 @@ export default function Dashboard() {
       ...p,
       variations: allVariations.filter((v: Variation) => v.project_id === p.id),
     })));
+
+    // Fetch company plan info
+    const { data: memberData } = await supabase
+      .from('company_members')
+      .select('company_id')
+      .eq('user_id', session.user.id)
+      .eq('is_active', true)
+      .single();
+    if (memberData) {
+      const { data: compData } = await supabase
+        .from('companies')
+        .select('plan, variation_count, variation_limit')
+        .eq('id', memberData.company_id)
+        .single();
+      if (compData) {
+        setCompanyPlan(compData.plan || 'free');
+        setVariationCount(compData.variation_count || 0);
+        setVariationLimit(compData.variation_limit ?? null);
+      }
+    }
+
+    // Check for first login onboarding
+    const isFirstLogin = localStorage.getItem('vs_first_login') === '1';
+    if (isFirstLogin) {
+      localStorage.removeItem('vs_first_login');
+    }
+
     setLoading(false);
   }
 
@@ -98,6 +129,22 @@ export default function Dashboard() {
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { setCreatingProject(false); return; }
+
+    // Free tier project limit check
+    const { data: companyData } = await supabase
+      .from('companies')
+      .select('plan, project_limit')
+      .eq('id', companyId)
+      .single();
+    if (companyData && companyData.plan === 'free' && companyData.project_limit !== null) {
+      const activeProjects = projects.length;
+      if (activeProjects >= companyData.project_limit) {
+        alert(`Free plan allows ${companyData.project_limit} project. Upgrade to Pro for unlimited projects.`);
+        setCreatingProject(false);
+        return;
+      }
+    }
+
     const { error } = await supabase.from('projects').insert({
       id: crypto.randomUUID(),
       created_by: session.user.id,
@@ -264,6 +311,36 @@ export default function Dashboard() {
       />
 
       <div className="p-4 md:p-8 space-y-6 pb-24 md:pb-8">
+
+        {/* ── Free Tier Onboarding Card ── */}
+        {companyPlan === 'free' && projects.length === 0 && !onboardingDismissed && (
+          <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-6">
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <h3 className="font-bold text-indigo-900 text-base">Welcome! Let's capture your first variation.</h3>
+                <p className="text-indigo-700 text-sm mt-1">Start by creating a project, then log your first scope change.</p>
+              </div>
+              <button onClick={() => setOnboardingDismissed(true)} className="text-indigo-400 hover:text-indigo-600 text-xs">✕</button>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 mt-4">
+              <button
+                onClick={() => setShowNewProject(true)}
+                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
+              >
+                <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+                Create your first project
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Free Tier Usage Banner ── */}
+        {companyPlan === 'free' && variationLimit !== null && variationCount > 0 && variationCount < variationLimit && (
+          <div className={`rounded-lg px-4 py-3 text-sm flex items-center justify-between ${variationCount >= variationLimit - 1 ? 'bg-amber-50 border border-amber-200 text-amber-800' : 'bg-blue-50 border border-blue-200 text-blue-800'}`}>
+            <span>{variationCount} of {variationLimit} free variations used{variationCount >= variationLimit - 1 ? ' — last one!' : ''}</span>
+            <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="font-semibold underline ml-3 text-xs">Upgrade to Pro →</a>
+          </div>
+        )}
 
         {/* ── Filter Bar ── */}
         <div className="flex flex-wrap items-center gap-2">

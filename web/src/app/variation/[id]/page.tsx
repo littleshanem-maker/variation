@@ -50,6 +50,7 @@ export default function VariationDetail() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [freeTierBanner, setFreeTierBanner] = useState<'warning' | 'final' | null>(null);
   const [revisingMode, setRevisingMode] = useState(false);
   // Dispute reason flow
   const [showDisputeDialog, setShowDisputeDialog] = useState(false);
@@ -85,6 +86,20 @@ export default function VariationDetail() {
   const [newFiles, setNewFiles] = useState<File[]>([]);
 
   useEffect(() => { loadVariation(); }, [id]);
+
+  useEffect(() => {
+    const banner = sessionStorage.getItem('vs_variation_banner') as 'warning' | 'final' | null;
+    if (banner) {
+      sessionStorage.removeItem('vs_variation_banner');
+      setFreeTierBanner(banner);
+      if (banner === 'final') {
+        // Auto-dismiss after 8s
+        setTimeout(() => setFreeTierBanner(null), 8000);
+      } else {
+        setTimeout(() => setFreeTierBanner(null), 5000);
+      }
+    }
+  }, []);
 
   function startEditing() {
     if (!variation) return;
@@ -472,7 +487,7 @@ export default function VariationDetail() {
         const pdfAttachmentUrls = documents
           .filter(d => d.file_type === 'application/pdf' && docUrls[d.id])
           .map(d => docUrls[d.id]);
-        const blob = await htmlToPdfBlob(html, css, pdfAttachmentUrls);
+        const blob = await htmlToPdfBlob(html, css, pdfAttachmentUrls, company?.plan === 'free');
         const reader = new FileReader();
         pdfBase64 = await new Promise<string>((resolve, reject) => {
           reader.onload = () => resolve((reader.result as string).split(',')[1]);
@@ -502,6 +517,7 @@ export default function VariationDetail() {
           senderName: sender.name,
           variationNumber: variation.variation_number,
           sequenceNumber: variation.sequence_number,
+          isFree: company?.plan === 'free',
         }),
       });
 
@@ -570,7 +586,7 @@ export default function VariationDetail() {
     try {
       const { subject, body, filename } = getVariationEmailMeta(variation, project);
       const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
-      const blob = await htmlToPdfBlob(html, css);
+      const blob = await htmlToPdfBlob(html, css, undefined, company?.plan === 'free');
       const attachmentUrls = documents
         .filter(d => !d.file_type.startsWith('image/') && docUrls[d.id])
         .map(d => ({ url: docUrls[d.id], filename: d.file_name, mimeType: d.file_type }));
@@ -594,7 +610,7 @@ export default function VariationDetail() {
       const pdfAttachmentUrls = documents
         .filter(d => d.file_type === 'application/pdf' && docUrls[d.id])
         .map(d => docUrls[d.id]);
-      const blob = await htmlToPdfBlob(html, css, pdfAttachmentUrls);
+      const blob = await htmlToPdfBlob(html, css, pdfAttachmentUrls, company?.plan === 'free');
       const { filename } = getVariationEmailMeta(variation, project);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -682,6 +698,18 @@ export default function VariationDetail() {
             <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5L6.5 11.5L3 8" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
               {successMsg}
+            </div>
+          )}
+          {freeTierBanner === 'warning' && (
+            <div className="flex items-center justify-between bg-amber-50 border border-amber-200 text-amber-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
+              <span>⚠️ You've used 2 of 3 free variations. One left.</span>
+              <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="ml-3 text-amber-700 underline text-xs font-semibold">Upgrade →</a>
+            </div>
+          )}
+          {freeTierBanner === 'final' && (
+            <div className="flex items-center justify-between bg-green-50 border border-green-200 text-green-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
+              <span>🎉 Nice — 3 variations documented. Upgrade to keep capturing.</span>
+              <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="ml-3 text-green-700 underline text-xs font-semibold">Upgrade to Pro →</a>
             </div>
           )}
           {saveError && !editing && (
@@ -1552,7 +1580,7 @@ export default function VariationDetail() {
                         response_due_date: rev.response_due_date ?? variation.response_due_date,
                       };
                       const { html, css } = getVariationHtmlForPdf(snapVar, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
-                      const blob = await htmlToPdfBlob(html, css);
+                      const blob = await htmlToPdfBlob(html, css, undefined, company?.plan === 'free');
                       const { filename } = getVariationEmailMeta(snapVar, project);
                       const revFilename = filename.replace('.pdf', parentRevNum > 0 ? `-Rev${parentRevNum}.pdf` : '-Original.pdf');
                       const url = URL.createObjectURL(blob);

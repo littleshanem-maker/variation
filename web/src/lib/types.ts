@@ -12,6 +12,11 @@ export interface Company {
   phone?: string;
   logo_url?: string;
   preferred_standard?: 'AS4000' | 'AS2124' | 'both';
+  plan?: 'free' | 'pro';
+  variation_count?: number;
+  variation_limit?: number | null;
+  project_limit?: number | null;
+  upgraded_at?: string | null;
   created_at: string;
   updated_at: string;
 }

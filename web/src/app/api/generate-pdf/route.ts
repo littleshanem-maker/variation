@@ -12,10 +12,11 @@ export async function POST(req: NextRequest) {
   let browser: any = null;
 
   try {
-    const { html, css, attachmentPdfUrls } = await req.json() as {
+    const { html, css, attachmentPdfUrls, isFree } = await req.json() as {
       html: string;
       css: string;
       attachmentPdfUrls?: string[]; // signed URLs of PDF attachments to merge
+      isFree?: boolean; // if true, add watermark footer
     };
 
     if (!html || !css) {
@@ -34,6 +35,11 @@ export async function POST(req: NextRequest) {
 
     const page = await browser.newPage();
 
+    const watermarkFooterHtml = isFree ? `
+    <div style="position: fixed; bottom: 0; left: 0; right: 0; text-align: center; font-size: 9px; color: #9CA3AF; padding: 6px 0; border-top: 1px solid #E5E7EB;">
+      Generated with Variation Shield — variationshield.com.au | Upgrade to Pro to remove this watermark
+    </div>` : '';
+
     const fullHtml = `<!DOCTYPE html>
 <html>
 <head>
@@ -50,6 +56,7 @@ export async function POST(req: NextRequest) {
   <div style="padding: 0;">
     ${html}
   </div>
+  ${watermarkFooterHtml}
 </body>
 </html>`;
 

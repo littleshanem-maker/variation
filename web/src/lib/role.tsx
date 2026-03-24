@@ -89,7 +89,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     const companyIds = [...new Set(memberData.map(m => m.company_id))];
     const { data: companyData } = await supabase
       .from('companies')
-      .select('id, name, abn, address, phone, logo_url, created_at, updated_at')
+      .select('id, name, abn, address, phone, logo_url, plan, variation_count, variation_limit, project_limit, upgraded_at, created_at, updated_at')
       .in('id', companyIds);
 
     const companyMap = new Map((companyData || []).map((c: any) => [c.id, c]));

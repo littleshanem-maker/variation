@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
       senderName,
       variationNumber,
       sequenceNumber,
+      isFree,
     } = await req.json() as {
       variationId: string;
       approvalToken?: string;
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
       senderName?: string;
       variationNumber?: string;
       sequenceNumber?: number;
+      isFree?: boolean;
     };
 
     // Support both toEmail (legacy) and toEmails (array)
@@ -146,9 +148,11 @@ export async function POST(req: NextRequest) {
               <strong>${varRef}</strong> has been submitted by <strong>${companyName}</strong> for your review.
             </p>
             <p style="margin:0 0 24px;color:#374151;font-size:14px;line-height:1.6;">
-              Please review the variation details and indicate your response below.
+              ${isFree
+                ? 'Please review the variation details in the attached PDF.'
+                : 'Please review the variation details and indicate your response below.'}
             </p>
-            <!-- Approve / Reject buttons -->
+            ${isFree ? '' : `<!-- Approve / Reject buttons -->
             <table cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
               <tr>
                 <td style="padding-right:12px;">
@@ -164,9 +168,11 @@ export async function POST(req: NextRequest) {
                   </a>
                 </td>
               </tr>
-            </table>
+            </table>`}
             <p style="margin:0 0 8px;color:#6b7280;font-size:12px;line-height:1.5;">
-              Or you may respond directly to this email or contact ${senderName || companyName} directly.
+              ${isFree
+                ? `Please respond directly to ${senderName || companyName} regarding this variation.`
+                : `Or you may respond directly to this email or contact ${senderName || companyName} directly.`}
             </p>
             <p style="margin:0;color:#6b7280;font-size:12px;line-height:1.5;">
               The full variation details are included in the attached PDF.

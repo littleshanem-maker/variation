@@ -44,6 +44,7 @@ function NewRequestForm() {
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [limitReached, setLimitReached] = useState<{ count: number; limit: number; totalValue: number } | null>(null);
 
   useEffect(() => {
     if (!roleLoading && companyId) {
@@ -95,6 +96,34 @@ function NewRequestForm() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
+
+      // Free tier limit check
+      const { data: memberData } = await supabase
+        .from('company_members')
+        .select('company_id')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .single();
+      if (memberData) {
+        const { data: companyData } = await supabase
+          .from('companies')
+          .select('plan, variation_count, variation_limit')
+          .eq('id', memberData.company_id)
+          .single();
+        if (companyData && companyData.plan === 'free' && companyData.variation_limit !== null) {
+          if ((companyData.variation_count || 0) >= companyData.variation_limit) {
+            // Calculate total value for the conversion wall
+            const { data: varData } = await supabase
+              .from('variations')
+              .select('estimated_value, project_id')
+              .in('project_id', (await supabase.from('projects').select('id').eq('company_id', memberData.company_id)).data?.map((p: any) => p.id) || []);
+            const totalValue = (varData || []).reduce((sum: number, v: any) => sum + (v.estimated_value || 0), 0);
+            setSaving(false);
+            setLimitReached({ count: companyData.variation_count, limit: companyData.variation_limit, totalValue });
+            return;
+          }
+        }
+      }
 
       const { data: existing } = await supabase
         .from('variations').select('sequence_number')
@@ -160,6 +189,23 @@ function NewRequestForm() {
         }
       }
 
+      // Check if we should show a banner on the next page (free tier milestones)
+      if (memberData) {
+        const { data: freshCompany } = await supabase
+          .from('companies')
+          .select('plan, variation_count, variation_limit')
+          .eq('id', memberData.company_id)
+          .single();
+        if (freshCompany && freshCompany.plan === 'free' && freshCompany.variation_limit !== null) {
+          const newCount = (freshCompany.variation_count || 0);
+          if (newCount === freshCompany.variation_limit) {
+            sessionStorage.setItem('vs_variation_banner', 'final');
+          } else if (newCount === freshCompany.variation_limit - 1) {
+            sessionStorage.setItem('vs_variation_banner', 'warning');
+          }
+        }
+      }
+
       router.push(`/variation/${variationId}`);
     } catch (err: any) {
       setError(err?.message ?? 'Something went wrong. Please try again.');
@@ -169,9 +215,64 @@ function NewRequestForm() {
 
   const showEot = claimType === 'time' || claimType === 'cost_and_time';
 
+  function handleExportCsv() {
+    // Trigger CSV download via the export API
+    const a = document.createElement('a');
+    a.href = '/api/export-variations';
+    a.download = 'variation-shield-export.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
   return (
     <AppShell>
       <TopBar title="New Variation Request" />
+
+      {/* Conversion Wall Modal */}
+      {limitReached && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-indigo-100 flex items-center justify-center mx-auto mb-5">
+              <svg width="28" height="28" fill="none" stroke="#4f46e5" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">
+              You've documented {limitReached.count} variation{limitReached.count !== 1 ? 's' : ''} worth ${(limitReached.totalValue / 100).toLocaleString('en-AU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} — want to keep going?
+            </h2>
+            <p className="text-gray-600 text-sm mb-2">
+              Upgrade to Pro and keep capturing — unlimited variations, projects, and team members.
+            </p>
+            <p className="text-gray-400 text-xs mb-7">
+              Or export what you have and go back to spreadsheets.
+            </p>
+            <div className="space-y-3">
+              <a
+                href={`https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02`}
+                className="block w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-colors"
+              >
+                Upgrade to Pro — $299/mo
+              </a>
+              <a
+                href="https://leveragedsystems.com.au/schedule"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full py-3 rounded-xl border border-gray-200 text-gray-700 font-semibold text-sm hover:bg-gray-50 transition-colors"
+              >
+                Book a Demo →
+              </a>
+              <button
+                onClick={handleExportCsv}
+                className="block w-full py-3 rounded-xl text-gray-400 text-sm hover:text-gray-600 transition-colors"
+              >
+                Export My Data
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 mt-5">
+              Your existing {limitReached.count} variations are safe — you can still view, edit, and download them.
+            </p>
+          </div>
+        </div>
+      )}
       <div className="p-4 md:p-8 space-y-4 md:space-y-5 ">
 
         {/* Back + title */}
