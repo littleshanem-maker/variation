@@ -50,6 +50,55 @@ async function notifyPM(opts: {
   }
 }
 
+async function notifyApprover(opts: {
+  toEmail: string;
+  varRef: string;
+  projectName: string;
+  action: 'approved' | 'rejected';
+  comment?: string;
+  variationId: string;
+  title?: string;
+  estimatedValue?: number | null;
+}) {
+  const { toEmail, varRef, projectName, action, comment, variationId, title, estimatedValue } = opts;
+  if (!toEmail || !process.env.RESEND_API_KEY) return;
+
+  const valueStr = estimatedValue ? `$${(estimatedValue / 100).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null;
+  const timestamp = new Date().toLocaleString('en-AU', { timeZone: 'Australia/Sydney', dateStyle: 'full', timeStyle: 'short' });
+
+  const subject = action === 'approved'
+    ? `Receipt: You approved ${varRef}`
+    : `Receipt: You rejected ${varRef}`;
+
+  const actionColour = action === 'approved' ? '#16a34a' : '#dc2626';
+  const actionLabel = action === 'approved' ? 'Approved' : 'Rejected';
+
+  const bodyHtml = `
+    <p>This is a confirmation that you <strong style="color:${actionColour};">${actionLabel}</strong> the following variation request.</p>
+    <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;">
+      <tr><td style="padding:8px 0;color:#6b7280;width:40%;">Reference</td><td style="padding:8px 0;font-weight:600;">${varRef}</td></tr>
+      ${title ? `<tr><td style="padding:8px 0;color:#6b7280;">Description</td><td style="padding:8px 0;">${title}</td></tr>` : ''}
+      ${valueStr ? `<tr><td style="padding:8px 0;color:#6b7280;">Amount</td><td style="padding:8px 0;font-weight:600;">${valueStr}</td></tr>` : ''}
+      <tr><td style="padding:8px 0;color:#6b7280;">Project</td><td style="padding:8px 0;">${projectName}</td></tr>
+      <tr><td style="padding:8px 0;color:#6b7280;">Decision</td><td style="padding:8px 0;font-weight:600;color:${actionColour};">${actionLabel}</td></tr>
+      ${comment ? `<tr><td style="padding:8px 0;color:#6b7280;">Your comment</td><td style="padding:8px 0;font-style:italic;">"${comment}"</td></tr>` : ''}
+      <tr><td style="padding:8px 0;color:#6b7280;">Recorded at</td><td style="padding:8px 0;">${timestamp} (AEST)</td></tr>
+    </table>
+    <p><a href="${APP_URL}/variation/${variationId}" style="color:#4f46e5;">View variation →</a></p>
+    <p style="color:#6b7280;font-size:12px;margin-top:24px;">If this was not you, contact the sender of this variation immediately.<br>This receipt was generated automatically by Variation Shield.</p>`;
+
+  try {
+    await resend.emails.send({
+      from: `Variation Shield <noreply@${FROM_DOMAIN}>`,
+      to: toEmail,
+      subject,
+      html: `<!DOCTYPE html><html><body style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:32px;">${bodyHtml}</body></html>`,
+    });
+  } catch (err) {
+    console.error('[variation-response] approver receipt error:', err);
+  }
+}
+
 // GET: Handle approve (direct redirect) or reject (show form)
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -123,7 +172,7 @@ export async function POST(req: NextRequest) {
 
     const { data: variation, error } = await supabase
       .from('variations')
-      .select('id, variation_number, sequence_number, status, approval_token_expires_at, requestor_email, project_id, cc_emails, client_approval_response')
+      .select('id, variation_number, sequence_number, status, approval_token_expires_at, requestor_email, project_id, cc_emails, client_approval_response, title, estimated_value, client_email')
       .eq('approval_token', token)
       .single();
 
@@ -186,6 +235,18 @@ export async function POST(req: NextRequest) {
         });
       }
 
+      if (bodyRespondentEmail) {
+        await notifyApprover({
+          toEmail: bodyRespondentEmail,
+          varRef, projectName,
+          action: 'approved',
+          comment,
+          variationId: variation.id,
+          title: (variation as any).title ?? undefined,
+          estimatedValue: (variation as any).estimated_value ?? null,
+        });
+      }
+
       return NextResponse.json({ ok: true });
     }
 
@@ -220,6 +281,18 @@ export async function POST(req: NextRequest) {
         comment,
         variationId: variation.id,
         respondentEmail: bodyRespondentEmail ?? undefined,
+      });
+    }
+
+    if (bodyRespondentEmail) {
+      await notifyApprover({
+        toEmail: bodyRespondentEmail,
+        varRef, projectName,
+        action: 'rejected',
+        comment,
+        variationId: variation.id,
+        title: (variation as any).title ?? undefined,
+        estimatedValue: (variation as any).estimated_value ?? null,
       });
     }
 
