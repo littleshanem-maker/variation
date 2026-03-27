@@ -35,7 +35,7 @@ function NewRequestForm() {
   const [estimatedValue, setEstimatedValue] = useState('');
   const [costItems, setCostItems] = useState<CostItem[]>([]);
   const [responseDueDate, setResponseDueDate] = useState('');
-  const [claimType, setClaimType] = useState<'cost' | 'time' | 'cost_and_time'>('cost');
+  const [claimType, setClaimType] = useState<'lump_sum' | 'cost_plus' | 'schedule_of_rates' | 'time_only' | 'cost_and_time'>('lump_sum');
   const [eotDays, setEotDays] = useState('');
   const [eotUnit, setEotUnit] = useState<'days' | 'hours'>('days');
   const [basisOfValuation, setBasisOfValuation] = useState('');
@@ -156,8 +156,8 @@ function NewRequestForm() {
         cost_items: costItems,
         response_due_date: responseDueDate || null,
         claim_type: claimType,
-        eot_days_claimed: (claimType !== 'cost' && eotDays) ? parseInt(eotDays) : null,
-        time_implication_unit: claimType !== 'cost' ? eotUnit : null,
+        eot_days_claimed: (claimType !== 'lump_sum' && claimType !== 'cost_plus' && claimType !== 'schedule_of_rates' && eotDays) ? parseInt(eotDays) : null,
+        time_implication_unit: (claimType !== 'lump_sum' && claimType !== 'cost_plus' && claimType !== 'schedule_of_rates') ? eotUnit : null,
         basis_of_valuation: basisOfValuation || null,
         status: 'draft',
         captured_at: new Date().toISOString(),
@@ -213,7 +213,9 @@ function NewRequestForm() {
     }
   }
 
-  const showEot = claimType === 'time' || claimType === 'cost_and_time';
+  const isCostOnly = claimType === 'lump_sum' || claimType === 'cost_plus' || claimType === 'schedule_of_rates';
+  const showCostBreakdown = isCostOnly || claimType === 'cost_and_time';
+  const showEot = claimType === 'time_only' || claimType === 'cost_and_time';
 
   function handleExportCsv() {
     // Trigger CSV download via the export API
@@ -358,7 +360,7 @@ function NewRequestForm() {
             </div>
 
             {/* Cost breakdown */}
-            {claimType !== 'time' && (
+            {showCostBreakdown && (
               <div>
                 <label className={labelClass}>Cost Breakdown</label>
                 <div className="mt-1 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB] p-3">
@@ -368,7 +370,13 @@ function NewRequestForm() {
                     onTotalChange={cents => setEstimatedValue((cents / 100).toFixed(2))}
                   />
                 </div>
-
+                {isCostOnly && (
+                  <p className="text-[12px] text-[#6B7280] mt-2">
+                    {claimType === 'lump_sum' && "Provide a single price for the complete scope of works."}
+                    {claimType === 'cost_plus' && "Break down materials, labour, and other costs. Margin applied separately."}
+                    {claimType === 'schedule_of_rates' && "Apply contract schedule rates to the quantities shown."}
+                  </p>
+                )}
               </div>
             )}
 
@@ -388,8 +396,10 @@ function NewRequestForm() {
             <div>
               <label className={labelClass}>Claim Type</label>
               <select value={claimType} onChange={e => setClaimType(e.target.value as any)} className={inputClass}>
-                <option value="cost">Cost only</option>
-                <option value="time">Time only (EOT)</option>
+                <option value="lump_sum">Lump Sum</option>
+                <option value="cost_plus">Cost Plus</option>
+                <option value="schedule_of_rates">Schedule of Rates</option>
+                <option value="time_only">Time Impact Only</option>
                 <option value="cost_and_time">Cost & Time</option>
               </select>
             </div>

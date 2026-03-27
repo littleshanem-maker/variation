@@ -94,7 +94,7 @@ export interface Variation {
   revision_number?: number; // 0 = original, 1 = Rev 1, 2 = Rev 2 etc.
   parent_id?: string;       // FK to parent variation, null for originals
   response_due_date?: string;   // ISO date (YYYY-MM-DD) — user-set response deadline
-  claim_type?: 'cost' | 'time' | 'cost_and_time';
+  claim_type?: 'lump_sum' | 'cost_plus' | 'schedule_of_rates' | 'time_only' | 'cost_and_time';
   eot_days_claimed?: number;
   basis_of_valuation?: 'agreement' | 'contract_rates' | 'daywork' | 'reasonable_rates';
   client_email?: string;
