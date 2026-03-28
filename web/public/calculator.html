@@ -873,6 +873,238 @@ footer {
     text-align: center;
   }
 }
+
+/* ─── PROGRESSIVE DISCLOSURE ─── */
+.results-section.blurred {
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.6;
+}
+
+.calc-prompt-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15,23,42,0.5);
+  backdrop-filter: blur(2px);
+  border-radius: var(--radius);
+  z-index: 10;
+  text-align: center;
+  padding: 32px;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.calc-prompt-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.calc-prompt-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  max-width: 260px;
+  line-height: 1.5;
+}
+
+/* ─── CALCULATE BUTTON ─── */
+.btn-calculate {
+  display: none;
+  width: 100%;
+  padding: 16px 28px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-calculate.visible {
+  display: flex;
+}
+
+.btn-calculate:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(79,70,229,0.45);
+}
+
+/* ─── TIME TOGGLE ─── */
+.time-toggle-wrap {
+  display: none;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.time-toggle-wrap.visible {
+  display: flex;
+}
+
+.time-toggle {
+  display: inline-flex;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 4px;
+  gap: 2px;
+}
+
+.time-toggle-btn {
+  padding: 7px 18px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.time-toggle-btn.active {
+  background: #4f46e5;
+  color: white;
+}
+
+/* ─── CARD COLOUR TREATMENTS ─── */
+.card-loss {
+  border-color: rgba(239,68,68,0.3) !important;
+  background: rgba(239,68,68,0.07) !important;
+}
+
+.card-loss .result-label {
+  color: rgba(239,68,68,0.75);
+}
+
+.card-recovery {
+  border-color: rgba(34,197,94,0.3) !important;
+  background: rgba(34,197,94,0.07) !important;
+}
+
+.card-recovery .result-label {
+  color: rgba(34,197,94,0.75);
+}
+
+.card-cost {
+  opacity: 0.65;
+  border-color: rgba(255,255,255,0.05) !important;
+  background: var(--bg-surface) !important;
+}
+
+.card-cost .result-value {
+  font-size: 20px !important;
+}
+
+/* ─── ROI GLOW ─── */
+.roi-comparison.glow {
+  border-color: rgba(34,197,94,0.45);
+  box-shadow: 0 0 32px rgba(34,197,94,0.14);
+}
+
+/* ─── BENCHMARK LINE ─── */
+.benchmark-line {
+  display: none;
+  margin-bottom: 16px;
+  padding: 11px 15px;
+  background: rgba(59,130,246,0.05);
+  border-left: 3px solid rgba(59,130,246,0.45);
+  border-radius: 0 6px 6px 0;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.benchmark-line.revealed {
+  display: block;
+}
+
+/* ─── INLINE CTA ─── */
+.inline-cta {
+  margin-top: 20px;
+  background: linear-gradient(135deg, rgba(79,70,229,0.1) 0%, rgba(79,70,229,0.05) 100%);
+  border: 1px solid rgba(79,70,229,0.28);
+  border-radius: var(--radius-sm);
+  padding: 22px 24px;
+  text-align: center;
+  display: none;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.inline-cta.revealed {
+  display: block;
+}
+
+.inline-cta.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.inline-cta-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  color: var(--text-primary);
+}
+
+.btn-inline-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 22px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  width: 100%;
+  font-family: inherit;
+}
+
+.btn-inline-cta:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(79,70,229,0.38);
+}
+
+.inline-cta-secondary {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+/* ─── SLIDER GLOW ON HOVER ─── */
+.slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 6px rgba(59,130,246,0.15), 0 2px 8px rgba(59,130,246,0.5);
+  transform: scale(1.2);
+}
+
+/* ─── HEADLINE SIZE BOOST ─── */
+.dramatic-reveal {
+  font-size: clamp(22px, 3.8vw, 32px) !important;
+}
 </style>
 </head>
 <body>
@@ -974,14 +1206,41 @@ footer {
         Defaults based on KPMG/AIQS (variation rate) and NSW Fair Trading SOPA data (59% of claims rejected or discounted). Root cause: poor documentation.
       </p>
     </div>
+
+    <!-- CALCULATE BUTTON -->
+    <button class="btn-calculate" id="btnCalculate" onclick="triggerReveal()">
+      Calculate My Loss
+      <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+
     </div><!-- end left col -->
 
     <!-- RIGHT: RESULTS -->
     <div>
-    <div class="results-section" id="resultsSection">
+    <!-- Time horizon toggle — appears after first reveal -->
+    <div class="time-toggle-wrap" id="timeToggleWrap">
+      <div class="time-toggle">
+        <button class="time-toggle-btn active" data-years="1" onclick="setTimeHorizon(1)">1 Year</button>
+        <button class="time-toggle-btn" data-years="3" onclick="setTimeHorizon(3)">3 Years</button>
+        <button class="time-toggle-btn" data-years="5" onclick="setTimeHorizon(5)">5 Years</button>
+      </div>
+    </div>
+
+    <div style="position:relative;">
+      <!-- Blurred overlay — shown before first calculate -->
+      <div class="calc-prompt-overlay" id="calcPromptOverlay">
+        <p class="calc-prompt-text">Adjust the sliders to see what you're losing</p>
+      </div>
+
+    <div class="results-section blurred" id="resultsSection">
       <div class="results-header">
-        <h2 class="dramatic-reveal">You're losing <span class="reveal-highlight" id="totalLeakage">$0</span> per year to variation disputes.</h2>
+        <h2 class="dramatic-reveal">You're losing <span class="reveal-highlight" id="totalLeakage">$0</span> <span id="timeHeadlineSuffix">per year</span> to variation disputes.</h2>
         <p class="results-subtitle">Here's the full picture — and what changes with a proper system.</p>
+      </div>
+
+      <!-- Benchmark line -->
+      <div class="benchmark-line" id="benchmarkLine">
+        📊 Australian subcontractors with proper variation documentation recover 30–70% of disputed claims. Without a system, most recover less than 10%. <em>Source: KPMG/AIQS benchmarks; NSW Fair Trading SOPA data.</em>
       </div>
 
       <div class="results-grid">
@@ -991,19 +1250,19 @@ footer {
           <div class="result-description">What your team claims in variations each year</div>
         </div>
 
-        <div class="result-card">
-          <div class="result-label">Lost every year</div>
+        <div class="result-card card-loss">
+          <div class="result-label">💸 Lost every year</div>
           <div class="result-value negative" id="currentLeakage">$0</div>
-          <div class="result-description">Variations that get disputed, rejected, or never paid</div>
+          <div class="result-description">Variations disputed, rejected, or never paid</div>
         </div>
 
-        <div class="result-card">
-          <div class="result-label">You could get back</div>
+        <div class="result-card card-recovery">
+          <div class="result-label">✅ You could get back</div>
           <div class="result-value positive" id="recoverable">$0</div>
-          <div class="result-description">What better documentation would recover — conservative estimate</div>
+          <div class="result-description">Conservative estimate of what proper documentation recovers</div>
         </div>
 
-        <div class="result-card highlight-card">
+        <div class="result-card card-cost">
           <div class="result-label">Cost to fix it</div>
           <div class="result-value amber">$3,588/yr</div>
           <div class="result-description">$299/mo — founding member rate, locked for life</div>
@@ -1011,7 +1270,7 @@ footer {
       </div>
 
       <!-- ROI COMPARISON -->
-      <div class="roi-comparison">
+      <div class="roi-comparison" id="roiComparison">
         <div class="roi-vs">
           <div class="roi-item">
             <div class="roi-item-label">You Recover</div>
@@ -1030,7 +1289,19 @@ footer {
         </div>
         <div class="roi-conclusion" id="roiConclusion">Variation Shield pays for itself.</div>
       </div>
-    </div>
+
+      <!-- INLINE CTA — appears after reveal, in viewport -->
+      <div class="inline-cta" id="inlineCta">
+        <div class="inline-cta-title">Start recovering your variations — free</div>
+        <a href="/signup/free" class="btn-inline-cta">
+          Get started free — no credit card needed
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="/schedule" class="inline-cta-secondary">Or book a 15-min walkthrough →</a>
+      </div>
+
+    </div><!-- end results-section -->
+    </div><!-- end relative wrapper -->
     </div><!-- end right col -->
     </div><!-- end calculator-columns -->
 
@@ -1131,49 +1402,24 @@ footer {
 // ─── CALCULATOR LOGIC ─── //
 
 const VARIATION_SHIELD_ANNUAL = 3588;
+let hasRevealed = false;
+let timeHorizon = 1;
+let hasInteracted = false;
 
-const sliders = {
-  revenue: document.getElementById('revenueSlider'),
-  variationRate: document.getElementById('variationRateSlider'),
-  unrecovered: document.getElementById('unrecoveredSlider'),
-};
+// Cached calc values
+let _calcRevenue = 10000000;
+let _calcVariationRate = 0.05;
+let _calcUnrecoveredRate = 0.60;
+let _calcAnnualLoss = 0;
+let _calcRecoverable = 0;
 
-const displays = {
-  revenue: document.getElementById('revenueValue'),
-  variationRate: document.getElementById('variationRateValue'),
-  unrecovered: document.getElementById('unrecoveredValue'),
-};
-
-const results = {
-  section: document.getElementById('resultsSection'),
-  totalLeakage: document.getElementById('totalLeakage'),
-  revenueAtRisk: document.getElementById('revenueAtRisk'),
-  currentLeakage: document.getElementById('currentLeakage'),
-  recoverable: document.getElementById('recoverable'),
-  roiRecoverable: document.getElementById('roiRecoverable'),
-  roiRatio: document.getElementById('roiRatio'),
-  roiConclusion: document.getElementById('roiConclusion'),
-};
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function fmt(n) {
   return new Intl.NumberFormat('en-AU', {
     style: 'currency', currency: 'AUD',
     minimumFractionDigits: 0, maximumFractionDigits: 0
   }).format(n);
-}
-
-function animateCount(el, target, isCurrency = true, suffix = '') {
-  const duration = 900;
-  const steps = 40;
-  const step = target / steps;
-  let current = 0;
-  let count = 0;
-  const timer = setInterval(() => {
-    count++;
-    current = Math.min(count * step, target);
-    el.textContent = isCurrency ? fmt(current) : (Math.round(current) + suffix);
-    if (count >= steps) clearInterval(timer);
-  }, duration / steps);
 }
 
 function fmtRevenue(n) {
@@ -1184,82 +1430,193 @@ function fmtRevenue(n) {
   return '$' + (n / 1000).toFixed(0) + 'K';
 }
 
-function calculate() {
-  const revenue = parseInt(sliders.revenue.value);
-  const variationRate = parseInt(sliders.variationRate.value) / 100;
-  const unrecoveredRate = parseInt(sliders.unrecovered.value) / 100;
+function animateCount(el, target, isCurrency = true, suffix = '', delay = 0) {
+  if (prefersReducedMotion) {
+    el.textContent = isCurrency ? fmt(target) : (Math.round(target) + suffix);
+    return;
+  }
+  const duration = 1000;
+  const startTime = performance.now() + delay;
 
+  function step(now) {
+    if (now < startTime) { requestAnimationFrame(step); return; }
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    // ease-out cubic
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = target * eased;
+    el.textContent = isCurrency ? fmt(current) : (Math.round(current) + suffix);
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function getBaseValues() {
+  const revenue = parseInt(document.getElementById('revenueSlider').value);
+  const variationRate = parseInt(document.getElementById('variationRateSlider').value) / 100;
+  const unrecoveredRate = parseInt(document.getElementById('unrecoveredSlider').value) / 100;
   const variationPool = revenue * variationRate;
   const annualLoss = variationPool * unrecoveredRate;
   const recoverable = annualLoss * 0.70;
-  const roiRatio = recoverable / VARIATION_SHIELD_ANNUAL;
+  return { revenue, variationRate, unrecoveredRate, variationPool, annualLoss, recoverable };
+}
 
-  // Cache for lead capture form submission
+function renderResults(animate) {
+  const { revenue, variationRate, unrecoveredRate, variationPool, annualLoss, recoverable } = getBaseValues();
+
+  // Apply time horizon multiplier
+  const mult = timeHorizon;
+  const displayPool = variationPool * mult;
+  const displayLoss = annualLoss * mult;
+  const displayRecoverable = recoverable * mult;
+  const displayCost = VARIATION_SHIELD_ANNUAL * mult;
+  const roiRatio = recoverable / VARIATION_SHIELD_ANNUAL; // ROI stays at 1yr base
+
   _calcRevenue = revenue;
   _calcVariationRate = variationRate;
   _calcUnrecoveredRate = unrecoveredRate;
   _calcAnnualLoss = annualLoss;
   _calcRecoverable = recoverable;
 
-  results.section.classList.add('visible');
+  // Update headline suffix
+  const suffix = timeHorizon === 1 ? 'per year' : `over ${timeHorizon} years`;
+  document.getElementById('timeHeadlineSuffix').textContent = suffix;
 
-  animateCount(results.revenueAtRisk, variationPool);
-  animateCount(results.currentLeakage, annualLoss);
-  animateCount(results.recoverable, recoverable);
-  animateCount(results.roiRecoverable, recoverable);
-  animateCount(results.totalLeakage, annualLoss);
-
-  if (roiRatio >= 1) {
-    results.roiRatio.textContent = roiRatio.toFixed(1) + 'x';
-    results.roiRatio.className = 'roi-item-value positive';
-    if (roiRatio >= 10) {
-      results.roiConclusion.textContent = roiRatio.toFixed(0) + 'x return on every dollar spent.';
-    } else if (roiRatio >= 3) {
-      results.roiConclusion.textContent = 'Pays for itself ' + roiRatio.toFixed(1) + 'x in year one.';
-    } else {
-      results.roiConclusion.textContent = 'Variation Shield pays for itself.';
-    }
-    results.roiConclusion.style.color = 'var(--green)';
-  } else if (annualLoss < 500) {
-    results.roiRatio.textContent = '—';
-    results.roiRatio.className = 'roi-item-value neutral';
-    results.roiConclusion.textContent = 'Adjust your sliders — most subcontractors see higher leakage.';
-    results.roiConclusion.style.color = 'var(--text-secondary)';
+  if (animate) {
+    animateCount(document.getElementById('totalLeakage'), displayLoss, true, '', 0);
+    animateCount(document.getElementById('revenueAtRisk'), displayPool, true, '', 0);
+    animateCount(document.getElementById('currentLeakage'), displayLoss, true, '', 50);
+    animateCount(document.getElementById('recoverable'), displayRecoverable, true, '', 100);
+    animateCount(document.getElementById('roiRecoverable'), displayRecoverable, true, '', 50);
+    // ROI counts up last
+    setTimeout(() => {
+      const roiEl = document.getElementById('roiRatio');
+      if (prefersReducedMotion) {
+        roiEl.textContent = roiRatio.toFixed(1) + '×';
+      } else {
+        animateCount(roiEl, roiRatio, false, '×', 0);
+      }
+    }, 1200);
   } else {
-    results.roiRatio.textContent = roiRatio.toFixed(1) + 'x';
-    results.roiRatio.className = 'roi-item-value amber';
-    results.roiConclusion.textContent = 'Variation Shield approaches break-even quickly as your rate improves.';
-    results.roiConclusion.style.color = 'var(--amber)';
+    document.getElementById('totalLeakage').textContent = fmt(displayLoss);
+    document.getElementById('revenueAtRisk').textContent = fmt(displayPool);
+    document.getElementById('currentLeakage').textContent = fmt(displayLoss);
+    document.getElementById('recoverable').textContent = fmt(displayRecoverable);
+    document.getElementById('roiRecoverable').textContent = fmt(displayRecoverable);
+    document.getElementById('roiRatio').textContent = roiRatio.toFixed(1) + '×';
   }
 
-  // Show lead capture section if leakage is meaningful and not yet submitted
+  // ROI text/colour
+  const roiEl = document.getElementById('roiRatio');
+  const roiConclusion = document.getElementById('roiConclusion');
+  const roiComparison = document.getElementById('roiComparison');
+
+  if (roiRatio >= 1) {
+    roiEl.className = 'roi-item-value positive';
+    if (roiRatio >= 10) {
+      roiConclusion.textContent = roiRatio.toFixed(0) + '× return on every dollar spent.';
+    } else if (roiRatio >= 3) {
+      roiConclusion.textContent = 'Pays for itself ' + roiRatio.toFixed(1) + '× in year one.';
+    } else {
+      roiConclusion.textContent = 'Variation Shield pays for itself.';
+    }
+    roiConclusion.style.color = 'var(--green)';
+    roiComparison.classList.add('glow');
+  } else if (annualLoss < 500) {
+    roiEl.className = 'roi-item-value neutral';
+    roiEl.textContent = '—';
+    roiConclusion.textContent = 'Adjust your sliders — most subcontractors see higher leakage.';
+    roiConclusion.style.color = 'var(--text-secondary)';
+    roiComparison.classList.remove('glow');
+  } else {
+    roiEl.className = 'roi-item-value amber';
+    roiConclusion.textContent = 'Variation Shield approaches break-even quickly as your rate improves.';
+    roiConclusion.style.color = 'var(--amber)';
+    roiComparison.classList.remove('glow');
+  }
+
+  // Lead capture (show if base annual loss ≥ $10k)
   if (annualLoss >= 10000) {
     const captureSection = document.getElementById('leadCaptureSection');
     if (!captureSection.dataset.submitted) {
       captureSection.style.display = 'block';
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => captureSection.classList.add('visible'));
-      });
+      requestAnimationFrame(() => requestAnimationFrame(() => captureSection.classList.add('visible')));
     }
   }
 }
 
-sliders.revenue.addEventListener('input', function() {
-  displays.revenue.textContent = fmtRevenue(parseInt(this.value));
-  calculate();
+function triggerReveal() {
+  if (hasRevealed) return;
+  hasRevealed = true;
+
+  const resultsSection = document.getElementById('resultsSection');
+  const overlay = document.getElementById('calcPromptOverlay');
+  const btnCalc = document.getElementById('btnCalculate');
+  const timeToggle = document.getElementById('timeToggleWrap');
+  const benchmarkLine = document.getElementById('benchmarkLine');
+  const inlineCta = document.getElementById('inlineCta');
+
+  // Hide button + overlay
+  btnCalc.style.display = 'none';
+  overlay.classList.add('hidden');
+
+  // Un-blur results
+  resultsSection.classList.remove('blurred');
+
+  // Show time toggle + benchmark
+  timeToggle.classList.add('visible');
+  benchmarkLine.classList.add('revealed');
+
+  // Animate numbers
+  renderResults(true);
+
+  // Show inline CTA after count-up settles
+  setTimeout(() => {
+    inlineCta.classList.add('revealed');
+    requestAnimationFrame(() => requestAnimationFrame(() => inlineCta.classList.add('animated')));
+  }, 1600);
+
+  // Auto-scroll to results on mobile
+  if (window.innerWidth <= 900) {
+    setTimeout(() => {
+      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+}
+
+function onSliderInteraction() {
+  if (!hasInteracted) {
+    hasInteracted = true;
+    document.getElementById('btnCalculate').classList.add('visible');
+  }
+  if (hasRevealed) {
+    renderResults(false);
+  }
+}
+
+function setTimeHorizon(years) {
+  timeHorizon = years;
+  document.querySelectorAll('.time-toggle-btn').forEach(btn => {
+    btn.classList.toggle('active', parseInt(btn.dataset.years) === years);
+  });
+  renderResults(true);
+}
+
+// Slider listeners
+document.getElementById('revenueSlider').addEventListener('input', function() {
+  document.getElementById('revenueValue').textContent = fmtRevenue(parseInt(this.value));
+  onSliderInteraction();
 });
 
-sliders.variationRate.addEventListener('input', function() {
-  displays.variationRate.textContent = this.value + '% of revenue';
-  calculate();
+document.getElementById('variationRateSlider').addEventListener('input', function() {
+  document.getElementById('variationRateValue').textContent = this.value + '% of revenue';
+  onSliderInteraction();
 });
 
-sliders.unrecovered.addEventListener('input', function() {
-  displays.unrecovered.textContent = this.value + '% unagreed';
-  calculate();
+document.getElementById('unrecoveredSlider').addEventListener('input', function() {
+  document.getElementById('unrecoveredValue').textContent = this.value + '% unagreed';
+  onSliderInteraction();
 });
-
-setTimeout(calculate, 400);
 
 // ─── REVEAL OBSERVER ─── //
 const observer = new IntersectionObserver((entries) => {
@@ -1270,15 +1627,10 @@ const observer = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
 // ─── SHARE FUNCTIONS ─── //
 function shareLinkedIn() {
-  const leakage = document.getElementById('currentLeakage').textContent;
-  const text = encodeURIComponent(
-    `I just ran a quick calculation and found out our business might be losing ${leakage} a year to undocumented variations.\n\nThis free calculator shows you the real number for your business:\nhttps://variationshield.com.au/calculator\n\n#construction #subcontractors #variations`
-  );
   window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://variationshield.com.au/calculator')}`, '_blank');
 }
 
@@ -1291,17 +1643,8 @@ function copyLink() {
 }
 
 // ─── LEAD CAPTURE ─── //
-
-// Cached calculation values — updated by calculate() below
-let _calcRevenue = 10000000;
-let _calcVariationRate = 0.05;
-let _calcUnrecoveredRate = 0.40;
-let _calcAnnualLoss = 0;
-let _calcRecoverable = 0;
-
 document.getElementById('leadCaptureForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-
   const email = document.getElementById('captureEmail').value.trim();
   const name = document.getElementById('captureFirstName').value.trim();
   const company = document.getElementById('captureCompany').value.trim();
@@ -1318,35 +1661,23 @@ document.getElementById('leadCaptureForm').addEventListener('submit', async func
   btn.textContent = 'Sending…';
 
   try {
-    const payload = {
-      email,
-      name: name || null,
-      company: company || null,
-      revenue: _calcRevenue,
-      variationRate: _calcVariationRate,
-      unrecoveredRate: _calcUnrecoveredRate,
-      annualLoss: _calcAnnualLoss,
-      recoverable: _calcRecoverable,
-    };
-
-    const res = await fetch('/api/calculator-lead', {
+    await fetch('/api/calculator-lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        email, name: name || null, company: company || null,
+        revenue: _calcRevenue, variationRate: _calcVariationRate,
+        unrecoveredRate: _calcUnrecoveredRate, annualLoss: _calcAnnualLoss,
+        recoverable: _calcRecoverable,
+      }),
     });
-
-    const captureSection = document.getElementById('leadCaptureSection');
-    captureSection.dataset.submitted = 'true';
-
-    // Fade out form, show success
+    document.getElementById('leadCaptureSection').dataset.submitted = 'true';
     const formWrap = document.getElementById('captureFormWrap');
     formWrap.classList.add('hiding');
     setTimeout(() => {
       formWrap.style.display = 'none';
-      const success = document.getElementById('captureSuccess');
-      success.classList.add('visible');
+      document.getElementById('captureSuccess').classList.add('visible');
     }, 300);
-
   } catch (err) {
     console.error('Lead capture error:', err);
     btn.disabled = false;
