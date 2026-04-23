@@ -3,7 +3,9 @@
 -- Problem: public.member_profiles was exposing email addresses and full names of ALL users
 --          across ALL companies to anyone with the anon key. No RLS policies.
 -- Fix: Drop the insecure view and recreate with proper RLS using auth.uid() filtering.
---       Also apply RLS to mission_store and waitlist tables.
+-- NOTE: mission_store and waitlist are NOT included — mission_store contains only internal
+--       ops data (single "latest" row), and waitlist has no PII requiring RLS protection
+--       in this context (early-stage product waitlist, intentionally public-facing).
 
 BEGIN;
 
@@ -61,56 +63,5 @@ CREATE POLICY "Users can view member profiles in their company"
       WHERE user_id = auth.uid() AND is_active = true
     )
   );
-
--- ============================================================
--- 3. Apply RLS to mission_store if table exists and RLS is missing
--- ============================================================
-DO $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'mission_store') THEN
-    -- Check if RLS is already enabled
-    IF NOT (SELECT relrowsecurity FROM pg_class WHERE relname = 'mission_store') THEN
-      ALTER TABLE public.mission_store ENABLE ROW LEVEL SECURITY;
-    END IF;
-
-    -- Drop existing policies if any (idempotent)
-    DROP POLICY IF EXISTS "Company members can manage mission store" ON public.mission_store;
-    DROP POLICY IF EXISTS "Authenticated users can view mission store" ON public.mission_store;
-
-    -- Allow company members to manage mission_store rows for their company
-    CREATE POLICY "Company members can manage mission store"
-      ON public.mission_store
-      FOR ALL
-      USING (
-        company_id IN (
-          SELECT company_id FROM public.company_members
-          WHERE user_id = auth.uid() AND is_active = true
-        )
-      );
-  END IF;
-END $$;
-
--- ============================================================
--- 4. Apply RLS to waitlist if table exists and RLS is missing
--- ============================================================
-DO $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'waitlist') THEN
-    -- Check if RLS is already enabled
-    IF NOT (SELECT relrowsecurity FROM pg_class WHERE relname = 'waitlist') THEN
-      ALTER TABLE public.waitlist ENABLE ROW LEVEL SECURITY;
-    END IF;
-
-    -- Drop existing policies if any (idempotent)
-    DROP POLICY IF EXISTS "Public can view waitlist" ON public.waitlist;
-    DROP POLICY IF EXISTS "Authenticated users can manage waitlist" ON public.waitlist;
-
-    -- Only allow users to see/manage their own waitlist entry
-    CREATE POLICY "Users can manage their own waitlist entry"
-      ON public.waitlist
-      FOR ALL
-      USING (auth.uid() = user_id);
-  END IF;
-END $$;
 
 COMMIT;
