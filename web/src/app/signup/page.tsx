@@ -108,7 +108,7 @@ function SignupContent() {
             >
               <div className="text-base font-bold mb-0.5">Subscribe — $299/mo</div>
               <div className="text-xs font-normal" style={{ color: 'rgba(255,255,255,0.6)' }}>
-                Founding rate · locked for life · 30-day guarantee
+                Early adopter rate · locked for 12 months · 30-day guarantee
               </div>
             </a>
           </div>

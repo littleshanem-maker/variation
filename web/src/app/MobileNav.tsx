@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import DemoButton from '@/components/DemoButton';
 
 export default function MobileNav() {
   function close() {
@@ -14,8 +15,8 @@ export default function MobileNav() {
       <a href="#pricing" className="py-3.5 text-sm text-white/60 border-b border-white/[0.06] active:text-white" onClick={close}>Pricing</a>
       <Link href="/calculator" className="py-3.5 text-sm text-white/60 border-b border-white/[0.06] active:text-white" onClick={close}>ROI Calculator</Link>
       <Link href="/login" className="py-3.5 text-sm text-white/60 border-b border-white/[0.06] active:text-white">Login</Link>
-      <Link href="/signup/free" className="my-3 w-full text-center bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-lg">Try Free — No Credit Card</Link>
-      <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs50XfrW02" className="w-full text-center border border-white/20 text-white/80 text-sm font-semibold px-4 py-3 rounded-lg">Get Started — $299/mo</a>
+      <DemoButton className="my-3 w-full text-center bg-indigo-600 text-white text-sm font-semibold px-4 py-3 rounded-lg">Book a 15-Minute Demo</DemoButton>
+      <Link href="/signup/free" className="w-full text-center border border-white/20 text-white/80 text-sm font-semibold px-4 py-3 rounded-lg">Try Free</Link>
     </div>
   );
 }
