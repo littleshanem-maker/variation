@@ -39,9 +39,10 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Protect /capture too — field users redirected here from /field
-  if (pathname.startsWith('/capture')) {
+  // Root path — redirect authenticated users to their role-based hub
+  if (pathname === '/') {
     const response = NextResponse.next();
+
     try {
       const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -57,13 +58,24 @@ export async function middleware(request: NextRequest) {
           },
         }
       );
+
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        return NextResponse.redirect(new URL('/login', request.url));
-      }
-      return response;
+
+      if (!user) return response;
+
+      const { data: membership } = await supabase
+        .from('company_members')
+        .select('role')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .limit(1)
+        .single();
+
+      const role = membership?.role ?? 'field';
+      const dest = role === 'field' ? '/field' : '/dashboard';
+      return NextResponse.redirect(new URL(dest, request.url));
     } catch {
-      return NextResponse.redirect(new URL('/login', request.url));
+      return response;
     }
   }
 
@@ -71,5 +83,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/dashboard', '/field', '/capture'],
+  matcher: ['/', '/dashboard', '/capture'],
 };
