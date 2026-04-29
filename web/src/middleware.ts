@@ -5,8 +5,8 @@ import type { NextRequest } from 'next/server';
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Protect /dashboard and /capture — require auth or redirect to login
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/capture')) {
+  // Protect app routes — require auth or redirect to login
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/field') || pathname.startsWith('/capture')) {
     const response = NextResponse.next();
 
     try {
@@ -69,9 +69,9 @@ export async function middleware(request: NextRequest) {
         .eq('user_id', user.id)
         .eq('is_active', true)
         .limit(1)
-        .single();
+        .maybeSingle();
 
-      const role = membership?.role ?? 'field';
+      const role = membership?.role;
       const dest = role === 'field' ? '/field' : '/dashboard';
       return NextResponse.redirect(new URL(dest, request.url));
     } catch {
@@ -83,5 +83,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/dashboard', '/capture'],
+  matcher: ['/', '/dashboard/:path*', '/field/:path*', '/capture/:path*'],
 };

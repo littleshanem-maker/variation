@@ -42,8 +42,8 @@ export default function LoginPage() {
         .eq('user_id', signInData.user.id)
         .eq('is_active', true)
         .limit(1)
-        .single();
-      const role = membership?.role ?? 'field';
+        .maybeSingle();
+      const role = membership?.role;
       window.location.replace(role === 'field' ? '/field' : '/dashboard');
     } catch {
       window.location.replace('/dashboard');

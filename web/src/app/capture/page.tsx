@@ -456,7 +456,7 @@ function CapturePageContent() {
             <form onSubmit={handleSubmit} className="space-y-3">
 
               {/* Project — always show picker so workers can select the right site */}
-              {isOnboarding && !preselectedProjectId ? (
+              {isOnboarding && onboardingProjectId ? (
                 loadingProjects ? (
                   <div className="h-12 bg-gray-100 rounded-lg animate-pulse" />
                 ) : (
