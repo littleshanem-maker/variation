@@ -20,7 +20,7 @@ function NewRequestForm() {
   const searchParams = useSearchParams();
   const preselectedProject = searchParams.get('project') || '';
   const duplicateId = searchParams.get('duplicate') || '';
-  const { isLoading: roleLoading } = useRole();
+  const { companyId, isLoading: roleLoading, company } = useRole();
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
@@ -55,7 +55,9 @@ function NewRequestForm() {
 
   async function loadProjects() {
     const supabase = createClient();
-    const { data } = await supabase.from('projects').select('*').eq('is_active', true).order('name');
+    let projectsQuery = supabase.from('projects').select('*').eq('is_active', true).order('name');
+    if (companyId) projectsQuery = projectsQuery.eq('company_id', companyId);
+    const { data } = await projectsQuery;
     setProjects(data || []);
     if (!preselectedProject && data?.length === 1) setProjectId(data[0].id);
     setLoadingProjects(false);
@@ -98,28 +100,23 @@ function NewRequestForm() {
       if (!user) throw new Error('Not authenticated');
 
       // Free tier limit check
-      const { data: memberData } = await supabase
-        .from('company_members')
-        .select('company_id')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .single();
-      if (memberData) {
-        const { data: companyData } = await supabase
+      if (companyId) {
+        const companyData = company ?? (await supabase
           .from('companies')
           .select('plan, variation_count, variation_limit')
-          .eq('id', memberData.company_id)
-          .single();
-        if (companyData && companyData.plan === 'free' && companyData.variation_limit !== null) {
+          .eq('id', companyId)
+          .single()).data;
+
+        if (companyData?.plan === 'free' && companyData.variation_limit !== null) {
           if ((companyData.variation_count || 0) >= companyData.variation_limit) {
             // Calculate total value for the conversion wall
             const { data: varData } = await supabase
               .from('variations')
               .select('estimated_value, project_id')
-              .in('project_id', (await supabase.from('projects').select('id').eq('company_id', memberData.company_id)).data?.map((p: any) => p.id) || []);
+              .in('project_id', (await supabase.from('projects').select('id').eq('company_id', companyId)).data?.map((p: any) => p.id) || []);
             const totalValue = (varData || []).reduce((sum: number, v: any) => sum + (v.estimated_value || 0), 0);
             setSaving(false);
-            setLimitReached({ count: companyData.variation_count, limit: companyData.variation_limit, totalValue });
+            setLimitReached({ count: companyData.variation_count || 0, limit: companyData.variation_limit, totalValue });
             return;
           }
         }
@@ -190,11 +187,11 @@ function NewRequestForm() {
       }
 
       // Check if we should show a banner on the next page (free tier milestones)
-      if (memberData) {
+      if (companyId) {
         const { data: freshCompany } = await supabase
           .from('companies')
           .select('plan, variation_count, variation_limit')
-          .eq('id', memberData.company_id)
+          .eq('id', companyId)
           .single();
         if (freshCompany && freshCompany.plan === 'free' && freshCompany.variation_limit !== null) {
           const newCount = (freshCompany.variation_count || 0);

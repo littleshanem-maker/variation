@@ -61,70 +61,31 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
+      setMemberships([]);
+      setActiveCompanyId(null);
+      setUserId(null);
       setIsLoading(false);
       return;
     }
 
     setUserId(session.user.id);
-    // First fetch memberships
-    const { data: memberData, error: memberError } = await supabase
-      .from('company_members')
-      .select('id, company_id, user_id, role, is_active, invited_at, accepted_at')
-      .eq('user_id', session.user.id)
-      .eq('is_active', true)
-      .order('accepted_at', { ascending: false, nullsFirst: false });
 
-    if (memberError) {
-      console.error('Failed to fetch memberships:', memberError);
+    try {
+      // Server-side bootstrap uses the service role and avoids company_members RLS recursion.
+      const res = await fetch('/api/me/bootstrap', { cache: 'no-store' });
+      if (!res.ok) throw new Error(`Bootstrap failed (${res.status})`);
+      const data = await res.json();
+      const nextMemberships = (data.memberships || []) as CompanyMembership[];
+
+      setMemberships(nextMemberships);
+      setActiveCompanyId(data.activeCompanyId ?? nextMemberships[0]?.company_id ?? null);
+    } catch (error) {
+      console.error('Failed to fetch membership bootstrap:', error);
+      setMemberships([]);
+      setActiveCompanyId(null);
+    } finally {
       setIsLoading(false);
-      return;
     }
-
-    if (!memberData || memberData.length === 0) {
-      setIsLoading(false);
-      return;
-    }
-
-    // Then fetch company details for those memberships
-    const companyIds = [...new Set(memberData.map(m => m.company_id))];
-    const { data: companyData } = await supabase
-      .from('companies')
-      .select('id, name, abn, address, phone, logo_url, plan, variation_count, variation_limit, project_limit, upgraded_at, created_at, updated_at')
-      .in('id', companyIds);
-
-    const companyMap = new Map((companyData || []).map((c: any) => [c.id, c]));
-
-    const roleRank: Record<string, number> = { admin: 3, office: 2, field: 1 };
-
-    // Deduplicate by company_id — keep highest role per company
-    const bestByCompany = new Map<string, any>();
-    for (const m of memberData) {
-      const existing = bestByCompany.get(m.company_id);
-      if (!existing || (roleRank[m.role] ?? 0) > (roleRank[existing.role] ?? 0)) {
-        bestByCompany.set(m.company_id, m);
-      }
-    }
-
-    const mapped: CompanyMembership[] = [...bestByCompany.values()].map((m: any) => ({
-      id: m.id,
-      company_id: m.company_id,
-      user_id: m.user_id,
-      role: m.role as UserRole,
-      is_active: m.is_active,
-      invited_at: m.invited_at,
-      accepted_at: m.accepted_at,
-      company: companyMap.get(m.company_id) || undefined,
-    }));
-
-    // Pick the strongest available role by default. This prevents users with both
-    // office/admin and field memberships from being dropped into field capture.
-    const sorted = [...mapped].sort((a, b) => (roleRank[b.role] ?? 0) - (roleRank[a.role] ?? 0));
-
-    setMemberships(sorted);
-    if (sorted.length > 0) {
-      setActiveCompanyId(sorted[0].company_id);
-    }
-    setIsLoading(false);
   }
 
   const activeMembership = useMemo(

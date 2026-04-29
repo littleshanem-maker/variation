@@ -50,20 +50,28 @@ export default function Dashboard() {
   const [filterProject, setFilterProject] = useState<string>('all');
   const [filterDateRange, setFilterDateRange] = useState<DateRangeKey>('all');
 
-  const { isField, companyId } = useRole();
+  const { isField, companyId, isLoading: roleLoading, company } = useRole();
 
   // Do not auto-redirect from dashboard to field/capture.
   // If role lookup is stale or blocked by RLS, this would dump office/demo users into capture.
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => {
+    if (!roleLoading) loadData();
+  }, [roleLoading, companyId]);
 
   async function loadData() {
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { window.location.replace('/login'); return; }
 
-    const { data: projectsData, error: pErr } = await supabase
-      .from('projects').select('*').eq('is_active', true).order('created_at', { ascending: false });
+    let projectsQuery = supabase
+      .from('projects')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+    if (companyId) projectsQuery = projectsQuery.eq('company_id', companyId);
+
+    const { data: projectsData, error: pErr } = await projectsQuery;
     if (pErr) { setError(pErr.message); setLoading(false); return; }
 
     const { data: variationsData, error: vErr } = await supabase
@@ -87,18 +95,16 @@ export default function Dashboard() {
       variations: allVariations.filter((v: Variation) => v.project_id === p.id),
     })));
 
-    // Fetch company plan info
-    const { data: memberData } = await supabase
-      .from('company_members')
-      .select('company_id')
-      .eq('user_id', session.user.id)
-      .eq('is_active', true)
-      .single();
-    if (memberData) {
+    // Fetch company plan info from bootstrapped role context when possible.
+    if (company) {
+      setCompanyPlan(company.plan || 'free');
+      setVariationCount(company.variation_count || 0);
+      setVariationLimit(company.variation_limit ?? null);
+    } else if (companyId) {
       const { data: compData } = await supabase
         .from('companies')
         .select('plan, variation_count, variation_limit')
-        .eq('id', memberData.company_id)
+        .eq('id', companyId)
         .single();
       if (compData) {
         setCompanyPlan(compData.plan || 'free');
