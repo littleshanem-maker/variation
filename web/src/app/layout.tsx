@@ -6,6 +6,7 @@ import { ErrorHandlerInit } from "@/components/ErrorHandlerInit";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { isStagingEnvironment } from "@/lib/runtime";
+import StagingBanner from "@/components/StagingBanner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,7 +15,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Variation Shield",
+  title: isStagingEnvironment() ? "[V2 STAGING] Variation Shield" : "Variation Shield",
   description: "Variation register for construction contractors",
   robots: isStagingEnvironment()
     ? {
@@ -52,6 +53,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/vs-icon.svg" />
       </head>
       <body className={`${inter.variable} font-sans antialiased bg-gray-50 text-gray-900`}>
+        <StagingBanner />
         <ErrorHandlerInit />
         <Providers>{children}</Providers>
         <Analytics />
