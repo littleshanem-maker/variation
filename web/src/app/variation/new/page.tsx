@@ -20,7 +20,7 @@ function NewRequestForm() {
   const searchParams = useSearchParams();
   const preselectedProject = searchParams.get('project') || '';
   const duplicateId = searchParams.get('duplicate') || '';
-  const { companyId, isLoading: roleLoading } = useRole();
+  const { isLoading: roleLoading } = useRole();
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
@@ -47,11 +47,11 @@ function NewRequestForm() {
   const [limitReached, setLimitReached] = useState<{ count: number; limit: number; totalValue: number } | null>(null);
 
   useEffect(() => {
-    if (!roleLoading && companyId) {
+    if (!roleLoading) {
       loadProjects();
       loadProfile();
     }
-  }, [roleLoading, companyId]);
+  }, [roleLoading]);
 
   async function loadProjects() {
     const supabase = createClient();
