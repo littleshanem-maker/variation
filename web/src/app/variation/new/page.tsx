@@ -303,10 +303,6 @@ function NewRequestForm() {
                 <div className="h-9 bg-slate-100 rounded-md animate-pulse" />
               ) : projects.length === 0 ? (
                 <p className="text-[13px] text-[#6B7280] py-1">No active projects. <Link href="/dashboard" className="underline text-[#1B365D]">Create one on the dashboard</Link>.</p>
-              ) : projects.length === 1 ? (
-                <div className="px-3 py-2 bg-slate-50 rounded-md text-[14px] text-[#1C1C1E] font-medium border border-[#E5E7EB]">
-                  {projects[0].name}
-                </div>
               ) : (
                 <ProjectPicker
                   projects={projects}
