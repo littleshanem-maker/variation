@@ -3,9 +3,10 @@ import type { Metadata } from 'next';
 import MobileMenuButton from './MobileMenuButton';
 import MobileNav from './MobileNav';
 import DemoButton from '@/components/DemoButton';
+import { isStagingEnvironment } from '@/lib/runtime';
 
 export const metadata: Metadata = {
-  title: 'Variation Shield — Every Variation. Documented. Paid.',
+  title: isStagingEnvironment() ? '[V2 STAGING] Variation Shield' : 'Variation Shield — Every Variation. Documented. Paid.',
   description: 'Capture scope changes in 60 seconds on site. Send to your client directly from the app. Built for Tier 2/3 Australian subcontractors.',
   openGraph: {
     title: 'Variation Shield — Every Variation. Documented. Paid.',
