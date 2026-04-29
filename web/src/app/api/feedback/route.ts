@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { resolveOutboundRecipients, stagingEmailBanner } from '@/lib/runtime';
 
 export const maxDuration = 30;
 
@@ -25,17 +26,23 @@ export async function POST(req: NextRequest) {
     }
 
     console.log('[feedback] sending email via Resend...');
+    const delivery = resolveOutboundRecipients(NOTIFY_EMAIL);
     const submittedAt = new Date().toLocaleString('en-AU', {
       timeZone: 'Australia/Melbourne',
       dateStyle: 'medium',
       timeStyle: 'short',
     });
 
+    if (delivery.skipped) {
+      console.warn('[feedback] Email skipped by environment settings', { originalRecipients: delivery.originalRecipients });
+      return NextResponse.json({ ok: true, skipped: true });
+    }
+
     const emailResult = await resend.emails.send({
       from: `Variation Shield <hello@${FROM_DOMAIN}>`,
-      to: NOTIFY_EMAIL,
-      subject: `💬 Feedback — ${userName}${companyName ? `, ${companyName}` : ''}`,
-      html: `
+      to: delivery.recipients,
+      subject: delivery.redirected ? `[STAGING REDIRECT] 💬 Feedback — ${userName}${companyName ? `, ${companyName}` : ''}` : `💬 Feedback — ${userName}${companyName ? `, ${companyName}` : ''}`,
+      html: `${stagingEmailBanner(delivery.originalRecipients)}
         <div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#0f1117;color:#f1f5f9;border-radius:12px;">
           <div style="margin-bottom:20px;">
             <span style="background:#4f46e5;color:white;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.05em;">PRODUCT FEEDBACK</span>

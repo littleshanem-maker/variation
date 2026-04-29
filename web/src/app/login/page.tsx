@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
 import Logo from '@/components/Logo';
+import { getStripeCheckoutUrl } from '@/lib/links';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -161,7 +162,7 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm" style={{ color: '#6B7280' }}>
           Don't have an account?{' '}
-          <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="font-medium" style={{ color: '#1B365D' }}>
+          <a href={getStripeCheckoutUrl()} className="font-medium" style={{ color: '#1B365D' }}>
             Sign up
           </a>
         </p>

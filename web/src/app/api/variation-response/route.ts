@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createBrowserClient } from '@/lib/supabase';
 import { Resend } from 'resend';
+import { resolveOutboundRecipients, stagingEmailBanner } from '@/lib/runtime';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.leveragedsystems.com.au';
 const FROM_DOMAIN = process.env.RESEND_FROM_DOMAIN || 'leveragedsystems.com.au';
@@ -17,6 +18,12 @@ async function notifyPM(opts: {
 }) {
   const { toEmail, varRef, projectName, action, comment, variationId, respondentEmail } = opts;
   if (!toEmail || !process.env.RESEND_API_KEY) return;
+
+  const delivery = resolveOutboundRecipients(toEmail);
+  if (delivery.skipped) {
+    console.warn('[variation-response] PM notification skipped by environment settings', { originalRecipients: delivery.originalRecipients });
+    return;
+  }
 
   const responder = respondentEmail ? `<strong>${respondentEmail}</strong>` : 'the client';
 
@@ -41,9 +48,9 @@ async function notifyPM(opts: {
   try {
     await resend.emails.send({
       from: `Variation Shield <noreply@${FROM_DOMAIN}>`,
-      to: toEmail,
-      subject,
-      html: `<!DOCTYPE html><html><body style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:32px;">${bodyHtml}</body></html>`,
+      to: delivery.recipients,
+      subject: delivery.redirected ? `[STAGING REDIRECT] ${subject}` : subject,
+      html: `<!DOCTYPE html><html><body style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:32px;">${stagingEmailBanner(delivery.originalRecipients)}${bodyHtml}</body></html>`,
     });
   } catch (err) {
     console.error('[variation-response] PM notify error:', err);
@@ -62,6 +69,12 @@ async function notifyApprover(opts: {
 }) {
   const { toEmail, varRef, projectName, action, comment, variationId, title, estimatedValue } = opts;
   if (!toEmail || !process.env.RESEND_API_KEY) return;
+
+  const delivery = resolveOutboundRecipients(toEmail);
+  if (delivery.skipped) {
+    console.warn('[variation-response] Approver receipt skipped by environment settings', { originalRecipients: delivery.originalRecipients });
+    return;
+  }
 
   const valueStr = estimatedValue ? `$${(estimatedValue / 100).toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : null;
   const timestamp = new Date().toLocaleString('en-AU', { timeZone: 'Australia/Sydney', dateStyle: 'full', timeStyle: 'short' });
@@ -90,9 +103,9 @@ async function notifyApprover(opts: {
   try {
     await resend.emails.send({
       from: `Variation Shield <noreply@${FROM_DOMAIN}>`,
-      to: toEmail,
-      subject,
-      html: `<!DOCTYPE html><html><body style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:32px;">${bodyHtml}</body></html>`,
+      to: delivery.recipients,
+      subject: delivery.redirected ? `[STAGING REDIRECT] ${subject}` : subject,
+      html: `<!DOCTYPE html><html><body style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:32px;">${stagingEmailBanner(delivery.originalRecipients)}${bodyHtml}</body></html>`,
     });
   } catch (err) {
     console.error('[variation-response] approver receipt error:', err);

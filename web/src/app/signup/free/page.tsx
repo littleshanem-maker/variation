@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase';
 import Logo from '@/components/Logo';
 import type { Metadata } from 'next';
+import { getStripeCheckoutUrl } from '@/lib/links';
 
 const inputBase = {
   padding: '12px 16px',
@@ -175,7 +176,7 @@ function FreeSignupContent() {
 
         <p className="mt-3 text-center text-sm" style={{ color: '#6B7280' }}>
           Ready to go Pro?{' '}
-          <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="font-medium" style={{ color: '#4f46e5' }}>
+          <a href={getStripeCheckoutUrl()} className="font-medium" style={{ color: '#4f46e5' }}>
             Subscribe — $299/mo
           </a>
         </p>

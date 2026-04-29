@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase';
 import type { UserRole } from '@/lib/types';
 import FeedbackModal from './FeedbackModal';
+import { getStripeCheckoutUrl } from '@/lib/links';
 import {
   LayoutDashboard,
   ClipboardList,
@@ -170,7 +171,7 @@ export default function Sidebar() {
                 />
               </div>
               {varCount >= varLimit ? (
-                <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="text-red-400 hover:text-red-300 font-semibold">
+                <a href={getStripeCheckoutUrl()} className="text-red-400 hover:text-red-300 font-semibold">
                   Upgrade to capture more →
                 </a>
               ) : (

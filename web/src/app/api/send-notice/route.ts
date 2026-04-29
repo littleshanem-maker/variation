@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { resolveOutboundRecipients, stagingEmailBanner } from '@/lib/runtime';
 
 export const maxDuration = 60;
 
@@ -83,15 +84,26 @@ export async function POST(req: NextRequest) {
 </body>
 </html>`;
 
-    const { data, error } = await resend.emails.send({
-      from: fromAddress,
-      to: toEmails,
-      ...(ccEmails && ccEmails.length > 0 ? { cc: ccEmails } : {}),
-      replyTo: senderEmail,
-      subject,
-      html: htmlBody,
-      ...(pdfBase64 ? { attachments: [{ filename, content: pdfBase64 }] } : {}),
-    });
+    const toDelivery = resolveOutboundRecipients(toEmails);
+    const ccDelivery = resolveOutboundRecipients(ccEmails || []);
+    let data: { id?: string } | null = null;
+    let error: unknown = null;
+
+    if (toDelivery.skipped) {
+      console.warn('[send-notice] Email skipped by environment settings', { originalRecipients: toDelivery.originalRecipients });
+    } else {
+      const result = await resend.emails.send({
+        from: fromAddress,
+        to: toDelivery.recipients,
+        ...(ccEmails && ccEmails.length > 0 && !ccDelivery.skipped ? { cc: ccDelivery.recipients } : {}),
+        replyTo: senderEmail,
+        subject: toDelivery.redirected ? `[STAGING REDIRECT] ${subject}` : subject,
+        html: `${stagingEmailBanner([...toDelivery.originalRecipients, ...ccDelivery.originalRecipients])}${htmlBody}`,
+        ...(pdfBase64 ? { attachments: [{ filename, content: pdfBase64 }] } : {}),
+      });
+      data = result.data;
+      error = result.error;
+    }
 
     if (error) {
       console.error('[send-notice] Resend error:', error);

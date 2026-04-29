@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { createClient as createSupabaseBrowserClient } from '@/lib/supabase';
+import { resolveOutboundRecipients, stagingEmailBanner } from '@/lib/runtime';
 
 export const maxDuration = 60;
 
@@ -194,24 +195,35 @@ export async function POST(req: NextRequest) {
 </body>
 </html>`;
 
+    const primaryDelivery = resolveOutboundRecipients(toEmails);
+    const ccDelivery = resolveOutboundRecipients(ccEmails || []);
+    let data: { id?: string } | null = null;
+    let error: unknown = null;
+
     // Send primary email to To recipients (with approve/reject buttons)
-    const { data, error } = await resend.emails.send({
-      from: fromAddress,
-      to: toEmails,
-      replyTo: senderEmail,
-      subject,
-      html: htmlBody,
-      ...(pdfBase64 ? { attachments: [{ filename, content: pdfBase64 }] } : {}),
-    });
+    if (primaryDelivery.skipped) {
+      console.warn('[send-variation] Email skipped by environment settings', { originalRecipients: primaryDelivery.originalRecipients });
+    } else {
+      const result = await resend.emails.send({
+        from: fromAddress,
+        to: primaryDelivery.recipients,
+        replyTo: senderEmail,
+        subject: primaryDelivery.redirected ? `[STAGING REDIRECT] ${subject}` : subject,
+        html: `${stagingEmailBanner(primaryDelivery.originalRecipients)}${htmlBody}`,
+        ...(pdfBase64 ? { attachments: [{ filename, content: pdfBase64 }] } : {}),
+      });
+      data = result.data;
+      error = result.error;
+    }
 
     // Send separate CC-only email without approve/reject buttons
-    if (!error && ccEmails && ccEmails.length > 0) {
+    if (!error && ccEmails && ccEmails.length > 0 && !ccDelivery.skipped) {
       await resend.emails.send({
         from: fromAddress,
-        to: ccEmails,
+        to: ccDelivery.recipients,
         replyTo: senderEmail,
-        subject: `[CC] ${subject}`,
-        html: ccHtmlBody,
+        subject: ccDelivery.redirected ? `[STAGING REDIRECT][CC] ${subject}` : `[CC] ${subject}`,
+        html: `${stagingEmailBanner(ccDelivery.originalRecipients)}${ccHtmlBody}`,
         ...(pdfBase64 ? { attachments: [{ filename, content: pdfBase64 }] } : {}),
       });
     }

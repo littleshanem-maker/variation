@@ -18,6 +18,7 @@ import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice, VariationRequestRevision } from '@/lib/types';
 import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight, FileText } from 'lucide-react';
 import EmailAutocomplete from '@/components/EmailAutocomplete';
+import { getStripeCheckoutUrl } from '@/lib/links';
 
 const EDITABLE_STATUSES = ['draft', 'captured'];
 const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
@@ -703,13 +704,13 @@ export default function VariationDetail() {
           {freeTierBanner === 'warning' && (
             <div className="flex items-center justify-between bg-amber-50 border border-amber-200 text-amber-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
               <span>⚠️ You've used 2 of 3 free variations. One left.</span>
-              <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="ml-3 text-amber-700 underline text-xs font-semibold">Upgrade →</a>
+              <a href={getStripeCheckoutUrl()} className="ml-3 text-amber-700 underline text-xs font-semibold">Upgrade →</a>
             </div>
           )}
           {freeTierBanner === 'final' && (
             <div className="flex items-center justify-between bg-green-50 border border-green-200 text-green-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
               <span>🎉 Nice — 3 variations documented. Upgrade to keep capturing.</span>
-              <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="ml-3 text-green-700 underline text-xs font-semibold">Upgrade to Pro →</a>
+              <a href={getStripeCheckoutUrl()} className="ml-3 text-green-700 underline text-xs font-semibold">Upgrade to Pro →</a>
             </div>
           )}
           {saveError && !editing && (

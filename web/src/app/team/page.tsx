@@ -7,6 +7,7 @@ import TopBar from '@/components/TopBar';
 import { createClient } from '@/lib/supabase';
 import { useRole } from '@/lib/role';
 import type { UserRole } from '@/lib/types';
+import { getStripeCheckoutUrl } from '@/lib/links';
 
 interface TeamMember {
   id: string;
@@ -202,7 +203,7 @@ export default function TeamPage() {
           </div>
           {isFree ? (
             <a
-              href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02"
+              href={getStripeCheckoutUrl()}
               className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors"
             >
               🔒 Field accounts available on Pro →

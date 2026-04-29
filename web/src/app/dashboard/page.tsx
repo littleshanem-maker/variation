@@ -10,6 +10,7 @@ import { formatCurrency } from '@/lib/utils';
 import { printRegister } from '@/lib/print';
 import { useRole } from '@/lib/role';
 import type { Project, Variation } from '@/lib/types';
+import { getStripeCheckoutUrl } from '@/lib/links';
 
 type DateRangeKey = 'all' | 'week' | 'month' | '30d' | '90d';
 
@@ -338,7 +339,7 @@ export default function Dashboard() {
         {companyPlan === 'free' && variationLimit !== null && variationCount > 0 && variationCount < variationLimit && (
           <div className={`rounded-lg px-4 py-3 text-sm flex items-center justify-between ${variationCount >= variationLimit - 1 ? 'bg-amber-50 border border-amber-200 text-amber-800' : 'bg-blue-50 border border-blue-200 text-blue-800'}`}>
             <span>{variationCount} of {variationLimit} free variations used{variationCount >= variationLimit - 1 ? ' — last one!' : ''}</span>
-            <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="font-semibold underline ml-3 text-xs">Upgrade to Pro →</a>
+            <a href={getStripeCheckoutUrl()} className="font-semibold underline ml-3 text-xs">Upgrade to Pro →</a>
           </div>
         )}
 

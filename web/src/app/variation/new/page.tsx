@@ -11,6 +11,7 @@ import AttachmentPicker from '@/components/AttachmentPicker';
 import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
 import type { Project } from '@/lib/types';
 import ProjectPicker from '@/components/ui/ProjectPicker';
+import { getStripeCheckoutUrl } from '@/lib/links';
 
 const inputClass = 'w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white';
 const labelClass = 'block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1';
@@ -246,7 +247,7 @@ function NewRequestForm() {
             </p>
             <div className="space-y-3">
               <a
-                href={`https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02`}
+                href={getStripeCheckoutUrl()}
                 className="block w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-colors"
               >
                 Upgrade to Pro — $299/mo

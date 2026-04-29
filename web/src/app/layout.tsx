@@ -5,6 +5,7 @@ import { Providers } from "./providers";
 import { ErrorHandlerInit } from "@/components/ErrorHandlerInit";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { isStagingEnvironment } from "@/lib/runtime";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -15,6 +16,18 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Variation Shield",
   description: "Variation register for construction contractors",
+  robots: isStagingEnvironment()
+    ? {
+        index: false,
+        follow: false,
+        nocache: true,
+        googleBot: {
+          index: false,
+          follow: false,
+          noimageindex: true,
+        },
+      }
+    : undefined,
 };
 
 export const viewport: Viewport = {
