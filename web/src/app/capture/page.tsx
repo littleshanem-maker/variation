@@ -455,8 +455,8 @@ function CapturePageContent() {
 
             <form onSubmit={handleSubmit} className="space-y-3">
 
-              {/* Project — locked (read-only) in onboarding mode, normal otherwise */}
-              {isOnboarding ? (
+              {/* Project — always show picker so workers can select the right site */}
+              {isOnboarding && !preselectedProjectId ? (
                 loadingProjects ? (
                   <div className="h-12 bg-gray-100 rounded-lg animate-pulse" />
                 ) : (
@@ -470,10 +470,6 @@ function CapturePageContent() {
                 <div className="text-sm text-[#6B7280] py-2">
                   No active projects found.{' '}
                   <Link href="/dashboard" className="underline text-[#1B365D]">Create one on the dashboard</Link>.
-                </div>
-              ) : projects.length === 1 ? (
-                <div className="px-4 py-3 bg-[#F3F4F6] rounded-lg text-sm text-[#1C1C1E] font-medium">
-                  📋 {projects[0].name}
                 </div>
               ) : (
                 <div>

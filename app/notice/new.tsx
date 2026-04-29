@@ -8,7 +8,7 @@
 import { useState, useEffect } from 'react';
 import {
   View, Text, Pressable, StyleSheet, ScrollView, TextInput,
-  Alert, SafeAreaView, KeyboardAvoidingView, Platform, Switch,
+  Alert, SafeAreaView, KeyboardAvoidingView, Platform, Switch, Modal, FlatList,
 } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,6 +16,8 @@ import { spacing, borderRadius, typography, touchTargets } from '../../src/theme
 import { useThemeColors } from '../../src/contexts/AppModeContext';
 import { createNotice } from '../../src/db/noticeRepository';
 import { getCurrentUser } from '../../src/services/auth';
+import { getActiveProjects } from '../../src/db/projectRepository';
+import { ProjectSummary } from '../../src/types/domain';
 import { nowISO } from '../../src/utils/helpers';
 
 function todayISO(): string {
@@ -24,8 +26,13 @@ function todayISO(): string {
 
 export default function NewNoticeScreen() {
   const colors = useThemeColors();
-  const { projectId } = useLocalSearchParams<{ projectId: string }>();
+  const { projectId: urlProjectId } = useLocalSearchParams<{ projectId: string }>();
   const router = useRouter();
+
+  const [projects, setProjects] = useState<ProjectSummary[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState(urlProjectId || '');
+  const [showProjectPicker, setShowProjectPicker] = useState(false);
+  const [loadingProjects, setLoadingProjects] = useState(true);
 
   const [eventDescription, setEventDescription] = useState('');
   const [eventDate, setEventDate] = useState(todayISO());
@@ -46,21 +53,39 @@ export default function NewNoticeScreen() {
         setIssuedByEmail(user.email || undefined);
       }
     });
+    loadProjects();
   }, []);
+
+  async function loadProjects() {
+    try {
+      const data = await getActiveProjects();
+      setProjects(data);
+      // Auto-select first project if none pre-selected
+      if (!urlProjectId && data.length > 0) {
+        setSelectedProjectId(data[0].id);
+      }
+    } catch {
+      // ignore
+    } finally {
+      setLoadingProjects(false);
+    }
+  }
+
+  const selectedProject = projects.find(p => p.id === selectedProjectId);
 
   const handleSave = async (issueNow: boolean) => {
     if (!eventDescription.trim()) {
       Alert.alert('Required', 'Please describe what happened on site.');
       return;
     }
-    if (!projectId) {
-      Alert.alert('Error', 'No project selected.');
+    if (!selectedProjectId) {
+      Alert.alert('Required', 'Please select a project before saving.');
       return;
     }
     setSaving(true);
     try {
       await createNotice({
-        projectId,
+        projectId: selectedProjectId,
         eventDescription: eventDescription.trim(),
         eventDate,
         costFlag,
@@ -134,6 +159,38 @@ export default function NewNoticeScreen() {
     },
     issueBtnText: { fontSize: 15, fontWeight: '700', color: '#fff' },
     disabledBtn: { opacity: 0.5 },
+    // Project picker
+    projectPickerTrigger: {
+      flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+      backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border,
+      borderRadius: borderRadius.md, paddingHorizontal: spacing.md, paddingVertical: 14,
+      minHeight: 48,
+    },
+    projectPickerText: { fontSize: 15, color: colors.text },
+    projectPickerPlaceholder: { fontSize: 15, color: colors.textMuted },
+    pickerChevron: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+    modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+    modalCard: {
+      backgroundColor: colors.surface, borderTopLeftRadius: 20, borderTopRightRadius: 20,
+      maxHeight: '70%',
+    },
+    modalHandle: {
+      width: 36, height: 4, borderRadius: 2, backgroundColor: colors.border,
+      alignSelf: 'center', marginTop: 12, marginBottom: 4,
+    },
+    modalTitle: {
+      ...typography.headingSmall, color: colors.text, textAlign: 'center',
+      paddingHorizontal: spacing.lg, paddingBottom: spacing.md,
+      borderBottomWidth: 1, borderBottomColor: colors.border,
+    },
+    projectItem: {
+      flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+      paddingHorizontal: spacing.lg, paddingVertical: 16,
+      borderBottomWidth: 1, borderBottomColor: colors.border,
+    },
+    projectItemName: { fontSize: 15, fontWeight: '600', color: colors.text, flex: 1 },
+    projectItemClient: { fontSize: 12, color: colors.textMuted, marginTop: 2 },
+    projectItemSelected: { color: colors.accent },
   });
 
   return (
@@ -152,6 +209,32 @@ export default function NewNoticeScreen() {
 
       <KeyboardAvoidingView style={styles.content} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={styles.scroll}>
+
+          {/* Project picker */}
+          <View style={styles.field}>
+            <Text style={styles.fieldLabel}>PROJECT *</Text>
+            <Pressable
+              style={styles.projectPickerTrigger}
+              onPress={() => {
+                if (loadingProjects) return;
+                setShowProjectPicker(true);
+              }}
+            >
+              {selectedProject ? (
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.projectPickerText}>{selectedProject.name}</Text>
+                  <Text style={styles.projectItemClient}>{selectedProject.client}</Text>
+                </View>
+              ) : (
+                <Text style={styles.projectPickerPlaceholder}>
+                  {loadingProjects ? 'Loading projects…' : 'Select a project'}
+                </Text>
+              )}
+              <View style={styles.pickerChevron}>
+                <Ionicons name="chevron-down" size={16} color={colors.textMuted} />
+              </View>
+            </Pressable>
+          </View>
 
           {/* What happened */}
           <View style={styles.field}>
@@ -254,6 +337,50 @@ export default function NewNoticeScreen() {
           <Text style={styles.issueBtnText}>{saving ? 'Saving…' : 'Issue Now'}</Text>
         </Pressable>
       </View>
+
+      {/* Project picker modal */}
+      <Modal
+        visible={showProjectPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowProjectPicker(false)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setShowProjectPicker(false)}>
+          <Pressable onPress={e => e.stopPropagation()} style={styles.modalCard}>
+            <View style={styles.modalHandle} />
+            <Text style={styles.modalTitle}>Select Project</Text>
+            <FlatList
+              data={projects}
+              keyExtractor={item => item.id}
+              renderItem={({ item }) => (
+                <Pressable
+                  style={styles.projectItem}
+                  onPress={() => {
+                    setSelectedProjectId(item.id);
+                    setShowProjectPicker(false);
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text style={[
+                      styles.projectItemName,
+                      item.id === selectedProjectId && styles.projectItemSelected,
+                    ]}>{item.name}</Text>
+                    <Text style={styles.projectItemClient}>{item.client}</Text>
+                  </View>
+                  {item.id === selectedProjectId && (
+                    <Ionicons name="checkmark" size={18} color={colors.accent} />
+                  )}
+                </Pressable>
+              )}
+              ListEmptyComponent={
+                <View style={{ padding: spacing.lg, alignItems: 'center' }}>
+                  <Text style={{ color: colors.textMuted }}>No projects found</Text>
+                </View>
+              }
+            />
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
