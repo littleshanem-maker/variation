@@ -34,19 +34,9 @@ export default function LoginPage() {
       return;
     }
 
-    // Check role to route directly — avoids dashboard→field redirect flash
-    try {
-      const { data: memberships } = await supabase
-        .from('company_members')
-        .select('role')
-        .eq('user_id', signInData.user.id)
-        .eq('is_active', true);
-      const roles = memberships?.map(m => m.role) ?? [];
-      const hasOfficeAccess = roles.includes('admin') || roles.includes('office');
-      window.location.replace(hasOfficeAccess ? '/dashboard' : '/field');
-    } catch {
-      window.location.replace('/dashboard');
-    }
+    // Default every successful login to the dashboard.
+    // Role lookups can fail under RLS, and falling back to field/capture is worse.
+    window.location.replace('/dashboard');
   }
 
   return (

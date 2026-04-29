@@ -39,7 +39,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Root path — redirect authenticated users to their role-based hub
+  // Root path — redirect authenticated users to dashboard.
+  // Avoid role-based routing here: role lookup can fail under RLS and should never dump users into capture.
   if (pathname === '/') {
     const response = NextResponse.next();
 
@@ -63,16 +64,7 @@ export async function middleware(request: NextRequest) {
 
       if (!user) return response;
 
-      const { data: memberships } = await supabase
-        .from('company_members')
-        .select('role')
-        .eq('user_id', user.id)
-        .eq('is_active', true);
-
-      const roles = memberships?.map(m => m.role) ?? [];
-      const hasOfficeAccess = roles.includes('admin') || roles.includes('office');
-      const dest = hasOfficeAccess ? '/dashboard' : '/field';
-      return NextResponse.redirect(new URL(dest, request.url));
+      return NextResponse.redirect(new URL('/dashboard', request.url));
     } catch {
       return response;
     }

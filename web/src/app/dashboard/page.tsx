@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
 import { TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import AppShell from '@/components/AppShell';
@@ -51,15 +50,10 @@ export default function Dashboard() {
   const [filterProject, setFilterProject] = useState<string>('all');
   const [filterDateRange, setFilterDateRange] = useState<DateRangeKey>('all');
 
-  const { isField, companyId, isLoading: roleLoading } = useRole();
-  const router = useRouter();
+  const { isField, companyId } = useRole();
 
-  // Field users have no business on the dashboard — send them to field home
-  useEffect(() => {
-    if (!roleLoading && isField) {
-      router.replace('/field');
-    }
-  }, [isField, roleLoading]);
+  // Do not auto-redirect from dashboard to field/capture.
+  // If role lookup is stale or blocked by RLS, this would dump office/demo users into capture.
 
   useEffect(() => { loadData(); }, []);
 
