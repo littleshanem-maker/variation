@@ -253,11 +253,11 @@ export default function LandingPage() {
           <p className="text-indigo-400 text-xs font-bold tracking-widest uppercase mb-3">Founder-led onboarding</p>
           <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-5">Not just a login — we help you test it properly</h2>
           <p className="text-white/65 text-base md:text-lg leading-relaxed mb-8">
-            Variation Shield works best when it is tested on live jobs, not clicked through once and forgotten.
-            Early customers get direct setup support so the team can capture real variations from site and see whether the workflow fits.
+            Variation Shield works best when it is tested on live jobs, not clicked through once and forgotten. Early customers get direct setup support so the team can capture real variations from site and see whether the workflow fits.
           </p>
-          <DemoButton className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/20">
+          <DemoButton className="inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/25">
             Book a 15-Minute Demo
+            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </DemoButton>
         </div>
       </section>
@@ -309,9 +309,7 @@ export default function LandingPage() {
 
           <div className="mt-8 bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center">
             <h3 className="font-bold text-lg mb-2">Want to look around first?</h3>
-            <p className="text-white/60 text-sm leading-relaxed mb-5">
-              Create a limited free account with 1 project and 3 test variations. No credit card required.
-            </p>
+            <p className="text-white/60 text-sm leading-relaxed mb-5">Create a limited free account with 1 project and 3 test variations. No credit card required.</p>
             <Link href="/signup/free" className="inline-flex items-center justify-center bg-white/[0.06] hover:bg-white/[0.1] border border-white/[0.1] text-white font-semibold px-6 py-3 rounded-xl text-sm transition-colors">
               Try Free
             </Link>
@@ -319,7 +317,7 @@ export default function LandingPage() {
 
           <div className="mt-6 flex items-center justify-center gap-2 text-sm text-white/30">
             <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            The average subcontractor loses $187,000/yr to undocumented variations. Variation Shield is built to help capture the work before it becomes a dispute.
+            A serious tool for contractors who lose money when variations are not captured properly — now available as a founder-led 30-day pilot.
           </div>
         </div>
       </section>
@@ -331,7 +329,7 @@ export default function LandingPage() {
         </div>
         <div className="relative z-10 max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">Stop leaving money on the table</h2>
-          <p className="text-white/65 text-lg mb-10">Book a short demo, set up your first live job, and test it properly with the team.</p>
+          <p className="text-white/65 text-lg mb-10">Book a short demo, set up a live-job pilot, and see whether the workflow fits your team.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-8 py-4 rounded-xl text-base transition-colors shadow-lg shadow-indigo-600/25">
               Book a 15-Minute Demo

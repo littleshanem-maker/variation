@@ -98,7 +98,7 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
           </div>
         ) : (
           <>
-            <h2 className="text-xl font-bold mb-1">Book a 15-min demo</h2>
+            <h2 className="text-xl font-bold mb-1">Book a 15-Minute Demo</h2>
             <p className="text-white/40 text-sm mb-6">I'll walk you through capturing a variation on-site and sending it to a client.</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">

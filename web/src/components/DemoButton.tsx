@@ -17,7 +17,7 @@ export default function DemoButton({ className, children }: DemoButtonProps) {
         onClick={() => setOpen(true)}
         className={className}
       >
-        {children ?? 'Book a 15-min Demo'}
+        {children ?? 'Book a 15-Minute Demo'}
       </button>
       <DemoRequestModal isOpen={open} onClose={() => setOpen(false)} />
     </>
