@@ -63,16 +63,15 @@ export async function middleware(request: NextRequest) {
 
       if (!user) return response;
 
-      const { data: membership } = await supabase
+      const { data: memberships } = await supabase
         .from('company_members')
         .select('role')
         .eq('user_id', user.id)
-        .eq('is_active', true)
-        .limit(1)
-        .maybeSingle();
+        .eq('is_active', true);
 
-      const role = membership?.role;
-      const dest = role === 'field' ? '/field' : '/dashboard';
+      const roles = memberships?.map(m => m.role) ?? [];
+      const hasOfficeAccess = roles.includes('admin') || roles.includes('office');
+      const dest = hasOfficeAccess ? '/dashboard' : '/field';
       return NextResponse.redirect(new URL(dest, request.url));
     } catch {
       return response;

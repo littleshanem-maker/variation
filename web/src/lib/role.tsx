@@ -19,10 +19,10 @@ interface RoleContextType {
 }
 
 const RoleContext = createContext<RoleContextType>({
-  role: 'field',
+  role: 'office',
   isAdmin: false,
-  isOffice: false,
-  isField: true,
+  isOffice: true,
+  isField: false,
   company: null,
   companyId: null,
   memberships: [],
@@ -116,9 +116,13 @@ export function RoleProvider({ children }: { children: ReactNode }) {
       company: companyMap.get(m.company_id) || undefined,
     }));
 
-    setMemberships(mapped);
-    if (mapped.length > 0) {
-      setActiveCompanyId(mapped[0].company_id);
+    // Pick the strongest available role by default. This prevents users with both
+    // office/admin and field memberships from being dropped into field capture.
+    const sorted = [...mapped].sort((a, b) => (roleRank[b.role] ?? 0) - (roleRank[a.role] ?? 0));
+
+    setMemberships(sorted);
+    if (sorted.length > 0) {
+      setActiveCompanyId(sorted[0].company_id);
     }
     setIsLoading(false);
   }
@@ -128,7 +132,9 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     [memberships, activeCompanyId]
   );
 
-  const role: UserRole = activeMembership?.role ?? 'field';
+  // Unknown/no membership should not be treated as field. Field is a restricted
+  // capture-only role; default unknown users to office/dashboard behaviour.
+  const role: UserRole = activeMembership?.role ?? 'office';
   const company: Company | null = activeMembership?.company ?? null;
 
   return (
