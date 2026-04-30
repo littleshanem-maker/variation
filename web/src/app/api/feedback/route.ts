@@ -4,7 +4,6 @@ import { resolveOutboundRecipients, stagingEmailBanner } from '@/lib/runtime';
 
 export const maxDuration = 30;
 
-const resend = new Resend(process.env.RESEND_API_KEY || '');
 const FROM_DOMAIN = process.env.RESEND_FROM_DOMAIN || 'variationshield.com.au';
 const NOTIFY_EMAIL = process.env.DEMO_NOTIFY_EMAIL || 'shane@leveragedsystems.com.au';
 
@@ -25,7 +24,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Message required' }, { status: 400 });
     }
 
-    console.log('[feedback] sending email via Resend...');
     const delivery = resolveOutboundRecipients(NOTIFY_EMAIL);
     const submittedAt = new Date().toLocaleString('en-AU', {
       timeZone: 'Australia/Melbourne',
@@ -38,6 +36,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, skipped: true });
     }
 
+    if (!process.env.RESEND_API_KEY) {
+      console.error('[feedback] RESEND_API_KEY required for current EMAIL_MODE');
+      return NextResponse.json({ error: 'Email provider not configured' }, { status: 500 });
+    }
+
+    console.log('[feedback] sending email via Resend...');
+    const resend = new Resend(process.env.RESEND_API_KEY);
     const emailResult = await resend.emails.send({
       from: `Variation Shield <hello@${FROM_DOMAIN}>`,
       to: delivery.recipients,
