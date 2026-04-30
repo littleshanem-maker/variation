@@ -270,7 +270,6 @@ export default function LandingPage() {
           <p className="text-[#334155] mb-12">Use Variation Shield on real work for 30 days. We’ll help you set it up, add your first project, and capture live variation notices before they get missed, delayed or disputed.</p>
 
           <div className="bg-[#FFFCF5] border border-[#D8D2C4] rounded-md p-8 text-left relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-[#B84C00] rounded-t-2xl" />
             <div className="inline-flex items-center gap-1.5 bg-[#8C6500]/10 border border-[#8C6500]/25 rounded-sm px-3 py-1 text-xs font-medium text-[#8C6500] uppercase tracking-wider mb-5">
               First 10 customers
             </div>
