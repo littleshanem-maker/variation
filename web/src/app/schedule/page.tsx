@@ -21,7 +21,7 @@ export default function SchedulePage() {
         </p>
         <button
           onClick={() => setOpen(true)}
-          className="inline-flex items-center justify-center bg-[#B84C00] hover:bg-[#B84C00] text-[#111827] font-medium px-8 py-4 rounded-md text-base transition-colors shadow-lg shadow-[#B84C00]/25"
+          className="inline-flex items-center justify-center bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-lg shadow-[#B84C00]/25"
         >
           Open demo request
         </button>
