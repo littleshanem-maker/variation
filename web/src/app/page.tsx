@@ -70,11 +70,11 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-base transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
+            <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
               Book a 15-minute demo
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
-            <Link href="/signup/free" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-8 py-4 rounded-md text-base transition-colors">
+            <Link href="/signup/free" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-8 py-4 rounded-md text-[16px] transition-colors">
               Try free
             </Link>
           </div>
@@ -148,7 +148,7 @@ export default function LandingPage() {
                 </svg>
               </div>
               <p className="text-sm font-medium tracking-[0.055em] uppercase text-[#9A3F00] mb-3">Step 01</p>
-              <h3 className="text-base font-medium mb-3">Capture on site</h3>
+              <h3 className="text-[16px] font-medium mb-3">Capture on site</h3>
               <p className="text-[#4B5563] text-sm leading-relaxed">Open the app. Add photos, description, cost and time impact. Under 60 seconds. Works offline — syncs when back in range.</p>
             </div>
             {/* Step 2 */}
@@ -159,7 +159,7 @@ export default function LandingPage() {
                 </svg>
               </div>
               <p className="text-sm font-medium tracking-[0.055em] uppercase text-[#9A3F00] mb-3">Step 02</p>
-              <h3 className="text-base font-medium mb-3">Send to your client</h3>
+              <h3 className="text-[16px] font-medium mb-3">Send to your client</h3>
               <p className="text-[#4B5563] text-sm leading-relaxed">Generate a professional PDF and send it directly from the app. The client approves or rejects via a secure link — no phone calls needed.</p>
             </div>
             {/* Step 3 */}
@@ -170,7 +170,7 @@ export default function LandingPage() {
                 </svg>
               </div>
               <p className="text-sm font-medium tracking-[0.055em] uppercase text-[#9A3F00] mb-3">Step 03</p>
-              <h3 className="text-base font-medium mb-3">Track to payment</h3>
+              <h3 className="text-[16px] font-medium mb-3">Track to payment</h3>
               <p className="text-[#4B5563] text-sm leading-relaxed">Every variation tracked from draft to approved to paid. Your PM sees everything in real time. No chasing. No arguing at final account.</p>
             </div>
           </div>
@@ -221,7 +221,7 @@ export default function LandingPage() {
                 <div className="w-11 h-11 rounded-md bg-[#B84C00]/15 border border-[#B84C00]/20 flex items-center justify-center mb-5">
                   {f.icon}
                 </div>
-                <h3 className="font-medium text-base mb-2">{f.title}</h3>
+                <h3 className="font-medium text-[16px] mb-2">{f.title}</h3>
                 <p className="text-[#334155] text-sm leading-relaxed">{f.body}</p>
               </div>
             ))}
@@ -234,7 +234,7 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-[#9A3F00] text-xs font-medium tracking-[0.055em] uppercase mb-6">Why this exists</p>
           <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-8 text-[#111827]">Built from the other side of the desk</h2>
-          <div className="space-y-5 text-[#17212B] text-base leading-relaxed text-left">
+          <div className="space-y-5 text-[#17212B] text-[16px] leading-relaxed text-left">
             <p>We spent 15 years as project managers on Tier 1 and Tier 2 infrastructure projects across Australia. Our job was processing variation claims from subcontractors — and deciding which ones got paid.</p>
             <p>We saw the same thing every week. Skilled tradespeople doing legitimate extra work. Good claims rejected because the paperwork wasn't there. Not because the work wasn't done — because the evidence wasn't documented properly.</p>
             <p><strong className="text-[#111827]">"Everyone on site knew it was extra"</strong> doesn't hold up in a final account meeting. The head contractor's commercial team knows that. And by the time you're arguing about it, the leverage is gone.</p>
@@ -252,10 +252,10 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-[#B84C00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Founder-led onboarding</p>
           <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-5">Not just a login — we help you test it properly</h2>
-          <p className="text-[#334155] text-base md:text-lg leading-relaxed mb-8">
+          <p className="text-[#334155] text-[16px] md:text-lg leading-relaxed mb-8">
             Variation Shield works best when it is tested on live jobs, not clicked through once and forgotten. Early customers get direct setup support so the team can capture real variations from site and see whether the workflow fits.
           </p>
-          <DemoButton className="inline-flex items-center justify-center gap-2 bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-base transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
+          <DemoButton className="inline-flex items-center justify-center gap-2 bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
             Book a 15-minute demo
             <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </DemoButton>
@@ -300,7 +300,7 @@ export default function LandingPage() {
               ))}
             </ul>
 
-            <DemoButton className="flex items-center justify-center gap-2 w-full bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium py-4 rounded-md text-base transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
+            <DemoButton className="flex items-center justify-center gap-2 w-full bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
               Book a 15-minute demo
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
@@ -331,11 +331,11 @@ export default function LandingPage() {
           <h2 className="text-3xl md:text-5xl font-medium tracking-tight mb-4">Stop leaving money on the table</h2>
           <p className="text-[#334155] text-lg mb-10">Book a short demo, set up a live-job pilot, and see whether the workflow fits your team.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-base transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
+            <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
               Book a 15-minute demo
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
-            <Link href="/signup/free" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-8 py-4 rounded-md text-base transition-colors">
+            <Link href="/signup/free" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-8 py-4 rounded-md text-[16px] transition-colors">
               Try free
             </Link>
           </div>
