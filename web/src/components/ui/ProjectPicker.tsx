@@ -39,27 +39,27 @@ export default function ProjectPicker({ projects, value, onChange, required, cla
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className={`w-full flex items-center justify-between border rounded-lg px-3 py-3 text-[15px] bg-white focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 transition-colors ${
-          open ? 'border-[#17212B]' : 'border-gray-300'
-        } ${selected ? 'text-[#111827]' : 'text-gray-400'} ${className || ''}`}
+        className={`w-full flex items-center justify-between border rounded-lg px-3 py-3 text-[15px] bg-[#FFFCF5] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 transition-colors ${
+          open ? 'border-[#17212B]' : 'border-[#D8D2C4]'
+        } ${selected ? 'text-[#111827]' : 'text-[#6B7280]'} ${className || ''}`}
       >
         <span className="truncate">{selected ? selected.name : 'Select a project…'}</span>
         <ChevronDown
           size={16}
-          className={`flex-shrink-0 text-gray-400 ml-2 transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
+          className={`flex-shrink-0 text-[#6B7280] ml-2 transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
         />
       </button>
 
       {/* Inline dropdown */}
       {open && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-[#D8D2C4] rounded-lg shadow-lg z-40 overflow-hidden max-h-56 overflow-y-auto">
+        <div className="absolute left-0 right-0 top-full mt-1 bg-[#FFFCF5] border border-[#D8D2C4] rounded-lg shadow-lg z-40 overflow-hidden max-h-56 overflow-y-auto">
           {projects.map((p, i) => (
             <button
               key={p.id}
               type="button"
               onClick={() => { onChange(p.id); setOpen(false); }}
-              className={`w-full flex items-center justify-between px-4 py-3.5 text-left text-[15px] text-[#111827] hover:bg-slate-50 active:bg-slate-100 transition-colors ${
-                i < projects.length - 1 ? 'border-b border-[#E7E0D2]' : ''
+              className={`w-full flex items-center justify-between px-4 py-3.5 text-left text-[15px] text-[#111827] hover:bg-[#F5F2EA] active:bg-[#F5F2EA] transition-colors ${
+                i < projects.length - 1 ? 'border-b border-[#D8D2C4]' : ''
               }`}
             >
               <span>{p.name}</span>

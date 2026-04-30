@@ -35,7 +35,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             alignItems: 'center',
             justifyContent: 'center',
             minHeight: '100vh',
-            backgroundColor: '#ffffff',
+            backgroundColor: '#FFFCF5',
             fontFamily: 'system-ui, -apple-system, sans-serif',
             padding: '24px',
             textAlign: 'center',
@@ -70,7 +70,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             }}
             style={{
               backgroundColor: '#17212B',
-              color: '#ffffff',
+              color: '#FFFCF5',
               border: 'none',
               borderRadius: '8px',
               padding: '12px 24px',

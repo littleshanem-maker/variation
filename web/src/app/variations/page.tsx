@@ -113,7 +113,7 @@ function VariationsList() {
 
   const SortHeader = ({ label, field, align, className = '' }: { label: string; field: SortKey; align?: 'right'; className?: string }) => (
     <th
-      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5 cursor-pointer hover:text-slate-700 select-none transition-colors duration-[120ms] ${className}`}
+      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5 cursor-pointer hover:text-[#334155] select-none transition-colors duration-[120ms] ${className}`}
       onClick={() => handleSort(field)}
     >
       {label} {sortKey === field ? (sortAsc ? '↑' : '↓') : ''}
@@ -208,7 +208,7 @@ function VariationsList() {
     return (
       <>
         <TopBar title="Variation Register" />
-        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div>
       </>
     );
   }
@@ -231,19 +231,19 @@ function VariationsList() {
       {showOnboardingSuccess && !onboardingBannerDismissed && (
         <div
           className="mx-4 md:mx-8 mt-4 md:mt-6 px-4 py-3.5 rounded-lg flex items-center justify-between gap-3"
-          style={{ backgroundColor: '#F0FDF4', border: '1px solid #BBF7D0', color: '#166534' }}
+          style={{ backgroundColor: '#E5F0E6', border: '1px solid #E5F0E6', color: '#1F5223' }}
         >
           <div className="flex items-center gap-2">
             <span className="text-[16px]">✅</span>
             <div>
-              <span className="text-[14px] font-semibold">First variation captured. Welcome to Variation Shield.</span>
+              <span className="text-[14px] font-medium">First variation captured. Welcome to Variation Shield.</span>
               <span className="text-[13px] ml-2">Every variation you capture from here is protected.</span>
             </div>
           </div>
           <button
             onClick={() => setOnboardingBannerDismissed(true)}
             className="flex-shrink-0 text-[18px] leading-none font-light"
-            style={{ color: '#16A34A' }}
+            style={{ color: '#2E7D32' }}
             aria-label="Dismiss"
           >
             ×
@@ -253,7 +253,7 @@ function VariationsList() {
 
       <div className="p-4 md:p-8 space-y-5 md:space-y-6">
         <div>
-          <h2 className="text-xl font-semibold text-[#111827]">Variation Register</h2>
+          <h2 className="text-xl font-medium text-[#111827]">Variation Register</h2>
           <p className="text-[13px] text-[#334155] mt-1">
             {filtered.length} variations · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value
           </p>
@@ -263,7 +263,7 @@ function VariationsList() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           {/* Status tabs — horizontally scrollable on mobile */}
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <div className="flex bg-[#E7E0D2] p-1 rounded-md w-max">
+            <div className="flex bg-[#D8D2C4] p-1 rounded-md w-max">
               {statuses.map(s => (
                 <button
                   key={s.value}
@@ -275,7 +275,7 @@ function VariationsList() {
                   }}
                   className={`px-3 py-1.5 text-[13px] font-medium rounded-sm transition-all duration-[120ms] whitespace-nowrap ${
                     filterStatus === s.value
-                      ? 'bg-white text-[#111827] shadow-sm'
+                      ? 'bg-[#FFFCF5] text-[#111827] shadow-sm'
                       : 'text-[#334155] hover:text-[#111827]'
                   }`}
                 >
@@ -289,7 +289,7 @@ function VariationsList() {
           <select
             value={filterProject}
             onChange={e => setFilterProject(e.target.value)}
-            className="px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md bg-white text-[#374151] focus:outline-none focus:ring-1 focus:ring-[#17212B] shadow-[0_1px_2px_rgba(0,0,0,0.04)] w-full sm:w-auto"
+            className="px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#334155] focus:outline-none focus:ring-1 focus:ring-[#17212B] shadow-[0_1px_2px_rgba(17,24,39,0.04)] w-full sm:w-auto"
           >
             <option value="all">All Projects</option>
             {rawProjects.map(p => (
@@ -300,7 +300,7 @@ function VariationsList() {
           {/* Export to Excel */}
           <button
             onClick={handleExportExcel}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#166534] bg-[#F0FDF4] border border-[#BBF7D0] rounded-md hover:bg-[#DCFCE7] transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)] whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#1F5223] bg-[#E5F0E6] border border-[#E5F0E6] rounded-md hover:bg-[#E5F0E6] transition-colors shadow-[0_1px_2px_rgba(17,24,39,0.04)] whitespace-nowrap"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
@@ -312,7 +312,7 @@ function VariationsList() {
           <button
             onClick={handleExportPdf}
             disabled={exportingPdf}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#991B1B] bg-[#FEF2F2] border border-[#FECACA] rounded-md hover:bg-[#FEE2E2] transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)] whitespace-nowrap disabled:opacity-50 disabled:cursor-wait"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#7A1810] bg-[#FBE6E4] border border-[#FBE6E4] rounded-md hover:bg-[#FBE6E4] transition-colors shadow-[0_1px_2px_rgba(17,24,39,0.04)] whitespace-nowrap disabled:opacity-50 disabled:cursor-wait"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
@@ -323,25 +323,25 @@ function VariationsList() {
         </div>
 
         {sorted.length === 0 ? (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-12 text-center text-[#64748B] text-sm">
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-12 text-center text-[#6B7280] text-sm">
             No variations match this filter.
           </div>
         ) : (
           <>
             {/* Mobile cards — md:hidden */}
-            <div className="md:hidden divide-y divide-[#E7E0D2] bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="md:hidden divide-y divide-[#D8D2C4] bg-[#FFFCF5] rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden">
               {sorted.map(v => (
                 <button key={v.id} className="w-full text-left" onClick={() => setSlideOverId(v.id)}>
-                  <div className="px-4 py-3 hover:bg-slate-50 transition-colors">
+                  <div className="px-4 py-3 hover:bg-[#F5F2EA] transition-colors">
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <div className="text-[12px] font-mono font-semibold text-[#E76F00]">{getVariationNumber(v)}</div>
-                        <div className="text-[14px] font-medium text-slate-800 mt-0.5 truncate">{v.title}</div>
-                        <div className="text-[12px] text-slate-400 mt-0.5 truncate">{v.project_name}</div>
+                        <div className="text-[12px] mono font-medium text-[#E76F00]">{getVariationNumber(v)}</div>
+                        <div className="text-[14px] font-medium text-[#111827] mt-0.5 truncate">{v.title}</div>
+                        <div className="text-[12px] text-[#6B7280] mt-0.5 truncate">{v.project_name}</div>
                       </div>
                       <div className="flex-shrink-0 text-right">
                         <StatusBadge status={v.status} />
-                        <div className="text-[13px] font-medium text-slate-700 mt-1">{formatCurrency(v.estimated_value)}</div>
+                        <div className="text-[13px] font-medium text-[#334155] mt-1">{formatCurrency(v.estimated_value)}</div>
                       </div>
                     </div>
                   </div>
@@ -350,7 +350,7 @@ function VariationsList() {
             </div>
 
             {/* Desktop table — hidden md:block */}
-            <div className="hidden md:block bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="hidden md:block bg-[#FFFCF5] rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[480px]" style={{tableLayout: 'fixed'}}>
                   <colgroup>
@@ -364,7 +364,7 @@ function VariationsList() {
                     <col style={{width: '40px'}} />   {/* Actions */}
                   </colgroup>
                   <thead>
-                    <tr className="border-b border-[#D8D2C4] bg-slate-50/60">
+                    <tr className="border-b border-[#D8D2C4] bg-[#F5F2EA]/60">
                       <SortHeader label="Var No." field="sequence_number" />
                       <SortHeader label="Title" field="title" />
                       <SortHeader label="Project" field="project_name" className="hidden md:table-cell" />
@@ -380,7 +380,7 @@ function VariationsList() {
                       <tr
                         key={v.id}
                         onClick={() => setSlideOverId(v.id)}
-                        className={`group relative border-b border-[#E7E0D2] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}
+                        className={`group relative border-b border-[#D8D2C4] hover:bg-[#F5F2EA] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}
                       >
                         <td className="px-3 md:px-4 py-3 text-[13px] font-medium text-[#111827] tabular-nums whitespace-nowrap">
                           {getVariationNumber(v)}
@@ -399,11 +399,11 @@ function VariationsList() {
                               const overdue = daysLeft < 0;
                               const dueSoon = daysLeft >= 0 && daysLeft <= 3;
                               return (
-                                <span className={`text-[13px] font-medium ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#111827]'}`}>
+                                <span className={`text-[13px] font-medium ${overdue ? 'text-[#B42318]' : dueSoon ? 'text-[#8C6500]' : 'text-[#111827]'}`}>
                                   {`${String(due.getDate()).padStart(2,'0')}/${String(due.getMonth()+1).padStart(2,'0')}/${String(due.getFullYear()).slice(-2)}`}
                                 </span>
                               );
-                            })() : <span className="text-[13px] text-[#D1D5DB]">—</span>}
+                            })() : <span className="text-[13px] text-[#D8D2C4]">—</span>}
                           </td>
                         <td className="px-3 md:px-4 py-3 text-[14px] font-medium text-[#111827] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
                           {/* Ellipsis action menu */}
@@ -411,7 +411,7 @@ function VariationsList() {
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <button
-                                  className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 opacity-0 group-hover:opacity-100 transition-all"
+                                  className="p-1 rounded-md text-[#6B7280] hover:text-[#334155] hover:bg-[#F5F2EA] opacity-0 group-hover:opacity-100 transition-all"
                                 >
                                   <MoreHorizontal size={16} />
                                 </button>
@@ -450,28 +450,28 @@ function VariationsList() {
         {notices.length > 0 && (
           <div className="mt-8">
             <div className="flex items-center justify-between mb-3 px-1">
-              <h2 className="text-[15px] font-semibold text-slate-900">Variation Notices</h2>
-              <span className="text-[13px] text-slate-400">{notices.filter(n => filterProject === 'all' || n.project_id === filterProject).length} notices</span>
+              <h2 className="text-[15px] font-medium text-[#111827]">Variation Notices</h2>
+              <span className="text-[13px] text-[#6B7280]">{notices.filter(n => filterProject === 'all' || n.project_id === filterProject).length} notices</span>
             </div>
             {/* Mobile cards */}
-            <div className="md:hidden bg-white rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden divide-y divide-[#E7E0D2]">
+            <div className="md:hidden bg-[#FFFCF5] rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden divide-y divide-[#D8D2C4]">
               {notices
                 .filter(n => filterProject === 'all' || n.project_id === filterProject)
                 .map(n => {
                   const statusConfig: Record<string, { label: string; color: string; bg: string; dot: string }> = {
-                    draft: { label: 'Draft', color: 'text-slate-600', bg: 'bg-slate-100', dot: 'bg-slate-400' },
-                    issued: { label: 'Issued', color: 'text-blue-700', bg: 'bg-blue-50', dot: 'bg-blue-500' },
-                    acknowledged: { label: 'Acknowledged', color: 'text-emerald-700', bg: 'bg-emerald-50', dot: 'bg-emerald-500' },
+                    draft: { label: 'Draft', color: 'text-[#334155]', bg: 'bg-[#F5F2EA]', dot: 'bg-[#6B7280]' },
+                    issued: { label: 'Issued', color: 'text-[#C75A00]', bg: 'bg-[#F5F2EA]', dot: 'bg-[#D8D2C4]' },
+                    acknowledged: { label: 'Acknowledged', color: 'text-[#1F5223]', bg: 'bg-[#E5F0E6]', dot: 'bg-[#2E7D32]' },
                   };
                   const sc = statusConfig[n.status] || statusConfig.draft;
                   return (
                     <button key={n.id} className="w-full text-left" onClick={() => window.location.href = `/notice/${n.id}`}>
-                      <div className="px-4 py-3 hover:bg-slate-50 transition-colors">
+                      <div className="px-4 py-3 hover:bg-[#F5F2EA] transition-colors">
                         <div className="flex items-center justify-between gap-3">
                           <div className="min-w-0 flex-1">
-                            <div className="text-[12px] font-mono font-semibold text-[#E76F00]">{n.notice_number}</div>
-                            <div className="text-[14px] font-medium text-slate-800 mt-0.5 truncate">{n.event_description}</div>
-                            <div className="text-[12px] text-slate-400 mt-0.5 truncate">{n.project_name}</div>
+                            <div className="text-[12px] mono font-medium text-[#E76F00]">{n.notice_number}</div>
+                            <div className="text-[14px] font-medium text-[#111827] mt-0.5 truncate">{n.event_description}</div>
+                            <div className="text-[12px] text-[#6B7280] mt-0.5 truncate">{n.project_name}</div>
                           </div>
                           <div className="flex-shrink-0">
                             <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium ${sc.bg} ${sc.color}`}>
@@ -487,16 +487,16 @@ function VariationsList() {
             </div>
 
             {/* Desktop table */}
-            <div className="hidden md:block bg-white rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="hidden md:block bg-[#FFFCF5] rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#D8D2C4] bg-slate-50/60">
-                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
-                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
-                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Project</th>
-                    <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Status</th>
-                    <th className="text-right text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Event Date</th>
-                    <th className="text-right text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5 hidden lg:table-cell">Issued</th>
+                  <tr className="border-b border-[#D8D2C4] bg-[#F5F2EA]/60">
+                    <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
+                    <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
+                    <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Project</th>
+                    <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Status</th>
+                    <th className="text-right text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Event Date</th>
+                    <th className="text-right text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5 hidden lg:table-cell">Issued</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -504,16 +504,16 @@ function VariationsList() {
                     .filter(n => filterProject === 'all' || n.project_id === filterProject)
                     .map((n, i, arr) => {
                       const statusConfig: Record<string, { label: string; color: string; bg: string; border: string; dot: string }> = {
-                        draft: { label: 'Draft', color: 'text-slate-600', bg: 'bg-slate-100', border: 'border-slate-200', dot: 'bg-slate-400' },
-                        issued: { label: 'Issued', color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200', dot: 'bg-blue-500' },
-                        acknowledged: { label: 'Acknowledged', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200', dot: 'bg-emerald-500' },
+                        draft: { label: 'Draft', color: 'text-[#334155]', bg: 'bg-[#F5F2EA]', border: 'border-[#D8D2C4]', dot: 'bg-[#6B7280]' },
+                        issued: { label: 'Issued', color: 'text-[#C75A00]', bg: 'bg-[#F5F2EA]', border: 'border-[#D8D2C4]', dot: 'bg-[#D8D2C4]' },
+                        acknowledged: { label: 'Acknowledged', color: 'text-[#1F5223]', bg: 'bg-[#E5F0E6]', border: 'border-[#D8D2C4]', dot: 'bg-[#2E7D32]' },
                       };
                       const sc = statusConfig[n.status] || statusConfig.draft;
                       return (
                         <tr
                           key={n.id}
                           onClick={() => window.location.href = `/notice/${n.id}`}
-                          className={`group border-b border-[#E7E0D2] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === arr.length - 1 ? 'border-b-0' : ''}`}
+                          className={`group border-b border-[#D8D2C4] hover:bg-[#F5F2EA] cursor-pointer transition-colors duration-[120ms] ease-out ${i === arr.length - 1 ? 'border-b-0' : ''}`}
                         >
                           <td className="px-3 md:px-4 py-3 text-[13px] font-medium text-[#111827] whitespace-nowrap">{n.notice_number}</td>
                           <td className="px-3 md:px-4 py-3 max-w-[260px] overflow-hidden">
@@ -527,7 +527,7 @@ function VariationsList() {
                             </span>
                           </td>
                           <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] text-right whitespace-nowrap">{formatDate(n.event_date + 'T00:00:00')}</td>
-                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] text-right hidden lg:table-cell whitespace-nowrap">{n.issued_at ? formatDate(n.issued_at) : <span className="text-slate-300">—</span>}</td>
+                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] text-right hidden lg:table-cell whitespace-nowrap">{n.issued_at ? formatDate(n.issued_at) : <span className="text-[#6B7280]">—</span>}</td>
                         </tr>
                       );
                     })}
@@ -552,7 +552,7 @@ function VariationsList() {
 export default function VariationsPage() {
   return (
     <AppShell>
-      <Suspense fallback={<><TopBar title="Variation Register" /><div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div></>}>
+      <Suspense fallback={<><TopBar title="Variation Register" /><div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div></>}>
         <VariationsList />
       </Suspense>
     </AppShell>

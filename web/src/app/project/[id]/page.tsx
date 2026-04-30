@@ -115,7 +115,7 @@ function ProjectDetailContent() {
 
   const SortHeader = ({ label, field, align, className = '' }: { label: string; field: SortKey; align?: 'right'; className?: string }) => (
     <th
-      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] px-4 md:px-5 py-3 cursor-pointer hover:text-[#334155] select-none transition-colors duration-[120ms] ${className}`}
+      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] px-4 md:px-5 py-3 cursor-pointer hover:text-[#334155] select-none transition-colors duration-[120ms] ${className}`}
       onClick={() => handleSort(field)}
     >
       {label} {sortKey === field ? (sortAsc ? '↑' : '↓') : ''}
@@ -125,7 +125,7 @@ function ProjectDetailContent() {
   if (loading) {
     return (
       <AppShell><TopBar title="Project" />
-        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div>
       </AppShell>
     );
   }
@@ -133,7 +133,7 @@ function ProjectDetailContent() {
   if (!project) {
     return (
       <AppShell><TopBar title="Project" />
-        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Project not found</div>
+        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Project not found</div>
       </AppShell>
     );
   }
@@ -147,7 +147,7 @@ function ProjectDetailContent() {
         <div>
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 w-full bg-white border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-semibold text-[#17212B] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="flex items-center gap-2 w-full bg-[#FFFCF5] border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-medium text-[#17212B] hover:bg-[#F5F2EA] active:bg-[#F5F2EA] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
               <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -155,7 +155,7 @@ function ProjectDetailContent() {
             Back to Dashboard
           </Link>
           <div className="mt-3">
-            <h2 className="text-xl font-semibold text-[#111827]">{project.name}</h2>
+            <h2 className="text-xl font-medium text-[#111827]">{project.name}</h2>
             <p className="text-[13px] text-[#334155] mt-1">{project.client} · {variations.length} variations{!isField && <> · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value</>}</p>
           </div>
           {/* Action buttons */}
@@ -174,7 +174,7 @@ function ProjectDetailContent() {
                 {isAdmin && (
                   <button
                     onClick={() => setShowDeleteConfirm(true)}
-                    className="px-3 py-1.5 text-[12px] font-medium text-[#B42318] hover:text-[#9E4D41] transition-colors duration-[120ms] whitespace-nowrap"
+                    className="px-3 py-1.5 text-[12px] font-medium text-[#B42318] hover:text-[#7A1810] transition-colors duration-[120ms] whitespace-nowrap"
                   >
                     Delete Project
                   </button>
@@ -186,20 +186,20 @@ function ProjectDetailContent() {
 
         {/* Project Settings — notice_required toggle (admin only) */}
         {isAdmin && (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
             <div className="flex items-center justify-between">
               <div className="flex-1 mr-4">
                 <div className="text-[14px] font-medium text-[#111827]">Require Variation Notice</div>
-                <div className="text-[12px] text-[#64748B] mt-0.5">Enable for Tier 1 contracts that require formal notice of variation events</div>
+                <div className="text-[12px] text-[#6B7280] mt-0.5">Enable for Tier 1 contracts that require formal notice of variation events</div>
               </div>
               <button
                 type="button"
                 onClick={handleToggleNoticeRequired}
                 disabled={togglingNoticeRequired}
-                className={`relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors duration-200 cursor-pointer disabled:opacity-40 ${project.notice_required ? 'bg-[#17212B]' : 'bg-[#D1D5DB]'}`}
+                className={`relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors duration-200 cursor-pointer disabled:opacity-40 ${project.notice_required ? 'bg-[#17212B]' : 'bg-[#D8D2C4]'}`}
                 aria-checked={project.notice_required}
               >
-                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-200 ${project.notice_required ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-[#FFFCF5] transition-transform duration-200 ${project.notice_required ? 'translate-x-4' : 'translate-x-0.5'}`} />
               </button>
             </div>
           </div>
@@ -208,10 +208,10 @@ function ProjectDetailContent() {
         {/* Variation Notices Section */}
         {notices.length > 0 && (
           <div>
-            <h3 className="text-[13px] font-semibold text-[#334155] uppercase tracking-[0.04em] mb-2">Variation Notices</h3>
+            <h3 className="text-[13px] font-medium text-[#334155] uppercase tracking-[0.04em] mb-2">Variation Notices</h3>
 
             {/* Mobile cards — md:hidden */}
-            <div className="md:hidden divide-y divide-[#E7E0D2] bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="md:hidden divide-y divide-[#D8D2C4] bg-[#FFFCF5] rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden">
               {notices.map(n => {
                 const linkedVar = variations.find(v => v.notice_id === n.id);
                 const varLabel = linkedVar
@@ -219,17 +219,17 @@ function ProjectDetailContent() {
                   : null;
                 return (
                   <Link key={n.id} href={`/notice/${n.id}`}>
-                    <div className="px-4 py-3 hover:bg-[#F5F3EF] transition-colors">
+                    <div className="px-4 py-3 hover:bg-[#F5F2EA] transition-colors">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1">
-                          <div className="text-[12px] font-mono font-semibold text-[#111827]">{n.notice_number}</div>
+                          <div className="text-[12px] mono font-medium text-[#111827]">{n.notice_number}</div>
                           <div className="text-[14px] font-medium text-[#111827] mt-0.5 truncate">{n.event_description}</div>
                           <div className="flex items-center gap-2 mt-1 flex-wrap">
-                            <span className="text-[12px] text-[#64748B]">
+                            <span className="text-[12px] text-[#6B7280]">
                               {new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </span>
                             {varLabel && (
-                              <span className="text-[11px] font-mono font-semibold text-[#2E7D32] bg-[#F0F7F4] px-1.5 py-0.5 rounded">
+                              <span className="text-[11px] mono font-medium text-[#2E7D32] bg-[#E5F0E6] px-1.5 py-0.5 rounded">
                                 → {varLabel}
                               </span>
                             )}
@@ -244,7 +244,7 @@ function ProjectDetailContent() {
             </div>
 
             {/* Desktop table — hidden md:block */}
-            <div className="hidden md:block bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="hidden md:block bg-[#FFFCF5] rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[540px]" style={{tableLayout: 'fixed'}}>
                   <colgroup>
@@ -255,12 +255,12 @@ function ProjectDetailContent() {
                     <col style={{width: '110px'}} />  {/* Linked VR */}
                   </colgroup>
                   <thead>
-                    <tr className="border-b border-[#D8D2C4] bg-slate-50/60">
-                      <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
-                      <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
-                      <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Status</th>
-                      <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Event Date</th>
-                      <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Linked VR</th>
+                    <tr className="border-b border-[#D8D2C4] bg-[#F5F2EA]/60">
+                      <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
+                      <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
+                      <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Status</th>
+                      <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Event Date</th>
+                      <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Linked VR</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -268,13 +268,13 @@ function ProjectDetailContent() {
                       const linkedVar = variations.find(v => v.notice_id === n.id);
                       return (
                         <Link key={n.id} href={`/notice/${n.id}`} className="contents">
-                          <tr className={`border-b border-[#E7E0D2] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === notices.length - 1 ? 'border-b-0' : ''}`}>
+                          <tr className={`border-b border-[#D8D2C4] hover:bg-[#F5F2EA] cursor-pointer transition-colors duration-[120ms] ease-out ${i === notices.length - 1 ? 'border-b-0' : ''}`}>
                             <td className="px-3 md:px-4 py-3 text-[13px] font-medium text-[#111827] whitespace-nowrap tabular-nums">{n.notice_number}</td>
                             <td className="px-3 md:px-4 py-3 overflow-hidden"><div className="truncate text-[14px] font-medium text-[#111827]">{n.event_description}</div></td>
                             <td className="px-3 md:px-4 py-3"><StatusBadge status={n.status} /></td>
                             <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] whitespace-nowrap">{new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                             <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] whitespace-nowrap">
-                              {linkedVar ? (linkedVar.variation_number ?? `VAR-${String(linkedVar.sequence_number).padStart(3, '0')}`) : <span className="text-slate-300">—</span>}
+                              {linkedVar ? (linkedVar.variation_number ?? `VAR-${String(linkedVar.sequence_number).padStart(3, '0')}`) : <span className="text-[#6B7280]">—</span>}
                             </td>
                           </tr>
                         </Link>
@@ -287,22 +287,22 @@ function ProjectDetailContent() {
           </div>
         )}
 
-        <h3 className="text-[13px] font-semibold text-[#334155] uppercase tracking-[0.04em] mb-2">Variation Requests</h3>
+        <h3 className="text-[13px] font-medium text-[#334155] uppercase tracking-[0.04em] mb-2">Variation Requests</h3>
 
         {variations.length === 0 ? (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-12 text-center text-[#64748B] text-sm">
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-12 text-center text-[#6B7280] text-sm">
             No variations captured for this project yet.
           </div>
         ) : (
           <>
             {/* Mobile cards — md:hidden */}
-            <div className="md:hidden rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="md:hidden rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden">
               {sorted.map((v, i) => (
                 <Link key={v.id} href={`/variation/${v.id}`}>
-                  <div className={`px-4 py-3 border-b border-[#E7E0D2] last:border-b-0 hover:bg-[#EEF2F8] active:bg-[#E8EFF8] transition-colors ${i % 2 === 0 ? 'bg-white' : 'bg-[#F5F2EA]'}`}>
+                  <div className={`px-4 py-3 border-b border-[#D8D2C4] last:border-b-0 hover:bg-[#F5F2EA] active:bg-[#F5F2EA] transition-colors ${i % 2 === 0 ? 'bg-[#FFFCF5]' : 'bg-[#F5F2EA]'}`}>
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <div className="text-[12px] font-mono font-bold text-[#17212B]">{getVariationNumber(v)}</div>
+                        <div className="text-[12px] mono font-medium text-[#17212B]">{getVariationNumber(v)}</div>
                         <div className="text-[14px] font-medium text-[#111827] mt-0.5 truncate">{v.title}</div>
                       </div>
                       <div className="flex-shrink-0 text-right">
@@ -318,7 +318,7 @@ function ProjectDetailContent() {
             </div>
 
             {/* Desktop table — hidden md:block */}
-            <div className="hidden md:block bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="hidden md:block bg-[#FFFCF5] rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[480px]">
                   <thead>
@@ -334,8 +334,8 @@ function ProjectDetailContent() {
                   <tbody>
                     {sorted.map((v, i) => (
                       <Link key={v.id} href={`/variation/${v.id}`} className="contents">
-                        <tr className={`relative h-[44px] border-b border-[#E7E0D2] hover:bg-[#F5F3EF] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
-                          <td className="px-4 md:px-5 py-2.5 text-[13px] font-mono font-medium text-[#17212B] tabular-nums whitespace-nowrap">{getVariationNumber(v)}</td>
+                        <tr className={`relative h-[44px] border-b border-[#D8D2C4] hover:bg-[#F5F2EA] cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}>
+                          <td className="px-4 md:px-5 py-2.5 text-[13px] mono font-medium text-[#17212B] tabular-nums whitespace-nowrap">{getVariationNumber(v)}</td>
                           <td className="px-4 md:px-5 py-2.5 max-w-[200px] overflow-hidden"><div className="truncate text-[14px] font-medium text-[#111827]">{v.title}</div></td>
                           <td className="px-4 md:px-5 py-2.5"><StatusBadge status={v.status} /></td>
                           <td className="px-4 md:px-5 py-2.5 text-[13px] text-[#334155] capitalize hidden md:table-cell whitespace-nowrap">{v.instruction_source?.replace(/_/g, ' ')}</td>
@@ -356,18 +356,18 @@ function ProjectDetailContent() {
 
       {/* Delete Project Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-2">Delete Project</h3>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#111827]/20 px-0 sm:px-4" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="bg-[#FFFCF5] rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+            <h3 className="text-[15px] font-medium text-[#111827] mb-2">Delete Project</h3>
             <p className="text-[14px] text-[#334155] mb-1">
               Are you sure you want to delete <span className="font-medium text-[#111827]">{project.name}</span>?
             </p>
             {variations.length > 0 ? (
               <p className="text-[13px] text-[#B42318] mb-5">
-                This will also permanently delete all <span className="font-semibold">{variations.length} variation{variations.length !== 1 ? 's' : ''}</span> and their associated data. This cannot be undone.
+                This will also permanently delete all <span className="font-medium">{variations.length} variation{variations.length !== 1 ? 's' : ''}</span> and their associated data. This cannot be undone.
               </p>
             ) : (
-              <p className="text-[13px] text-[#64748B] mb-5">This cannot be undone.</p>
+              <p className="text-[13px] text-[#6B7280] mb-5">This cannot be undone.</p>
             )}
             <div className="flex justify-end gap-2">
               <button
@@ -380,7 +380,7 @@ function ProjectDetailContent() {
               <button
                 onClick={handleDeleteProject}
                 disabled={deleting}
-                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#B42318] rounded-md hover:bg-[#9E4D41] disabled:opacity-40 transition-colors duration-[120ms]"
+                className="px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#B42318] rounded-md hover:bg-[#7A1810] disabled:opacity-40 transition-colors duration-[120ms]"
               >
                 {deleting ? 'Deleting...' : 'Delete Project'}
               </button>
@@ -391,13 +391,13 @@ function ProjectDetailContent() {
 
       {/* Archive Project Confirmation Modal */}
       {showArchiveConfirm && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowArchiveConfirm(false)}>
-          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-2">Archive Project</h3>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#111827]/20 px-0 sm:px-4" onClick={() => setShowArchiveConfirm(false)}>
+          <div className="bg-[#FFFCF5] rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+            <h3 className="text-[15px] font-medium text-[#111827] mb-2">Archive Project</h3>
             <p className="text-[14px] text-[#334155] mb-1">
               Archive <span className="font-medium text-[#111827]">{project.name}</span>?
             </p>
-            <p className="text-[13px] text-[#64748B] mb-5">
+            <p className="text-[13px] text-[#6B7280] mb-5">
               The project and its {variations.length} variation{variations.length !== 1 ? 's' : ''} will be hidden from the dashboard. You can unarchive at any time from the Archived Projects page.
             </p>
             <div className="flex justify-end gap-2">
@@ -411,7 +411,7 @@ function ProjectDetailContent() {
               <button
                 onClick={handleArchiveProject}
                 disabled={archiving}
-                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#334155] rounded-md hover:bg-[#4B5563] disabled:opacity-40 transition-colors duration-[120ms]"
+                className="px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#334155] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
               >
                 {archiving ? 'Archiving...' : 'Archive Project'}
               </button>
@@ -425,7 +425,7 @@ function ProjectDetailContent() {
 
 export default function ProjectDetail() {
   return (
-    <Suspense fallback={<AppShell><TopBar title="Project" /><div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div></AppShell>}>
+    <Suspense fallback={<AppShell><TopBar title="Project" /><div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div></AppShell>}>
       <ProjectDetailContent />
     </Suspense>
   );

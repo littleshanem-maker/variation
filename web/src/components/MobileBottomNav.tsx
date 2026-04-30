@@ -39,7 +39,7 @@ export default function MobileBottomNav() {
       {/* FAB backdrop */}
       {!hideFab && fabOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/20"
+          className="fixed inset-0 z-40 bg-[#111827]/20"
           onClick={() => setFabOpen(false)}
         />
       )}
@@ -58,7 +58,7 @@ export default function MobileBottomNav() {
           <Link
             href="/variation/new"
             onClick={() => setFabOpen(false)}
-            className="flex items-center gap-2 px-5 py-3 bg-[#E76F00] border border-[#E76F00] text-white text-[15px] font-medium shadow-[0_2px_6px_rgba(17,24,39,0.12)] whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-3 bg-[#E76F00] border border-[#E76F00] text-[#FFFCF5] text-[15px] font-medium shadow-[0_2px_6px_rgba(17,24,39,0.12)] whitespace-nowrap"
           >
             <Plus size={16} />
             New request
@@ -70,7 +70,7 @@ export default function MobileBottomNav() {
       {!hideFab && <button
         onClick={() => setFabOpen(prev => !prev)}
         aria-label="Create new"
-        className="fixed bottom-[76px] right-4 z-50 w-14 h-14 rounded-full bg-[#E76F00] text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform md:hidden"
+        className="fixed bottom-[76px] right-4 z-50 w-14 h-14 rounded-full bg-[#E76F00] text-[#FFFCF5] shadow-xl flex items-center justify-center active:scale-95 transition-transform md:hidden"
       >
         {fabOpen
           ? <X size={24} strokeWidth={2.5} />
@@ -81,7 +81,7 @@ export default function MobileBottomNav() {
       <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 
       {/* Bottom nav bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-[#17212B] border-t border-white/[0.08] flex items-stretch h-16 safe-area-inset-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-[#17212B] border-t border-[#FFFCF5]/[0.08] flex items-stretch h-16 safe-area-inset-bottom">
         {tabs.map(tab => {
           const Icon = tab.icon;
           const active = isActive(tab.href);
@@ -90,7 +90,7 @@ export default function MobileBottomNav() {
               key={tab.href}
               href={tab.href}
               className={`flex-1 flex flex-col items-center justify-center gap-1 py-1 transition-colors ${
-                active ? 'text-white' : 'text-white/35 hover:text-white/60'
+                active ? 'text-[#FFFCF5]' : 'text-[#FFFCF5]/35 hover:text-[#FFFCF5]/60'
               }`}
             >
               {active && (
@@ -108,7 +108,7 @@ export default function MobileBottomNav() {
         })}
         <button
           onClick={() => setFeedbackOpen(true)}
-          className="flex-1 flex flex-col items-center justify-center gap-1 py-1 text-white/35 hover:text-white/60 transition-colors"
+          className="flex-1 flex flex-col items-center justify-center gap-1 py-1 text-[#FFFCF5]/35 hover:text-[#FFFCF5]/60 transition-colors"
         >
           <MessageSquare size={22} strokeWidth={1.8} />
           <span className="text-[10px] font-medium leading-none">Feedback</span>

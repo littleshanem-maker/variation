@@ -631,7 +631,7 @@ export default function VariationDetail() {
   if (loading) {
     return (
       <AppShell><TopBar title="Variation" />
-        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div>
       </AppShell>
     );
   }
@@ -639,7 +639,7 @@ export default function VariationDetail() {
   if (!variation || !project) {
     return (
       <AppShell><TopBar title="Variation" />
-        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Variation not found</div>
+        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Variation not found</div>
       </AppShell>
     );
   }
@@ -654,7 +654,7 @@ export default function VariationDetail() {
   const awaitingClientResponse = isSubmitted && !!variation.client_email && !variation.client_approval_response;
 
   const inputClass = "w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-lg focus:ring-2 focus:ring-[#E76F00] focus:border-[#E76F00] outline-none transition-shadow";
-  const labelClass = "block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1";
+  const labelClass = "block text-[11px] font-medium uppercase tracking-wider text-[#6B7280] mb-1";
 
   const STATUS_TRANSITIONS: Record<string, string[]> = {
     draft:     ['submitted'],
@@ -672,10 +672,10 @@ export default function VariationDetail() {
     disputed:  'Mark Disputed',
   };
   const STATUS_ACTION_STYLES: Record<string, string> = {
-    submitted: 'text-[#92722E] border-[#D99A00] hover:bg-[#FDF8ED]',
-    approved:  'text-[#3D6B5E] border-[#2E7D32] hover:bg-[#F0F7F4]',
-    rejected:  'text-[#5B3A7C] border-[#7C5BA0] hover:bg-[#F5F0FA]',
-    disputed:  'text-[#9A4A3E] border-[#B42318] hover:bg-[#FDF2F0]',
+    submitted: 'text-[#8C6500] border-[#D99A00] hover:bg-[#FBF1D6]',
+    approved:  'text-[#1F5223] border-[#2E7D32] hover:bg-[#E5F0E6]',
+    rejected:  'text-[#334155] border-[#334155] hover:bg-[#F5F2EA]',
+    disputed:  'text-[#7A1810] border-[#B42318] hover:bg-[#FBE6E4]',
   };
   const nextStatuses = STATUS_TRANSITIONS[variation.status] ?? [];
 
@@ -687,7 +687,7 @@ export default function VariationDetail() {
         <div className="space-y-3">
           <Link
             href={fromDashboard ? '/' : `/project/${project.id}`}
-            className="hidden md:flex items-center gap-2 w-full bg-white border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-semibold text-[#17212B] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)] truncate"
+            className="hidden md:flex items-center gap-2 w-full bg-[#FFFCF5] border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-medium text-[#17212B] hover:bg-[#F5F2EA] active:bg-[#F5F2EA] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.04)] truncate"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="flex-shrink-0">
               <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -695,25 +695,25 @@ export default function VariationDetail() {
             <span className="truncate">{fromDashboard ? 'Back to Risk Overview' : `Back to ${project.name}`}</span>
           </Link>
           {successMsg && (
-            <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5L6.5 11.5L3 8" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <div className="flex items-center gap-2 bg-[#E5F0E6] border border-[#D8D2C4] text-[#1F5223] rounded-md px-4 py-2.5 text-[13px] font-medium">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5L6.5 11.5L3 8" stroke="#2E7D32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
               {successMsg}
             </div>
           )}
           {freeTierBanner === 'warning' && (
-            <div className="flex items-center justify-between bg-amber-50 border border-amber-200 text-amber-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
+            <div className="flex items-center justify-between bg-[#FBF1D6] border border-[#D8D2C4] text-[#8C6500] rounded-md px-4 py-2.5 text-[13px] font-medium">
               <span>⚠️ You've used 2 of 3 free variations. One left.</span>
-              <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="ml-3 text-amber-700 underline text-xs font-semibold">Upgrade →</a>
+              <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="ml-3 text-[#8C6500] underline text-xs font-medium">Upgrade →</a>
             </div>
           )}
           {freeTierBanner === 'final' && (
-            <div className="flex items-center justify-between bg-green-50 border border-green-200 text-green-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
+            <div className="flex items-center justify-between bg-[#E5F0E6] border border-[#D8D2C4] text-[#1F5223] rounded-md px-4 py-2.5 text-[13px] font-medium">
               <span>🎉 Nice — 3 variations documented. Upgrade to keep capturing.</span>
-              <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="ml-3 text-[#276B2B] underline text-xs font-semibold">Upgrade to Pro →</a>
+              <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="ml-3 text-[#2E7D32] underline text-xs font-medium">Upgrade to Pro →</a>
             </div>
           )}
           {saveError && !editing && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
+            <div className="flex items-center gap-2 bg-[#FBE6E4] border border-[#D8D2C4] text-[#7A1810] rounded-md px-4 py-2.5 text-[13px] font-medium">
               ⚠️ {saveError}
             </div>
           )}
@@ -733,7 +733,7 @@ export default function VariationDetail() {
                       }
                     }}
                     disabled={sendingEmail}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg disabled:opacity-40 transition-colors shadow-sm whitespace-nowrap"
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg disabled:opacity-40 transition-colors shadow-sm whitespace-nowrap"
                   >
                     <Send size={14} />
                     {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : showEmailInput ? 'Send' : 'Submit to Client'}
@@ -743,44 +743,44 @@ export default function VariationDetail() {
                 {isSubmitted && !isField && (
                   <>
                     {variation.client_approval_response === 'approved' ? (
-                      <button disabled className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg opacity-80 cursor-default">
+                      <button disabled className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#1F5223] bg-[#E5F0E6] border border-[#D8D2C4] rounded-lg opacity-80 cursor-default">
                         <CheckCircle size={14} /> Approved by Client
                       </button>
                     ) : (
-                      <button onClick={() => handleAdvanceStatus('approved')} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm">
+                      <button onClick={() => handleAdvanceStatus('approved')} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#2E7D32] hover:bg-[#1F5223] rounded-lg disabled:opacity-40 transition-colors shadow-sm">
                         <CheckCircle size={14} /> {advancingStatus ? '…' : 'Mark as Approved by Client'}
                       </button>
                     )}
                     {variation.client_approval_response === 'rejected' ? (
-                      <button disabled className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded-lg opacity-80 cursor-default">
+                      <button disabled className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#7A1810] bg-[#FBE6E4] border border-[#D8D2C4] rounded-lg opacity-80 cursor-default">
                         <XCircle size={14} /> Rejected by Client
                       </button>
                     ) : (
-                      <button onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors">
+                      <button onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#B42318] bg-[#FBE6E4] border border-[#D8D2C4] rounded-lg hover:bg-[#FBE6E4] transition-colors">
                         <XCircle size={14} /> Mark as Rejected by Client
                       </button>
                     )}
                   </>
                 )}
                 {isDisputed && !isField && (
-                  <button onClick={startRevising} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm">
+                  <button onClick={startRevising} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm">
                     <ArrowUpRight size={14} /> Revise &amp; Resubmit
                   </button>
                 )}
                 {variation.status === 'approved' && !isField && (
-                  <button onClick={() => handleAdvanceStatus('paid')} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-white bg-emerald-700 hover:bg-emerald-800 rounded-lg disabled:opacity-40 transition-colors shadow-sm">
+                  <button onClick={() => handleAdvanceStatus('paid')} disabled={advancingStatus} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#2E7D32] hover:bg-[#1F5223] rounded-lg disabled:opacity-40 transition-colors shadow-sm">
                     <CheckCircle size={14} /> {advancingStatus ? '…' : 'Mark as Paid'}
                   </button>
                 )}
                 {/* PDF */}
-                <button onClick={handleDownloadPdf} disabled={sendingEmail} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap">
+                <button onClick={handleDownloadPdf} disabled={sendingEmail} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors disabled:opacity-50 whitespace-nowrap">
                   <FileText size={14} /> {sendingEmail && sendStage === 'idle' ? 'Building…' : 'PDF'}
                 </button>
                 {/* Edit — hidden when disputed */}
                 {!isField && !isDisputed && (
                   <button
                     onClick={() => awaitingClientResponse ? setShowClientWarning('edit') : startEditing()}
-                    className="px-3 py-2 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="px-3 py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors"
                   >Edit</button>
                 )}
 
@@ -788,19 +788,19 @@ export default function VariationDetail() {
                 {canDelete && (
                   <button
                     onClick={() => awaitingClientResponse ? setShowClientWarning('delete') : setShowDeleteConfirm(true)}
-                    className="px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap"
+                    className="px-3 py-2 text-[13px] font-medium text-[#B42318] bg-[#FBE6E4] border border-[#D8D2C4] rounded-lg hover:bg-[#FBE6E4] transition-colors whitespace-nowrap"
                   >Delete</button>
                 )}
                 {/* Refresh */}
                 {!isField && (
-                  <button onClick={() => window.location.reload()} className="px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap">
+                  <button onClick={() => window.location.reload()} className="px-3 py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors whitespace-nowrap">
                     Refresh
                   </button>
                 )}
               </div>
               {/* Inline To/CC email input */}
               {showEmailInput && (
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
+                <div className="p-3 bg-[#F5F2EA] border border-[#D8D2C4] rounded-lg space-y-2">
                   <EmailAutocomplete
                     value={clientEmailInput}
                     onChange={setClientEmailInput}
@@ -820,7 +820,7 @@ export default function VariationDetail() {
                     labelSuffix="(optional — internal team)"
                   />
                   <div className="flex items-center gap-2 pt-1">
-                    <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-slate-400 hover:text-slate-600">Cancel</button>
+                    <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-[#6B7280] hover:text-[#334155]">Cancel</button>
                   </div>
                 </div>
               )}
@@ -829,7 +829,7 @@ export default function VariationDetail() {
           {editing && (
             <div className="flex gap-2">
               {saveError && (
-                <p className="text-[13px] text-[#B42318] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 self-center">{saveError}</p>
+                <p className="text-[13px] text-[#B42318] bg-[#FBE6E4] border border-[#FBE6E4] rounded-md px-3 py-2 self-center">{saveError}</p>
               )}
               <button
                 onClick={() => { setEditing(false); setRevisingMode(false); setNewFiles([]); setSaveError(null); }}
@@ -840,9 +840,9 @@ export default function VariationDetail() {
               <button
                 onClick={handleSave}
                 disabled={saving || !editTitle.trim()}
-                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-lg hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
+                className="px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#17212B] rounded-lg hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
               >
-                {saving ? 'Saving...' : revisingMode ? 'Save Revision' : 'Save Changes'}
+                {saving ? 'Saving...' : revisingMode ? 'Save Revision' : 'Save changes'}
               </button>
             </div>
           )}
@@ -850,12 +850,12 @@ export default function VariationDetail() {
 
         {/* Linked Variation Notice Banner */}
         {linkedNotice && (
-          <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-[#FDF8ED] border border-[#D99A00]/30 rounded-md text-[13px]">
-            <span className="font-mono font-bold text-[#17212B]">{linkedNotice.notice_number}</span>
+          <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-[#FBF1D6] border border-[#D99A00]/30 rounded-md text-[13px]">
+            <span className="mono font-medium text-[#17212B]">{linkedNotice.notice_number}</span>
             <span className="text-[#334155]">—</span>
             {linkedNotice.issued_at
-              ? <span className="text-[#92722E]">Issued {new Date(linkedNotice.issued_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
-              : <span className="text-[#92722E] capitalize">{linkedNotice.status}</span>
+              ? <span className="text-[#8C6500]">Issued {new Date(linkedNotice.issued_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+              : <span className="text-[#8C6500] capitalize">{linkedNotice.status}</span>
             }
             <Link href={`/notice/${linkedNotice.id}`} className="ml-auto text-[#17212B] font-medium hover:text-[#334155] transition-colors duration-[120ms]">
               View Notice →
@@ -865,16 +865,16 @@ export default function VariationDetail() {
 
         {/* State banners */}
         {isSubmitted && !editing && (
-          <div className="flex items-center gap-2 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl text-[13px] text-amber-700 font-medium">
+          <div className="flex items-center gap-2 px-4 py-3 bg-[#FBF1D6] border border-[#D8D2C4] rounded-xl text-[13px] text-[#8C6500] font-medium">
             <Lock size={14} className="flex-shrink-0" />
             Submitted to client. Use Edit to make changes and resubmit.
           </div>
         )}
         {isDisputed && !editing && variation.notes?.startsWith('DISPUTE REASON:') && (
-          <div className="flex items-start gap-2 px-4 py-3 bg-rose-50 border border-rose-200 rounded-xl text-[13px] text-rose-700">
+          <div className="flex items-start gap-2 px-4 py-3 bg-[#FBE6E4] border border-[#D8D2C4] rounded-xl text-[13px] text-[#7A1810]">
             <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
             <div>
-              <span className="font-semibold">Rejected by client: </span>
+              <span className="font-medium">Rejected by client: </span>
               {variation.notes.replace('DISPUTE REASON: ', '')}
             </div>
           </div>
@@ -892,7 +892,7 @@ export default function VariationDetail() {
           const ORDER = ['draft', 'captured', 'submitted', 'approved', 'disputed', 'paid'];
           const currentIdx = ORDER.indexOf(variation.status);
           return (
-            <div className="flex items-center gap-0 bg-white border border-[#D8D2C4] rounded-md px-4 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="flex items-center gap-0 bg-[#FFFCF5] border border-[#D8D2C4] rounded-md px-4 py-3 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
               {steps.map((step, i) => {
                 const stepOrder = ORDER.indexOf(step.key);
                 const isCurrent = variation.status === step.key || (step.key === 'draft' && variation.status === 'captured');
@@ -901,23 +901,23 @@ export default function VariationDetail() {
                 return (
                   <div key={step.key} className="flex items-center flex-1 min-w-0">
                     <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-medium flex-shrink-0 ${
                         isCurrent
-                          ? step.key === 'disputed' ? 'bg-rose-500 text-white' : 'bg-[#E76F00] text-white'
+                          ? step.key === 'disputed' ? 'bg-[#B42318] text-[#FFFCF5]' : 'bg-[#E76F00] text-[#FFFCF5]'
                           : isDone
-                          ? 'bg-emerald-500 text-white'
-                          : 'bg-slate-100 text-slate-400'
+                          ? 'bg-[#2E7D32] text-[#FFFCF5]'
+                          : 'bg-[#F5F2EA] text-[#6B7280]'
                       }`}>
                         {isDone ? '✓' : i + 1}
                       </div>
                       <span className={`text-[10px] font-medium text-center leading-tight hidden sm:block ${
                         isCurrent
-                          ? step.key === 'disputed' ? 'text-rose-600' : 'text-[#E76F00]'
-                          : isDone ? 'text-emerald-600' : 'text-slate-400'
+                          ? step.key === 'disputed' ? 'text-[#B42318]' : 'text-[#E76F00]'
+                          : isDone ? 'text-[#2E7D32]' : 'text-[#6B7280]'
                       }`}>{step.label}</span>
                     </div>
                     {i < steps.length - 1 && (
-                      <div className={`h-[2px] flex-1 mx-1 ${isDone ? 'bg-emerald-300' : 'bg-slate-200'}`} />
+                      <div className={`h-[2px] flex-1 mx-1 ${isDone ? 'bg-[#2E7D32]' : 'bg-[#D8D2C4]'}`} />
                     )}
                   </div>
                 );
@@ -927,7 +927,7 @@ export default function VariationDetail() {
         })()}
 
         {/* Header Card */}
-        <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
           {editing ? (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-4">
@@ -940,7 +940,7 @@ export default function VariationDetail() {
                 {!revisingMode && (
                   <div>
                     <label className={labelClass}>Status</label>
-                    <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className={inputClass + " bg-white"}>
+                    <select value={editStatus} onChange={e => setEditStatus(e.target.value)} className={inputClass + " bg-[#FFFCF5]"}>
                       <option value="draft">Draft</option>
                       <option value="submitted">Submitted</option>
                       <option value="approved">Approved</option>
@@ -952,7 +952,7 @@ export default function VariationDetail() {
                 )}
                 <div>
                   <label className={labelClass}>Instruction Source</label>
-                  <select value={editSource} onChange={e => setEditSource(e.target.value)} className={inputClass + " bg-white"}>
+                  <select value={editSource} onChange={e => setEditSource(e.target.value)} className={inputClass + " bg-[#FFFCF5]"}>
                     <option value="verbal">Verbal</option>
                     <option value="email">Email</option>
                     <option value="site_instruction">Site Instruction</option>
@@ -971,14 +971,14 @@ export default function VariationDetail() {
                 <input type="text" value={editReferenceDoc} onChange={e => setEditReferenceDoc(e.target.value)} className={inputClass} placeholder="e.g. RFI-042, Rev C drawings" />
               </div>
               <div>
-                <label className={labelClass}>Response Due Date <span className="text-red-500">*</span></label>
+                <label className={labelClass}>Response Due Date <span className="text-[#B42318]">*</span></label>
                 <input type="date" required value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className={inputClass} />
-                <p className="text-[11px] text-slate-500 mt-1">Date by which a response to this variation is required</p>
+                <p className="text-[11px] text-[#6B7280] mt-1">Date by which a response to this variation is required</p>
               </div>
               <div>
                 <label className={labelClass}>Client Email</label>
                 <input type="email" value={editClientEmail} onChange={e => setEditClientEmail(e.target.value)} className={inputClass} placeholder="e.g. engineer@clientcompany.com.au" />
-                <p className="text-[11px] text-slate-500 mt-1">If set, Submit to Client will email the variation directly with Approve/Reject buttons</p>
+                <p className="text-[11px] text-[#6B7280] mt-1">If set, Submit to Client will email the variation directly with Approve/Reject buttons</p>
               </div>
             </div>
           ) : (
@@ -986,46 +986,46 @@ export default function VariationDetail() {
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="text-[12px] font-mono font-bold text-[#17212B] uppercase tracking-wider">{getVariationNumber(variation)}</div>
+                    <div className="text-[12px] mono font-medium text-[#17212B] uppercase tracking-wider">{getVariationNumber(variation)}</div>
                     {editing ? (
-                      <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#E76F00] px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#E76F00] px-1.5 py-0.5 rounded">
                         {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0) + 1} — Draft` : 'Draft'}
                       </span>
                     ) : hasPendingDraft ? (
-                      <span className="text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-medium uppercase tracking-wide text-[#8C6500] bg-[#FBF1D6] border border-[#D8D2C4] px-1.5 py-0.5 rounded">
                         {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0) + 1} — Draft` : 'Draft'}
                       </span>
                     ) : variation.status === 'draft' ? (
-                      <span className="text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-medium uppercase tracking-wide text-[#8C6500] bg-[#FBF1D6] border border-[#D8D2C4] px-1.5 py-0.5 rounded">
                         Draft
                       </span>
                     ) : null}
                   </div>
-                  <h2 className="text-[22px] font-bold text-[#111827] truncate">{variation.title}</h2>
+                  <h2 className="text-[22px] font-medium text-[#111827] truncate">{variation.title}</h2>
                   <p className="text-[13px] text-[#334155] mt-1 truncate">{project.name} · {project.client}</p>
                 </div>
                 <div className="sm:text-right flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0 flex-shrink-0">
-                  {!isField && <div className="text-[28px] font-bold text-[#111827] tabular-nums">{formatCurrency(variation.estimated_value)}</div>}
+                  {!isField && <div className="text-[28px] font-medium text-[#111827] tabular-nums">{formatCurrency(variation.estimated_value)}</div>}
                   <div className="sm:mt-2"><StatusBadge status={variation.status} /></div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5 pt-4 border-t border-[#E7E0D2]">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5 pt-4 border-t border-[#D8D2C4]">
                 <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Instruction Source</div>
+                  <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Instruction Source</div>
                   <div className="text-[15px] text-[#111827] mt-1 capitalize truncate">{variation.instruction_source?.replace(/_/g, ' ')}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Instructed By</div>
+                  <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Instructed By</div>
                   <div className="text-[15px] text-[#111827] mt-1 truncate">{variation.instructed_by || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Captured</div>
+                  <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Captured</div>
                   <div className="text-[15px] text-[#111827] mt-1 whitespace-nowrap">{formatDate(variation.captured_at)}</div>
                 </div>
                 {(variation.requestor_name || variation.requestor_email) && (
                   <div>
-                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Submitted By</div>
+                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Submitted By</div>
                     <div className="text-[15px] text-[#111827] mt-1 truncate">{variation.requestor_name || '—'}</div>
                     {variation.requestor_email && (
                       <div className="text-[12px] text-[#334155] mt-0.5 break-all">{variation.requestor_email}</div>
@@ -1034,13 +1034,13 @@ export default function VariationDetail() {
                 )}
                 {variation.reference_doc && (
                   <div>
-                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Reference Document</div>
+                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Reference Document</div>
                     <div className="text-[15px] text-[#111827] mt-1 truncate">{variation.reference_doc}</div>
                   </div>
                 )}
                 {variation.client_email && (
                   <div>
-                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Client Email</div>
+                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Client Email</div>
                     <div className="text-[15px] text-[#111827] mt-1 break-all">{variation.client_email}</div>
                   </div>
                 )}
@@ -1052,11 +1052,11 @@ export default function VariationDetail() {
                   const dueSoon = daysLeft >= 0 && daysLeft <= 3;
                   return (
                     <div>
-                      <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Response Due</div>
-                      <div className={`text-[15px] font-semibold mt-1 ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#111827]'}`}>
+                      <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Response Due</div>
+                      <div className={`text-[15px] font-medium mt-1 ${overdue ? 'text-[#B42318]' : dueSoon ? 'text-[#8C6500]' : 'text-[#111827]'}`}>
                         {due.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
                       </div>
-                      <div className={`text-[12px] mt-0.5 ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#334155]'}`}>
+                      <div className={`text-[12px] mt-0.5 ${overdue ? 'text-[#B42318]' : dueSoon ? 'text-[#8C6500]' : 'text-[#334155]'}`}>
                         {overdue ? `${Math.abs(daysLeft)}d overdue` : daysLeft === 0 ? 'Due today' : `${daysLeft}d remaining`}
                       </div>
                     </div>
@@ -1064,8 +1064,8 @@ export default function VariationDetail() {
                 })()}
                 {variation.evidence_hash && (
                   <div className="sm:col-span-2">
-                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Evidence Hash</div>
-                    <div className="text-[11px] text-[#64748B] mt-1 font-mono break-all">{variation.evidence_hash}</div>
+                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Evidence Hash</div>
+                    <div className="text-[11px] text-[#6B7280] mt-1 mono break-all">{variation.evidence_hash}</div>
                   </div>
                 )}
               </div>
@@ -1074,8 +1074,8 @@ export default function VariationDetail() {
         </div>
 
         {/* Description */}
-        <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Description</h3>
+        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+          <h3 className="text-[15px] font-medium text-[#111827] mb-3">Description</h3>
           {editing ? (
             <textarea
               value={editDescription}
@@ -1103,10 +1103,10 @@ export default function VariationDetail() {
 
         {/* Cost Breakdown */}
         {(editing || (variation as any).cost_items?.length > 0) && (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Cost Breakdown</h3>
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+            <h3 className="text-[15px] font-medium text-[#111827] mb-3">Cost Breakdown</h3>
             {editing ? (
-              <div className="bg-[#F9FAFB] rounded-lg border border-[#D8D2C4] p-3">
+              <div className="bg-[#FFFCF5] rounded-lg border border-[#D8D2C4] p-3">
                 <CostItemsTable
                   items={editCostItems}
                   onChange={setEditCostItems}
@@ -1116,12 +1116,12 @@ export default function VariationDetail() {
             ) : (
               <div className="space-y-1">
                 {((variation as any).cost_items || []).map((item: any) => (
-                  <div key={item.id} className="flex justify-between text-[13px] py-1 border-b border-[#E7E0D2]">
-                    <span className="text-[#111827]">{item.description} <span className="text-[#64748B]">({item.qty} {item.unit} @ ${item.rate})</span></span>
+                  <div key={item.id} className="flex justify-between text-[13px] py-1 border-b border-[#D8D2C4]">
+                    <span className="text-[#111827]">{item.description} <span className="text-[#6B7280]">({item.qty} {item.unit} @ ${item.rate})</span></span>
                     <span className="font-medium tabular-nums">${item.total?.toFixed(2)}</span>
                   </div>
                 ))}
-                <div className="flex justify-between text-[13px] pt-2 font-bold">
+                <div className="flex justify-between text-[13px] pt-2 font-medium">
                   <span>Total</span>
                   <span>{formatCurrency(variation.estimated_value)}</span>
                 </div>
@@ -1132,8 +1132,8 @@ export default function VariationDetail() {
 
         {/* Time Implication */}
         {(editing || variation.eot_days_claimed != null || linkedNotice?.time_flag) && (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Time Implication</h3>
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+            <h3 className="text-[15px] font-medium text-[#111827] mb-3">Time Implication</h3>
             {editing ? (
               <div className="flex items-center gap-3">
                 <input
@@ -1148,12 +1148,12 @@ export default function VariationDetail() {
                 <select
                   value={editTimeUnit}
                   onChange={e => setEditTimeUnit(e.target.value as 'days' | 'hours')}
-                  className="px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none bg-white"
+                  className="px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none bg-[#FFFCF5]"
                 >
                   <option value="days">days</option>
                   <option value="hours">hours</option>
                 </select>
-                <span className="text-[13px] text-slate-400">Leave blank if no time impact</span>
+                <span className="text-[13px] text-[#6B7280]">Leave blank if no time impact</span>
               </div>
             ) : (
               <div className="text-[14px] text-[#111827] font-medium">
@@ -1161,7 +1161,7 @@ export default function VariationDetail() {
                   ? `${variation.eot_days_claimed} ${variation.time_implication_unit === 'hours'
                       ? `hour${variation.eot_days_claimed !== 1 ? 's' : ''}`
                       : `day${variation.eot_days_claimed !== 1 ? 's' : ''}`} extension claimed`
-                  : <span className="text-slate-400 font-normal">Time impact flagged — enter days/hours to quantify</span>
+                  : <span className="text-[#6B7280] font-normal">Time impact flagged — enter days/hours to quantify</span>
                 }
               </div>
             )}
@@ -1170,8 +1170,8 @@ export default function VariationDetail() {
 
         {/* Documents */}
         {(documents.length > 0 || editing) && (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Documents {documents.length > 0 && `(${documents.length})`}</h3>
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+            <h3 className="text-[15px] font-medium text-[#111827] mb-4">Documents {documents.length > 0 && `(${documents.length})`}</h3>
             <div className="space-y-2">
               {documents.map(doc => (
                 <a
@@ -1179,12 +1179,12 @@ export default function VariationDetail() {
                   href={docUrls[doc.id] || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 bg-[#F5F2EA] rounded-md hover:bg-[#E7E0D2] transition-colors duration-[120ms]"
+                  className="flex items-center gap-3 p-3 bg-[#F5F2EA] rounded-md hover:bg-[#D8D2C4] transition-colors duration-[120ms]"
                 >
                   <div className="text-[#334155]">📄</div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[14px] font-medium text-[#111827] truncate">{doc.file_name}</div>
-                    <div className="text-[12px] text-[#64748B]">{(doc.file_size / 1024).toFixed(0)} KB</div>
+                    <div className="text-[12px] text-[#6B7280]">{(doc.file_size / 1024).toFixed(0)} KB</div>
                   </div>
                   <span className="text-[12px] text-[#17212B] font-medium flex-shrink-0">Download ↓</span>
                 </a>
@@ -1193,7 +1193,7 @@ export default function VariationDetail() {
             {editing && (
               <div className="mt-3">
                 <div
-                  className="w-full px-3 py-4 border border-dashed border-[#D1D5DB] rounded-md text-center cursor-pointer hover:border-[#17212B] hover:bg-[#F8FAFC] transition-colors duration-[120ms]"
+                  className="w-full px-3 py-4 border border-dashed border-[#D8D2C4] rounded-md text-center cursor-pointer hover:border-[#17212B] hover:bg-[#F5F2EA] transition-colors duration-[120ms]"
                   onClick={() => document.getElementById('edit-file-input')?.click()}
                 >
                   <input
@@ -1209,7 +1209,7 @@ export default function VariationDetail() {
                     }}
                   />
                   <p className="text-[13px] text-[#334155]">Click to attach more files</p>
-                  <p className="text-[11px] text-[#64748B] mt-1">PDF, Word, Excel, Images</p>
+                  <p className="text-[11px] text-[#6B7280] mt-1">PDF, Word, Excel, Images</p>
                 </div>
                 {newFiles.length > 0 && (
                   <div className="mt-2 space-y-1">
@@ -1219,7 +1219,7 @@ export default function VariationDetail() {
                         <button
                           type="button"
                           onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))}
-                          className="text-[#64748B] hover:text-[#B42318] ml-2 transition-colors"
+                          className="text-[#6B7280] hover:text-[#B42318] ml-2 transition-colors"
                         >
                           ✕
                         </button>
@@ -1234,15 +1234,15 @@ export default function VariationDetail() {
 
         {/* Photos */}
         {photos.length > 0 && (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Photo Evidence ({photos.length})</h3>
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+            <h3 className="text-[15px] font-medium text-[#111827] mb-4">Photo Evidence ({photos.length})</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {photos.map(photo => (
                 <div key={photo.id} className="aspect-square bg-[#F5F2EA] rounded-md overflow-hidden border border-[#D8D2C4]">
                   {photoUrls[photo.id] ? (
                     <img src={photoUrls[photo.id]} alt="Evidence" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[#64748B] text-[13px]">Loading...</div>
+                    <div className="w-full h-full flex items-center justify-center text-[#6B7280] text-[13px]">Loading...</div>
                   )}
                 </div>
               ))}
@@ -1252,14 +1252,14 @@ export default function VariationDetail() {
 
         {/* Voice Notes */}
         {voiceNotes.length > 0 && (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Voice Notes ({voiceNotes.length})</h3>
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+            <h3 className="text-[15px] font-medium text-[#111827] mb-4">Voice Notes ({voiceNotes.length})</h3>
             <div className="space-y-2">
               {voiceNotes.map(vn => (
                 <div key={vn.id} className="flex items-start gap-3 p-3 bg-[#F5F2EA] rounded-md">
-                  <div className="text-[#64748B]">🎤</div>
+                  <div className="text-[#6B7280]">🎤</div>
                   <div className="flex-1">
-                    <div className="text-[12px] text-[#64748B]">{Math.round(vn.duration_seconds)}s · {formatDate(vn.captured_at)}</div>
+                    <div className="text-[12px] text-[#6B7280]">{Math.round(vn.duration_seconds)}s · {formatDate(vn.captured_at)}</div>
                     {vn.transcription && (
                       <p className="text-[13px] text-[#334155] mt-1.5 italic leading-relaxed">&ldquo;{vn.transcription}&rdquo;</p>
                     )}
@@ -1272,35 +1272,35 @@ export default function VariationDetail() {
 
         {/* Client Email Approval Status */}
         {variation.client_approval_response && (
-          <div className={`rounded-md border p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] ${
+          <div className={`rounded-md border p-4 shadow-[0_1px_2px_rgba(17,24,39,0.04)] ${
             variation.client_approval_response === 'approved'
-              ? 'bg-emerald-50 border-emerald-200'
-              : 'bg-red-50 border-red-200'
+              ? 'bg-[#E5F0E6] border-[#D8D2C4]'
+              : 'bg-[#FBE6E4] border-[#D8D2C4]'
           }`}>
             <div className="flex items-center gap-2 mb-1">
               {variation.client_approval_response === 'approved' ? (
                 <>
-                  <CheckCircle size={15} className="text-emerald-600" />
-                  <span className="text-[13px] font-semibold text-emerald-700">Approved via email</span>
+                  <CheckCircle size={15} className="text-[#2E7D32]" />
+                  <span className="text-[13px] font-medium text-[#1F5223]">Approved via email</span>
                 </>
               ) : (
                 <>
                   <XCircle size={15} className="text-[#B42318]" />
-                  <span className="text-[13px] font-semibold text-[#971D14]">Rejected via email</span>
+                  <span className="text-[13px] font-medium text-[#7A1810]">Rejected via email</span>
                 </>
               )}
               {(variation.client_approved_by_email || variation.client_email) && (
-                <span className="text-[11px] text-slate-500">
+                <span className="text-[11px] text-[#6B7280]">
                   by {variation.client_approved_by_email || variation.client_email}
                 </span>
               )}
               {variation.client_approved_at && (
-                <span className="text-[11px] text-slate-400">{formatDateTime(variation.client_approved_at)}</span>
+                <span className="text-[11px] text-[#6B7280]">{formatDateTime(variation.client_approved_at)}</span>
               )}
             </div>
             {variation.client_approval_comment && (
-              <p className="text-[12px] text-slate-600 mt-1 pl-5">
-                <span className="font-medium text-slate-500">Comment: </span>
+              <p className="text-[12px] text-[#334155] mt-1 pl-5">
+                <span className="font-medium text-[#6B7280]">Comment: </span>
                 &ldquo;{variation.client_approval_comment}&rdquo;
               </p>
             )}
@@ -1355,17 +1355,17 @@ export default function VariationDetail() {
           ].sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
 
           return (
-            <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-              <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Status History</h3>
+            <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+              <h3 className="text-[15px] font-medium text-[#111827] mb-4">Status History</h3>
               <div className="space-y-3">
                 {entries.map(entry => {
                   if (entry.kind === 'send') {
                     const rev = entry.rev;
                     return (
                       <div key={entry.id} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
-                        <div className="text-[#64748B] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
+                        <div className="text-[#6B7280] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#E76F00] px-2 py-0.5 rounded flex-shrink-0">
+                          <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#E76F00] px-2 py-0.5 rounded flex-shrink-0">
                             📧 Sent
                           </span>
                           <span className="text-[12px] text-[#111827] truncate">
@@ -1382,11 +1382,11 @@ export default function VariationDetail() {
                   const isRejection = entry.toStatus === 'disputed' && isClientApproval;
                   return (
                     <div key={entry.id} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
-                      <div className="text-[#64748B] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
+                      <div className="text-[#6B7280] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
                       <div className="flex flex-col gap-1 flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           {entry.fromStatus && <StatusBadge status={entry.fromStatus} />}
-                          {entry.fromStatus && <span className="text-[#64748B]">→</span>}
+                          {entry.fromStatus && <span className="text-[#6B7280]">→</span>}
                           <StatusBadge status={entry.toStatus} />
                           {entry.by && !isClientApproval && (
                             <span className="text-[12px] text-[#334155]">by {entry.by}</span>
@@ -1394,10 +1394,10 @@ export default function VariationDetail() {
                         </div>
                         {/* Client approval/rejection detail from notes field */}
                         {isClientApproval && entry.notes && (
-                          <div className="text-[12px] text-slate-600 pl-1">{entry.notes}</div>
+                          <div className="text-[12px] text-[#334155] pl-1">{entry.notes}</div>
                         )}
                         {entry.notes && !isClientApproval && (
-                          <div className="text-[11px] text-slate-400 pl-1">{entry.notes}</div>
+                          <div className="text-[11px] text-[#6B7280] pl-1">{entry.notes}</div>
                         )}
                       </div>
                     </div>
@@ -1409,8 +1409,8 @@ export default function VariationDetail() {
         })()}
         {/* Revision History */}
         {revisions.length > 1 && (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Revision History</h3>
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+            <h3 className="text-[15px] font-medium text-[#111827] mb-3">Revision History</h3>
             <div className="space-y-1">
               {revisions.map(r => (
                 <Link
@@ -1418,11 +1418,11 @@ export default function VariationDetail() {
                   href={`/variation/${r.id}`}
                   className={`flex items-center justify-between px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ${
                     r.id === variation.id
-                      ? 'bg-[#EEF3FB] font-semibold text-[#17212B] pointer-events-none'
+                      ? 'bg-[#F5F2EA] font-medium text-[#17212B] pointer-events-none'
                       : 'hover:bg-[#F5F2EA] text-[#111827]'
                   }`}
                 >
-                  <span className="font-mono">{getVariationNumber(r)}</span>
+                  <span className="mono">{getVariationNumber(r)}</span>
                   <StatusBadge status={r.status} />
                 </Link>
               ))}
@@ -1433,27 +1433,27 @@ export default function VariationDetail() {
 
       {/* Dispute Reason Dialog */}
       {showDisputeDialog && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowDisputeDialog(false)}>
-          <div className="bg-white rounded-t-xl sm:rounded-xl border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#111827]/20 px-0 sm:px-4" onClick={() => setShowDisputeDialog(false)}>
+          <div className="bg-[#FFFCF5] rounded-t-xl sm:rounded-xl border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-2 mb-1">
-              <XCircle size={18} className="text-rose-500 flex-shrink-0" />
-              <h3 className="text-[15px] font-semibold text-slate-900">Rejected by Client</h3>
+              <XCircle size={18} className="text-[#B42318] flex-shrink-0" />
+              <h3 className="text-[15px] font-medium text-[#111827]">Rejected by Client</h3>
             </div>
-            <p className="text-[13px] text-slate-500 mb-4">Record the reason for rejection. This will be saved against the variation.</p>
+            <p className="text-[13px] text-[#6B7280] mb-4">Record the reason for rejection. This will be saved against the variation.</p>
             <textarea
               value={disputeReason}
               onChange={e => setDisputeReason(e.target.value)}
               rows={3}
               autoFocus
               placeholder="e.g. This work falls within the original scope as per drawing M-201…"
-              className="w-full px-3 py-2.5 text-[14px] border border-slate-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:border-rose-400 outline-none resize-none mb-3"
+              className="w-full px-3 py-2.5 text-[14px] border border-[#D8D2C4] rounded-lg focus:ring-2 focus:ring-[#FBE6E4] focus:border-[#B42318] outline-none resize-none mb-3"
             />
             {/* Attachment upload */}
             <div className="mb-4">
               <button
                 type="button"
                 onClick={() => document.getElementById('rejection-file-input')?.click()}
-                className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-slate-600 border border-dashed border-slate-300 rounded-lg hover:bg-slate-50 hover:border-slate-400 transition-colors w-full justify-center"
+                className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#334155] border border-dashed border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] hover:border-[#D8D2C4] transition-colors w-full justify-center"
               >
                 📎 Attach client email or PDF
               </button>
@@ -1472,12 +1472,12 @@ export default function VariationDetail() {
               {rejectionFiles.length > 0 && (
                 <ul className="mt-2 space-y-1">
                   {rejectionFiles.map((f, i) => (
-                    <li key={i} className="flex items-center justify-between text-[12px] text-slate-600 bg-slate-50 rounded px-2 py-1">
+                    <li key={i} className="flex items-center justify-between text-[12px] text-[#334155] bg-[#F5F2EA] rounded px-2 py-1">
                       <span className="truncate">📄 {f.name}</span>
                       <button
                         type="button"
                         onClick={() => setRejectionFiles(prev => prev.filter((_, idx) => idx !== i))}
-                        className="ml-2 text-slate-400 hover:text-rose-500 flex-shrink-0"
+                        className="ml-2 text-[#6B7280] hover:text-[#B42318] flex-shrink-0"
                       >✕</button>
                     </li>
                   ))}
@@ -1487,7 +1487,7 @@ export default function VariationDetail() {
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => { setShowDisputeDialog(false); setDisputeReason(''); setRejectionFiles([]); }}
-                className="px-3 py-1.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors"
               >
                 Cancel
               </button>
@@ -1530,7 +1530,7 @@ export default function VariationDetail() {
                   loadVariation();
                 }}
                 disabled={!disputeReason.trim() || advancingStatus}
-                className="px-4 py-1.5 text-[13px] font-semibold text-white bg-rose-600 hover:bg-rose-700 rounded-lg disabled:opacity-40 transition-colors"
+                className="px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#B42318] hover:bg-[#7A1810] rounded-lg disabled:opacity-40 transition-colors"
               >
                 Confirm Rejection
               </button>
@@ -1541,8 +1541,8 @@ export default function VariationDetail() {
 
       {/* Sent Versions — PDF downloads for each sent revision */}
       {!isField && varRevisions.length > 0 && (
-        <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] mx-4 md:mx-8 mb-4 ">
-          <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Sent Versions</h3>
+        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)] mx-4 md:mx-8 mb-4 ">
+          <h3 className="text-[15px] font-medium text-[#111827] mb-3">Sent Versions</h3>
           <div className="space-y-2">
             {varRevisions.map((rev) => {
               // Look up the parent variation's revision_number to get the correct label
@@ -1550,15 +1550,15 @@ export default function VariationDetail() {
               const parentRevNum = parentVariation?.revision_number ?? 0;
               const revLabel = parentRevNum === 0 ? 'Original' : `Rev ${parentRevNum}`;
               return (
-              <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-slate-50 rounded-md border border-slate-100">
+              <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-[#F5F2EA] rounded-md border border-[#D8D2C4]">
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#17212B] px-2 py-0.5 rounded flex-shrink-0">
+                  <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#17212B] px-2 py-0.5 rounded flex-shrink-0">
                     {revLabel}
                   </span>
                   <div className="min-w-0">
                     <div className="text-[13px] text-[#111827] truncate">Sent to {rev.sent_to}</div>
-                    {rev.sent_cc && <div className="text-[11px] text-slate-400 truncate">CC: {rev.sent_cc}</div>}
-                    <div className="text-[11px] text-slate-400">
+                    {rev.sent_cc && <div className="text-[11px] text-[#6B7280] truncate">CC: {rev.sent_cc}</div>}
+                    <div className="text-[11px] text-[#6B7280]">
                       {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
                     </div>
                   </div>
@@ -1592,7 +1592,7 @@ export default function VariationDetail() {
                     finally { setGeneratingRevPdf(null); }
                   }}
                   disabled={generatingRevPdf === rev.id}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-slate-600 border border-slate-200 rounded-md hover:bg-white transition-colors disabled:opacity-50 flex-shrink-0 ml-3"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-[#334155] border border-[#D8D2C4] rounded-md hover:bg-[#FFFCF5] transition-colors disabled:opacity-50 flex-shrink-0 ml-3"
                 >
                   <FileText size={13} />
                   {generatingRevPdf === rev.id ? 'Building…' : 'PDF'}
@@ -1606,18 +1606,18 @@ export default function VariationDetail() {
 
       {/* Awaiting Client Response Warning Modal */}
       {showClientWarning && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowClientWarning(null)}>
-          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#111827]/20 px-0 sm:px-4" onClick={() => setShowClientWarning(null)}>
+          <div className="bg-[#FFFCF5] rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <div className="w-9 h-9 rounded-full bg-[#FBF1D6] flex items-center justify-center flex-shrink-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C6500" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               </div>
-              <h3 className="text-[15px] font-semibold text-[#111827]">Awaiting client response</h3>
+              <h3 className="text-[15px] font-medium text-[#111827]">Awaiting client response</h3>
             </div>
             <p className="text-[14px] text-[#334155] mb-1">
               This variation has been submitted to <strong className="text-[#111827]">{variation.client_email}</strong> and you're still waiting on their response.
             </p>
-            <p className="text-[13px] text-[#64748B] mb-5">
+            <p className="text-[13px] text-[#6B7280] mb-5">
               {showClientWarning === 'edit'
                 ? 'Editing and resubmitting will replace the current version. The client\'s existing email link will no longer work.'
                 : 'Deleting will permanently remove this variation. The client will not be notified.'}
@@ -1632,7 +1632,7 @@ export default function VariationDetail() {
                   if (showClientWarning === 'edit') { setShowClientWarning(null); startEditing(); }
                   else { setShowClientWarning(null); setShowDeleteConfirm(true); }
                 }}
-                className={`px-4 py-1.5 text-[13px] font-semibold text-white rounded-lg transition-colors ${showClientWarning === 'delete' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-amber-600 hover:bg-amber-700'}`}
+                className={`px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] rounded-lg transition-colors ${showClientWarning === 'delete' ? 'bg-[#B42318] hover:bg-[#7A1810]' : 'bg-[#D99A00] hover:bg-[#8C6500]'}`}
               >
                 {showClientWarning === 'edit' ? 'Edit anyway' : 'Delete anyway'}
               </button>
@@ -1643,15 +1643,15 @@ export default function VariationDetail() {
 
       {/* Delete Variation Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-2">Delete Variation</h3>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#111827]/20 px-0 sm:px-4" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="bg-[#FFFCF5] rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+            <h3 className="text-[15px] font-medium text-[#111827] mb-2">Delete Variation</h3>
             <p className="text-[14px] text-[#334155] mb-1">
               Are you sure you want to delete <span className="font-medium text-[#111827]">Variation #{variation.sequence_number}: {variation.title}</span>?
             </p>
-            <p className="text-[13px] text-[#64748B] mb-5">This will permanently delete the variation and all associated photos, voice notes, and documents. This cannot be undone.</p>
+            <p className="text-[13px] text-[#6B7280] mb-5">This will permanently delete the variation and all associated photos, voice notes, and documents. This cannot be undone.</p>
             {deleteError && (
-              <p className="text-[13px] text-[#B42318] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 mb-4">{deleteError}</p>
+              <p className="text-[13px] text-[#B42318] bg-[#FBE6E4] border border-[#FBE6E4] rounded-md px-3 py-2 mb-4">{deleteError}</p>
             )}
             <div className="flex justify-end gap-2">
               <button
@@ -1664,7 +1664,7 @@ export default function VariationDetail() {
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="px-4 py-1.5 text-[13px] font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 disabled:opacity-40 transition-colors duration-[120ms]"
+                className="px-4 py-1.5 text-[13px] font-medium text-[#7A1810] bg-[#FBE6E4] border border-[#D8D2C4] rounded-lg hover:bg-[#FBE6E4] disabled:opacity-40 transition-colors duration-[120ms]"
               >
                 {deleting ? 'Deleting...' : 'Delete Variation'}
               </button>
@@ -1674,25 +1674,25 @@ export default function VariationDetail() {
       )}
       {/* Mobile sticky action bar */}
       {!editing && !isField && (
-        <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 bg-white border-t border-slate-200 px-4 py-3 flex flex-col gap-2 shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
+        <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 bg-[#FFFCF5] border-t border-[#D8D2C4] px-4 py-3 flex flex-col gap-2 shadow-[0_-2px_12px_rgba(17,24,39,0.08)]">
           {isDraft && (
             <>
               <button
                 onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
                 disabled={advancingStatus}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-[#E76F00] rounded-xl disabled:opacity-40 transition-colors active:bg-[#C75A00]"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] rounded-xl disabled:opacity-40 transition-colors active:bg-[#C75A00]"
               >
                 <Send size={15} />
                 {advancingStatus ? 'Saving…' : 'Submit to Client'}
               </button>
               <div className="grid grid-cols-2 gap-2">
-                <button onClick={startEditing} className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+                <button onClick={startEditing} className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-xl hover:bg-[#F5F2EA] transition-colors">
                   Edit
                 </button>
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50 transition-colors"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50 transition-colors"
                 >
                   <FileText size={14} /> {sendingEmail ? '…' : 'PDF / Send'}
                 </button>
@@ -1704,7 +1704,7 @@ export default function VariationDetail() {
               <button
                 onClick={() => handleAdvanceStatus('approved')}
                 disabled={advancingStatus}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-emerald-600 rounded-xl disabled:opacity-40 transition-colors active:bg-emerald-700"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#2E7D32] rounded-xl disabled:opacity-40 transition-colors active:bg-[#2E7D32]"
               >
                 <CheckCircle size={15} /> {advancingStatus ? '…' : 'Approved by Client'}
               </button>
@@ -1712,21 +1712,21 @@ export default function VariationDetail() {
                 <button
                   onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }}
                   disabled={advancingStatus}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-200 rounded-xl"
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#B42318] bg-[#FBE6E4] border border-[#D8D2C4] rounded-xl"
                 >
                   Rejected
                 </button>
                 <button
                   onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
                 >
                   <Send size={14} /> {sendingEmail ? '…' : 'Resend'}
                 </button>
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
                 >
                   <FileText size={14} /> {sendingEmail ? '…' : 'PDF'}
                 </button>
@@ -1737,14 +1737,14 @@ export default function VariationDetail() {
             <>
               <button
                 onClick={startRevising}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-[#E76F00] rounded-xl transition-colors active:bg-[#C75A00]"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] rounded-xl transition-colors active:bg-[#C75A00]"
               >
                 <ArrowUpRight size={15} /> Revise
               </button>
               <button
                 onClick={handleSendEmail}
                 disabled={sendingEmail}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
               >
                 <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
               </button>
@@ -1755,14 +1755,14 @@ export default function VariationDetail() {
               <button
                 onClick={() => handleAdvanceStatus('paid')}
                 disabled={advancingStatus}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-emerald-700 rounded-xl disabled:opacity-40 transition-colors active:bg-emerald-800"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#2E7D32] rounded-xl disabled:opacity-40 transition-colors active:bg-[#1F5223]"
               >
                 <CheckCircle size={15} /> {advancingStatus ? '…' : 'Mark as Paid'}
               </button>
               <button
                 onClick={handleSendEmail}
                 disabled={sendingEmail}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
               >
                 <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
               </button>
@@ -1772,7 +1772,7 @@ export default function VariationDetail() {
             <button
               onClick={handleSendEmail}
               disabled={sendingEmail}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
             >
               <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
             </button>

@@ -1,10 +1,10 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" rx="112" fill="#4f46e5"/>
-  <text x="256" y="340" 
-    font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
-    font-size="240" 
-    font-weight="700" 
+  <rect width="512" height="512" rx="112" fill="#E76F00"/>
+  <text x="256" y="340"
+    font-family="IBM Plex Sans, -apple-system, BlinkMacSystemFont, sans-serif"
+    font-size="240"
+    font-weight="500"
     letter-spacing="-8"
-    fill="white" 
+    fill="#FFFCF5"
     text-anchor="middle">vs</text>
 </svg>

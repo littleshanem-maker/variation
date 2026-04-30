@@ -32,11 +32,11 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center" style={{ backgroundColor: '#EEF2F7' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center" style={{ backgroundColor: '#F5F2EA' }}>
       <div className="w-full max-w-sm mx-auto px-6">
         <div className="flex flex-col items-center mb-8">
           <Logo size={64} className="mb-5" />
-          <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#111827' }}>
+          <h1 className="text-2xl font-medium tracking-tight" style={{ color: '#111827' }}>
             Reset your password
           </h1>
           <p className="text-sm mt-1.5 text-center" style={{ color: '#334155' }}>
@@ -45,9 +45,9 @@ export default function ForgotPasswordPage() {
         </div>
 
         {sent ? (
-          <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
+          <div className="bg-[#FFFCF5] rounded-2xl p-6 shadow-sm text-center">
             <div className="text-3xl mb-3">📧</div>
-            <h2 className="font-semibold text-[#111827] mb-2">Check your email</h2>
+            <h2 className="font-medium text-[#111827] mb-2">Check your email</h2>
             <p className="text-sm text-[#334155] mb-5">
               We've sent a password reset link to <strong>{email}</strong>. Check your inbox and click the link to reset your password.
             </p>
@@ -56,15 +56,15 @@ export default function ForgotPasswordPage() {
             </Link>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
+          <form onSubmit={handleSubmit} className="bg-[#FFFCF5] rounded-2xl p-6 shadow-sm space-y-4">
             {error && (
-              <div className="rounded-lg px-4 py-3 text-sm font-medium bg-red-50 text-[#971D14] border border-red-200">
+              <div className="rounded-lg px-4 py-3 text-sm font-medium bg-[#FBE6E4] text-[#7A1810] border border-[#D8D2C4]">
                 {error}
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium mb-1.5" style={{ color: '#374151' }}>
+              <label className="block text-sm font-medium mb-1.5" style={{ color: '#334155' }}>
                 Email address
               </label>
               <input
@@ -76,8 +76,8 @@ export default function ForgotPasswordPage() {
                 className="w-full rounded-lg text-sm outline-none transition-all"
                 style={{
                   padding: '12px 14px',
-                  border: '1px solid #D1D5DB',
-                  backgroundColor: '#F9FAFB',
+                  border: '1px solid #D8D2C4',
+                  backgroundColor: '#FFFCF5',
                   color: '#111827',
                 }}
               />
@@ -86,11 +86,11 @@ export default function ForgotPasswordPage() {
             <button
               type="submit"
               disabled={loading || !email}
-              className="w-full rounded-lg text-base font-semibold transition-all"
+              className="w-full rounded-lg text-base font-medium transition-all"
               style={{
                 padding: '12px',
                 backgroundColor: '#E76F00',
-                color: '#FFFFFF',
+                color: '#FFFCF5',
                 border: 'none',
                 cursor: loading || !email ? 'not-allowed' : 'pointer',
                 opacity: loading || !email ? 0.5 : 1,

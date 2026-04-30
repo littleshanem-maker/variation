@@ -61,7 +61,7 @@ export default function ArchivedProjects() {
     return (
       <AppShell>
         <TopBar title="Archived projects" />
-        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div>
       </AppShell>
     );
   }
@@ -81,13 +81,13 @@ export default function ArchivedProjects() {
         </div>
 
         {projects.length === 0 ? (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-12 text-center text-[#64748B] text-sm">
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-12 text-center text-[#6B7280] text-sm">
             No archived projects.
           </div>
         ) : (
-          <div className="bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden">
             {/* Mobile card layout */}
-            <div className="md:hidden divide-y divide-[#E7E0D2]">
+            <div className="md:hidden divide-y divide-[#D8D2C4]">
               {projects.map(p => {
                 const totalValue = p.variations.reduce((sum, v) => sum + v.estimated_value, 0);
                 return (
@@ -99,7 +99,7 @@ export default function ArchivedProjects() {
                     <button
                       onClick={() => handleUnarchive(p.id)}
                       disabled={p.unarchiving}
-                      className="flex-shrink-0 px-3 py-1 text-[12px] font-medium text-[#334155] border border-[#D8D2C4] rounded hover:bg-[#F5F3EF] disabled:opacity-40 transition-colors duration-[120ms]"
+                      className="flex-shrink-0 px-3 py-1 text-[12px] font-medium text-[#334155] border border-[#D8D2C4] rounded hover:bg-[#F5F2EA] disabled:opacity-40 transition-colors duration-[120ms]"
                     >
                       {p.unarchiving ? 'Restoring...' : 'Unarchive'}
                     </button>
@@ -127,7 +127,7 @@ export default function ArchivedProjects() {
                     return (
                       <tr
                         key={p.id}
-                        className={`h-[44px] border-b border-[#E7E0D2] ${i === projects.length - 1 ? 'border-b-0' : ''}`}
+                        className={`h-[44px] border-b border-[#D8D2C4] ${i === projects.length - 1 ? 'border-b-0' : ''}`}
                       >
                         <td className="px-5 py-2.5 text-[14px] font-medium text-[#111827]">{p.name}</td>
                         <td className="px-5 py-2.5 text-[13px] text-[#334155]">{p.client}</td>
@@ -138,7 +138,7 @@ export default function ArchivedProjects() {
                           <button
                             onClick={() => handleUnarchive(p.id)}
                             disabled={p.unarchiving}
-                            className="px-3 py-1 text-[12px] font-medium text-[#334155] border border-[#D8D2C4] rounded hover:bg-[#F5F3EF] disabled:opacity-40 transition-colors duration-[120ms]"
+                            className="px-3 py-1 text-[12px] font-medium text-[#334155] border border-[#D8D2C4] rounded hover:bg-[#F5F2EA] disabled:opacity-40 transition-colors duration-[120ms]"
                           >
                             {p.unarchiving ? 'Restoring...' : 'Unarchive'}
                           </button>

@@ -180,19 +180,19 @@ function JoinForm() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-[#64748B] text-sm">Loading invitation...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#FFFCF5]">
+        <p className="text-[#6B7280] text-sm">Loading invitation...</p>
       </div>
     );
   }
 
   if (error && !invite) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FFFCF5] px-6">
         <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: '#17212B' }}>
-          <span className="text-white text-sm font-bold tracking-tight">VC</span>
+          <span className="text-[#FFFCF5] text-sm font-medium tracking-tight">VC</span>
         </div>
-        <h1 className="text-xl font-semibold text-[#111827] mb-2">Invalid Invitation</h1>
+        <h1 className="text-xl font-medium text-[#111827] mb-2">Invalid Invitation</h1>
         <p className="text-[#334155] text-sm text-center max-w-sm">{error}</p>
         <a href="/login" className="mt-6 text-sm font-medium text-[#17212B] hover:text-[#334155]">Go to Login →</a>
       </div>
@@ -202,18 +202,18 @@ function JoinForm() {
   if (!invite) return null;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-white">
+    <div className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-[#FFFCF5]">
       {/* Top gradient */}
-      <div className="absolute top-0 left-0 right-0 h-64" style={{ background: 'linear-gradient(180deg, #E2E8F0 0%, #EEF2F7 40%, rgba(255,255,255,0) 100%)' }} />
-      <div className="absolute top-0 left-0 right-0 h-40 opacity-30" style={{ background: 'linear-gradient(135deg, #CBD5E1 0%, #DDD6CC 50%, #C7D2E0 100%)' }} />
+      <div className="absolute top-0 left-0 right-0 h-64" style={{ background: 'linear-gradient(180deg, #D8D2C4 0%, #F5F2EA 40%, rgba(255,252,245,0) 100%)' }} />
+      <div className="absolute top-0 left-0 right-0 h-40 opacity-30" style={{ background: 'linear-gradient(135deg, #D8D2C4 0%, #D8D2C4 50%, #D8D2C4 100%)' }} />
 
       <div className="relative z-10 w-full max-w-sm mx-auto px-6">
         {/* Logo */}
         <div className="flex flex-col items-center mb-6">
           <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ backgroundColor: '#17212B' }}>
-            <span className="text-white text-sm font-bold tracking-tight">VC</span>
+            <span className="text-[#FFFCF5] text-sm font-medium tracking-tight">VC</span>
           </div>
-          <h1 className="text-2xl font-semibold tracking-tight text-[#111827]">
+          <h1 className="text-2xl font-medium tracking-tight text-[#111827]">
             Join {invite.company_name}
           </h1>
           <p className="text-sm mt-1.5 text-[#334155]">
@@ -238,7 +238,7 @@ function JoinForm() {
         </div>
 
         {error && (
-          <div className="mb-5 px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B42318' }}>
+          <div className="mb-5 px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FBE6E4', border: '1px solid rgba(180,35,24,0.15)', color: '#B42318' }}>
             {error}
           </div>
         )}
@@ -248,14 +248,14 @@ function JoinForm() {
           <button
             onClick={handleJoinExisting}
             disabled={joining}
-            className="w-full rounded-lg text-base font-semibold transition-all"
+            className="w-full rounded-lg text-base font-medium transition-all"
             style={{
               padding: '12px',
               backgroundColor: '#17212B',
-              color: '#FFFFFF',
+              color: '#FFFCF5',
               opacity: joining ? 0.5 : 1,
               cursor: joining ? 'not-allowed' : 'pointer',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              boxShadow: '0 1px 3px rgba(17,24,39,0.1)',
             }}
           >
             {joining ? 'Joining...' : `Join ${invite.company_name}`}
@@ -269,8 +269,8 @@ function JoinForm() {
                 value={fullName}
                 onChange={e => setFullName(e.target.value)}
                 className="w-full rounded-lg text-base outline-none transition-all"
-                style={{ padding: '12px 16px', backgroundColor: '#FFFFFF', border: '1px solid #D8D2C4', color: '#111827' }}
-                onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                style={{ padding: '12px 16px', backgroundColor: '#FFFCF5', border: '1px solid #D8D2C4', color: '#111827' }}
+                onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
                 onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                 placeholder="Full name"
               />
@@ -281,7 +281,7 @@ function JoinForm() {
                 value={invite.email}
                 disabled
                 className="w-full rounded-lg text-base outline-none"
-                style={{ padding: '12px 16px', backgroundColor: '#F3F4F6', border: '1px solid #D8D2C4', color: '#334155' }}
+                style={{ padding: '12px 16px', backgroundColor: '#F5F2EA', border: '1px solid #D8D2C4', color: '#334155' }}
               />
             </div>
             <div className="relative">
@@ -290,8 +290,8 @@ function JoinForm() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
                 className="w-full rounded-lg text-base outline-none transition-all"
-                style={{ padding: '12px 44px 12px 16px', backgroundColor: '#FFFFFF', border: '1px solid #D8D2C4', color: '#111827' }}
-                onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                style={{ padding: '12px 44px 12px 16px', backgroundColor: '#FFFCF5', border: '1px solid #D8D2C4', color: '#111827' }}
+                onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
                 onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                 placeholder="Create a password"
                 required
@@ -301,7 +301,7 @@ function JoinForm() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute top-1/2 -translate-y-1/2"
-                style={{ right: '12px', color: '#64748B', background: 'none', border: 'none', cursor: 'pointer' }}
+                style={{ right: '12px', color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer' }}
                 tabIndex={-1}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -324,14 +324,14 @@ function JoinForm() {
             <button
               type="submit"
               disabled={submitting || !password}
-              className="w-full rounded-lg text-base font-semibold transition-all"
+              className="w-full rounded-lg text-base font-medium transition-all"
               style={{
                 padding: '12px',
                 backgroundColor: '#17212B',
-                color: '#FFFFFF',
+                color: '#FFFCF5',
                 opacity: (submitting || !password) ? 0.5 : 1,
                 cursor: (submitting || !password) ? 'not-allowed' : 'pointer',
-                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                boxShadow: '0 1px 3px rgba(17,24,39,0.1)',
               }}
             >
               {submitting ? 'Creating account...' : 'Create Account & Join'}
@@ -345,7 +345,7 @@ function JoinForm() {
           </a>
         </div>
 
-        <p className="text-center text-xs mt-10 text-[#C4C9D0]">
+        <p className="text-center text-xs mt-10 text-[#6B7280]">
           Leveraged Systems · Leveraged Systems
         </p>
       </div>
@@ -356,8 +356,8 @@ function JoinForm() {
 export default function JoinPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-[#64748B] text-sm">Loading...</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#FFFCF5]">
+        <p className="text-[#6B7280] text-sm">Loading...</p>
       </div>
     }>
       <JoinForm />

@@ -81,11 +81,11 @@ export default function Sidebar() {
   return (
     <>
 
-      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[240px] bg-[#17212B] text-white flex-col z-50">
+      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[240px] bg-[#17212B] text-[#FFFCF5] flex-col z-50">
         <div className="px-6 py-6">
           <a href="https://variationshield.com.au" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <Logo size={32} />
-            <span className="font-semibold text-[15px] tracking-tight">Variation Shield</span>
+            <span className="font-medium text-[15px] tracking-tight">Variation Shield</span>
           </a>
           {company && (
             <div className="mt-2 text-[12px] text-[#6B7280] truncate">{company.name}</div>
@@ -96,7 +96,7 @@ export default function Sidebar() {
           <div className="px-3 pb-2">
             <Link
               href="/capture"
-              className="flex items-center gap-2.5 px-3 py-2 border border-[#E76F00] bg-[#E76F00] text-white text-[13px] font-medium hover:bg-[#C75A00] hover:border-[#C75A00] hover:-translate-y-px transition-all"
+              className="flex items-center gap-2.5 px-3 py-2 border border-[#E76F00] bg-[#E76F00] text-[#FFFCF5] text-[13px] font-medium hover:bg-[#C75A00] hover:border-[#C75A00] hover:-translate-y-px transition-all"
             >
               <Zap size={15} strokeWidth={2.5} />
               Quick capture
@@ -114,8 +114,8 @@ export default function Sidebar() {
                 href={item.href}
                 className={`relative flex items-center justify-between gap-2.5 px-3 py-2.5 text-[13px] transition-colors duration-[120ms] ease-out ${
                   active
-                    ? 'text-[#FFFCF5] font-medium bg-white/[0.04]'
-                    : 'text-white/55 hover:text-[#FFFCF5] hover:bg-white/[0.03] font-medium'
+                    ? 'text-[#FFFCF5] font-medium bg-[#FFFCF5]/[0.04]'
+                    : 'text-[#FFFCF5]/55 hover:text-[#FFFCF5] hover:bg-[#FFFCF5]/[0.03] font-medium'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
@@ -125,12 +125,12 @@ export default function Sidebar() {
                   <Icon
                     size={15}
                     strokeWidth={active ? 2.2 : 1.8}
-                    className={active ? 'text-white' : 'text-white/50'}
+                    className={active ? 'text-[#FFFCF5]' : 'text-[#FFFCF5]/50'}
                   />
                   {item.label}
                 </div>
                 {item.href === '/notifications' && notifCount > 0 && (
-                  <span className="num flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-medium bg-[#B42318] text-white rounded-full">
+                  <span className="num flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-medium bg-[#B42318] text-[#FFFCF5] rounded-full">
                     {notifCount > 99 ? '99+' : notifCount}
                   </span>
                 )}
@@ -147,15 +147,15 @@ export default function Sidebar() {
                 ? 'bg-[#FBE6E4] border border-[#B42318]/20'
                 : varCount >= varLimit - 1
                 ? 'bg-[#FBF1D6] border border-[#D99A00]/20'
-                : 'bg-white/[0.04] border border-white/[0.08]'
+                : 'bg-[#FFFCF5]/[0.04] border border-[#FFFCF5]/[0.08]'
             }`}>
               <div className={`mb-1 ${
-                varCount >= varLimit ? 'text-[#7A1810]' : varCount >= varLimit - 1 ? 'text-[#8C6500]' : 'text-white/70'
+                varCount >= varLimit ? 'text-[#7A1810]' : varCount >= varLimit - 1 ? 'text-[#8C6500]' : 'text-[#FFFCF5]/70'
               }`}>
                 <span className="cond text-[11px]">Usage</span>{' '}
                 <span className="num">{varCount}</span> / <span className="num">{varLimit}</span> variations used
               </div>
-              <div className="w-full bg-white/10 rounded-full h-1 mb-2">
+              <div className="w-full bg-[#FFFCF5]/10 rounded-full h-1 mb-2">
                 <div
                   className={`h-1 rounded-full transition-all ${
                     varCount >= varLimit ? 'bg-[#B42318]' : varCount >= varLimit - 1 ? 'bg-[#D99A00]' : 'bg-[#E76F00]'
@@ -168,7 +168,7 @@ export default function Sidebar() {
                   Upgrade to capture more
                 </a>
               ) : (
-                <span className="text-white/40"><span className="num">{varLimit - varCount}</span> remaining</span>
+                <span className="text-[#FFFCF5]/40"><span className="num">{varLimit - varCount}</span> remaining</span>
               )}
             </div>
           </div>
@@ -177,13 +177,13 @@ export default function Sidebar() {
         <div className="px-3 py-4 space-y-1">
           <button
             onClick={() => setFeedbackOpen(true)}
-            className="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-white/55 hover:text-[#FFFCF5] hover:bg-white/[0.03] transition-colors"
+            className="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-[#FFFCF5]/55 hover:text-[#FFFCF5] hover:bg-[#FFFCF5]/[0.03] transition-colors"
           >
-            <MessageSquare size={15} strokeWidth={1.8} className="text-white/50" />
+            <MessageSquare size={15} strokeWidth={1.8} className="text-[#FFFCF5]/50" />
             Feedback
           </button>
           <div className="px-3 pt-1">
-            <div className="cond text-[11px] text-white/30 capitalize">{role} access</div>
+            <div className="cond text-[11px] text-[#FFFCF5]/30 capitalize">{role} access</div>
           </div>
         </div>
       </aside>

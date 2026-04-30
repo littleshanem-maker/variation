@@ -25,7 +25,7 @@ export default function Logo({ size = 32, className = '' }: LogoProps) {
       <path
         d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
         fill="none"
-        stroke="rgba(255,255,255,0.25)"
+        stroke="rgba(255,252,245,0.25)"
         strokeWidth="1"
         strokeLinecap="round"
         strokeLinejoin="round"

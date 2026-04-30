@@ -9,7 +9,7 @@ import type { Metadata } from 'next';
 
 const inputBase = {
   padding: '12px 16px',
-  backgroundColor: '#FFFFFF',
+  backgroundColor: '#FFFCF5',
   border: '1px solid #D8D2C4',
   color: '#111827',
   borderRadius: '8px',
@@ -78,13 +78,13 @@ function FreeSignupContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center" style={{ backgroundColor: '#EEF2F7' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center" style={{ backgroundColor: '#F5F2EA' }}>
       <div className="w-full max-w-sm mx-auto px-6">
 
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <Logo size={64} className="mb-5" />
-          <h1 className="text-2xl font-semibold tracking-tight text-center" style={{ color: '#111827' }}>
+          <h1 className="text-2xl font-medium tracking-tight text-center" style={{ color: '#111827' }}>
             Start for free
           </h1>
           <p className="text-sm mt-1.5 text-center" style={{ color: '#334155' }}>
@@ -93,7 +93,7 @@ function FreeSignupContent() {
         </div>
 
         {error && (
-          <div className="mb-5 px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B42318' }}>
+          <div className="mb-5 px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FBE6E4', border: '1px solid rgba(180,35,24,0.15)', color: '#B42318' }}>
             {error}
           </div>
         )}
@@ -104,7 +104,7 @@ function FreeSignupContent() {
             value={fullName}
             onChange={e => setFullName(e.target.value)}
             style={inputBase}
-            onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+            onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
             onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
             placeholder="Full name"
             required
@@ -115,7 +115,7 @@ function FreeSignupContent() {
             value={companyName}
             onChange={e => setCompanyName(e.target.value)}
             style={inputBase}
-            onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+            onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
             onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
             placeholder="Company name"
             required
@@ -125,7 +125,7 @@ function FreeSignupContent() {
             value={email}
             onChange={e => setEmail(e.target.value)}
             style={inputBase}
-            onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+            onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
             onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
             placeholder="Work email"
             required
@@ -136,7 +136,7 @@ function FreeSignupContent() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               style={{ ...inputBase, paddingRight: '48px' }}
-              onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+              onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
               onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
               placeholder="Password (min. 6 characters)"
               minLength={6}
@@ -155,14 +155,14 @@ function FreeSignupContent() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-50"
+            className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] transition-colors disabled:opacity-50"
             style={{ backgroundColor: '#E76F00' }}
           >
             {loading ? 'Creating account…' : 'Create free account'}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-xs" style={{ color: '#64748B' }}>
+        <p className="mt-4 text-center text-xs" style={{ color: '#6B7280' }}>
           Free plan: 1 project · 3 variations · no credit card
         </p>
 

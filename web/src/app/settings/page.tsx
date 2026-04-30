@@ -150,8 +150,8 @@ export default function SettingsPage() {
 
   const roleBadgeColors: Record<string, string> = {
     admin: 'bg-[#17212B]/10 text-[#17212B]',
-    office: 'bg-[#E76F00]/10 text-[#96752A]',
-    field: 'bg-[#E8713A]/10 text-[#B85A2B]',
+    office: 'bg-[#E76F00]/10 text-[#8C6500]',
+    field: 'bg-[#E76F00]/10 text-[#8C6500]',
   };
 
   return (
@@ -160,8 +160,8 @@ export default function SettingsPage() {
       <div className="p-4 md:p-8 max-w-lg space-y-6">
 
         {/* Account */}
-        <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[16px] font-semibold text-[#111827] border-b border-[#E7E0D2] pb-3 mb-4">Account</h3>
+        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+          <h3 className="text-[16px] font-medium text-[#111827] border-b border-[#D8D2C4] pb-3 mb-4">Account</h3>
           {email && (
             <div className="flex flex-col gap-3">
               <div className="min-w-0">
@@ -182,21 +182,21 @@ export default function SettingsPage() {
                     value={displayName}
                     onChange={e => setDisplayName(e.target.value)}
                     placeholder="Your full name"
-                    className="flex-1 px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-white text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]"
+                    className="flex-1 px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]"
                   />
                   <button
                     onClick={handleSaveDisplayName}
                     disabled={savingName || !displayName.trim()}
-                    className="px-3 py-2 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
+                    className="px-3 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
                   >
                     {nameSaved ? '✓ Saved' : savingName ? '…' : 'Save'}
                   </button>
                 </div>
-                <p className="text-[12px] text-[#64748B] mt-1">Used as &ldquo;Issued By&rdquo; on new notices.</p>
+                <p className="text-[12px] text-[#6B7280] mt-1">Used as &ldquo;Issued By&rdquo; on new notices.</p>
               </div>
 
               {/* Change Password */}
-              <div className="pt-1 border-t border-[#E7E0D2]">
+              <div className="pt-1 border-t border-[#D8D2C4]">
                 <label className="block text-[12px] font-medium text-[#334155] uppercase tracking-wider mb-2 mt-3">Change Password</label>
                 <div className="space-y-2">
                   <input
@@ -204,27 +204,27 @@ export default function SettingsPage() {
                     value={currentPassword}
                     onChange={e => setCurrentPassword(e.target.value)}
                     placeholder="Current password"
-                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-white text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]"
                   />
                   <input
                     type="password"
                     value={newPassword}
                     onChange={e => setNewPassword(e.target.value)}
                     placeholder="New password"
-                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-white text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]"
                   />
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
                     placeholder="Confirm new password"
-                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-white text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]"
                   />
                   {passwordError && <p className="text-[12px] text-[#B42318]">{passwordError}</p>}
                   <button
                     onClick={handleChangePassword}
                     disabled={changingPassword || !currentPassword || !newPassword || !confirmPassword}
-                    className="w-full py-2 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
+                    className="w-full py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
                   >
                     {passwordSaved ? '✓ Password updated' : changingPassword ? 'Updating…' : 'Update Password'}
                   </button>
@@ -243,32 +243,32 @@ export default function SettingsPage() {
 
         {/* Company Settings — admin only */}
         {isAdmin && (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[16px] font-semibold text-[#111827] border-b border-[#E7E0D2] pb-3 mb-4">Company Settings</h3>
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+            <h3 className="text-[16px] font-medium text-[#111827] border-b border-[#D8D2C4] pb-3 mb-4">Company Settings</h3>
             <div className="space-y-4">
 
               {/* Logo */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-2">Company Logo</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-2">Company Logo</label>
                 <div className="flex items-center gap-4">
                   {logoUrl ? (
-                    <img src={logoUrl} alt="Company logo" className="h-14 w-14 object-contain rounded-md border border-[#D8D2C4] bg-white p-1" />
+                    <img src={logoUrl} alt="Company logo" className="h-14 w-14 object-contain rounded-md border border-[#D8D2C4] bg-[#FFFCF5] p-1" />
                   ) : (
-                    <div className="h-14 w-14 rounded-md border border-dashed border-[#D1D5DB] flex items-center justify-center text-[#64748B] text-xs text-center">No logo</div>
+                    <div className="h-14 w-14 rounded-md border border-dashed border-[#D8D2C4] flex items-center justify-center text-[#6B7280] text-xs text-center">No logo</div>
                   )}
                   <div>
                     <label className="cursor-pointer inline-block px-3 py-2 text-[13px] font-medium text-[#17212B] bg-[#17212B]/5 border border-[#17212B]/20 rounded-md hover:bg-[#17212B]/10 transition-colors">
                       {logoUploading ? 'Uploading…' : logoUrl ? 'Replace logo' : 'Upload logo'}
                       <input type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" className="hidden" onChange={handleLogoUpload} disabled={logoUploading} />
                     </label>
-                    <p className="text-[11px] text-[#64748B] mt-1">PNG, JPG or SVG · Appears on all printed documents</p>
+                    <p className="text-[11px] text-[#6B7280] mt-1">PNG, JPG or SVG · Appears on all printed documents</p>
                   </div>
                 </div>
               </div>
 
               {/* Company Name */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-1.5">Company Name</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-1.5">Company Name</label>
                 <input
                   type="text"
                   value={companyName}
@@ -279,7 +279,7 @@ export default function SettingsPage() {
 
               {/* ABN */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-1.5">ABN</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-1.5">ABN</label>
                 <input
                   type="text"
                   value={companyAbn}
@@ -291,7 +291,7 @@ export default function SettingsPage() {
 
               {/* Address */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-1.5">Address</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-1.5">Address</label>
                 <input
                   type="text"
                   value={companyAddress}
@@ -303,7 +303,7 @@ export default function SettingsPage() {
 
               {/* Phone */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-1.5">Phone</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-1.5">Phone</label>
                 <input
                   type="text"
                   value={companyPhone}
@@ -315,24 +315,24 @@ export default function SettingsPage() {
 
               {/* Contract Standard */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-widest text-[#64748B] mb-1.5">Contract Standard</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-1.5">Contract Standard</label>
                 <select
                   value={preferredStandard}
                   onChange={e => setPreferredStandard(e.target.value as any)}
-                  className="w-full px-3 py-2.5 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-white"
+                  className="w-full px-3 py-2.5 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-[#FFFCF5]"
                 >
                   <option value="both">AS 4000–1997 and AS 2124–1992 (both cited)</option>
                   <option value="AS4000">AS 4000–1997 only (Clause 36)</option>
                   <option value="AS2124">AS 2124–1992 only (Clause 40)</option>
                 </select>
-                <p className="text-[11px] text-[#64748B] mt-1">Applied to the notice language on all printed Variation Requests and Notices</p>
+                <p className="text-[11px] text-[#6B7280] mt-1">Applied to the notice language on all printed Variation Requests and Notices</p>
               </div>
 
               <div className="flex items-center gap-3 pt-1">
                 <button
                   onClick={handleSaveCompany}
                   disabled={savingCompany || !companyName.trim()}
-                  className="flex-1 sm:flex-none px-4 py-2.5 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
+                  className="flex-1 sm:flex-none px-4 py-2.5 text-[13px] font-medium text-[#FFFCF5] bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
                 >
                   {savingCompany ? 'Saving...' : 'Save'}
                 </button>
@@ -343,10 +343,10 @@ export default function SettingsPage() {
         )}
 
         {/* About */}
-        <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[16px] font-semibold text-[#111827] border-b border-[#E7E0D2] pb-3 mb-4">About</h3>
+        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+          <h3 className="text-[16px] font-medium text-[#111827] border-b border-[#D8D2C4] pb-3 mb-4">About</h3>
           <p className="text-[14px] text-[#334155]">Variation Shield · <span className="capitalize">{role}</span> Access</p>
-          <p className="text-[13px] text-[#64748B] mt-1">Version 2.1.0 · Leveraged Systems</p>
+          <p className="text-[13px] text-[#6B7280] mt-1">Version 2.1.0 · Leveraged Systems</p>
         </div>
 
       </div>

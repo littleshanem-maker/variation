@@ -10,7 +10,7 @@
   --color-navy-light: #334155;
   --color-border: #D8D2C4;
   --color-border-light: #D8D2C4;
-  --color-hover: #EFE9DC;
+  --color-hover: #F5F2EA;
   --color-gold: #E76F00;
   --color-gold-hover: #C75A00;
   --color-status-approved: #2E7D32;
@@ -25,7 +25,7 @@
   --color-pill-danger-fg: #7A1810;
   --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-condensed: 'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 body {
@@ -60,7 +60,7 @@ body {
 }
 
 .mono {
-  font-family: var(--font-mono);
+  font-family: var(--mono);
 }
 
 /* Prevent iOS auto-zoom on input focus (requires font-size >= 16px on mobile) */

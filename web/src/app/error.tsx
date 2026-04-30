@@ -33,7 +33,7 @@ export default function Error({ error, reset }: ErrorProps) {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '60vh',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#FFFCF5',
         fontFamily: 'system-ui, -apple-system, sans-serif',
         padding: '24px',
         textAlign: 'center',
@@ -68,7 +68,7 @@ export default function Error({ error, reset }: ErrorProps) {
         }}
         style={{
           backgroundColor: '#17212B',
-          color: '#ffffff',
+          color: '#FFFCF5',
           border: 'none',
           borderRadius: '8px',
           padding: '10px 20px',

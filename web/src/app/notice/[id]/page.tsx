@@ -515,7 +515,7 @@ export default function NoticeDetail() {
   if (loading) {
     return (
       <AppShell><TopBar title="Variation Notice" />
-        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div>
       </AppShell>
     );
   }
@@ -523,7 +523,7 @@ export default function NoticeDetail() {
   if (!notice || !project) {
     return (
       <AppShell><TopBar title="Variation Notice" />
-        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Notice not found</div>
+        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Notice not found</div>
       </AppShell>
     );
   }
@@ -535,7 +535,7 @@ export default function NoticeDetail() {
   // True when sent to client and still awaiting acknowledgement
   const awaitingClientResponse = notice.status === 'issued' && !!notice.client_email && !notice.acknowledged_at;
 
-  const labelClass = "block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1";
+  const labelClass = "block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1";
 
   return (
     <AppShell>
@@ -545,7 +545,7 @@ export default function NoticeDetail() {
         <div className="space-y-3">
           <Link
             href={`/project/${project.id}`}
-            className="hidden md:flex items-center gap-2 w-full bg-white border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-semibold text-[#17212B] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)] truncate"
+            className="hidden md:flex items-center gap-2 w-full bg-[#FFFCF5] border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-medium text-[#17212B] hover:bg-[#F5F2EA] active:bg-[#F5F2EA] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.04)] truncate"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="flex-shrink-0">
               <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -553,13 +553,13 @@ export default function NoticeDetail() {
             <span className="truncate">Back to {project.name}</span>
           </Link>
           {successMsg && (
-            <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5L6.5 11.5L3 8" stroke="#16a34a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <div className="flex items-center gap-2 bg-[#E5F0E6] border border-[#D8D2C4] text-[#1F5223] rounded-md px-4 py-2.5 text-[13px] font-medium">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 4.5L6.5 11.5L3 8" stroke="#2E7D32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
               {successMsg}
             </div>
           )}
           {saveError && !editing && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
+            <div className="flex items-center gap-2 bg-[#FBE6E4] border border-[#D8D2C4] text-[#7A1810] rounded-md px-4 py-2.5 text-[13px] font-medium">
               ⚠️ {saveError}
             </div>
           )}
@@ -580,7 +580,7 @@ export default function NoticeDetail() {
                       }
                     }}
                     disabled={sendingEmail}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors disabled:opacity-40 shadow-sm whitespace-nowrap"
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors disabled:opacity-40 shadow-sm whitespace-nowrap"
                   >
                     <Send size={14} />
                     {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : showEmailInput ? 'Send' : 'Submit to Client'}
@@ -590,7 +590,7 @@ export default function NoticeDetail() {
                 <button
                   onClick={handleDownloadPdf}
                   disabled={sendingEmail}
-                  className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50 whitespace-nowrap"
+                  className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors disabled:opacity-50 whitespace-nowrap"
                 >
                   <FileText size={14} />
                   {sendingEmail && sendStage === 'idle' ? 'Building…' : 'PDF'}
@@ -599,7 +599,7 @@ export default function NoticeDetail() {
                 {!isField && (
                   <button
                     onClick={() => awaitingClientResponse ? setShowClientWarning('edit') : startEditing()}
-                    className="px-3 py-2 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="px-3 py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors"
                   >
                     Edit
                   </button>
@@ -609,13 +609,13 @@ export default function NoticeDetail() {
                   <button
                     onClick={handleAcknowledge}
                     disabled={advancing}
-                    className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors disabled:opacity-40 whitespace-nowrap"
+                    className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#1F5223] bg-[#E5F0E6] border border-[#D8D2C4] rounded-lg hover:bg-[#E5F0E6] transition-colors disabled:opacity-40 whitespace-nowrap"
                   >
                     <CheckCircle size={14} /> {advancing ? '…' : 'Mark as Acknowledged by Client'}
                   </button>
                 )}
                 {notice.status === 'acknowledged' && (
-                  <button disabled className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg opacity-80 cursor-default whitespace-nowrap">
+                  <button disabled className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#1F5223] bg-[#E5F0E6] border border-[#D8D2C4] rounded-lg opacity-80 cursor-default whitespace-nowrap">
                     <CheckCircle size={14} /> Acknowledged by Client
                   </button>
                 )}
@@ -623,21 +623,21 @@ export default function NoticeDetail() {
                 {canDelete && (
                   <button
                     onClick={() => awaitingClientResponse ? setShowClientWarning('delete') : setShowDeleteConfirm(true)}
-                    className="px-3 py-2 text-[13px] font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 transition-colors whitespace-nowrap"
+                    className="px-3 py-2 text-[13px] font-medium text-[#B42318] bg-[#FBE6E4] border border-[#D8D2C4] rounded-lg hover:bg-[#FBE6E4] transition-colors whitespace-nowrap"
                   >
                     Delete
                   </button>
                 )}
                 {/* Refresh */}
                 {!isField && (
-                  <button onClick={() => window.location.reload()} className="px-3 py-2 text-[13px] font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap">
+                  <button onClick={() => window.location.reload()} className="px-3 py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors whitespace-nowrap">
                     Refresh
                   </button>
                 )}
               </div>
               {/* Inline client email input */}
               {showEmailInput && (
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg space-y-2">
+                <div className="p-3 bg-[#F5F2EA] border border-[#D8D2C4] rounded-lg space-y-2">
                   <EmailAutocomplete
                     value={clientEmailInput}
                     onChange={setClientEmailInput}
@@ -657,7 +657,7 @@ export default function NoticeDetail() {
                     labelSuffix="(optional — internal team)"
                   />
                   <div className="flex items-center gap-2 pt-1">
-                    <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-slate-400 hover:text-slate-600">Cancel</button>
+                    <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-[#6B7280] hover:text-[#334155]">Cancel</button>
                   </div>
                 </div>
               )}
@@ -668,7 +668,7 @@ export default function NoticeDetail() {
             {/* File attachments */}
             <div>
               <div
-                className="w-full px-3 py-3 border border-dashed border-[#D1D5DB] rounded-md text-center cursor-pointer hover:border-[#17212B] hover:bg-[#F8FAFC] transition-colors"
+                className="w-full px-3 py-3 border border-dashed border-[#D8D2C4] rounded-md text-center cursor-pointer hover:border-[#17212B] hover:bg-[#F5F2EA] transition-colors"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <input
@@ -680,33 +680,33 @@ export default function NoticeDetail() {
                   onChange={e => { if (e.target.files) setNewFiles(prev => [...prev, ...Array.from(e.target.files!)]); }}
                 />
                 <p className="text-[13px] text-[#334155]">📎 Attach photos or files</p>
-                <p className="text-[11px] text-[#64748B] mt-0.5">PDF, Word, Excel, Images</p>
+                <p className="text-[11px] text-[#6B7280] mt-0.5">PDF, Word, Excel, Images</p>
               </div>
               {newFiles.length > 0 && (
                 <div className="mt-2 space-y-1">
                   {newFiles.map((f, i) => (
                     <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-[#F5F2EA] rounded text-[13px]">
                       <span className="text-[#111827] truncate">{f.name}</span>
-                      <button type="button" onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))} className="text-[#64748B] hover:text-rose-500 ml-2">✕</button>
+                      <button type="button" onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))} className="text-[#6B7280] hover:text-[#B42318] ml-2">✕</button>
                     </div>
                   ))}
                 </div>
               )}
             </div>
             <div className="flex items-center gap-2">
-              {saveError && <p className="text-[13px] text-rose-600 bg-rose-50 border border-rose-200 rounded-md px-3 py-2">{saveError}</p>}
+              {saveError && <p className="text-[13px] text-[#B42318] bg-[#FBE6E4] border border-[#D8D2C4] rounded-md px-3 py-2">{saveError}</p>}
               <button
                 onClick={() => { setEditing(false); setSaveError(null); }}
-                className="px-3 py-1.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveEdit}
                 disabled={saving || !editDescription.trim()}
-                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-lg hover:bg-[#334155] disabled:opacity-40 transition-colors"
+                className="px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#17212B] rounded-lg hover:bg-[#334155] disabled:opacity-40 transition-colors"
               >
-                {saving ? 'Saving…' : 'Save Changes'}
+                {saving ? 'Saving…' : 'Save changes'}
               </button>
             </div>
             </div>
@@ -716,36 +716,36 @@ export default function NoticeDetail() {
 
 
         {/* Header Card */}
-        <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
-              <div className="text-[12px] font-mono font-bold text-[#17212B] uppercase tracking-wider mb-1 flex items-center gap-2 flex-wrap">
+              <div className="text-[12px] mono font-medium text-[#17212B] uppercase tracking-wider mb-1 flex items-center gap-2 flex-wrap">
                 {notice.notice_number}
                 {editing ? (
-                  <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#E76F00] px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#E76F00] px-1.5 py-0.5 rounded">
                     {revisions.length > 0 ? `Rev ${revisions.length} — Draft` : 'Draft'}
                   </span>
                 ) : (notice.status === 'draft' || hasPendingDraft) ? (
-                  <span className="text-[10px] font-bold uppercase tracking-wide text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-medium uppercase tracking-wide text-[#8C6500] bg-[#FBF1D6] border border-[#D8D2C4] px-1.5 py-0.5 rounded">
                     {hasPendingDraft && revisions.length > 0 ? `Rev ${revisions.length} — Draft` : 'Draft'}
                   </span>
                 ) : (notice.revision_number ?? 0) > 0 ? (
-                  <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#17212B] px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#17212B] px-1.5 py-0.5 rounded">
                     Rev {notice.revision_number}
                   </span>
                 ) : null}
               </div>
-              <h2 className="text-xl font-semibold text-[#111827]">Variation Notice</h2>
+              <h2 className="text-xl font-medium text-[#111827]">Variation Notice</h2>
               <p className="text-[13px] text-[#334155] mt-1">{project.name} · {project.client}</p>
             </div>
             <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0">
               <StatusBadge status={notice.status} />
-              {notice.issued_at && <div className="text-[12px] text-[#64748B] sm:mt-2">Issued {formatDate(notice.issued_at)}</div>}
-              {notice.acknowledged_at && <div className="text-[12px] text-[#64748B] sm:mt-1">Acknowledged {formatDate(notice.acknowledged_at)}</div>}
+              {notice.issued_at && <div className="text-[12px] text-[#6B7280] sm:mt-2">Issued {formatDate(notice.issued_at)}</div>}
+              {notice.acknowledged_at && <div className="text-[12px] text-[#6B7280] sm:mt-1">Acknowledged {formatDate(notice.acknowledged_at)}</div>}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-5 pt-4 md:pt-5 border-t border-[#E7E0D2]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-5 pt-4 md:pt-5 border-t border-[#D8D2C4]">
             {editing ? (
               <>
                 <div>
@@ -790,8 +790,8 @@ export default function NoticeDetail() {
         </div>
 
         {/* Event Description */}
-        <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Description of Event</h3>
+        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+          <h3 className="text-[15px] font-medium text-[#111827] mb-3">Description of Event</h3>
           {editing ? (
             <textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={5} className="w-full px-3 py-2.5 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none resize-none" />
           ) : (
@@ -801,8 +801,8 @@ export default function NoticeDetail() {
 
         {/* Photo Attachments */}
         {documents.length > 0 && (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Attachments</h3>
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+            <h3 className="text-[15px] font-medium text-[#111827] mb-3">Attachments</h3>
             {/* Photos */}
             {documents.filter(d => d.file_type.startsWith('image/')).length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
@@ -825,10 +825,10 @@ export default function NoticeDetail() {
                   const url = docUrls[d.id];
                   return (
                     <a key={d.id} href={url || '#'} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center justify-between px-3 py-2.5 bg-[#F5F2EA] rounded-md hover:bg-[#E7E0D2] transition-colors">
+                      className="flex items-center justify-between px-3 py-2.5 bg-[#F5F2EA] rounded-md hover:bg-[#D8D2C4] transition-colors">
                       <div>
                         <div className="text-[14px] font-medium text-[#111827] truncate">{d.file_name}</div>
-                        <div className="text-[12px] text-[#64748B]">{(d.file_size / 1024).toFixed(0)} KB</div>
+                        <div className="text-[12px] text-[#6B7280]">{(d.file_size / 1024).toFixed(0)} KB</div>
                       </div>
                       <span className="text-[12px] text-[#17212B] font-medium flex-shrink-0 ml-3">Download ↓</span>
                     </a>
@@ -840,8 +840,8 @@ export default function NoticeDetail() {
         )}
 
         {/* Implications Card — office/admin only */}
-        {!isField && <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Impact</h3>
+        {!isField && <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+          <h3 className="text-[15px] font-medium text-[#111827] mb-4">Impact</h3>
           <div className={`grid gap-4 md:gap-6 ${editing ? 'grid-cols-1' : 'grid-cols-2'}`}>
             <div className={editing || (notice.cost_flag && (notice.cost_items as any[])?.length > 0) ? 'col-span-2' : ''}>
               <div className={labelClass}>Cost Impact</div>
@@ -852,7 +852,7 @@ export default function NoticeDetail() {
                       type="checkbox"
                       checked={editCostFlag}
                       onChange={e => setEditCostFlag(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 text-[#E76F00]"
+                      className="w-4 h-4 rounded border-[#D8D2C4] text-[#E76F00]"
                     />
                     <span className="text-[14px] text-[#111827]">Cost impact</span>
                   </label>
@@ -869,17 +869,17 @@ export default function NoticeDetail() {
                     <div className="border border-[#D8D2C4] rounded-md overflow-hidden">
                       <table className="w-full text-[13px]">
                         <thead>
-                          <tr className="bg-slate-50 border-b border-[#D8D2C4]">
-                            <th className="text-left px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider">Description</th>
-                            <th className="text-right px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider w-16">Qty</th>
-                            <th className="text-left px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider w-16">Unit</th>
-                            <th className="text-right px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider w-20">Rate</th>
-                            <th className="text-right px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider w-24">Total</th>
+                          <tr className="bg-[#F5F2EA] border-b border-[#D8D2C4]">
+                            <th className="text-left px-3 py-2 text-[11px] font-medium text-[#6B7280] uppercase tracking-wider">Description</th>
+                            <th className="text-right px-3 py-2 text-[11px] font-medium text-[#6B7280] uppercase tracking-wider w-16">Qty</th>
+                            <th className="text-left px-3 py-2 text-[11px] font-medium text-[#6B7280] uppercase tracking-wider w-16">Unit</th>
+                            <th className="text-right px-3 py-2 text-[11px] font-medium text-[#6B7280] uppercase tracking-wider w-20">Rate</th>
+                            <th className="text-right px-3 py-2 text-[11px] font-medium text-[#6B7280] uppercase tracking-wider w-24">Total</th>
                           </tr>
                         </thead>
                         <tbody>
                           {(notice.cost_items as any[]).map((item: any, i: number) => (
-                            <tr key={i} className="border-b border-[#E7E0D2] last:border-b-0">
+                            <tr key={i} className="border-b border-[#D8D2C4] last:border-b-0">
                               <td className="px-3 py-2 text-[#111827]">{item.description}</td>
                               <td className="px-3 py-2 text-right text-[#111827] tabular-nums">{item.qty}</td>
                               <td className="px-3 py-2 text-[#334155]">{item.unit}</td>
@@ -887,9 +887,9 @@ export default function NoticeDetail() {
                               <td className="px-3 py-2 text-right font-medium text-[#111827] tabular-nums">${Number(item.total).toFixed(2)}</td>
                             </tr>
                           ))}
-                          <tr className="bg-slate-50 border-t-2 border-[#D8D2C4]">
-                            <td colSpan={4} className="px-3 py-2 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total</td>
-                            <td className="px-3 py-2 text-right font-bold text-[#111827] tabular-nums">
+                          <tr className="bg-[#F5F2EA] border-t-2 border-[#D8D2C4]">
+                            <td colSpan={4} className="px-3 py-2 text-right text-[11px] font-medium text-[#6B7280] uppercase tracking-wider">Total</td>
+                            <td className="px-3 py-2 text-right font-medium text-[#111827] tabular-nums">
                               ${(notice.cost_items as any[]).reduce((s: number, i: any) => s + (Number(i.total) || 0), 0).toFixed(2)}
                             </td>
                           </tr>
@@ -909,7 +909,7 @@ export default function NoticeDetail() {
                       type="checkbox"
                       checked={editTimeFlag}
                       onChange={e => setEditTimeFlag(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 text-[#E76F00]"
+                      className="w-4 h-4 rounded border-[#D8D2C4] text-[#E76F00]"
                     />
                     <span className="text-[14px] text-[#111827]">Time impact</span>
                   </label>
@@ -927,7 +927,7 @@ export default function NoticeDetail() {
                       <select
                         value={editTimeUnit}
                         onChange={e => setEditTimeUnit(e.target.value as 'days' | 'hours')}
-                        className="px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none bg-white"
+                        className="px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none bg-[#FFFCF5]"
                       >
                         <option value="days">days</option>
                         <option value="hours">hours</option>
@@ -941,7 +941,7 @@ export default function NoticeDetail() {
                     {notice.time_flag ? 'Yes' : 'No'}
                   </div>
                   {notice.time_flag && notice.estimated_days != null && (
-                    <div className="text-[14px] text-[#92722E] font-medium mt-0.5">
+                    <div className="text-[14px] text-[#8C6500] font-medium mt-0.5">
                       {notice.estimated_days} {notice.time_implication_unit === 'hours'
                         ? `hour${notice.estimated_days !== 1 ? 's' : ''}`
                         : `day${notice.estimated_days !== 1 ? 's' : ''}`}
@@ -954,15 +954,15 @@ export default function NoticeDetail() {
         </div>}
 
         {/* Linked Variation Request — office/admin only */}
-        {!isField && <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Linked Variation Request</h3>
+        {!isField && <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+          <h3 className="text-[15px] font-medium text-[#111827] mb-3">Linked Variation Request</h3>
           {linkedVariation ? (
             <Link
               href={`/variation/${linkedVariation.id}`}
-              className="flex items-center justify-between p-3 bg-[#F5F2EA] rounded-md hover:bg-[#E7E0D2] transition-colors duration-[120ms]"
+              className="flex items-center justify-between p-3 bg-[#F5F2EA] rounded-md hover:bg-[#D8D2C4] transition-colors duration-[120ms]"
             >
               <div>
-                <div className="text-[13px] font-mono font-bold text-[#17212B]">
+                <div className="text-[13px] mono font-medium text-[#17212B]">
                   {linkedVariation.variation_number ?? `VAR-${String(linkedVariation.sequence_number).padStart(3, '0')}`}
                 </div>
                 <div className="text-[14px] font-medium text-[#111827] mt-0.5">{linkedVariation.title}</div>
@@ -979,7 +979,7 @@ export default function NoticeDetail() {
                 <button
                   onClick={handleConvertToVar}
                   disabled={converting}
-                  className="w-full py-3 px-4 bg-[#E76F00] hover:bg-[#C75A00] disabled:opacity-50 text-white text-[14px] font-semibold rounded-md transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+                  className="w-full py-3 px-4 bg-[#E76F00] hover:bg-[#C75A00] disabled:opacity-50 text-[#FFFCF5] text-[14px] font-medium rounded-md transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)]"
                 >
                   {converting ? 'Creating...' : 'Convert to Variation Request →'}
                 </button>
@@ -990,16 +990,16 @@ export default function NoticeDetail() {
 
         {/* Status History — office/admin only */}
         {!isField && revisions.length > 0 && (
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Status History</h3>
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+            <h3 className="text-[15px] font-medium text-[#111827] mb-3">Status History</h3>
             <div className="space-y-3 mb-4">
               {revisions.slice().sort((a, b) => new Date(a.sent_at ?? 0).getTime() - new Date(b.sent_at ?? 0).getTime()).map((rev) => (
                 <div key={rev.id + '-timeline'} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
-                  <div className="text-[#64748B] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">
+                  <div className="text-[#6B7280] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">
                     {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
                   </div>
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#E76F00] px-2 py-0.5 rounded flex-shrink-0">
+                    <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#E76F00] px-2 py-0.5 rounded flex-shrink-0">
                       📧 Issued
                     </span>
                     <span className="text-[12px] text-[#111827] truncate">
@@ -1010,13 +1010,13 @@ export default function NoticeDetail() {
                 </div>
               ))}
             </div>
-            <div className="border-t border-[#E7E0D2] pt-3">
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] mb-2">Download sent versions</div>
+            <div className="border-t border-[#D8D2C4] pt-3">
+              <div className="text-[11px] font-medium uppercase tracking-wider text-[#6B7280] mb-2">Download sent versions</div>
             <div className="space-y-2">
               {revisions.map((rev) => (
-                <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-slate-50 rounded-md border border-slate-100">
+                <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-[#F5F2EA] rounded-md border border-[#D8D2C4]">
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#17212B] px-2 py-0.5 rounded flex-shrink-0">
+                    <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#17212B] px-2 py-0.5 rounded flex-shrink-0">
                       {rev.revision_number === 0 ? 'Original' : `Rev ${rev.revision_number}`}
                     </span>
                     <div className="min-w-0">
@@ -1024,9 +1024,9 @@ export default function NoticeDetail() {
                         Sent to {rev.sent_to}
                       </div>
                       {rev.sent_cc && (
-                        <div className="text-[11px] text-slate-400 truncate">CC: {rev.sent_cc}</div>
+                        <div className="text-[11px] text-[#6B7280] truncate">CC: {rev.sent_cc}</div>
                       )}
-                      <div className="text-[11px] text-slate-400">
+                      <div className="text-[11px] text-[#6B7280]">
                         {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
                       </div>
                     </div>
@@ -1070,7 +1070,7 @@ export default function NoticeDetail() {
                       }
                     }}
                     disabled={generatingRevPdf === rev.revision_number}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-slate-600 border border-slate-200 rounded-md hover:bg-white transition-colors disabled:opacity-50 flex-shrink-0 ml-3"
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-[#334155] border border-[#D8D2C4] rounded-md hover:bg-[#FFFCF5] transition-colors disabled:opacity-50 flex-shrink-0 ml-3"
                   >
                     <FileText size={13} />
                     {generatingRevPdf === rev.revision_number ? 'Building…' : 'PDF'}
@@ -1085,18 +1085,18 @@ export default function NoticeDetail() {
 
       {/* Awaiting Client Response Warning Modal */}
       {showClientWarning && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowClientWarning(null)}>
-          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#111827]/20 px-0 sm:px-4" onClick={() => setShowClientWarning(null)}>
+          <div className="bg-[#FFFCF5] rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <div className="w-9 h-9 rounded-full bg-[#FBF1D6] flex items-center justify-center flex-shrink-0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8C6500" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               </div>
-              <h3 className="text-[15px] font-semibold text-[#111827]">Awaiting client acknowledgement</h3>
+              <h3 className="text-[15px] font-medium text-[#111827]">Awaiting client acknowledgement</h3>
             </div>
             <p className="text-[14px] text-[#334155] mb-1">
               This notice has been sent to <strong className="text-[#111827]">{notice.client_email}</strong> and hasn&apos;t been acknowledged yet.
             </p>
-            <p className="text-[13px] text-[#64748B] mb-5">
+            <p className="text-[13px] text-[#6B7280] mb-5">
               {showClientWarning === 'edit'
                 ? 'Editing and reissuing will replace the current version. The client will need to be resent the updated notice.'
                 : 'Deleting will permanently remove this notice. The client will not be notified.'}
@@ -1108,7 +1108,7 @@ export default function NoticeDetail() {
                   if (showClientWarning === 'edit') { setShowClientWarning(null); startEditing(); }
                   else { setShowClientWarning(null); setShowDeleteConfirm(true); }
                 }}
-                className={`px-4 py-1.5 text-[13px] font-semibold text-white rounded-lg transition-colors ${showClientWarning === 'delete' ? 'bg-rose-600 hover:bg-rose-700' : 'bg-amber-600 hover:bg-amber-700'}`}
+                className={`px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] rounded-lg transition-colors ${showClientWarning === 'delete' ? 'bg-[#B42318] hover:bg-[#7A1810]' : 'bg-[#D99A00] hover:bg-[#8C6500]'}`}
               >
                 {showClientWarning === 'edit' ? 'Edit anyway' : 'Delete anyway'}
               </button>
@@ -1119,21 +1119,21 @@ export default function NoticeDetail() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
-            <h3 className="text-[15px] font-semibold text-[#111827] mb-2">Delete Notice</h3>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#111827]/20 px-0 sm:px-4" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="bg-[#FFFCF5] rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+            <h3 className="text-[15px] font-medium text-[#111827] mb-2">Delete Notice</h3>
             <p className="text-[14px] text-[#334155] mb-1">
               Are you sure you want to delete <span className="font-medium text-[#111827]">{notice.notice_number}</span>?
             </p>
             {notice.status !== 'draft' ? (
-              <p className="text-[13px] text-[#D99A00] bg-[#FEF3C7] border border-[#FDE68A] rounded-md px-3 py-2 mb-4">
+              <p className="text-[13px] text-[#D99A00] bg-[#FBF1D6] border border-[#D8D2C4] rounded-md px-3 py-2 mb-4">
                 This notice has been <strong>{notice.status}</strong>. Deleting it will permanently remove it from your records — ensure the client has been notified separately if needed.
               </p>
             ) : (
-              <p className="text-[13px] text-[#64748B] mb-5">This cannot be undone.</p>
+              <p className="text-[13px] text-[#6B7280] mb-5">This cannot be undone.</p>
             )}
             {deleteError && (
-              <p className="text-[13px] text-[#B42318] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 mb-4">{deleteError}</p>
+              <p className="text-[13px] text-[#B42318] bg-[#FBE6E4] border border-[#FBE6E4] rounded-md px-3 py-2 mb-4">{deleteError}</p>
             )}
             <div className="flex justify-end gap-2">
               <button
@@ -1146,7 +1146,7 @@ export default function NoticeDetail() {
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#B42318] rounded-md hover:bg-[#9E4D41] disabled:opacity-40 transition-colors duration-[120ms]"
+                className="px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#B42318] rounded-md hover:bg-[#7A1810] disabled:opacity-40 transition-colors duration-[120ms]"
               >
                 {deleting ? 'Deleting...' : 'Delete Notice'}
               </button>

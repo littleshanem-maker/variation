@@ -142,7 +142,7 @@ export default function OnboardingPage() {
   const inputClass = "w-full px-3 py-2.5 text-[14px] border border-[#D8D2C4] rounded-md outline-none transition-all";
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12" style={{ backgroundColor: '#EEF2F7' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12" style={{ backgroundColor: '#F5F2EA' }}>
       <div className="w-full max-w-md mx-auto">
 
         {/* Header */}
@@ -150,8 +150,8 @@ export default function OnboardingPage() {
           <Logo size={56} className="mb-4" />
           {step === 1 ? (
             <>
-              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: '#64748B' }}>Step 1 of 2</p>
-              <h1 className="text-2xl font-semibold tracking-tight text-center" style={{ color: '#111827' }}>
+              <p className="text-[11px] font-medium uppercase tracking-wider mb-2" style={{ color: '#6B7280' }}>Step 1 of 2</p>
+              <h1 className="text-2xl font-medium tracking-tight text-center" style={{ color: '#111827' }}>
                 Set up your company
               </h1>
               <p className="text-sm mt-1.5 text-center" style={{ color: '#334155' }}>
@@ -160,8 +160,8 @@ export default function OnboardingPage() {
             </>
           ) : (
             <>
-              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: '#64748B' }}>Step 2 of 2</p>
-              <h1 className="text-2xl font-semibold tracking-tight text-center" style={{ color: '#111827' }}>
+              <p className="text-[11px] font-medium uppercase tracking-wider mb-2" style={{ color: '#6B7280' }}>Step 2 of 2</p>
+              <h1 className="text-2xl font-medium tracking-tight text-center" style={{ color: '#111827' }}>
                 Your first project
               </h1>
               <p className="text-sm mt-1.5 text-center" style={{ color: '#334155' }}>
@@ -174,17 +174,17 @@ export default function OnboardingPage() {
         {step === 1 ? (
           <>
             {/* Step 1 Form */}
-            <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5" style={{ borderColor: '#D8D2C4' }}>
+            <div className="bg-[#FFFCF5] rounded-xl border shadow-sm p-6 space-y-5" style={{ borderColor: '#D8D2C4' }}>
 
               {error && (
-                <div className="px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B42318' }}>
+                <div className="px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FBE6E4', border: '1px solid rgba(180,35,24,0.15)', color: '#B42318' }}>
                   {error}
                 </div>
               )}
 
               {/* Company Name */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
                   Company Name *
                 </label>
                 <input
@@ -192,7 +192,7 @@ export default function OnboardingPage() {
                   value={companyName}
                   onChange={e => setCompanyName(e.target.value)}
                   className={inputClass}
-                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
                   onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   placeholder="e.g. Company Pty Ltd"
                   autoFocus
@@ -201,14 +201,14 @@ export default function OnboardingPage() {
 
               {/* Address */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
-                  Business Address <span style={{ color: '#C4C9D0', fontWeight: 400 }}>(optional)</span>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
+                  Business Address <span style={{ color: '#6B7280', fontWeight: 400 }}>(optional)</span>
                 </label>
                 <textarea
                   value={companyAddress}
                   onChange={e => setCompanyAddress(e.target.value)}
                   className={inputClass + ' resize-none'}
-                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
                   onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   rows={2}
                   placeholder="e.g. 12 Smith St, Melbourne VIC 3000"
@@ -217,15 +217,15 @@ export default function OnboardingPage() {
 
               {/* Phone */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
-                  Phone <span style={{ color: '#C4C9D0', fontWeight: 400 }}>(optional)</span>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
+                  Phone <span style={{ color: '#6B7280', fontWeight: 400 }}>(optional)</span>
                 </label>
                 <input
                   type="tel"
                   value={companyPhone}
                   onChange={e => setCompanyPhone(e.target.value)}
                   className={inputClass}
-                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
                   onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   placeholder="e.g. 03 9000 0000"
                 />
@@ -233,8 +233,8 @@ export default function OnboardingPage() {
 
               {/* Logo */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
-                  Company Logo <span style={{ color: '#C4C9D0', fontWeight: 400 }}>(optional)</span>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
+                  Company Logo <span style={{ color: '#6B7280', fontWeight: 400 }}>(optional)</span>
                 </label>
                 {logoPreview ? (
                   <div className="flex items-center gap-3">
@@ -253,9 +253,9 @@ export default function OnboardingPage() {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     className="w-full py-6 border-2 border-dashed rounded-lg text-[13px] text-center transition-colors"
-                    style={{ borderColor: '#D8D2C4', color: '#64748B' }}
+                    style={{ borderColor: '#D8D2C4', color: '#6B7280' }}
                     onMouseEnter={e => { (e.currentTarget).style.borderColor = '#17212B'; (e.currentTarget).style.color = '#17212B'; }}
-                    onMouseLeave={e => { (e.currentTarget).style.borderColor = '#D8D2C4'; (e.currentTarget).style.color = '#64748B'; }}
+                    onMouseLeave={e => { (e.currentTarget).style.borderColor = '#D8D2C4'; (e.currentTarget).style.color = '#6B7280'; }}
                   >
                     Click to upload logo (PNG or JPG)
                   </button>
@@ -275,7 +275,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleSaveAndNext}
                 disabled={saving || !companyName.trim()}
-                className="w-full py-3 rounded-lg text-sm font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? 'Saving…' : 'Next →'}
               </button>
@@ -291,17 +291,17 @@ export default function OnboardingPage() {
         ) : (
           <>
             {/* Step 2 Form */}
-            <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5" style={{ borderColor: '#D8D2C4' }}>
+            <div className="bg-[#FFFCF5] rounded-xl border shadow-sm p-6 space-y-5" style={{ borderColor: '#D8D2C4' }}>
 
               {projectError && (
-                <div className="px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B42318' }}>
+                <div className="px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FBE6E4', border: '1px solid rgba(180,35,24,0.15)', color: '#B42318' }}>
                   {projectError}
                 </div>
               )}
 
               {/* Project Name */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
                   Project Name *
                 </label>
                 <input
@@ -309,7 +309,7 @@ export default function OnboardingPage() {
                   value={projectName}
                   onChange={e => setProjectName(e.target.value)}
                   className={inputClass}
-                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
                   onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   placeholder="e.g. Austin Health — Level 6 Fitout"
                   autoFocus
@@ -318,15 +318,15 @@ export default function OnboardingPage() {
 
               {/* Client */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
-                  Client / Head Contractor <span style={{ color: '#C4C9D0', fontWeight: 400 }}>(optional)</span>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
+                  Client / Head Contractor <span style={{ color: '#6B7280', fontWeight: 400 }}>(optional)</span>
                 </label>
                 <input
                   type="text"
                   value={projectClient}
                   onChange={e => setProjectClient(e.target.value)}
                   className={inputClass}
-                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
                   onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   placeholder="e.g. Multiplex"
                 />
@@ -338,7 +338,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleCreateProject}
                 disabled={creatingProject || !projectName.trim()}
-                className="w-full py-3 rounded-lg text-sm font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed transition-colors"
               >
                 {creatingProject ? 'Creating…' : 'Create project →'}
               </button>

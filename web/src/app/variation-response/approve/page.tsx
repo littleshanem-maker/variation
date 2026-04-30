@@ -37,20 +37,20 @@ function ApproveForm() {
 
   if (done) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="max-w-md w-full text-center bg-white rounded-2xl shadow-sm border border-gray-100 p-10">
+      <div className="min-h-screen bg-[#F5F2EA] flex items-center justify-center p-6">
+        <div className="max-w-md w-full text-center bg-[#FFFCF5] rounded-2xl shadow-sm border border-[#D8D2C4] p-10">
           <div className="mb-6 flex justify-center">
-            <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="w-16 h-16 rounded-full bg-[#E5F0E6] flex items-center justify-center">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">Variation Approved</h1>
-          <p className="text-gray-600 text-sm leading-relaxed mb-2">
-            <strong className="text-gray-900">{ref}</strong> has been approved.
+          <h1 className="text-2xl font-medium text-[#111827] mb-3">Variation Approved</h1>
+          <p className="text-[#334155] text-sm leading-relaxed mb-2">
+            <strong className="text-[#111827]">{ref}</strong> has been approved.
           </p>
-          <p className="text-gray-400 text-sm leading-relaxed">
+          <p className="text-[#6B7280] text-sm leading-relaxed">
             The contractor has been notified. Thank you for your response.
           </p>
         </div>
@@ -59,18 +59,18 @@ function ApproveForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+    <div className="min-h-screen bg-[#F5F2EA] flex items-center justify-center p-6">
+      <div className="max-w-md w-full bg-[#FFFCF5] rounded-2xl shadow-sm border border-[#D8D2C4] p-8">
         <div className="mb-8 text-center">
           <div className="mb-4 flex justify-center">
-            <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="w-12 h-12 rounded-full bg-[#E5F0E6] flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2E7D32" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
           </div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Approve {ref}</h1>
-          <p className="text-gray-500 text-sm">Add a comment for your records (optional).</p>
+          <h1 className="text-xl font-medium text-[#111827] mb-2">Approve {ref}</h1>
+          <p className="text-[#6B7280] text-sm">Add a comment for your records (optional).</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <textarea
@@ -78,21 +78,21 @@ function ApproveForm() {
             onChange={e => setComment(e.target.value)}
             placeholder="e.g. Approved subject to invoice matching this breakdown. Proceed with works."
             rows={4}
-            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-900 text-sm placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-300"
+            className="w-full bg-[#F5F2EA] border border-[#D8D2C4] rounded-lg px-4 py-3 text-[#111827] text-sm placeholder:text-[#6B7280] resize-none focus:outline-none focus:ring-2 focus:ring-[#E5F0E6] focus:border-[#2E7D32]"
           />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-[#B42318] text-sm">{error}</p>}
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-semibold py-3 rounded-lg text-sm transition-colors"
+            className="w-full bg-[#2E7D32] hover:bg-[#1F5223] disabled:opacity-50 text-[#FFFCF5] font-medium py-3 rounded-lg text-sm transition-colors"
           >
             {submitting ? 'Submitting…' : 'Confirm Approval'}
           </button>
-          <p className="text-center text-gray-400 text-xs">
+          <p className="text-center text-[#6B7280] text-xs">
             Changed your mind?{' '}
             <a
               href={`/api/variation-response?token=${token}&action=reject${respondentEmail ? `&respondent=${encodeURIComponent(respondentEmail)}` : ''}`}
-              className="text-red-500 hover:underline"
+              className="text-[#B42318] hover:underline"
             >
               Reject instead
             </a>
@@ -106,8 +106,8 @@ function ApproveForm() {
 export default function ApprovePage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-400 text-sm">Loading…</div>
+      <div className="min-h-screen bg-[#F5F2EA] flex items-center justify-center">
+        <div className="text-[#6B7280] text-sm">Loading…</div>
       </div>
     }>
       <ApproveForm />

@@ -10,9 +10,9 @@ export default function MobileMenuButton() {
       }}
       aria-label="Menu"
     >
-      <span className="block w-5 h-0.5 bg-white/70 rounded" />
-      <span className="block w-5 h-0.5 bg-white/70 rounded" />
-      <span className="block w-5 h-0.5 bg-white/70 rounded" />
+      <span className="block w-5 h-0.5 bg-[#FFFCF5]/70 rounded" />
+      <span className="block w-5 h-0.5 bg-[#FFFCF5]/70 rounded" />
+      <span className="block w-5 h-0.5 bg-[#FFFCF5]/70 rounded" />
     </button>
   );
 }

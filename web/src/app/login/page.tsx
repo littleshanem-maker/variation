@@ -42,13 +42,13 @@ export default function LoginPage() {
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center"
-      style={{ backgroundColor: '#EEF2F7' }}
+      style={{ backgroundColor: '#F5F2EA' }}
     >
       <div className="w-full max-w-sm mx-auto px-6">
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <Logo size={64} className="mb-5" />
-          <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#111827' }}>
+          <h1 className="text-2xl font-medium tracking-tight" style={{ color: '#111827' }}>
             Welcome back
           </h1>
           <p className="text-sm mt-1.5" style={{ color: '#334155' }}>
@@ -60,7 +60,7 @@ export default function LoginPage() {
         {error && (
           <div
             className="mb-5 px-4 py-3 rounded-lg text-sm"
-            style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B42318' }}
+            style={{ backgroundColor: '#FBE6E4', border: '1px solid rgba(180,35,24,0.15)', color: '#B42318' }}
           >
             {error}
           </div>
@@ -77,11 +77,11 @@ export default function LoginPage() {
               className="w-full rounded-lg text-base outline-none transition-all"
               style={{
                 padding: '12px 16px',
-                backgroundColor: '#FFFFFF',
+                backgroundColor: '#FFFCF5',
                 border: '1px solid #D8D2C4',
                 color: '#111827',
               }}
-              onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+              onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
               onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
               placeholder="Work email"
               required
@@ -96,11 +96,11 @@ export default function LoginPage() {
               className="w-full rounded-lg text-base outline-none transition-all"
               style={{
                 padding: '12px 44px 12px 16px',
-                backgroundColor: '#FFFFFF',
+                backgroundColor: '#FFFCF5',
                 border: '1px solid #D8D2C4',
                 color: '#111827',
               }}
-              onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+              onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(23,33,43,0.1)'; }}
               onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
               placeholder="Password"
               required
@@ -109,7 +109,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute top-1/2 -translate-y-1/2"
-              style={{ right: '12px', color: '#64748B', background: 'none', border: 'none', cursor: 'pointer' }}
+              style={{ right: '12px', color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer' }}
               tabIndex={-1}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -132,15 +132,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg text-base font-semibold transition-all"
+            className="w-full rounded-lg text-base font-medium transition-all"
             style={{
               padding: '12px',
               backgroundColor: '#E76F00',
-              color: '#FFFFFF',
+              color: '#FFFCF5',
               border: 'none',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.5 : 1,
-              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              boxShadow: '0 1px 3px rgba(17,24,39,0.1)',
             }}
             onMouseEnter={e => { if (!loading) (e.target as HTMLElement).style.backgroundColor = '#C75A00'; }}
             onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#E76F00'; }}
@@ -166,7 +166,7 @@ export default function LoginPage() {
           </a>
         </p>
 
-        <p className="text-center text-xs mt-8" style={{ color: '#C4C9D0' }}>
+        <p className="text-center text-xs mt-8" style={{ color: '#6B7280' }}>
           Leveraged Systems · Variation Shield
         </p>
       </div>

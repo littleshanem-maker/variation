@@ -12,8 +12,8 @@ import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
 import type { Project } from '@/lib/types';
 import ProjectPicker from '@/components/ui/ProjectPicker';
 
-const inputClass = 'w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-white';
-const labelClass = 'block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1';
+const inputClass = 'w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-[#FFFCF5]';
+const labelClass = 'block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1';
 
 function NewRequestForm() {
   const router = useRouter();
@@ -230,24 +230,24 @@ function NewRequestForm() {
 
       {/* Conversion Wall Modal */}
       {limitReached && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-indigo-100 flex items-center justify-center mx-auto mb-5">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#111827]/60 backdrop-blur-sm p-4">
+          <div className="bg-[#FFFCF5] rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-[#F5F2EA] flex items-center justify-center mx-auto mb-5">
               <svg width="28" height="28" fill="none" stroke="#E76F00" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 mb-2">
+            <h2 className="text-xl font-medium text-[#111827] mb-2">
               You've documented {limitReached.count} variation{limitReached.count !== 1 ? 's' : ''} worth ${(limitReached.totalValue / 100).toLocaleString('en-AU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} — want to keep going?
             </h2>
-            <p className="text-gray-600 text-sm mb-2">
+            <p className="text-[#334155] text-sm mb-2">
               Upgrade to Pro and keep capturing — unlimited variations, projects, and team members.
             </p>
-            <p className="text-gray-400 text-xs mb-7">
+            <p className="text-[#6B7280] text-xs mb-7">
               Or export what you have and go back to spreadsheets.
             </p>
             <div className="space-y-3">
               <a
                 href={`https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02`}
-                className="block w-full py-3 rounded-xl bg-[#E76F00] hover:bg-[#C75A00] text-white font-bold text-sm transition-colors"
+                className="block w-full py-3 rounded-xl bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium text-sm transition-colors"
               >
                 Upgrade to Pro — $299/mo
               </a>
@@ -255,18 +255,18 @@ function NewRequestForm() {
                 href="https://leveragedsystems.com.au/schedule"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full py-3 rounded-xl border border-gray-200 text-gray-700 font-semibold text-sm hover:bg-gray-50 transition-colors"
+                className="block w-full py-3 rounded-xl border border-[#D8D2C4] text-[#334155] font-medium text-sm hover:bg-[#F5F2EA] transition-colors"
               >
                 Book a Demo →
               </a>
               <button
                 onClick={handleExportCsv}
-                className="block w-full py-3 rounded-xl text-gray-400 text-sm hover:text-gray-600 transition-colors"
+                className="block w-full py-3 rounded-xl text-[#6B7280] text-sm hover:text-[#334155] transition-colors"
               >
                 Export My Data
               </button>
             </div>
-            <p className="text-xs text-gray-400 mt-5">
+            <p className="text-xs text-[#6B7280] mt-5">
               Your existing {limitReached.count} variations are safe — you can still view, edit, and download them.
             </p>
           </div>
@@ -278,26 +278,26 @@ function NewRequestForm() {
         <div>
           <Link
             href="/dashboard"
-            className="hidden md:flex items-center gap-2 w-full bg-white border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-semibold text-[#17212B] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="hidden md:flex items-center gap-2 w-full bg-[#FFFCF5] border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-medium text-[#17212B] hover:bg-[#F5F2EA] active:bg-[#F5F2EA] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="flex-shrink-0">
               <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Back to Dashboard
           </Link>
-          <h2 className="text-xl font-semibold text-[#111827] mt-3">New Variation Request</h2>
+          <h2 className="text-xl font-medium text-[#111827] mt-3">New Variation Request</h2>
           <p className="text-[13px] text-[#334155] mt-1">Pursuant to AS 4000–1997 Cl. 36 / AS 2124–1992 Cl. 40</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
           {/* Core details card */}
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-4">
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)] space-y-4">
 
             {/* Project */}
             <div>
               <label className={labelClass}>Project *</label>
               {loadingProjects ? (
-                <div className="h-9 bg-slate-100 rounded-md animate-pulse" />
+                <div className="h-9 bg-[#F5F2EA] rounded-md animate-pulse" />
               ) : projects.length === 0 ? (
                 <p className="text-[13px] text-[#334155] py-1">No active projects. <Link href="/dashboard" className="underline text-[#17212B]">Create one on the dashboard</Link>.</p>
               ) : (
@@ -356,7 +356,7 @@ function NewRequestForm() {
             {showCostBreakdown && (
               <div>
                 <label className={labelClass}>Cost Breakdown</label>
-                <div className="mt-1 bg-[#F9FAFB] rounded-lg border border-[#D8D2C4] p-3">
+                <div className="mt-1 bg-[#FFFCF5] rounded-lg border border-[#D8D2C4] p-3">
                   <CostItemsTable
                     items={costItems}
                     onChange={setCostItems}
@@ -376,14 +376,14 @@ function NewRequestForm() {
 
             {/* Response due date */}
             <div>
-              <label className={labelClass}>Response Due Date <span className="text-red-500">*</span></label>
+              <label className={labelClass}>Response Due Date <span className="text-[#B42318]">*</span></label>
               <input type="date" required value={responseDueDate} onChange={e => setResponseDueDate(e.target.value)} className={inputClass} />
             </div>
           </div>
 
           {/* AS Compliance card */}
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">Claim Details (AS 4000 / AS 2124)</p>
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)] space-y-4">
+            <p className="text-[11px] font-medium uppercase tracking-wider text-[#6B7280]">Claim Details (AS 4000 / AS 2124)</p>
 
             {/* Claim type */}
             <div>
@@ -404,7 +404,7 @@ function NewRequestForm() {
                   <input type="number" min="0" value={eotDays} onChange={e => setEotDays(e.target.value)}
                     placeholder="e.g. 5" className={`${inputClass} flex-1`} />
                   <select value={eotUnit} onChange={e => setEotUnit(e.target.value as 'days' | 'hours')}
-                    className="px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-white text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]">
+                    className="px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]">
                     <option value="hours">Hours</option>
                     <option value="days">Days</option>
                   </select>
@@ -426,13 +426,13 @@ function NewRequestForm() {
           </div>
 
           {/* Attachments card */}
-          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
             <AttachmentPicker files={attachments} onChange={setAttachments} label="Photos & Files (optional)" />
           </div>
 
           {/* Error */}
           {error && (
-            <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-md text-[13px] text-[#971D14]">
+            <div className="px-4 py-3 bg-[#FBE6E4] border border-[#D8D2C4] rounded-md text-[13px] text-[#7A1810]">
               {error}
             </div>
           )}
@@ -441,14 +441,14 @@ function NewRequestForm() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <Link
               href="/dashboard"
-              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms] text-center"
+              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-md hover:bg-[#F5F2EA] transition-colors duration-[120ms] text-center"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={saving || loadingProjects}
-              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] text-center"
+              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)] text-center"
             >
               {saving ? 'Creating…' : 'Create Variation Request'}
             </button>
@@ -461,7 +461,7 @@ function NewRequestForm() {
 
 export default function NewVariationPage() {
   return (
-    <Suspense fallback={<AppShell><TopBar title="New Variation Request" /><div className="flex items-center justify-center h-96 text-slate-400 text-sm">Loading…</div></AppShell>}>
+    <Suspense fallback={<AppShell><TopBar title="New Variation Request" /><div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading…</div></AppShell>}>
       <NewRequestForm />
     </Suspense>
   );

@@ -67,21 +67,21 @@ export default function NotificationsPage() {
       <TopBar title="Notifications" />
       <div className="p-4 md:p-8 ">
         {loading ? (
-          <div className="flex items-center justify-center h-48 text-slate-400 text-sm">Loading…</div>
+          <div className="flex items-center justify-center h-48 text-[#6B7280] text-sm">Loading…</div>
         ) : notifications.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-slate-400 text-sm gap-2">
-            <Clock size={24} className="text-slate-300" />
+          <div className="flex flex-col items-center justify-center h-48 text-[#6B7280] text-sm gap-2">
+            <Clock size={24} className="text-[#6B7280]" />
             All caught up
           </div>
         ) : (
           <>
             <div className="flex items-center justify-between mb-3">
-              <p className="text-[13px] text-slate-500"><span className="num">{notifications.length}</span> unseen</p>
+              <p className="text-[13px] text-[#6B7280]"><span className="num">{notifications.length}</span> unseen</p>
               <button
                 onClick={handleMarkAllSeen}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-[#334155] border border-[#D8D2C4] bg-[#FFFCF5] rounded-lg hover:bg-[#F5F2EA] transition-colors"
               >
-                <CheckCircle size={13} className="text-emerald-500" /> Mark all as seen
+                <CheckCircle size={13} className="text-[#2E7D32]" /> Mark all as seen
               </button>
             </div>
             <div className="space-y-2">
@@ -97,8 +97,8 @@ export default function NotificationsPage() {
                   >
                     <div className="flex-shrink-0 mt-0.5">
                       {isApproved
-                        ? <CheckCircle size={18} className="text-emerald-500" />
-                        : <XCircle size={18} className="text-rose-500" />}
+                        ? <CheckCircle size={18} className="text-[#2E7D32]" />
+                        : <XCircle size={18} className="text-[#B42318]" />}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
@@ -106,19 +106,19 @@ export default function NotificationsPage() {
                         <span className={`cond text-[11px] px-1.5 py-0.5 rounded-full ${isApproved ? 'text-[#1F5223] bg-[#E5F0E6]' : 'text-[#7A1810] bg-[#FBE6E4]'}`}>
                           {isApproved ? 'Approved' : 'Disputed'}
                         </span>
-                        <span className="text-[11px] text-slate-400">via email link</span>
+                        <span className="text-[11px] text-[#6B7280]">via email link</span>
                       </div>
-                      <div className="text-[13px] font-semibold text-[#111827] mt-0.5 truncate">{v.title}</div>
+                      <div className="text-[13px] font-medium text-[#111827] mt-0.5 truncate">{v.title}</div>
                       {proj?.name && (
                         <div className="text-[12px] text-[#111827] mt-0.5">{proj.name}</div>
                       )}
                       {v.client_approval_comment && (
-                        <div className="text-[12px] text-slate-500 mt-1 italic">"{v.client_approval_comment}"</div>
+                        <div className="text-[12px] text-[#6B7280] mt-1 italic">"{v.client_approval_comment}"</div>
                       )}
                     </div>
                     <div className="flex-shrink-0 flex flex-col items-end gap-1">
                       <div className="num text-[11px] text-[#111827]">{v.client_approved_at ? formatDateTime(v.client_approved_at) : ''}</div>
-                      <ArrowUpRight size={14} className="text-slate-300" />
+                      <ArrowUpRight size={14} className="text-[#6B7280]" />
                     </div>
                   </button>
                 );

@@ -25,17 +25,17 @@ async function notifyPM(opts: {
     : `❌ ${varRef} rejected by ${respondentEmail ?? 'client'} — ${projectName}`;
 
   const bodyHtml = action === 'approved'
-    ? `<p>Good news — <strong>${varRef}</strong> has been <strong style="color:#16a34a;">approved</strong> via the email link.</p>
+    ? `<p>Good news — <strong>${varRef}</strong> has been <strong style="color:#2E7D32;">approved</strong> via the email link.</p>
        <p>Approved by: ${responder}</p>
        ${comment ? `<p>Approver's comment: <em>"${comment}"</em></p>` : ''}
        <p>Project: ${projectName}</p>
-       <p><a href="${APP_URL}/variation/${variationId}" style="color:#4f46e5;">View variation →</a></p>
+       <p><a href="${APP_URL}/variation/${variationId}" style="color:#334155;">View variation →</a></p>
        <p style="color:#6b7280;font-size:12px;">Log in to mark as paid when the invoice is raised.</p>`
-    : `<p><strong>${varRef}</strong> has been <strong style="color:#dc2626;">rejected</strong> via the email link.</p>
+    : `<p><strong>${varRef}</strong> has been <strong style="color:#B42318;">rejected</strong> via the email link.</p>
        <p>Rejected by: ${responder}</p>
        <p>Project: ${projectName}</p>
        ${comment ? `<p>Reason: <em>"${comment}"</em></p>` : ''}
-       <p><a href="${APP_URL}/variation/${variationId}" style="color:#4f46e5;">View variation →</a></p>
+       <p><a href="${APP_URL}/variation/${variationId}" style="color:#334155;">View variation →</a></p>
        <p style="color:#6b7280;font-size:12px;">Log in to revise and resubmit.</p>`;
 
   try {
@@ -70,21 +70,21 @@ async function notifyApprover(opts: {
     ? `Receipt: You approved ${varRef}`
     : `Receipt: You rejected ${varRef}`;
 
-  const actionColour = action === 'approved' ? '#16a34a' : '#dc2626';
+  const actionColour = action === 'approved' ? '#2E7D32' : '#B42318';
   const actionLabel = action === 'approved' ? 'Approved' : 'Rejected';
 
   const bodyHtml = `
     <p>This is a confirmation that you <strong style="color:${actionColour};">${actionLabel}</strong> the following variation request.</p>
     <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;">
-      <tr><td style="padding:8px 0;color:#6b7280;width:40%;">Reference</td><td style="padding:8px 0;font-weight:600;">${varRef}</td></tr>
+      <tr><td style="padding:8px 0;color:#6b7280;width:40%;">Reference</td><td style="padding:8px 0;font-weight:500;">${varRef}</td></tr>
       ${title ? `<tr><td style="padding:8px 0;color:#6b7280;">Description</td><td style="padding:8px 0;">${title}</td></tr>` : ''}
-      ${valueStr ? `<tr><td style="padding:8px 0;color:#6b7280;">Amount</td><td style="padding:8px 0;font-weight:600;">${valueStr}</td></tr>` : ''}
+      ${valueStr ? `<tr><td style="padding:8px 0;color:#6b7280;">Amount</td><td style="padding:8px 0;font-weight:500;">${valueStr}</td></tr>` : ''}
       <tr><td style="padding:8px 0;color:#6b7280;">Project</td><td style="padding:8px 0;">${projectName}</td></tr>
-      <tr><td style="padding:8px 0;color:#6b7280;">Decision</td><td style="padding:8px 0;font-weight:600;color:${actionColour};">${actionLabel}</td></tr>
+      <tr><td style="padding:8px 0;color:#6b7280;">Decision</td><td style="padding:8px 0;font-weight:500;color:${actionColour};">${actionLabel}</td></tr>
       ${comment ? `<tr><td style="padding:8px 0;color:#6b7280;">Your comment</td><td style="padding:8px 0;font-style:italic;">"${comment}"</td></tr>` : ''}
       <tr><td style="padding:8px 0;color:#6b7280;">Recorded at</td><td style="padding:8px 0;">${timestamp} (AEST)</td></tr>
     </table>
-    <p><a href="${APP_URL}/variation/${variationId}" style="color:#4f46e5;">View variation →</a></p>
+    <p><a href="${APP_URL}/variation/${variationId}" style="color:#334155;">View variation →</a></p>
     <p style="color:#6b7280;font-size:12px;margin-top:24px;">If this was not you, contact the sender of this variation immediately.<br>This receipt was generated automatically by Variation Shield.</p>`;
 
   try {

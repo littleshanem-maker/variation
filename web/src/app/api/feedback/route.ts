@@ -36,16 +36,16 @@ export async function POST(req: NextRequest) {
       to: NOTIFY_EMAIL,
       subject: `💬 Feedback — ${userName}${companyName ? `, ${companyName}` : ''}`,
       html: `
-        <div style="font-family:Inter,sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#0f1117;color:#f1f5f9;border-radius:12px;">
+        <div style="font-family:'IBM Plex Sans',sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#111827;color:#F5F2EA;border-radius:12px;">
           <div style="margin-bottom:20px;">
-            <span style="background:#4f46e5;color:white;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:0.05em;">PRODUCT FEEDBACK</span>
+            <span style="background:#334155;color:#FFFCF5;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;letter-spacing:0.05em;">PRODUCT FEEDBACK</span>
           </div>
-          <h2 style="margin:0 0 4px;font-size:18px;font-weight:700;">${userName}</h2>
-          <p style="margin:0 0 20px;color:#64748b;font-size:13px;">${companyName}${userEmail ? ` · ${userEmail}` : ''}</p>
-          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px 20px;margin-bottom:20px;">
-            <p style="margin:0;font-size:14px;line-height:1.7;color:#cbd5e1;white-space:pre-wrap;">${message.trim()}</p>
+          <h2 style="margin:0 0 4px;font-size:18px;font-weight:500;">${userName}</h2>
+          <p style="margin:0 0 20px;color:#6B7280;font-size:13px;">${companyName}${userEmail ? ` · ${userEmail}` : ''}</p>
+          <div style="background:rgba(255,252,245,0.04);border:1px solid rgba(255,252,245,0.08);border-radius:10px;padding:16px 20px;margin-bottom:20px;">
+            <p style="margin:0;font-size:14px;line-height:1.7;color:#D8D2C4;white-space:pre-wrap;">${message.trim()}</p>
           </div>
-          <p style="font-size:12px;color:#475569;margin-top:16px;">${submittedAt} AEDT</p>
+          <p style="font-size:12px;color:#334155;margin-top:16px;">${submittedAt} AEDT</p>
         </div>
       `,
     });

@@ -144,7 +144,7 @@ function NewNoticeForm() {
   }
 
   const inputClass = "w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none";
-  const labelClass = "block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1";
+  const labelClass = "block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1";
   const toggleBase = "relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors duration-200 cursor-pointer";
 
   return (
@@ -154,18 +154,18 @@ function NewNoticeForm() {
         <div>
           <Link
             href={preselectedProjectId ? `/project/${preselectedProjectId}` : '/'}
-            className="hidden md:flex items-center gap-2 w-full bg-white border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-semibold text-[#17212B] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="hidden md:flex items-center gap-2 w-full bg-[#FFFCF5] border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-medium text-[#17212B] hover:bg-[#F5F2EA] active:bg-[#F5F2EA] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="flex-shrink-0">
               <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             {preselectedProjectId ? 'Back to Project' : 'Back to Dashboard'}
           </Link>
-          <h2 className="text-xl font-semibold text-[#111827] mt-3">New Variation Notice</h2>
+          <h2 className="text-xl font-medium text-[#111827] mt-3">New Variation Notice</h2>
           <p className="text-[13px] text-[#334155] mt-1">Issue a formal notice of a variation event. A full Variation Request can be linked later.</p>
         </div>
 
-        <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-4">
+        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)] space-y-4">
           {/* Project */}
           <div>
             <label className={labelClass}>Project *</label>
@@ -208,10 +208,10 @@ function NewNoticeForm() {
                 <button
                   type="button"
                   onClick={() => setCostFlag(!costFlag)}
-                  className={`${toggleBase} ${costFlag ? 'bg-[#17212B]' : 'bg-[#D1D5DB]'}`}
+                  className={`${toggleBase} ${costFlag ? 'bg-[#17212B]' : 'bg-[#D8D2C4]'}`}
                   aria-checked={costFlag}
                 >
-                  <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-200 ${costFlag ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                  <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-[#FFFCF5] transition-transform duration-200 ${costFlag ? 'translate-x-4' : 'translate-x-0.5'}`} />
                 </button>
                 <span className="text-[14px] text-[#111827]">{costFlag ? 'Yes' : 'No'}</span>
               </div>
@@ -222,10 +222,10 @@ function NewNoticeForm() {
                 <button
                   type="button"
                   onClick={() => setTimeFlag(!timeFlag)}
-                  className={`${toggleBase} ${timeFlag ? 'bg-[#17212B]' : 'bg-[#D1D5DB]'}`}
+                  className={`${toggleBase} ${timeFlag ? 'bg-[#17212B]' : 'bg-[#D8D2C4]'}`}
                   aria-checked={timeFlag}
                 >
-                  <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-200 ${timeFlag ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                  <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-[#FFFCF5] transition-transform duration-200 ${timeFlag ? 'translate-x-4' : 'translate-x-0.5'}`} />
                 </button>
                 <span className="text-[14px] text-[#111827]">{timeFlag ? 'Yes' : 'No'}</span>
               </div>
@@ -236,7 +236,7 @@ function NewNoticeForm() {
           {costFlag && (
             <div>
               <label className={labelClass}>Cost Breakdown</label>
-              <div className="mt-2 bg-[#F9FAFB] rounded-lg border border-[#D8D2C4] p-3">
+              <div className="mt-2 bg-[#FFFCF5] rounded-lg border border-[#D8D2C4] p-3">
                 <CostItemsTable items={costItems} onChange={setCostItems} />
               </div>
             </div>
@@ -257,7 +257,7 @@ function NewNoticeForm() {
                 <select
                   value={timeUnit}
                   onChange={e => setTimeUnit(e.target.value as 'days' | 'hours')}
-                  className="px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-white text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]"
+                  className="px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]"
                 >
                   <option value="hours">Hours</option>
                   <option value="days">Days</option>
@@ -304,7 +304,7 @@ function NewNoticeForm() {
         </div>
 
         {/* Attachments */}
-        <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
           <AttachmentPicker files={attachments} onChange={setAttachments} label="Photos & Files (optional)" />
         </div>
 
@@ -314,14 +314,14 @@ function NewNoticeForm() {
             type="button"
             onClick={() => router.back()}
             disabled={saving}
-            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-md hover:bg-[#F5F3EF] disabled:opacity-40 transition-colors duration-[120ms] text-center"
+            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-md hover:bg-[#F5F2EA] disabled:opacity-40 transition-colors duration-[120ms] text-center"
           >
             Cancel
           </button>
           <button
             onClick={() => handleSave(false)}
             disabled={saving || !projectId || !eventDescription.trim()}
-            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] text-center"
+            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)] text-center"
           >
             {saving ? 'Creating…' : 'Create Variation Notice'}
           </button>
@@ -333,7 +333,7 @@ function NewNoticeForm() {
 
 export default function NewNoticePage() {
   return (
-    <Suspense fallback={<AppShell><TopBar title="New Variation Notice" /><div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div></AppShell>}>
+    <Suspense fallback={<AppShell><TopBar title="New Variation Notice" /><div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div></AppShell>}>
       <NewNoticeForm />
     </Suspense>
   );

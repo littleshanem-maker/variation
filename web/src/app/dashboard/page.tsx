@@ -285,14 +285,14 @@ export default function Dashboard() {
     <AppShell>
       <TopBar title="Executive risk overview" />
       <div className="flex items-center justify-center h-96">
-        <div className="text-[#64748B] text-sm">Loading...</div>
+        <div className="text-[#6B7280] text-sm">Loading...</div>
       </div>
     </AppShell>
   );
 
   if (error === 'not_authenticated') {
     if (typeof window !== 'undefined') window.location.href = '/login';
-    return <div className="min-h-screen flex items-center justify-center"><p className="text-[#64748B] text-sm">Redirecting to login...</p></div>;
+    return <div className="min-h-screen flex items-center justify-center"><p className="text-[#6B7280] text-sm">Redirecting to login...</p></div>;
   }
 
   if (error) return (
@@ -325,7 +325,7 @@ export default function Dashboard() {
             <div className="flex flex-col sm:flex-row gap-3 mt-4">
               <button
                 onClick={() => setShowNewProject(true)}
-                className="flex items-center gap-2 bg-[#E76F00] border border-[#E76F00] hover:bg-[#C75A00] hover:border-[#C75A00] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-all hover:-translate-y-px"
+                className="flex items-center gap-2 bg-[#E76F00] border border-[#E76F00] hover:bg-[#C75A00] hover:border-[#C75A00] text-[#FFFCF5] text-sm font-medium px-4 py-2.5 rounded-lg transition-all hover:-translate-y-px"
               >
                 <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
                 Create your first project
@@ -444,7 +444,7 @@ export default function Dashboard() {
                 {!isField && (
                   <button
                     onClick={() => setShowNewProject(true)}
-                    className="flex items-center gap-1 px-3 py-1.5 text-[12px] font-medium text-[#334155] bg-[#FFFCF5] border border-[#D8D2C4] rounded-md hover:bg-[#F5F3EF] transition-all hover:-translate-y-px shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
+                    className="flex items-center gap-1 px-3 py-1.5 text-[12px] font-medium text-[#334155] bg-[#FFFCF5] border border-[#D8D2C4] rounded-md hover:bg-[#F5F2EA] transition-all hover:-translate-y-px shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
                   >
                     + New project
                   </button>
@@ -455,14 +455,14 @@ export default function Dashboard() {
             {projects.length === 0 ? (
               <div className="bg-[#FFFCF5] rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] p-12 text-center">
                 <div className="w-12 h-12 bg-[#E76F00] rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFCF5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </div>
                 <h3 className="text-[18px] font-medium text-[#111827] mb-2">Welcome to Variation Shield</h3>
                 <p className="text-[14px] text-[#334155] mb-1">Start by creating your first project.</p>
                 <p className="text-[14px] text-[#334155] mb-8">Then capture a variation in under 60 seconds.</p>
                 <Link
                   href="/onboarding"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[14px] font-medium text-white bg-[#E76F00] border border-[#E76F00] hover:bg-[#C75A00] hover:border-[#C75A00] transition-all hover:-translate-y-px"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] border border-[#E76F00] hover:bg-[#C75A00] hover:border-[#C75A00] transition-all hover:-translate-y-px"
                 >
                   Create your first project
                 </Link>
@@ -476,9 +476,9 @@ export default function Dashboard() {
                     const atRisk = p.variations.filter(v => ['disputed', 'draft', 'captured'].includes(v.status)).reduce((s, v) => s + (v.estimated_value || 0), 0);
                     return (
                       <Link key={p.id} href={`/project/${p.id}`}>
-                        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] px-4 py-3 flex items-center justify-between hover:bg-[#F5F3EF] transition-colors">
+                        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] px-4 py-3 flex items-center justify-between hover:bg-[#F5F2EA] transition-colors">
                           <div className="min-w-0 mr-3">
-                            <div className="text-[14px] font-semibold text-[#111827] truncate">{p.name}</div>
+                            <div className="text-[14px] font-medium text-[#111827] truncate">{p.name}</div>
                             <div className="text-[12px] text-[#334155] truncate">{p.client}</div>
                           </div>
                           <div className="flex-shrink-0 text-right">
@@ -494,7 +494,7 @@ export default function Dashboard() {
                 {/* Desktop: stacked bar chart */}
                 <div className="hidden md:block bg-[#FFFCF5] rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] p-5 space-y-2">
                   {barChartData.length === 0 ? (
-                    <p className="text-[13px] text-[#64748B] text-center py-6">No variation data to display.</p>
+                    <p className="text-[13px] text-[#6B7280] text-center py-6">No variation data to display.</p>
                   ) : (
                     barChartData.map(p => {
                       const barW = (p.totalValue / maxBarValue) * 100;
@@ -528,11 +528,11 @@ export default function Dashboard() {
                           <div className="w-full h-[18px] bg-[#F5F2EA] rounded-md overflow-hidden mb-5 border border-[#D8D2C4]">
                             {p.variationCount === 0 ? (
                               <div className="flex items-center h-full px-2">
-                                <span className="text-[11px] text-[#64748B]">No variations yet — <Link href={`/project/${p.id}`} className="underline hover:text-[#17212B]">open project to add one</Link></span>
+                                <span className="text-[11px] text-[#6B7280]">No variations yet — <Link href={`/project/${p.id}`} className="underline hover:text-[#17212B]">open project to add one</Link></span>
                               </div>
                             ) : p.totalValue === 0 ? (
                               <div className="flex items-center h-full px-2">
-                                <span className="text-[11px] text-[#64748B]">{p.variationCount} variation{p.variationCount !== 1 ? 's' : ''} — no value recorded yet</span>
+                                <span className="text-[11px] text-[#6B7280]">{p.variationCount} variation{p.variationCount !== 1 ? 's' : ''} — no value recorded yet</span>
                               </div>
                             ) : (
                               <div style={{ width: `${barW}%` }} className="flex h-full gap-px">
@@ -565,7 +565,7 @@ export default function Dashboard() {
                   )}
 
                   {/* Legend */}
-                  <div className="flex flex-wrap gap-4 pt-3 border-t border-[#E7E0D2]">
+                  <div className="flex flex-wrap gap-4 pt-3 border-t border-[#D8D2C4]">
                     {[
                       { color: 'bg-[#2E7D32]', label: 'Paid / approved' },
                       { color: 'bg-[#D99A00]',  label: 'Submitted' },
@@ -590,7 +590,7 @@ export default function Dashboard() {
               style={{ backgroundColor: '#FFFCF5', border: '1px solid #D8D2C4', color: '#111827' }}
             >
               <div>
-                <div className="text-[14px] font-semibold mb-0.5">⚡ No variations yet.</div>
+                <div className="text-[14px] font-medium mb-0.5">⚡ No variations yet.</div>
                 <div className="text-[13px]" style={{ color: '#334155' }}>
                   Capture one now — it takes 60 seconds on site.{' '}
                   <Link href="/capture" className="underline font-medium hover:text-[#17212B]">Capture a variation</Link>
@@ -612,7 +612,7 @@ export default function Dashboard() {
             <div className="flex items-center gap-2 mb-4">
               <h2 className="text-[18px] font-medium text-[#111827]">Urgent attention feed</h2>
               {urgentItems.length > 0 && (
-                <span className="num inline-flex items-center justify-center w-5 h-5 bg-[#B42318] text-white text-[10px] font-medium rounded-full">
+                <span className="num inline-flex items-center justify-center w-5 h-5 bg-[#B42318] text-[#FFFCF5] text-[10px] font-medium rounded-full">
                   {urgentItems.length}
                 </span>
               )}
@@ -620,7 +620,7 @@ export default function Dashboard() {
 
             <div className="bg-[#F5F2EA] rounded-xl border border-[#D8D2C4] p-2 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
               {urgentItems.length === 0 ? (
-                <div className="bg-white rounded-lg p-8 text-center">
+                <div className="bg-[#FFFCF5] rounded-lg p-8 text-center">
                   <div className="text-2xl mb-2">✅</div>
                   <p className="text-[13px] text-[#334155]">No urgent items — all variations on track.</p>
                 </div>
@@ -638,7 +638,7 @@ export default function Dashboard() {
                           {/* Content */}
                           <div className="flex-1 min-w-0">
                             <div className="text-[13px] text-[#111827] leading-snug">
-                              <span className="font-semibold">
+                              <span className="font-medium">
                                 {item.kind === 'overdue' ? 'Response overdue: '
                                   : item.kind === 'due-soon' ? 'Due soon: '
                                   : 'Dispute escalation: '}
@@ -679,8 +679,8 @@ export default function Dashboard() {
 
         {/* ── New Project Modal ── */}
         {showNewProject && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowNewProject(false)}>
-            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#111827]/20 px-0 sm:px-4" onClick={() => setShowNewProject(false)}>
+            <div className="bg-[#FFFCF5] rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
               <h3 className="text-[15px] font-medium text-[#111827] mb-4">New project</h3>
               <div className="space-y-3">
                 <div>
@@ -699,7 +699,7 @@ export default function Dashboard() {
               <div className="flex justify-end gap-2 mt-5">
                 <button onClick={() => setShowNewProject(false)} className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors">Cancel</button>
                 <button onClick={handleCreateProject} disabled={creatingProject || !newProjectName.trim() || !newProjectClient.trim()}
-                  className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors">
+                  className="px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors">
                   {creatingProject ? 'Creating...' : 'Create project'}
                 </button>
               </div>

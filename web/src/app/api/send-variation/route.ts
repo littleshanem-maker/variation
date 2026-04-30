@@ -85,24 +85,24 @@ export async function POST(req: NextRequest) {
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:32px 0;">
+<body style="margin:0;padding:0;background:#F5F2EA;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F5F2EA;padding:32px 0;">
     <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#FFFCF5;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
         <tr>
-          <td style="background:#0f172a;padding:20px 32px;text-align:left;">
-            <span style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:-0.3px;">
-              <span style="color:#7c3aed;">⬡</span> Variation Shield
+          <td style="background:#17212B;padding:20px 32px;text-align:left;">
+            <span style="color:#FFFCF5;font-size:16px;font-weight:500;letter-spacing:-0.3px;">
+              <span style="color:#334155;">⬡</span> Variation Shield
             </span>
           </td>
         </tr>
         <tr>
           <td style="padding:32px;">
             <p style="margin:0 0 16px;color:#111827;font-size:15px;line-height:1.6;">You have been CC'd on this variation.</p>
-            <p style="margin:0 0 16px;color:#374151;font-size:14px;line-height:1.6;">
+            <p style="margin:0 0 16px;color:#334155;font-size:14px;line-height:1.6;">
               <strong>${varRef}</strong> has been submitted by <strong>${companyName}</strong> for review.
             </p>
-            <p style="margin:0 0 24px;color:#374151;font-size:14px;line-height:1.6;">
+            <p style="margin:0 0 24px;color:#334155;font-size:14px;line-height:1.6;">
               This is a copy for your records. Only the primary recipient can approve or reject this variation.
             </p>
             <p style="margin:0;color:#6b7280;font-size:12px;line-height:1.5;">
@@ -111,9 +111,9 @@ export async function POST(req: NextRequest) {
           </td>
         </tr>
         <tr>
-          <td style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 32px;">
-            <p style="margin:0;color:#9ca3af;font-size:11px;line-height:1.5;">
-              Sent via <a href="https://variationshield.com.au" style="color:#7c3aed;text-decoration:none;">Variation Shield</a> on behalf of ${companyName}.
+          <td style="background:#FFFCF5;border-top:1px solid #D8D2C4;padding:16px 32px;">
+            <p style="margin:0;color:#6B7280;font-size:11px;line-height:1.5;">
+              Sent via <a href="https://variationshield.com.au" style="color:#334155;text-decoration:none;">Variation Shield</a> on behalf of ${companyName}.
               This variation was submitted on ${new Date().toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: 'numeric' })}.
             </p>
           </td>
@@ -128,15 +128,15 @@ export async function POST(req: NextRequest) {
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:32px 0;">
+<body style="margin:0;padding:0;background:#F5F2EA;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#F5F2EA;padding:32px 0;">
     <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#FFFCF5;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
         <!-- Header -->
         <tr>
-          <td style="background:#0f172a;padding:20px 32px;text-align:left;">
-            <span style="color:#ffffff;font-size:16px;font-weight:700;letter-spacing:-0.3px;">
-              <span style="color:#7c3aed;">⬡</span> Variation Shield
+          <td style="background:#17212B;padding:20px 32px;text-align:left;">
+            <span style="color:#FFFCF5;font-size:16px;font-weight:500;letter-spacing:-0.3px;">
+              <span style="color:#334155;">⬡</span> Variation Shield
             </span>
           </td>
         </tr>
@@ -144,10 +144,10 @@ export async function POST(req: NextRequest) {
         <tr>
           <td style="padding:32px;">
             <p style="margin:0 0 16px;color:#111827;font-size:15px;line-height:1.6;">${greeting}</p>
-            <p style="margin:0 0 16px;color:#374151;font-size:14px;line-height:1.6;">
+            <p style="margin:0 0 16px;color:#334155;font-size:14px;line-height:1.6;">
               <strong>${varRef}</strong> has been submitted by <strong>${companyName}</strong> for your review.
             </p>
-            <p style="margin:0 0 24px;color:#374151;font-size:14px;line-height:1.6;">
+            <p style="margin:0 0 24px;color:#334155;font-size:14px;line-height:1.6;">
               ${isFree
                 ? 'Please review the variation details in the attached PDF.'
                 : 'Please review the variation details and indicate your response below.'}
@@ -157,13 +157,13 @@ export async function POST(req: NextRequest) {
               <tr>
                 <td style="padding-right:12px;">
                   <a href="${approveUrl}"
-                     style="display:inline-block;background:#16a34a;color:#ffffff;font-size:14px;font-weight:600;padding:12px 24px;border-radius:6px;text-decoration:none;letter-spacing:0.1px;">
+                     style="display:inline-block;background:#2E7D32;color:#FFFCF5;font-size:14px;font-weight:500;padding:12px 24px;border-radius:6px;text-decoration:none;letter-spacing:0.1px;">
                     ✓ Approve Variation
                   </a>
                 </td>
                 <td>
                   <a href="${rejectUrl}"
-                     style="display:inline-block;background:#ffffff;color:#dc2626;font-size:14px;font-weight:600;padding:12px 24px;border-radius:6px;text-decoration:none;border:1.5px solid #dc2626;letter-spacing:0.1px;">
+                     style="display:inline-block;background:#FFFCF5;color:#B42318;font-size:14px;font-weight:500;padding:12px 24px;border-radius:6px;text-decoration:none;border:1.5px solid #B42318;letter-spacing:0.1px;">
                     ✗ Reject Variation
                   </a>
                 </td>
@@ -181,9 +181,9 @@ export async function POST(req: NextRequest) {
         </tr>
         <!-- Footer -->
         <tr>
-          <td style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:16px 32px;">
-            <p style="margin:0;color:#9ca3af;font-size:11px;line-height:1.5;">
-              Sent via <a href="https://variationshield.com.au" style="color:#7c3aed;text-decoration:none;">Variation Shield</a> on behalf of ${companyName}.
+          <td style="background:#FFFCF5;border-top:1px solid #D8D2C4;padding:16px 32px;">
+            <p style="margin:0;color:#6B7280;font-size:11px;line-height:1.5;">
+              Sent via <a href="https://variationshield.com.au" style="color:#334155;text-decoration:none;">Variation Shield</a> on behalf of ${companyName}.
               This variation was submitted on ${new Date().toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: 'numeric' })}.
             </p>
           </td>

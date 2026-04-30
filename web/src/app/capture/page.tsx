@@ -181,11 +181,11 @@ function CapturePageContent() {
           const y = img.height - boxH - padding;
 
           // Semi-transparent black background
-          ctx.fillStyle = 'rgba(0,0,0,0.6)';
+          ctx.fillStyle = 'rgba(17,24,39,0.6)';
           ctx.fillRect(x, y, boxW, boxH);
 
           // White text
-          ctx.fillStyle = '#ffffff';
+          ctx.fillStyle = '#FFFCF5';
           lines.forEach((line, i) => {
             ctx.fillText(line, x + padding, y + padding + fontSize + i * lineH);
           });
@@ -365,38 +365,38 @@ function CapturePageContent() {
 
   // ── SUCCESS OVERLAY — shown over the form ───────────────────
   const SuccessOverlay = result ? (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-5">
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#111827]/60 backdrop-blur-sm px-5">
+      <div className="w-full max-w-sm bg-[#FFFCF5] rounded-2xl shadow-2xl overflow-hidden">
         {/* Compact success row */}
-        <div className="bg-emerald-500 px-5 py-5 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+        <div className="bg-[#2E7D32] px-5 py-5 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full bg-[#FFFCF5]/20 flex items-center justify-center flex-shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFCF5" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 6 9 17l-5-5"/>
             </svg>
           </div>
           <div>
-            <div className="text-white font-bold text-[16px] leading-tight">Notice Captured</div>
-            <div className="text-emerald-100 text-[12px] mt-0.5">
+            <div className="text-[#FFFCF5] font-medium text-[16px] leading-tight">Notice Captured</div>
+            <div className="text-[#E5F0E6] text-[12px] mt-0.5">
               {new Date(result.capturedAt).toLocaleString('en-AU', { timeStyle: 'short', dateStyle: 'short' })}
             </div>
           </div>
         </div>
         {/* Detail */}
-        <div className="px-5 py-4 text-center border-b border-slate-100">
-          <div className="text-[22px] font-bold text-slate-900">{result.variationNumber}</div>
-          <div className="text-[13px] text-slate-500 mt-0.5">{result.projectName}</div>
+        <div className="px-5 py-4 text-center border-b border-[#D8D2C4]">
+          <div className="text-[22px] font-medium text-[#111827]">{result.variationNumber}</div>
+          <div className="text-[13px] text-[#6B7280] mt-0.5">{result.projectName}</div>
         </div>
         {/* Actions */}
         <div className="px-5 py-4 flex flex-col gap-2">
           <button
             onClick={handleCaptureAnother}
-            className="w-full bg-[#E76F00] text-white font-bold py-3 rounded-xl text-[15px] transition-colors active:bg-[#C75A00]"
+            className="w-full bg-[#E76F00] text-[#FFFCF5] font-medium py-3 rounded-xl text-[15px] transition-colors active:bg-[#C75A00]"
           >
             Capture Another
           </button>
           <Link
             href={`/notice/${result.variationId}`}
-            className="block w-full text-center text-slate-400 font-medium py-2 text-[13px]"
+            className="block w-full text-center text-[#6B7280] font-medium py-2 text-[13px]"
           >
             View Notice →
           </Link>
@@ -426,7 +426,7 @@ function CapturePageContent() {
               style={{ backgroundColor: '#FFFCF5', border: '1px solid #D8D2C4', color: '#111827' }}
             >
               <div>
-                <div className="text-[14px] font-semibold mb-0.5">⚡ You&apos;re 60 seconds from your first captured variation.</div>
+                <div className="text-[14px] font-medium mb-0.5">⚡ You&apos;re 60 seconds from your first captured variation.</div>
                 <div className="text-[13px]" style={{ color: '#334155' }}>Fill in the title and hit Save.</div>
               </div>
               <button
@@ -442,14 +442,14 @@ function CapturePageContent() {
 
           {/* Context note for non-field users (non-onboarding only) */}
           {!isOnboarding && !roleLoading && !isField && (
-            <div className="mb-4 px-4 py-2.5 bg-[#FDF8ED] border border-[#D99A00]/40 rounded-lg text-xs text-[#92722E]">
+            <div className="mb-4 px-4 py-2.5 bg-[#FBF1D6] border border-[#D99A00]/40 rounded-lg text-xs text-[#8C6500]">
               Quick notice mode — for the full register,{' '}
               <Link href="/dashboard" className="underline">go to Dashboard</Link>.
             </div>
           )}
 
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
-            <h1 className="text-lg font-semibold text-[#111827] mb-5">
+          <div className="bg-[#FFFCF5] border border-[#D8D2C4] rounded-xl shadow-sm p-6">
+            <h1 className="text-lg font-medium text-[#111827] mb-5">
               Capture a Variation Notice
             </h1>
 
@@ -458,14 +458,14 @@ function CapturePageContent() {
               {/* Project — always show picker so workers can select the right site */}
               {isOnboarding && onboardingProjectId ? (
                 loadingProjects ? (
-                  <div className="h-12 bg-gray-100 rounded-lg animate-pulse" />
+                  <div className="h-12 bg-[#F5F2EA] rounded-lg animate-pulse" />
                 ) : (
-                  <div className="px-4 py-3 bg-[#F3F4F6] rounded-lg text-sm text-[#111827] font-medium">
+                  <div className="px-4 py-3 bg-[#F5F2EA] rounded-lg text-sm text-[#111827] font-medium">
                     📋 {onboardingProject?.name ?? 'Your project'}
                   </div>
                 )
               ) : loadingProjects ? (
-                <div className="h-12 bg-gray-100 rounded-lg animate-pulse" />
+                <div className="h-12 bg-[#F5F2EA] rounded-lg animate-pulse" />
               ) : projects.length === 0 ? (
                 <div className="text-sm text-[#334155] py-2">
                   No active projects found.{' '}
@@ -473,7 +473,7 @@ function CapturePageContent() {
                 </div>
               ) : (
                 <div>
-                  <label className="block text-sm font-medium text-[#374151] mb-1.5">Project</label>
+                  <label className="block text-sm font-medium text-[#334155] mb-1.5">Project</label>
                   <ProjectPicker
                     projects={projects}
                     value={selectedProjectId}
@@ -485,9 +485,9 @@ function CapturePageContent() {
 
               {/* Title / Description */}
               <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                <label className="block text-sm font-medium text-[#334155] mb-1.5">
                   {isOnboarding ? 'Variation title' : 'What happened?'}{' '}
-                  <span className="text-red-500">*</span>
+                  <span className="text-[#B42318]">*</span>
                 </label>
                 <textarea
                   value={description}
@@ -498,7 +498,7 @@ function CapturePageContent() {
                       ? 'e.g. Additional blockwork to Level 3 corridor'
                       : 'Describe the change — what was directed, by whom, where on site'
                   }
-                  className="w-full border border-gray-300 rounded-lg px-3 py-3 text-[15px] text-[#111827] resize-none focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-gray-400"
+                  className="w-full border border-[#D8D2C4] rounded-lg px-3 py-3 text-[15px] text-[#111827] resize-none focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-[#6B7280]"
                   required
                 />
               </div>
@@ -518,7 +518,7 @@ function CapturePageContent() {
                     <div className="mt-4 space-y-5">
                       {/* Who instructed it */}
                       <div>
-                        <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                        <label className="block text-sm font-medium text-[#334155] mb-1.5">
                           Who instructed it?
                         </label>
                         <input
@@ -526,42 +526,42 @@ function CapturePageContent() {
                           value={instructedBy}
                           onChange={(e) => setInstructedBy(e.target.value)}
                           placeholder="e.g. Site foreman, client rep, engineer"
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-gray-400"
+                          className="w-full border border-[#D8D2C4] rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-[#6B7280]"
                         />
                       </div>
 
                       {/* Date / Time */}
                       <div>
-                        <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                        <label className="block text-sm font-medium text-[#334155] mb-1.5">
                           When did it happen?
                         </label>
                         <input
                           type="datetime-local"
                           value={occurredAt}
                           onChange={(e) => setOccurredAt(e.target.value)}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B]"
+                          className="w-full border border-[#D8D2C4] rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B]"
                         />
                       </div>
 
                       {/* Response Due Date — hidden for field users */}
                       {!isField && (
                       <div>
-                        <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                          Response due date <span className="text-[#64748B] font-normal">(optional)</span>
+                        <label className="block text-sm font-medium text-[#334155] mb-1.5">
+                          Response due date <span className="text-[#6B7280] font-normal">(optional)</span>
                         </label>
                         <input
                           type="date"
                           value={responseDueDate}
                           onChange={(e) => setResponseDueDate(e.target.value)}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B]"
+                          className="w-full border border-[#D8D2C4] rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B]"
                         />
                       </div>
                       )}
 
                       {/* Photo */}
                       <div>
-                        <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                          Photo evidence <span className="text-[#64748B] font-normal">(optional)</span>
+                        <label className="block text-sm font-medium text-[#334155] mb-1.5">
+                          Photo evidence <span className="text-[#6B7280] font-normal">(optional)</span>
                         </label>
                         {photoPreview ? (
                           <div className="relative">
@@ -569,12 +569,12 @@ function CapturePageContent() {
                             <img
                               src={photoPreview}
                               alt="Preview"
-                              className="w-full h-28 object-cover rounded-lg border border-gray-200"
+                              className="w-full h-28 object-cover rounded-lg border border-[#D8D2C4]"
                             />
                             <button
                               type="button"
                               onClick={removePhoto}
-                              className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md hover:bg-black/80"
+                              className="absolute top-2 right-2 bg-[#111827]/60 text-[#FFFCF5] text-xs px-2 py-1 rounded-md hover:bg-[#111827]/80"
                             >
                               Remove
                             </button>
@@ -583,7 +583,7 @@ function CapturePageContent() {
                           <button
                             type="button"
                             onClick={() => fileInputRef.current?.click()}
-                            className="w-full border-2 border-dashed border-gray-300 rounded-lg py-3 text-sm text-[#334155] hover:border-gray-400 hover:text-[#4B5563] transition-colors flex flex-col items-center gap-1"
+                            className="w-full border-2 border-dashed border-[#D8D2C4] rounded-lg py-3 text-sm text-[#334155] hover:border-[#D8D2C4] hover:text-[#334155] transition-colors flex flex-col items-center gap-1"
                           >
                             <span className="text-2xl">📷</span>
                             Tap to attach a photo
@@ -609,7 +609,7 @@ function CapturePageContent() {
 
                   {/* Who instructed it */}
                   <div>
-                    <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                    <label className="block text-sm font-medium text-[#334155] mb-1.5">
                       Who instructed it?
                     </label>
                     <input
@@ -617,42 +617,42 @@ function CapturePageContent() {
                       value={instructedBy}
                       onChange={(e) => setInstructedBy(e.target.value)}
                       placeholder="e.g. Site foreman, client rep, engineer"
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-gray-400"
+                      className="w-full border border-[#D8D2C4] rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-[#6B7280]"
                     />
                   </div>
 
                   {/* Date / Time */}
                   <div>
-                    <label className="block text-sm font-medium text-[#374151] mb-1.5">
+                    <label className="block text-sm font-medium text-[#334155] mb-1.5">
                       When did it happen?
                     </label>
                     <input
                       type="datetime-local"
                       value={occurredAt}
                       onChange={(e) => setOccurredAt(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B]"
+                      className="w-full border border-[#D8D2C4] rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B]"
                     />
                   </div>
 
                   {/* Response Due Date — hidden for field users */}
                   {!isField && (
                   <div>
-                    <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                      Response due date <span className="text-red-500">*</span>
+                    <label className="block text-sm font-medium text-[#334155] mb-1.5">
+                      Response due date <span className="text-[#B42318]">*</span>
                     </label>
                     <input
                       type="date"
                       value={responseDueDate}
                       onChange={(e) => setResponseDueDate(e.target.value)}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B]"
+                      className="w-full border border-[#D8D2C4] rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B]"
                     />
                   </div>
                   )}
 
                   {/* Photo */}
                   <div>
-                    <label className="block text-sm font-medium text-[#374151] mb-1.5">
-                      Photo evidence <span className="text-[#64748B] font-normal">(optional)</span>
+                    <label className="block text-sm font-medium text-[#334155] mb-1.5">
+                      Photo evidence <span className="text-[#6B7280] font-normal">(optional)</span>
                     </label>
                     {photoPreview ? (
                       <div className="relative">
@@ -660,12 +660,12 @@ function CapturePageContent() {
                         <img
                           src={photoPreview}
                           alt="Preview"
-                          className="w-full h-28 object-cover rounded-lg border border-gray-200"
+                          className="w-full h-28 object-cover rounded-lg border border-[#D8D2C4]"
                         />
                         <button
                           type="button"
                           onClick={removePhoto}
-                          className="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded-md hover:bg-black/80"
+                          className="absolute top-2 right-2 bg-[#111827]/60 text-[#FFFCF5] text-xs px-2 py-1 rounded-md hover:bg-[#111827]/80"
                         >
                           Remove
                         </button>
@@ -674,7 +674,7 @@ function CapturePageContent() {
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full border-2 border-dashed border-gray-300 rounded-lg py-3 text-sm text-[#334155] hover:border-gray-400 hover:text-[#4B5563] transition-colors flex flex-col items-center gap-1"
+                        className="w-full border-2 border-dashed border-[#D8D2C4] rounded-lg py-3 text-sm text-[#334155] hover:border-[#D8D2C4] hover:text-[#334155] transition-colors flex flex-col items-center gap-1"
                       >
                         <span className="text-2xl">📷</span>
                         Tap to attach a photo
@@ -696,7 +696,7 @@ function CapturePageContent() {
 
               {/* Error */}
               {error && (
-                <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-sm text-[#971D14]">
+                <div className="px-4 py-3 bg-[#FBE6E4] border border-[#D8D2C4] rounded-lg text-sm text-[#7A1810]">
                   {error}
                 </div>
               )}
@@ -705,7 +705,7 @@ function CapturePageContent() {
               <button
                 type="submit"
                 disabled={submitting || loadingProjects || (!isOnboarding && projects.length === 0)}
-                className="w-full bg-[#E76F00] hover:bg-[#C75A00] active:bg-[#9E4700] disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-xl text-base transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#E76F00] hover:bg-[#C75A00] active:bg-[#C75A00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed text-[#FFFCF5] font-medium py-4 px-6 rounded-xl text-base transition-colors flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <>
@@ -720,7 +720,7 @@ function CapturePageContent() {
           </div>
 
           {!isField && (
-            <p className="text-center text-xs text-[#64748B] mt-6">
+            <p className="text-center text-xs text-[#6B7280] mt-6">
               <Link href="/dashboard" className="hover:underline">← Back to Dashboard</Link>
             </p>
           )}
@@ -729,14 +729,14 @@ function CapturePageContent() {
 
       {/* Bottom nav — field users only */}
       {isField && (
-        <div className="fixed bottom-0 left-0 right-0 bg-slate-900 flex items-center justify-around px-2 py-3 z-50">
+        <div className="fixed bottom-0 left-0 right-0 bg-[#17212B] flex items-center justify-around px-2 py-3 z-50">
           <Link href="/field" className="flex flex-col items-center gap-1 px-10 py-1">
-            <Home size={20} className="text-slate-400" />
-            <span className="text-[10px] font-medium text-slate-400">Home</span>
+            <Home size={20} className="text-[#6B7280]" />
+            <span className="text-[10px] font-medium text-[#6B7280]">Home</span>
           </Link>
           <Link href="/settings" className="flex flex-col items-center gap-1 px-10 py-1">
-            <Settings size={20} className="text-slate-400" />
-            <span className="text-[10px] font-medium text-slate-400">Settings</span>
+            <Settings size={20} className="text-[#6B7280]" />
+            <span className="text-[10px] font-medium text-[#6B7280]">Settings</span>
           </Link>
         </div>
       )}
@@ -750,7 +750,7 @@ export default function CapturePage() {
       <div className="min-h-screen bg-[#F5F2EA] flex flex-col">
         <CaptureHeader />
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-[#64748B] text-sm">Loading…</div>
+          <div className="text-[#6B7280] text-sm">Loading…</div>
         </div>
       </div>
     }>
@@ -762,21 +762,21 @@ export default function CapturePage() {
 function CaptureHeader() {
   const { company } = useRole();
   return (
-    <header className="bg-slate-900 text-white px-5 pt-12 pb-5">
+    <header className="bg-[#17212B] text-[#FFFCF5] px-5 pt-12 pb-5">
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 bg-[#E76F00] rounded-lg flex items-center justify-center flex-shrink-0">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFCF5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
           </div>
-          <span className="font-semibold text-[14px] text-white/90 tracking-tight">{company?.name || 'Variation Shield'}</span>
+          <span className="font-medium text-[14px] text-[#FFFCF5]/90 tracking-tight">{company?.name || 'Variation Shield'}</span>
         </div>
 
       </div>
       <div className="mt-4">
-        <h1 className="text-[22px] font-bold text-white tracking-tight leading-tight">Capture a Notice</h1>
-        <p className="text-[13px] text-white/40 mt-0.5">Record a site instruction before you move on</p>
+        <h1 className="text-[22px] font-medium text-[#FFFCF5] tracking-tight leading-tight">Capture a Notice</h1>
+        <p className="text-[13px] text-[#FFFCF5]/40 mt-0.5">Record a site instruction before you move on</p>
       </div>
     </header>
   );

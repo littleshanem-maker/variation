@@ -20,8 +20,8 @@ interface Props {
   onStatusChange?: () => void;
 }
 
-const metaLabel = 'text-[10px] font-medium uppercase tracking-wider text-slate-400';
-const metaValue = 'text-[14px] font-medium text-slate-800 mt-0.5';
+const metaLabel = 'text-[10px] font-medium uppercase tracking-wider text-[#6B7280]';
+const metaValue = 'text-[14px] font-medium text-[#111827] mt-0.5';
 
 export default function VariationSlideOver({ variationId, open, onClose, onStatusChange }: Props) {
   const { company } = useRole();
@@ -157,7 +157,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
     <Sheet open={open} onOpenChange={o => { if (!o) onClose(); }}>
       <SheetContent>
         {loading || !variation ? (
-          <div className="flex items-center justify-center h-full text-slate-400 text-sm">
+          <div className="flex items-center justify-center h-full text-[#6B7280] text-sm">
             {loading ? 'Loading…' : 'Not found'}
           </div>
         ) : (
@@ -165,7 +165,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
             {/* Header */}
             <SheetHeader>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[12px] font-mono font-semibold text-[#E76F00] uppercase tracking-wider">
+                <span className="text-[12px] mono font-medium text-[#E76F00] uppercase tracking-wider">
                   {getVariationNumber(variation)}
                 </span>
                 <StatusBadge status={variation.status} />
@@ -175,36 +175,36 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
 
               {/* Status banner */}
               {isSubmitted && !variation.client_approval_response && (
-                <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-[12px] text-amber-700 font-medium">
+                <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-[#FBF1D6] border border-[#D8D2C4] rounded-lg text-[12px] text-[#8C6500] font-medium">
                   <Lock size={12} className="flex-shrink-0" />
                   Awaiting client response.
                 </div>
               )}
               {isSubmitted && variation.client_approval_response === 'approved' && (
-                <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-lg text-[12px] text-emerald-700 font-medium">
+                <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-[#E5F0E6] border border-[#D8D2C4] rounded-lg text-[12px] text-[#1F5223] font-medium">
                   <CheckCircle size={12} className="flex-shrink-0" />
                   ✅ Approved by client via email link
-                  {variation.client_approved_at && <span className="text-emerald-500 font-normal ml-1">· {new Date(variation.client_approved_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'short' })}</span>}
+                  {variation.client_approved_at && <span className="text-[#2E7D32] font-normal ml-1">· {new Date(variation.client_approved_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'short' })}</span>}
                 </div>
               )}
               {isDisputed && variation.client_approval_response === 'rejected' && (
-                <div className="flex flex-col gap-1 mt-3 px-3 py-2 bg-rose-50 border border-rose-200 rounded-lg text-[12px] text-rose-700 font-medium">
+                <div className="flex flex-col gap-1 mt-3 px-3 py-2 bg-[#FBE6E4] border border-[#D8D2C4] rounded-lg text-[12px] text-[#7A1810] font-medium">
                   <div className="flex items-center gap-2">
                     <AlertTriangle size={12} className="flex-shrink-0" />
                     ❌ Rejected by client via email link
-                    {variation.client_approved_at && <span className="text-rose-400 font-normal">· {new Date(variation.client_approved_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'short' })}</span>}
+                    {variation.client_approved_at && <span className="text-[#B42318] font-normal">· {new Date(variation.client_approved_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'short' })}</span>}
                   </div>
-                  {variation.client_approval_comment && <div className="text-[11px] text-rose-600 font-normal pl-4">"{variation.client_approval_comment}"</div>}
+                  {variation.client_approval_comment && <div className="text-[11px] text-[#B42318] font-normal pl-4">"{variation.client_approval_comment}"</div>}
                 </div>
               )}
               {isDisputed && !variation.client_approval_response && (
-                <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-rose-50 border border-rose-200 rounded-lg text-[12px] text-rose-700 font-medium">
+                <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-[#FBE6E4] border border-[#D8D2C4] rounded-lg text-[12px] text-[#7A1810] font-medium">
                   <AlertTriangle size={12} className="flex-shrink-0" />
                   Disputed — revise and resubmit.
                 </div>
               )}
               {isResolved && (
-                <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-[12px] text-slate-600 font-medium">
+                <div className="flex items-center gap-2 mt-3 px-3 py-2 bg-[#F5F2EA] border border-[#D8D2C4] rounded-lg text-[12px] text-[#334155] font-medium">
                   <CheckCircle size={12} className="flex-shrink-0" />
                   {variation.status.charAt(0).toUpperCase() + variation.status.slice(1)} — no further action needed.
                 </div>
@@ -214,9 +214,9 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
             {/* Body */}
             <SheetBody>
               {/* Value */}
-              <div className="flex items-baseline justify-between py-4 border-b border-slate-100">
+              <div className="flex items-baseline justify-between py-4 border-b border-[#D8D2C4]">
                 <span className={metaLabel}>Estimated Value</span>
-                <span className="text-[28px] font-bold text-slate-900 tabular-nums">
+                <span className="text-[28px] font-medium text-[#111827] tabular-nums">
                   {formatCurrency(variation.estimated_value)}
                 </span>
               </div>
@@ -242,7 +242,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                   return (
                     <div>
                       <div className={metaLabel}>Response Due</div>
-                      <div className={`text-[14px] font-semibold mt-0.5 ${overdue ? 'text-rose-600' : daysLeft <= 3 ? 'text-amber-600' : 'text-slate-800'}`}>
+                      <div className={`text-[14px] font-medium mt-0.5 ${overdue ? 'text-[#B42318]' : daysLeft <= 3 ? 'text-[#8C6500]' : 'text-[#111827]'}`}>
                         {due.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
                         <span className="ml-1.5 text-[12px] font-normal">
                           ({overdue ? `${Math.abs(daysLeft)}d overdue` : `${daysLeft}d left`})
@@ -263,7 +263,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
               {(variation.ai_description || variation.description) && (
                 <div>
                   <div className={`${metaLabel} mb-2`}>Description</div>
-                  <p className="text-[14px] text-slate-700 leading-relaxed whitespace-pre-wrap">
+                  <p className="text-[14px] text-[#334155] leading-relaxed whitespace-pre-wrap">
                     {variation.ai_description || variation.description}
                   </p>
                 </div>
@@ -273,7 +273,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
               {variation.notes && (
                 <div>
                   <div className={`${metaLabel} mb-2`}>Notes</div>
-                  <p className="text-[13px] text-slate-500 leading-relaxed whitespace-pre-wrap">{variation.notes}</p>
+                  <p className="text-[13px] text-[#6B7280] leading-relaxed whitespace-pre-wrap">{variation.notes}</p>
                 </div>
               )}
 
@@ -283,24 +283,24 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                   <div className={`${metaLabel} mb-2`}>Evidence ({photos.length} photo{photos.length !== 1 ? 's' : ''})</div>
                   <div className="grid grid-cols-2 gap-2">
                     {photos.slice(0, 4).map(photo => (
-                      <div key={photo.id} className="aspect-video bg-slate-100 rounded-lg overflow-hidden">
+                      <div key={photo.id} className="aspect-video bg-[#F5F2EA] rounded-lg overflow-hidden">
                         {photoUrls[photo.id]
                           ? <img src={photoUrls[photo.id]} alt="Evidence" className="w-full h-full object-cover" />
-                          : <div className="w-full h-full flex items-center justify-center text-slate-300 text-xs">Loading…</div>
+                          : <div className="w-full h-full flex items-center justify-center text-[#6B7280] text-xs">Loading…</div>
                         }
                       </div>
                     ))}
                   </div>
                   {photos.length > 4 && (
-                    <p className="text-[11px] text-slate-400 mt-1">+{photos.length - 4} more — open full detail to view all</p>
+                    <p className="text-[11px] text-[#6B7280] mt-1">+{photos.length - 4} more — open full detail to view all</p>
                   )}
                 </div>
               )}
 
               {/* Dispute reason input — shows when user clicks Dispute */}
               {showDisputeInput && (
-                <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl">
-                  <label className="block text-[11px] font-medium uppercase tracking-wider text-rose-700 mb-2">
+                <div className="p-4 bg-[#FBE6E4] border border-[#D8D2C4] rounded-xl">
+                  <label className="block text-[11px] font-medium uppercase tracking-wider text-[#7A1810] mb-2">
                     Reason for Dispute (required)
                   </label>
                   <textarea
@@ -308,20 +308,20 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                     onChange={e => setDisputeReason(e.target.value)}
                     rows={3}
                     placeholder="Describe why this variation is being disputed…"
-                    className="w-full px-3 py-2 text-[14px] border border-rose-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:border-rose-400 outline-none resize-none bg-white"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-lg focus:ring-2 focus:ring-[#FBE6E4] focus:border-[#B42318] outline-none resize-none bg-[#FFFCF5]"
                     autoFocus
                   />
                   <div className="flex gap-2 mt-3">
                     <button
                       onClick={() => { setShowDisputeInput(false); setDisputeReason(''); }}
-                      className="px-3 py-1.5 text-[13px] text-slate-600 hover:text-slate-900 transition-colors"
+                      className="px-3 py-1.5 text-[13px] text-[#334155] hover:text-[#111827] transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={() => advanceStatus('disputed', { notes: `DISPUTE REASON: ${disputeReason}` })}
                       disabled={!disputeReason.trim() || acting}
-                      className="px-4 py-1.5 text-[13px] font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-lg disabled:opacity-40 transition-colors"
+                      className="px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#B42318] hover:bg-[#7A1810] rounded-lg disabled:opacity-40 transition-colors"
                     >
                       {acting ? 'Saving…' : 'Confirm Dispute'}
                     </button>
@@ -337,14 +337,14 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                 <div className="grid grid-cols-2 gap-2">
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors"
                     onClick={onClose}
                   >
                     <ArrowUpRight size={14} /> View Variation
                   </Link>
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
                     onClick={onClose}
                   >
                     <Pencil size={14} /> Revise &amp; Resubmit
@@ -357,14 +357,14 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                 <div className="grid grid-cols-2 gap-2">
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors"
                     onClick={onClose}
                   >
                     <ArrowUpRight size={14} /> View Variation
                   </Link>
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
                     onClick={onClose}
                   >
                     <Pencil size={14} /> Revise &amp; Resubmit
@@ -377,14 +377,14 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                 <div className="grid grid-cols-2 gap-2">
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors"
                     onClick={onClose}
                   >
                     <ArrowUpRight size={14} /> View Variation
                   </Link>
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
                     onClick={onClose}
                   >
                     <Pencil size={14} /> Revise &amp; Resubmit
@@ -396,7 +396,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
               {isResolved && !showDisputeInput && (
                 <Link
                   href={`/variation/${variation.id}`}
-                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors"
                   onClick={onClose}
                 >
                   <ArrowUpRight size={14} /> View Variation

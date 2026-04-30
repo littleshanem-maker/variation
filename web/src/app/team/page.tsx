@@ -197,7 +197,7 @@ export default function TeamPage() {
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-semibold text-[#111827]">Team</h2>
+            <h2 className="text-xl font-medium text-[#111827]">Team</h2>
             <p className="text-[13px] text-[#334155] mt-1">{company?.name} · <span className="num">{members.filter(m => m.is_active).length}</span> active members</p>
           </div>
           {isFree ? (
@@ -210,7 +210,7 @@ export default function TeamPage() {
           ) : (
             <button
               onClick={() => setShowInvite(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#17212B] rounded-md hover:bg-[#334155] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)]"
             >
               + Invite member
             </button>
@@ -218,21 +218,21 @@ export default function TeamPage() {
         </div>
 
         {/* Active Members */}
-        <div className="bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden">
           <div className="px-4 md:px-5 py-3 border-b border-[#D8D2C4]">
             <h3 className="text-[13px] font-medium text-[#111827]">Active members</h3>
           </div>
           {loading ? (
-            <div className="p-8 text-center text-[#64748B] text-sm">Loading...</div>
+            <div className="p-8 text-center text-[#6B7280] text-sm">Loading...</div>
           ) : members.filter(m => m.is_active).length === 0 ? (
-            <div className="p-8 text-center text-[#64748B] text-sm">No team members yet.</div>
+            <div className="p-8 text-center text-[#6B7280] text-sm">No team members yet.</div>
           ) : (
-            <div className="divide-y divide-[#E7E0D2]">
+            <div className="divide-y divide-[#D8D2C4]">
               {members.filter(m => m.is_active).map(m => (
                 <div key={m.id} className="px-4 md:px-5 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="text-[14px] font-medium text-[#111827]">{m.display_name || m.full_name || '—'}</div>
-                    <div className="text-[12px] text-[#64748B] break-all">{m.email}</div>
+                    <div className="text-[12px] text-[#6B7280] break-all">{m.email}</div>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
                     <span className={`cond inline-block px-2.5 py-1 text-[12px] rounded-full capitalize ${roleBadgeColors[m.role]}`}>
@@ -246,7 +246,7 @@ export default function TeamPage() {
                     </button>
                     <button
                       onClick={() => handleRemoveMember(m.id)}
-                      className="text-[12px] text-[#64748B] hover:text-[#B42318] transition-colors"
+                      className="text-[12px] text-[#6B7280] hover:text-[#B42318] transition-colors"
                     >
                       Remove
                     </button>
@@ -259,11 +259,11 @@ export default function TeamPage() {
 
         {/* Pending Invitations */}
         {invites.length > 0 && (
-          <div className="bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden">
             <div className="px-4 md:px-5 py-3 border-b border-[#D8D2C4]">
-              <h3 className="text-[13px] font-semibold text-[#111827]">Pending Invitations</h3>
+              <h3 className="text-[13px] font-medium text-[#111827]">Pending Invitations</h3>
             </div>
-            <div className="divide-y divide-[#E7E0D2]">
+            <div className="divide-y divide-[#D8D2C4]">
               {invites.map(inv => {
                 const link = `${window.location.origin}/join?token=${inv.token}`;
                 return (
@@ -274,7 +274,7 @@ export default function TeamPage() {
                         <span className={`inline-block px-2.5 py-0.5 text-[11px] font-medium rounded-full capitalize ${roleBadgeColors[inv.role]}`}>
                           {inv.role}
                         </span>
-                        <span className="text-[12px] text-[#64748B]">
+                        <span className="text-[12px] text-[#6B7280]">
                           Expires {new Date(inv.expires_at).toLocaleDateString()}
                         </span>
                       </div>
@@ -291,7 +291,7 @@ export default function TeamPage() {
                       </button>
                       <button
                         onClick={() => handleRevokeInvite(inv.id)}
-                        className="text-[12px] text-[#64748B] hover:text-[#B42318] transition-colors"
+                        className="text-[12px] text-[#6B7280] hover:text-[#B42318] transition-colors"
                       >
                         Revoke
                       </button>
@@ -305,12 +305,12 @@ export default function TeamPage() {
 
         {/* Edit Member Modal */}
         {editMember && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setEditMember(null)}>
-            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
-              <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Edit Team Member</h3>
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#111827]/20 px-0 sm:px-4" onClick={() => setEditMember(null)}>
+            <div className="bg-[#FFFCF5] rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+              <h3 className="text-[15px] font-medium text-[#111827] mb-4">Edit Team Member</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Display Name</label>
+                  <label className="block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1">Display Name</label>
                   <input
                     type="text"
                     value={editName}
@@ -321,21 +321,21 @@ export default function TeamPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Email Address</label>
+                  <label className="block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1">Email Address</label>
                   <input
                     type="text"
                     value={editMember.email}
                     readOnly
-                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-[#F5F2EA] text-[#64748B] cursor-not-allowed"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-[#F5F2EA] text-[#6B7280] cursor-not-allowed"
                   />
-                  <p className="text-[11px] text-[#64748B] mt-1">Email can only be changed by the member in their account settings.</p>
+                  <p className="text-[11px] text-[#6B7280] mt-1">Email can only be changed by the member in their account settings.</p>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Role</label>
+                  <label className="block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1">Role</label>
                   <select
                     value={editRole}
                     onChange={e => setEditRole(e.target.value as UserRole)}
-                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-white"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-[#FFFCF5]"
                   >
                     <option value="field">Field — capture variations only, no pricing</option>
                     <option value="office">Office — full register, reports, pricing</option>
@@ -353,9 +353,9 @@ export default function TeamPage() {
                 <button
                   onClick={handleSaveEdit}
                   disabled={savingEdit}
-                  className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
+                  className="px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
                 >
-                  {savingEdit ? 'Saving…' : 'Save Changes'}
+                  {savingEdit ? 'Saving…' : 'Save changes'}
                 </button>
               </div>
             </div>
@@ -364,18 +364,18 @@ export default function TeamPage() {
 
         {/* Invite Modal */}
         {(showInvite || inviteLink) && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => { setShowInvite(false); setInviteLink(null); setCopied(false); }}>
-            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#111827]/20 px-0 sm:px-4" onClick={() => { setShowInvite(false); setInviteLink(null); setCopied(false); }}>
+            <div className="bg-[#FFFCF5] rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
               {inviteLink ? (
                 <>
-                  <h3 className="text-[15px] font-semibold text-[#111827] mb-2">Invitation Created ✓</h3>
+                  <h3 className="text-[15px] font-medium text-[#111827] mb-2">Invitation created ✓</h3>
                   <p className="text-[13px] text-[#334155] mb-4">Share this link with your team member. It expires in 7 days.</p>
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={inviteLink}
                       readOnly
-                      className="flex-1 min-w-0 px-3 py-2 text-[13px] border border-[#D8D2C4] rounded-md bg-[#F5F2EA] text-[#111827] font-mono"
+                      className="flex-1 min-w-0 px-3 py-2 text-[13px] border border-[#D8D2C4] rounded-md bg-[#F5F2EA] text-[#111827]"
                       onClick={e => (e.target as HTMLInputElement).select()}
                     />
                     <button
@@ -384,7 +384,7 @@ export default function TeamPage() {
                         setCopied(true);
                         setTimeout(() => setCopied(false), 2000);
                       }}
-                      className="flex-shrink-0 px-3 py-2 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] transition-colors duration-[120ms] whitespace-nowrap"
+                      className="flex-shrink-0 px-3 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#17212B] rounded-md hover:bg-[#334155] transition-colors duration-[120ms] whitespace-nowrap"
                     >
                       {copied ? '✓ Copied' : 'Copy'}
                     </button>
@@ -400,10 +400,10 @@ export default function TeamPage() {
                 </>
               ) : (
                 <>
-                  <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Invite Team Member</h3>
+                  <h3 className="text-[15px] font-medium text-[#111827] mb-4">Invite Team Member</h3>
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Email Address</label>
+                      <label className="block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1">Email Address</label>
                       <input
                         type="email"
                         value={inviteEmail}
@@ -414,11 +414,11 @@ export default function TeamPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Role</label>
+                      <label className="block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1">Role</label>
                       <select
                         value={inviteRole}
                         onChange={e => setInviteRole(e.target.value as UserRole)}
-                        className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-white"
+                        className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-[#FFFCF5]"
                       >
                         <option value="field">Field — capture variations only, no pricing</option>
                         <option value="office">Office — full register, reports, pricing</option>
@@ -436,7 +436,7 @@ export default function TeamPage() {
                     <button
                       onClick={handleInvite}
                       disabled={sending || !inviteEmail.trim()}
-                      className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
+                      className="px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
                     >
                       {sending ? 'Creating...' : 'Create Invitation'}
                     </button>

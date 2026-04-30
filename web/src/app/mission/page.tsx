@@ -47,14 +47,14 @@ export default function MissionControl() {
       localStorage.setItem('mission_session', 'active');
       fetchData();
     } else {
-      alert('Access Denied');
+      alert('Access denied');
       setPinInput('');
     }
   }
 
   if (locked) {
     return (
-      <div className="min-h-screen bg-[#17212B] text-[#FFFCF5] flex items-center justify-center mono">
+      <div className="min-h-screen bg-[#17212B] text-[#FFFCF5] flex items-center justify-center">
         <form onSubmit={handleUnlock} className="text-center space-y-4">
           <h1 className="text-2xl tracking-[0.2em] uppercase text-[#B42318] mb-8">Restricted access</h1>
           <input
@@ -74,7 +74,7 @@ export default function MissionControl() {
   }
 
   if (loading || !data) {
-    return <div className="min-h-screen bg-[#17212B] text-[#6B7280] flex items-center justify-center mono">Initializing uplink...</div>;
+    return <div className="min-h-screen bg-[#17212B] text-[#6B7280] flex items-center justify-center">Initializing uplink...</div>;
   }
 
   return (
@@ -100,10 +100,10 @@ export default function MissionControl() {
           <Section title="Strategy" icon="🎯">
             <div className="prose prose-invert prose-sm max-w-none">
               <h3 className="cond text-[#E76F00] text-xs mb-2">Current mission</h3>
-              <p className="text-gray-300 whitespace-pre-line leading-relaxed">{data.strategy?.mission}</p>
+              <p className="text-[#D8D2C4] whitespace-pre-line leading-relaxed">{data.strategy?.mission}</p>
 
               <h3 className="cond text-[#D99A00] text-xs mt-6 mb-2">Strategic focus</h3>
-              <p className="text-gray-300 whitespace-pre-line leading-relaxed">{data.strategy?.strategy}</p>
+              <p className="text-[#D8D2C4] whitespace-pre-line leading-relaxed">{data.strategy?.strategy}</p>
             </div>
           </Section>
 
@@ -112,8 +112,8 @@ export default function MissionControl() {
               <h4 className="cond text-xs text-[#D99A00]">In progress</h4>
               <ul className="space-y-2">
                 {data.tactics?.inProgress?.map((task: string, i: number) => (
-                  <li key={i} className="flex items-start gap-2 text-sm text-white bg-yellow-500/10 p-2 rounded border border-yellow-500/20">
-                    <span className="text-yellow-500 mt-0.5">►</span>
+                  <li key={i} className="flex items-start gap-2 text-sm text-[#FFFCF5] bg-[#FBF1D6] p-2 rounded border border-[#D8D2C4]">
+                    <span className="text-[#D99A00] mt-0.5">►</span>
                     {task}
                   </li>
                 ))}
@@ -124,7 +124,7 @@ export default function MissionControl() {
                   <h4 className="cond text-xs text-[#B42318] mt-4">Blocked</h4>
                   <ul className="space-y-2">
                     {data.tactics?.blocked?.map((task: string, i: number) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-red-300 bg-red-900/20 p-2 rounded border border-red-900/30">
+                      <li key={i} className="flex items-start gap-2 text-sm text-[#FBE6E4] bg-[#FBE6E4] p-2 rounded border border-[#D8D2C4]">
                         <span>⛔</span> {task}
                       </li>
                     ))}
@@ -150,14 +150,14 @@ export default function MissionControl() {
                     <Card key={i} text={item} status="doing" />
                   ))}
                   {(!data.kanban?.inProgress || data.kanban.inProgress.length === 0) && (
-                    <div className="text-sm text-gray-600 italic px-2">No active tasks</div>
+                    <div className="text-sm text-[#334155] italic px-2">No active tasks</div>
                   )}
                 </div>
               </div>
 
               {/* Backlog Preview */}
               <div>
-                <div className="flex items-center justify-between mb-3 border-t border-gray-800 pt-4">
+                <div className="flex items-center justify-between mb-3 border-t border-[#334155] pt-4">
                   <h3 className="cond text-xs text-[#6B7280]">Up next</h3>
                   <span className="num text-xs bg-[#111827] text-[#6B7280] px-2 py-0.5 rounded-full">{data.kanban?.backlog?.length || 0}</span>
                 </div>
@@ -176,10 +176,10 @@ export default function MissionControl() {
           <Section title="Content Queue" icon="📡">
              <div className="space-y-3">
                 {data.content?.map((item: any, i: number) => (
-                  <div key={i} className="bg-gray-800/50 border border-gray-700 p-3 rounded flex items-center justify-between">
+                  <div key={i} className="bg-[#334155] border border-[#334155] p-3 rounded flex items-center justify-between">
                     <div>
-                      <div className="text-sm font-medium text-white">{item.title}</div>
-                      <div className="text-xs text-gray-500">{item.date}</div>
+                      <div className="text-sm font-medium text-[#FFFCF5]">{item.title}</div>
+                      <div className="text-xs text-[#6B7280]">{item.date}</div>
                     </div>
                     <span className={`cond text-xs px-2 py-1 rounded ${
                       item.status === 'Posted' ? 'bg-[#E5F0E6] text-[#1F5223]' : 'bg-[#FBF1D6] text-[#8C6500]'
@@ -189,7 +189,7 @@ export default function MissionControl() {
                   </div>
                 ))}
                 {(!data.content || data.content.length === 0) && (
-                  <div className="text-sm text-gray-500">Queue empty</div>
+                  <div className="text-sm text-[#6B7280]">Queue empty</div>
                 )}
              </div>
           </Section>

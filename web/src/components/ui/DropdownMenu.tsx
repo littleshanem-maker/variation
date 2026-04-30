@@ -18,7 +18,7 @@ export function DropdownMenuContent({
         align={align}
         sideOffset={4}
         className={cn(
-          'z-50 min-w-[160px] bg-white border border-slate-200 rounded-lg shadow-lg p-1',
+          'z-50 min-w-[160px] bg-[#FFFCF5] border border-[#D8D2C4] rounded-lg shadow-lg p-1',
           'data-[state=open]:animate-in data-[state=closed]:animate-out',
           'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
           'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
@@ -46,8 +46,8 @@ export function DropdownMenuItem({
       className={cn(
         'flex items-center gap-2 px-2.5 py-2 text-[13px] rounded-md cursor-pointer outline-none select-none transition-colors',
         destructive
-          ? 'text-rose-600 hover:bg-rose-50 focus:bg-rose-50'
-          : 'text-slate-700 hover:bg-slate-50 focus:bg-slate-50',
+          ? 'text-[#B42318] hover:bg-[#FBE6E4] focus:bg-[#FBE6E4]'
+          : 'text-[#334155] hover:bg-[#F5F2EA] focus:bg-[#F5F2EA]',
         className
       )}
       {...props}
@@ -60,7 +60,7 @@ export function DropdownMenuItem({
 export function DropdownMenuSeparator({ className }: { className?: string }) {
   return (
     <DropdownMenuPrimitive.Separator
-      className={cn('my-1 h-px bg-slate-100', className)}
+      className={cn('my-1 h-px bg-[#F5F2EA]', className)}
     />
   );
 }

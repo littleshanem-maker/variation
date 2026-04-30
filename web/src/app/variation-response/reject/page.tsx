@@ -37,20 +37,20 @@ function RejectForm() {
 
   if (done) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-        <div className="max-w-md w-full text-center bg-white rounded-2xl shadow-sm border border-gray-100 p-10">
+      <div className="min-h-screen bg-[#F5F2EA] flex items-center justify-center p-6">
+        <div className="max-w-md w-full text-center bg-[#FFFCF5] rounded-2xl shadow-sm border border-[#D8D2C4] p-10">
           <div className="mb-6 flex justify-center">
-            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="w-16 h-16 rounded-full bg-[#FBE6E4] flex items-center justify-center">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#B42318" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">Variation Rejected</h1>
-          <p className="text-gray-600 text-sm leading-relaxed mb-2">
-            <strong className="text-gray-900">{ref}</strong> has been rejected.
+          <h1 className="text-2xl font-medium text-[#111827] mb-3">Variation Rejected</h1>
+          <p className="text-[#334155] text-sm leading-relaxed mb-2">
+            <strong className="text-[#111827]">{ref}</strong> has been rejected.
           </p>
-          <p className="text-gray-400 text-sm leading-relaxed">
+          <p className="text-[#6B7280] text-sm leading-relaxed">
             The contractor has been notified. Thank you for your response.
           </p>
         </div>
@@ -59,18 +59,18 @@ function RejectForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+    <div className="min-h-screen bg-[#F5F2EA] flex items-center justify-center p-6">
+      <div className="max-w-md w-full bg-[#FFFCF5] rounded-2xl shadow-sm border border-[#D8D2C4] p-8">
         <div className="mb-8 text-center">
           <div className="mb-4 flex justify-center">
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <div className="w-12 h-12 rounded-full bg-[#FBE6E4] flex items-center justify-center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B42318" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </div>
           </div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Reject {ref}</h1>
-          <p className="text-gray-500 text-sm">Please provide a reason (optional but helpful).</p>
+          <h1 className="text-xl font-medium text-[#111827] mb-2">Reject {ref}</h1>
+          <p className="text-[#6B7280] text-sm">Please provide a reason (optional but helpful).</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <textarea
@@ -78,21 +78,21 @@ function RejectForm() {
             onChange={e => setComment(e.target.value)}
             placeholder="e.g. Cost breakdown not aligned with contract rates, please revise labour hours."
             rows={4}
-            className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-900 text-sm placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-red-300"
+            className="w-full bg-[#F5F2EA] border border-[#D8D2C4] rounded-lg px-4 py-3 text-[#111827] text-sm placeholder:text-[#6B7280] resize-none focus:outline-none focus:ring-2 focus:ring-[#FBE6E4] focus:border-[#B42318]"
           />
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-[#B42318] text-sm">{error}</p>}
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-[#B42318] hover:bg-[#971D14] disabled:opacity-50 text-white font-semibold py-3 rounded-lg text-sm transition-colors"
+            className="w-full bg-[#B42318] hover:bg-[#7A1810] disabled:opacity-50 text-[#FFFCF5] font-medium py-3 rounded-lg text-sm transition-colors"
           >
             {submitting ? 'Submitting…' : 'Confirm Rejection'}
           </button>
-          <p className="text-center text-gray-400 text-xs">
+          <p className="text-center text-[#6B7280] text-xs">
             Changed your mind?{' '}
             <a
               href={`/api/variation-response?token=${token}&action=approve${respondentEmail ? `&respondent=${encodeURIComponent(respondentEmail)}` : ''}`}
-              className="text-emerald-600 hover:underline"
+              className="text-[#2E7D32] hover:underline"
             >
               Approve instead
             </a>

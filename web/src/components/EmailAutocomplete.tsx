@@ -134,9 +134,9 @@ export default function EmailAutocomplete({
   return (
     <div className="relative">
       {label && (
-        <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-1">
+        <label className="block text-[11px] font-medium text-[#6B7280] uppercase tracking-wider mb-1">
           {label}
-          {labelSuffix && <span className="text-slate-400 normal-case font-normal"> {labelSuffix}</span>}
+          {labelSuffix && <span className="text-[#6B7280] normal-case font-normal"> {labelSuffix}</span>}
         </label>
       )}
       <input
@@ -152,29 +152,29 @@ export default function EmailAutocomplete({
         placeholder={placeholder}
         autoFocus={autoFocus}
         autoComplete="off"
-        className={`w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md focus:ring-1 focus:ring-[#E76F00] outline-none bg-white ${className}`}
+        className={`w-full px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#E76F00] outline-none bg-[#FFFCF5] ${className}`}
       />
       {open && suggestions.length > 0 && (
         <div
           ref={dropdownRef}
-          className="absolute z-50 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden"
+          className="absolute z-50 left-0 right-0 mt-1 bg-[#FFFCF5] border border-[#D8D2C4] rounded-lg shadow-lg overflow-hidden"
         >
           {suggestions.map((c, i) => (
             <button
               key={c.email}
               type="button"
               onMouseDown={e => { e.preventDefault(); selectSuggestion(c); }}
-              className={`w-full text-left px-3 py-2 flex items-center gap-3 hover:bg-indigo-50 transition-colors ${i === activeIdx ? 'bg-indigo-50' : ''}`}
+              className={`w-full text-left px-3 py-2 flex items-center gap-3 hover:bg-[#F5F2EA] transition-colors ${i === activeIdx ? 'bg-[#F5F2EA]' : ''}`}
             >
-              <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 text-[11px] font-bold text-[#E76F00]">
+              <div className="w-7 h-7 rounded-full bg-[#F5F2EA] flex items-center justify-center flex-shrink-0 text-[11px] font-medium text-[#E76F00]">
                 {(c.name?.[0] || c.email[0]).toUpperCase()}
               </div>
               <div className="min-w-0">
-                {c.name && <div className="text-[12px] font-semibold text-slate-700 truncate">{c.name}</div>}
-                <div className="text-[12px] text-slate-500 truncate">{c.email}</div>
+                {c.name && <div className="text-[12px] font-medium text-[#334155] truncate">{c.name}</div>}
+                <div className="text-[12px] text-[#6B7280] truncate">{c.email}</div>
               </div>
               {c.use_count > 1 && (
-                <div className="ml-auto text-[11px] text-slate-300 flex-shrink-0">{c.use_count}×</div>
+                <div className="ml-auto text-[11px] text-[#6B7280] flex-shrink-0">{c.use_count}×</div>
               )}
             </button>
           ))}
