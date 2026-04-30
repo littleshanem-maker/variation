@@ -16,17 +16,24 @@
 
 <style>
 :root {
-  --bg-dark: #17212B;
-  --bg-surface: #17212B;
-  --bg-card: #334155;
+  --bg-dark: #F5F2EA;
+  --bg-surface: #FFFCF5;
+  --bg-card: #FFFCF5;
   --accent: #E76F00;
-  --accent-hover: #E76F00;
-  --text-primary: #F5F2EA;
-  --text-secondary: #6B7280;
-  --border: rgba(255,252,245,0.08);
+  --accent-hover: #C75A00;
+  --text-primary: #111827;
+  --text-secondary: #334155;
+  --text-tertiary: #6B7280;
+  --border: #D8D2C4;
   --green: #2E7D32;
+  --green-dark: #1F5223;
+  --green-tint: #E5F0E6;
   --red: #B42318;
+  --red-dark: #7A1810;
+  --red-tint: #FBE6E4;
   --amber: #D99A00;
+  --amber-dark: #8C6500;
+  --amber-tint: #FBF1D6;
   --radius: 16px;
   --radius-sm: 10px;
 }
@@ -61,7 +68,7 @@ body {
 .announce-bar a {
   display: inline-block;
   background: #E76F00;
-  color: #fff;
+  color: #FFFCF5;
   padding: 5px 14px;
   border-radius: 6px;
   font-size: 13px;
@@ -161,8 +168,8 @@ nav {
 
 .calculator-badge {
   display: inline-block;
-  background: rgba(180,35,24,0.12);
-  color: var(--red);
+  background: var(--red-tint);
+  color: var(--red-dark);
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 12px;
@@ -170,7 +177,7 @@ nav {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 14px;
-  border: 1px solid rgba(180,35,24,0.2);
+  border: 1px solid var(--border);
 }
 
 .calculator-title {
@@ -203,6 +210,7 @@ nav {
   border-radius: var(--radius);
   padding: 28px;
   border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(17,24,39,0.04);
 }
 
 .inputs-title {
@@ -240,7 +248,7 @@ nav {
   width: 100%;
   height: 6px;
   border-radius: 3px;
-  background: rgba(255,252,245,0.1);
+  background: #D8D2C4;
   outline: none;
   -webkit-appearance: none;
   cursor: pointer;
@@ -295,7 +303,8 @@ nav {
   background: var(--bg-card);
   border-radius: var(--radius);
   padding: 28px;
-  border: 1px solid rgba(180,35,24,0.15);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(17,24,39,0.04);
   opacity: 1;
   transform: none;
 }
@@ -315,10 +324,7 @@ nav {
 }
 
 .reveal-highlight {
-  background: linear-gradient(120deg, var(--red), #B42318);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--red);
 }
 
 .results-subtitle {
@@ -343,8 +349,8 @@ nav {
 }
 
 .result-card.highlight-card {
-  border-color: rgba(46,125,50,0.3);
-  background: rgba(46,125,50,0.05);
+  border-color: var(--border);
+  background: var(--green-tint);
 }
 
 .result-label {
@@ -376,8 +382,8 @@ nav {
 
 /* ─── ROI COMPARISON BAR ─── */
 .roi-comparison {
-  background: rgba(46,125,50,0.08);
-  border: 1px solid rgba(46,125,50,0.2);
+  background: var(--green-tint);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 24px 28px;
   display: flex;
@@ -431,8 +437,8 @@ nav {
 
 /* ─── LEAD CAPTURE SECTION ─── */
 .lead-capture-section {
-  background: linear-gradient(135deg, rgba(180,35,24,0.06) 0%, rgba(180,35,24,0.02) 100%);
-  border: 1px solid rgba(180,35,24,0.2);
+  background: var(--red-tint);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 40px;
   margin-bottom: 24px;
@@ -507,7 +513,7 @@ nav {
 
 .form-field input {
   background: var(--bg-surface);
-  border: 1px solid rgba(255,252,245,0.1);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 12px 16px;
   font-family: inherit;
@@ -519,7 +525,7 @@ nav {
 }
 
 .form-field input::placeholder {
-  color: rgba(107,114,128,0.5);
+  color: var(--text-tertiary);
 }
 
 .form-field input:focus {
@@ -619,8 +625,8 @@ nav {
 
 /* ─── CTA SECTION ─── */
 .cta-section {
-  background: linear-gradient(135deg, rgba(231,111,0,0.08) 0%, rgba(231,111,0,0.03) 100%);
-  border: 1px solid rgba(231,111,0,0.15);
+  background: var(--amber-tint);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 48px 40px;
   text-align: center;
@@ -655,9 +661,9 @@ nav {
 
 .founding-pill {
   display: inline-block;
-  background: rgba(217,154,0,0.12);
-  color: var(--amber);
-  border: 1px solid rgba(217,154,0,0.25);
+  background: #FFFCF5;
+  color: var(--amber-dark);
+  border: 1px solid var(--border);
   border-radius: 20px;
   font-size: 13px;
   font-weight: 500;
@@ -710,15 +716,16 @@ nav {
   text-decoration: none;
   transition: all 0.25s ease;
   width: 100%;
-  background: transparent;
-  color: var(--text-secondary);
-  border: 1px solid rgba(255,252,245,0.12);
+  background: #FFFCF5;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   cursor: pointer;
 }
 
 .btn-secondary:hover {
   color: var(--text-primary);
-  border-color: rgba(255,252,245,0.25);
+  border-color: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
 .guarantee-note {
@@ -784,8 +791,8 @@ nav {
   border: 1px solid var(--border);
 }
 .btn-share-copy:hover {
-  background: var(--bg-surface);
-  border-color: rgba(255,252,245,0.2);
+  background: #F5F2EA;
+  border-color: var(--accent-hover);
 }
 
 .copy-toast {
@@ -956,8 +963,8 @@ footer {
 
 .time-toggle {
   display: inline-flex;
-  background: rgba(255,252,245,0.05);
-  border: 1px solid rgba(255,252,245,0.1);
+  background: #FFFCF5;
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 4px;
   gap: 2px;
@@ -983,27 +990,26 @@ footer {
 
 /* ─── CARD COLOUR TREATMENTS ─── */
 .card-loss {
-  border-color: rgba(180,35,24,0.3) !important;
-  background: rgba(180,35,24,0.07) !important;
+  border-color: var(--border) !important;
+  background: var(--red-tint) !important;
 }
 
 .card-loss .result-label {
-  color: rgba(180,35,24,0.75);
+  color: var(--red-dark);
 }
 
 .card-recovery {
-  border-color: rgba(46,125,50,0.3) !important;
-  background: rgba(46,125,50,0.07) !important;
+  border-color: var(--border) !important;
+  background: var(--green-tint) !important;
 }
 
 .card-recovery .result-label {
-  color: rgba(46,125,50,0.75);
+  color: var(--green-dark);
 }
 
 .card-cost {
-  opacity: 0.65;
-  border-color: rgba(255,252,245,0.05) !important;
-  background: var(--bg-surface) !important;
+  border-color: var(--border) !important;
+  background: var(--amber-tint) !important;
 }
 
 .card-cost .result-value {
@@ -1012,8 +1018,8 @@ footer {
 
 /* ─── ROI GLOW ─── */
 .roi-comparison.glow {
-  border-color: rgba(46,125,50,0.45);
-  box-shadow: 0 0 32px rgba(46,125,50,0.14);
+  border-color: var(--green);
+  box-shadow: 0 1px 2px rgba(17,24,39,0.04);
 }
 
 /* ─── BENCHMARK LINE ─── */
@@ -1021,8 +1027,8 @@ footer {
   display: none;
   margin-bottom: 16px;
   padding: 11px 15px;
-  background: rgba(231,111,0,0.05);
-  border-left: 3px solid rgba(231,111,0,0.45);
+  background: var(--amber-tint);
+  border-left: 3px solid var(--accent);
   border-radius: 0 6px 6px 0;
   font-size: 12.5px;
   color: var(--text-secondary);
@@ -1036,8 +1042,8 @@ footer {
 /* ─── INLINE CTA ─── */
 .inline-cta {
   margin-top: 20px;
-  background: linear-gradient(135deg, rgba(17,24,39,0.08) 0%, rgba(17,24,39,0.05) 100%);
-  border: 1px solid rgba(17,24,39,0.28);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 22px 24px;
   text-align: center;
@@ -1202,8 +1208,8 @@ footer {
     </div>
 
     <!-- Source footnote inside left column -->
-    <div style="margin-top: 16px; padding: 12px 16px; background: rgba(255,252,245,0.04); border-radius: 8px;">
-      <p style="font-size: 11px; color: #6B7280; line-height: 1.6; margin: 0; overflow-wrap: break-word; word-break: break-word;">
+    <div style="margin-top: 16px; padding: 12px 16px; background: #FFFCF5; border: 1px solid #D8D2C4; border-radius: 8px;">
+      <p style="font-size: 11px; color: #334155; line-height: 1.6; margin: 0; overflow-wrap: break-word; word-break: break-word;">
         Defaults based on KPMG/AIQS (variation rate) and NSW Fair Trading SOPA data (59% of claims rejected or discounted). Root cause: poor documentation.
       </p>
     </div>
