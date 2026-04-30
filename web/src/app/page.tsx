@@ -232,9 +232,9 @@ export default function LandingPage() {
       {/* CREDIBILITY */}
       <section className="py-24 px-6 bg-[#FFFCF5] border-y border-[#D8D2C4]">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-6">Why this exists</p>
-          <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-8">Built from the other side of the desk</h2>
-          <div className="space-y-5 text-[#334155] text-base leading-relaxed text-left">
+          <p className="text-[#C75A00] text-xs font-medium tracking-[0.055em] uppercase mb-6">Why this exists</p>
+          <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-8 text-[#111827]">Built from the other side of the desk</h2>
+          <div className="space-y-5 text-[#17212B] text-base leading-relaxed text-left">
             <p>We spent 15 years as project managers on Tier 1 and Tier 2 infrastructure projects across Australia. Our job was processing variation claims from subcontractors — and deciding which ones got paid.</p>
             <p>We saw the same thing every week. Skilled tradespeople doing legitimate extra work. Good claims rejected because the paperwork wasn't there. Not because the work wasn't done — because the evidence wasn't documented properly.</p>
             <p><strong className="text-[#111827]">"Everyone on site knew it was extra"</strong> doesn't hold up in a final account meeting. The head contractor's commercial team knows that. And by the time you're arguing about it, the leverage is gone.</p>
@@ -242,7 +242,7 @@ export default function LandingPage() {
           </div>
           <div className="mt-10 pt-8 border-t border-[#D8D2C4]">
             <div className="font-medium text-lg">Shane Little</div>
-            <div className="text-[#334155] text-sm mt-1">Founder, Leveraged Systems · 15 years Tier 1 & 2 project management</div>
+            <div className="text-[#17212B] text-sm mt-1">Founder, Leveraged Systems · 15 years Tier 1 & 2 project management</div>
           </div>
         </div>
       </section>
