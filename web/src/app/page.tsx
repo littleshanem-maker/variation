@@ -88,11 +88,11 @@ export default function LandingPage() {
       {/* SOCIAL PROOF BAR */}
       <div className="border-y border-[#D8D2C4] bg-[#FFFCF5] py-5 px-6">
         <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-x-10 gap-y-3 text-sm text-[#334155] text-center">
-          <span className="flex items-center gap-2"><span className="text-[#2E7D32]">✓</span> 60-second site capture</span>
-          <span className="flex items-center gap-2"><span className="text-[#2E7D32]">✓</span> Send to client from the app</span>
-          <span className="flex items-center gap-2"><span className="text-[#2E7D32]">✓</span> Professional PDF reports</span>
-          <span className="flex items-center gap-2"><span className="text-[#2E7D32]">✓</span> Works offline on site</span>
-          <span className="flex items-center gap-2"><span className="text-[#2E7D32]">✓</span> Field + office roles</span>
+          <span className="flex items-center gap-2"><span className="text-[#1F5223]">✓</span> 60-second site capture</span>
+          <span className="flex items-center gap-2"><span className="text-[#1F5223]">✓</span> Send to client from the app</span>
+          <span className="flex items-center gap-2"><span className="text-[#1F5223]">✓</span> Professional PDF reports</span>
+          <span className="flex items-center gap-2"><span className="text-[#1F5223]">✓</span> Works offline on site</span>
+          <span className="flex items-center gap-2"><span className="text-[#1F5223]">✓</span> Field + office roles</span>
         </div>
       </div>
 
@@ -293,7 +293,7 @@ export default function LandingPage() {
                 'Cancel anytime',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3 text-sm text-[#334155]">
-                  <span className="text-[#2E7D32] font-medium mt-0.5 flex-shrink-0">✓</span>
+                  <span className="text-[#1F5223] font-medium mt-0.5 flex-shrink-0">✓</span>
                   {item}
                 </li>
               ))}
