@@ -43,7 +43,7 @@ async function notifyPM(opts: {
       from: `Variation Shield <noreply@${FROM_DOMAIN}>`,
       to: toEmail,
       subject,
-      html: `<!DOCTYPE html><html><body style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:32px;">${bodyHtml}</body></html>`,
+      html: `<!DOCTYPE html><html><body style="font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto;padding:32px;">${bodyHtml}</body></html>`,
     });
   } catch (err) {
     console.error('[variation-response] PM notify error:', err);
@@ -92,7 +92,7 @@ async function notifyApprover(opts: {
       from: `Variation Shield <noreply@${FROM_DOMAIN}>`,
       to: toEmail,
       subject,
-      html: `<!DOCTYPE html><html><body style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;padding:32px;">${bodyHtml}</body></html>`,
+      html: `<!DOCTYPE html><html><body style="font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,sans-serif;max-width:600px;margin:0 auto;padding:32px;">${bodyHtml}</body></html>`,
     });
   } catch (err) {
     console.error('[variation-response] approver receipt error:', err);

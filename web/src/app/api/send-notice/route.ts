@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#F5F2EA;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;">
+<body style="margin:0;padding:0;background:#F5F2EA;font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#F5F2EA;padding:32px 0;">
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="background:#FFFCF5;border-radius:8px;overflow:hidden;max-width:600px;width:100%;">
