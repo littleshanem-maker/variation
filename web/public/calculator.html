@@ -1404,7 +1404,7 @@ footer {
 const VARIATION_SHIELD_ANNUAL = 3588;
 let hasRevealed = false;
 let timeHorizon = 1;
-let hasInteracted = false;
+let hasIBM Plex Sansacted = false;
 
 // Cached calc values
 let _calcRevenue = 10000000;
@@ -1584,9 +1584,9 @@ function triggerReveal() {
   }
 }
 
-function onSliderInteraction() {
-  if (!hasInteracted) {
-    hasInteracted = true;
+function onSliderIBM Plex Sansaction() {
+  if (!hasIBM Plex Sansacted) {
+    hasIBM Plex Sansacted = true;
     document.getElementById('btnCalculate').classList.add('visible');
   }
   if (hasRevealed) {
@@ -1605,23 +1605,23 @@ function setTimeHorizon(years) {
 // Slider listeners
 document.getElementById('revenueSlider').addEventListener('input', function() {
   document.getElementById('revenueValue').textContent = fmtRevenue(parseInt(this.value));
-  onSliderInteraction();
+  onSliderIBM Plex Sansaction();
 });
 
 document.getElementById('variationRateSlider').addEventListener('input', function() {
   document.getElementById('variationRateValue').textContent = this.value + '% of revenue';
-  onSliderInteraction();
+  onSliderIBM Plex Sansaction();
 });
 
 document.getElementById('unrecoveredSlider').addEventListener('input', function() {
   document.getElementById('unrecoveredValue').textContent = this.value + '% unagreed';
-  onSliderInteraction();
+  onSliderIBM Plex Sansaction();
 });
 
 // ─── REVEAL OBSERVER ─── //
-const observer = new IntersectionObserver((entries) => {
+const observer = new IBM Plex SanssectionObserver((entries) => {
   entries.forEach(entry => {
-    if (entry.isIntersecting) {
+    if (entry.isIBM Plex Sanssecting) {
       entry.target.classList.add('visible');
       observer.unobserve(entry.target);
     }
