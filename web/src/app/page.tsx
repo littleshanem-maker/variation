@@ -271,14 +271,14 @@ export default function LandingPage() {
 
           <div className="bg-[#FFFCF5] border border-[#D8D2C4] rounded-md p-8 text-left relative overflow-hidden">
             <div className="inline-flex items-center gap-1.5 bg-[#8C6500]/10 border border-[#8C6500]/25 rounded-sm px-3 py-1 text-xs font-medium text-[#8C6500] uppercase tracking-wider mb-5">
-              First 10 customers
+              Limited places available
             </div>
             <div className="flex items-baseline gap-3 mb-1">
               <span className="text-5xl font-medium">$299</span>
               <span className="text-[#334155] text-lg">+ GST / month</span>
             </div>
             <p className="text-[#8C6500] text-sm font-medium mb-1">$299/month early adopter rate, locked for 12 months</p>
-            <p className="text-[#334155] text-xs mb-1">First 10 customers: $299/month. Standard price will be $499/month.</p>
+            <p className="text-[#334155] text-xs mb-1">Limited places available: $299/month. Standard price will be $499/month.</p>
             <p className="text-[#4B5563] text-xs mb-8">If it helps, continue at the $299/month early adopter rate. Cancel anytime.</p>
 
             <ul className="space-y-3 mb-8">
