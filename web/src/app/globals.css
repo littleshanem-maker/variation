@@ -1,34 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  --color-base: #F8F8F6;
-  --color-surface: #FFFFFF;
-  --color-text-primary: #1C1C1E;
-  --color-text-secondary: #6B7280;
-  --color-text-muted: #9CA3AF;
-  --color-navy: #1B365D;
-  --color-navy-light: #24466F;
-  --color-border: #E5E7EB;
-  --color-border-light: #F0F0EE;
-  --color-hover: #F5F3EF;
-  --color-gold: #D4A853;
-  --color-status-approved: #4A7C6F;
-  --color-status-submitted: #C8943E;
-  --color-status-disputed: #B25B4E;
-  --color-status-draft: #9CA3AF;
-  --color-status-paid: #1C1C1E;
-  --color-status-at-risk: #C8943E;
-  --font-sans: var(--font-inter), 'Inter', system-ui, -apple-system, sans-serif;
+  --color-base: #F5F2EA;
+  --color-surface: #FFFCF5;
+  --color-text-primary: #111827;
+  --color-text-secondary: #334155;
+  --color-text-muted: #64748B;
+  --color-navy: #17212B;
+  --color-navy-light: #334155;
+  --color-border: #D8D2C4;
+  --color-border-light: #E7E0D2;
+  --color-hover: #EFE9DC;
+  --color-gold: #E76F00;
+  --color-status-approved: #2E7D32;
+  --color-status-submitted: #D99A00;
+  --color-status-disputed: #B42318;
+  --color-status-draft: #64748B;
+  --color-status-paid: #111827;
+  --color-status-at-risk: #D99A00;
+  --font-sans: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --font-condensed: var(--font-plex-condensed), 'IBM Plex Sans Condensed', var(--font-sans);
 }
 
 html {
-  font-feature-settings: 'tnum' on, 'lnum' on;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
 }
 
 body {
   background-color: var(--color-base);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -52,4 +55,23 @@ body {
   }
 
 
+}
+
+
+/* Construction-commercial visual refresh */
+.font-condensed,
+[class*="tracking-wider"],
+[class*="tracking-widest"],
+[class*="uppercase"],
+[class*="status"],
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'lnum' 1;
+}
+
+[class*="tracking-wider"],
+[class*="tracking-widest"],
+[class*="uppercase"] {
+  font-family: var(--font-condensed);
+  letter-spacing: 0.055em;
 }

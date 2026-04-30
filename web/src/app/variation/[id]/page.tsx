@@ -631,7 +631,7 @@ export default function VariationDetail() {
   if (loading) {
     return (
       <AppShell><TopBar title="Variation" />
-        <div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div>
       </AppShell>
     );
   }
@@ -639,7 +639,7 @@ export default function VariationDetail() {
   if (!variation || !project) {
     return (
       <AppShell><TopBar title="Variation" />
-        <div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Variation not found</div>
+        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Variation not found</div>
       </AppShell>
     );
   }
@@ -653,7 +653,7 @@ export default function VariationDetail() {
   // True when sent to client and awaiting their response
   const awaitingClientResponse = isSubmitted && !!variation.client_email && !variation.client_approval_response;
 
-  const inputClass = "w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-shadow";
+  const inputClass = "w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-lg focus:ring-2 focus:ring-[#E76F00] focus:border-[#E76F00] outline-none transition-shadow";
   const labelClass = "block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1";
 
   const STATUS_TRANSITIONS: Record<string, string[]> = {
@@ -672,10 +672,10 @@ export default function VariationDetail() {
     disputed:  'Mark Disputed',
   };
   const STATUS_ACTION_STYLES: Record<string, string> = {
-    submitted: 'text-[#92722E] border-[#C8943E] hover:bg-[#FDF8ED]',
-    approved:  'text-[#3D6B5E] border-[#4A7C6F] hover:bg-[#F0F7F4]',
+    submitted: 'text-[#92722E] border-[#D99A00] hover:bg-[#FDF8ED]',
+    approved:  'text-[#3D6B5E] border-[#2E7D32] hover:bg-[#F0F7F4]',
     rejected:  'text-[#5B3A7C] border-[#7C5BA0] hover:bg-[#F5F0FA]',
-    disputed:  'text-[#9A4A3E] border-[#B25B4E] hover:bg-[#FDF2F0]',
+    disputed:  'text-[#9A4A3E] border-[#B42318] hover:bg-[#FDF2F0]',
   };
   const nextStatuses = STATUS_TRANSITIONS[variation.status] ?? [];
 
@@ -687,7 +687,7 @@ export default function VariationDetail() {
         <div className="space-y-3">
           <Link
             href={fromDashboard ? '/' : `/project/${project.id}`}
-            className="hidden md:flex items-center gap-2 w-full bg-white border border-[#E5E7EB] rounded-md px-4 py-3 text-[14px] font-semibold text-[#1B365D] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)] truncate"
+            className="hidden md:flex items-center gap-2 w-full bg-white border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-semibold text-[#17212B] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)] truncate"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="flex-shrink-0">
               <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -709,7 +709,7 @@ export default function VariationDetail() {
           {freeTierBanner === 'final' && (
             <div className="flex items-center justify-between bg-green-50 border border-green-200 text-green-800 rounded-md px-4 py-2.5 text-[13px] font-medium">
               <span>🎉 Nice — 3 variations documented. Upgrade to keep capturing.</span>
-              <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="ml-3 text-green-700 underline text-xs font-semibold">Upgrade to Pro →</a>
+              <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="ml-3 text-[#276B2B] underline text-xs font-semibold">Upgrade to Pro →</a>
             </div>
           )}
           {saveError && !editing && (
@@ -733,7 +733,7 @@ export default function VariationDetail() {
                       }
                     }}
                     disabled={sendingEmail}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg disabled:opacity-40 transition-colors shadow-sm whitespace-nowrap"
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg disabled:opacity-40 transition-colors shadow-sm whitespace-nowrap"
                   >
                     <Send size={14} />
                     {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : showEmailInput ? 'Send' : 'Submit to Client'}
@@ -763,7 +763,7 @@ export default function VariationDetail() {
                   </>
                 )}
                 {isDisputed && !isField && (
-                  <button onClick={startRevising} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm">
+                  <button onClick={startRevising} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm">
                     <ArrowUpRight size={14} /> Revise &amp; Resubmit
                   </button>
                 )}
@@ -829,18 +829,18 @@ export default function VariationDetail() {
           {editing && (
             <div className="flex gap-2">
               {saveError && (
-                <p className="text-[13px] text-[#B25B4E] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 self-center">{saveError}</p>
+                <p className="text-[13px] text-[#B42318] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 self-center">{saveError}</p>
               )}
               <button
                 onClick={() => { setEditing(false); setRevisingMode(false); setNewFiles([]); setSaveError(null); }}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving || !editTitle.trim()}
-                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-lg hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
+                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-lg hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
               >
                 {saving ? 'Saving...' : revisingMode ? 'Save Revision' : 'Save Changes'}
               </button>
@@ -850,14 +850,14 @@ export default function VariationDetail() {
 
         {/* Linked Variation Notice Banner */}
         {linkedNotice && (
-          <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-[#FDF8ED] border border-[#C8943E]/30 rounded-md text-[13px]">
-            <span className="font-mono font-bold text-[#1B365D]">{linkedNotice.notice_number}</span>
-            <span className="text-[#6B7280]">—</span>
+          <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-[#FDF8ED] border border-[#D99A00]/30 rounded-md text-[13px]">
+            <span className="font-mono font-bold text-[#17212B]">{linkedNotice.notice_number}</span>
+            <span className="text-[#334155]">—</span>
             {linkedNotice.issued_at
               ? <span className="text-[#92722E]">Issued {new Date(linkedNotice.issued_at).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
               : <span className="text-[#92722E] capitalize">{linkedNotice.status}</span>
             }
-            <Link href={`/notice/${linkedNotice.id}`} className="ml-auto text-[#1B365D] font-medium hover:text-[#24466F] transition-colors duration-[120ms]">
+            <Link href={`/notice/${linkedNotice.id}`} className="ml-auto text-[#17212B] font-medium hover:text-[#334155] transition-colors duration-[120ms]">
               View Notice →
             </Link>
           </div>
@@ -892,7 +892,7 @@ export default function VariationDetail() {
           const ORDER = ['draft', 'captured', 'submitted', 'approved', 'disputed', 'paid'];
           const currentIdx = ORDER.indexOf(variation.status);
           return (
-            <div className="flex items-center gap-0 bg-white border border-[#E5E7EB] rounded-md px-4 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="flex items-center gap-0 bg-white border border-[#D8D2C4] rounded-md px-4 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
               {steps.map((step, i) => {
                 const stepOrder = ORDER.indexOf(step.key);
                 const isCurrent = variation.status === step.key || (step.key === 'draft' && variation.status === 'captured');
@@ -903,7 +903,7 @@ export default function VariationDetail() {
                     <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0 ${
                         isCurrent
-                          ? step.key === 'disputed' ? 'bg-rose-500 text-white' : 'bg-indigo-600 text-white'
+                          ? step.key === 'disputed' ? 'bg-rose-500 text-white' : 'bg-[#E76F00] text-white'
                           : isDone
                           ? 'bg-emerald-500 text-white'
                           : 'bg-slate-100 text-slate-400'
@@ -912,7 +912,7 @@ export default function VariationDetail() {
                       </div>
                       <span className={`text-[10px] font-medium text-center leading-tight hidden sm:block ${
                         isCurrent
-                          ? step.key === 'disputed' ? 'text-rose-600' : 'text-indigo-600'
+                          ? step.key === 'disputed' ? 'text-rose-600' : 'text-[#E76F00]'
                           : isDone ? 'text-emerald-600' : 'text-slate-400'
                       }`}>{step.label}</span>
                     </div>
@@ -927,7 +927,7 @@ export default function VariationDetail() {
         })()}
 
         {/* Header Card */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           {editing ? (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-4">
@@ -986,9 +986,9 @@ export default function VariationDetail() {
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider">{getVariationNumber(variation)}</div>
+                    <div className="text-[12px] font-mono font-bold text-[#17212B] uppercase tracking-wider">{getVariationNumber(variation)}</div>
                     {editing ? (
-                      <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-indigo-500 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#E76F00] px-1.5 py-0.5 rounded">
                         {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0) + 1} — Draft` : 'Draft'}
                       </span>
                     ) : hasPendingDraft ? (
@@ -1001,47 +1001,47 @@ export default function VariationDetail() {
                       </span>
                     ) : null}
                   </div>
-                  <h2 className="text-[22px] font-bold text-[#1C1C1E] truncate">{variation.title}</h2>
-                  <p className="text-[13px] text-[#6B7280] mt-1 truncate">{project.name} · {project.client}</p>
+                  <h2 className="text-[22px] font-bold text-[#111827] truncate">{variation.title}</h2>
+                  <p className="text-[13px] text-[#334155] mt-1 truncate">{project.name} · {project.client}</p>
                 </div>
                 <div className="sm:text-right flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0 flex-shrink-0">
-                  {!isField && <div className="text-[28px] font-bold text-[#1C1C1E] tabular-nums">{formatCurrency(variation.estimated_value)}</div>}
+                  {!isField && <div className="text-[28px] font-bold text-[#111827] tabular-nums">{formatCurrency(variation.estimated_value)}</div>}
                   <div className="sm:mt-2"><StatusBadge status={variation.status} /></div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5 pt-4 border-t border-[#F0F0EE]">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5 pt-4 border-t border-[#E7E0D2]">
                 <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Instruction Source</div>
-                  <div className="text-[15px] text-[#1C1C1E] mt-1 capitalize truncate">{variation.instruction_source?.replace(/_/g, ' ')}</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Instruction Source</div>
+                  <div className="text-[15px] text-[#111827] mt-1 capitalize truncate">{variation.instruction_source?.replace(/_/g, ' ')}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Instructed By</div>
-                  <div className="text-[15px] text-[#1C1C1E] mt-1 truncate">{variation.instructed_by || '—'}</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Instructed By</div>
+                  <div className="text-[15px] text-[#111827] mt-1 truncate">{variation.instructed_by || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Captured</div>
-                  <div className="text-[15px] text-[#1C1C1E] mt-1 whitespace-nowrap">{formatDate(variation.captured_at)}</div>
+                  <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Captured</div>
+                  <div className="text-[15px] text-[#111827] mt-1 whitespace-nowrap">{formatDate(variation.captured_at)}</div>
                 </div>
                 {(variation.requestor_name || variation.requestor_email) && (
                   <div>
-                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Submitted By</div>
-                    <div className="text-[15px] text-[#1C1C1E] mt-1 truncate">{variation.requestor_name || '—'}</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Submitted By</div>
+                    <div className="text-[15px] text-[#111827] mt-1 truncate">{variation.requestor_name || '—'}</div>
                     {variation.requestor_email && (
-                      <div className="text-[12px] text-[#6B7280] mt-0.5 break-all">{variation.requestor_email}</div>
+                      <div className="text-[12px] text-[#334155] mt-0.5 break-all">{variation.requestor_email}</div>
                     )}
                   </div>
                 )}
                 {variation.reference_doc && (
                   <div>
-                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Reference Document</div>
-                    <div className="text-[15px] text-[#1C1C1E] mt-1 truncate">{variation.reference_doc}</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Reference Document</div>
+                    <div className="text-[15px] text-[#111827] mt-1 truncate">{variation.reference_doc}</div>
                   </div>
                 )}
                 {variation.client_email && (
                   <div>
-                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Client Email</div>
-                    <div className="text-[15px] text-[#1C1C1E] mt-1 break-all">{variation.client_email}</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Client Email</div>
+                    <div className="text-[15px] text-[#111827] mt-1 break-all">{variation.client_email}</div>
                   </div>
                 )}
                 {variation.response_due_date && (() => {
@@ -1052,11 +1052,11 @@ export default function VariationDetail() {
                   const dueSoon = daysLeft >= 0 && daysLeft <= 3;
                   return (
                     <div>
-                      <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Response Due</div>
-                      <div className={`text-[15px] font-semibold mt-1 ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#1C1C1E]'}`}>
+                      <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Response Due</div>
+                      <div className={`text-[15px] font-semibold mt-1 ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#111827]'}`}>
                         {due.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
                       </div>
-                      <div className={`text-[12px] mt-0.5 ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#6B7280]'}`}>
+                      <div className={`text-[12px] mt-0.5 ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#334155]'}`}>
                         {overdue ? `${Math.abs(daysLeft)}d overdue` : daysLeft === 0 ? 'Due today' : `${daysLeft}d remaining`}
                       </div>
                     </div>
@@ -1064,8 +1064,8 @@ export default function VariationDetail() {
                 })()}
                 {variation.evidence_hash && (
                   <div className="sm:col-span-2">
-                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#9CA3AF]">Evidence Hash</div>
-                    <div className="text-[11px] text-[#9CA3AF] mt-1 font-mono break-all">{variation.evidence_hash}</div>
+                    <div className="text-[11px] font-semibold uppercase tracking-widest text-[#64748B]">Evidence Hash</div>
+                    <div className="text-[11px] text-[#64748B] mt-1 font-mono break-all">{variation.evidence_hash}</div>
                   </div>
                 )}
               </div>
@@ -1074,8 +1074,8 @@ export default function VariationDetail() {
         </div>
 
         {/* Description */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Description</h3>
+        <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Description</h3>
           {editing ? (
             <textarea
               value={editDescription}
@@ -1086,13 +1086,13 @@ export default function VariationDetail() {
             />
           ) : (
             <>
-              <p className="text-[14px] text-[#1C1C1E] leading-relaxed whitespace-pre-wrap">
+              <p className="text-[14px] text-[#111827] leading-relaxed whitespace-pre-wrap">
                 {variation.ai_description || variation.description || '—'}
               </p>
               {variation.ai_description && variation.description && (
                 <details className="mt-4">
-                  <summary className="text-[12px] text-[#1B365D] cursor-pointer font-medium">View original</summary>
-                  <p className="text-[13px] text-[#6B7280] mt-2 whitespace-pre-wrap">{variation.description}</p>
+                  <summary className="text-[12px] text-[#17212B] cursor-pointer font-medium">View original</summary>
+                  <p className="text-[13px] text-[#334155] mt-2 whitespace-pre-wrap">{variation.description}</p>
                 </details>
               )}
             </>
@@ -1103,10 +1103,10 @@ export default function VariationDetail() {
 
         {/* Cost Breakdown */}
         {(editing || (variation as any).cost_items?.length > 0) && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Cost Breakdown</h3>
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Cost Breakdown</h3>
             {editing ? (
-              <div className="bg-[#F9FAFB] rounded-lg border border-[#E5E7EB] p-3">
+              <div className="bg-[#F9FAFB] rounded-lg border border-[#D8D2C4] p-3">
                 <CostItemsTable
                   items={editCostItems}
                   onChange={setEditCostItems}
@@ -1116,8 +1116,8 @@ export default function VariationDetail() {
             ) : (
               <div className="space-y-1">
                 {((variation as any).cost_items || []).map((item: any) => (
-                  <div key={item.id} className="flex justify-between text-[13px] py-1 border-b border-[#F0F0EE]">
-                    <span className="text-[#1C1C1E]">{item.description} <span className="text-[#9CA3AF]">({item.qty} {item.unit} @ ${item.rate})</span></span>
+                  <div key={item.id} className="flex justify-between text-[13px] py-1 border-b border-[#E7E0D2]">
+                    <span className="text-[#111827]">{item.description} <span className="text-[#64748B]">({item.qty} {item.unit} @ ${item.rate})</span></span>
                     <span className="font-medium tabular-nums">${item.total?.toFixed(2)}</span>
                   </div>
                 ))}
@@ -1132,8 +1132,8 @@ export default function VariationDetail() {
 
         {/* Time Implication */}
         {(editing || variation.eot_days_claimed != null || linkedNotice?.time_flag) && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Time Implication</h3>
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Time Implication</h3>
             {editing ? (
               <div className="flex items-center gap-3">
                 <input
@@ -1143,12 +1143,12 @@ export default function VariationDetail() {
                   value={editEotDays}
                   onChange={e => setEditEotDays(e.target.value)}
                   placeholder="e.g. 5"
-                  className="w-28 px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none"
+                  className="w-28 px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none"
                 />
                 <select
                   value={editTimeUnit}
                   onChange={e => setEditTimeUnit(e.target.value as 'days' | 'hours')}
-                  className="px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none bg-white"
+                  className="px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none bg-white"
                 >
                   <option value="days">days</option>
                   <option value="hours">hours</option>
@@ -1156,7 +1156,7 @@ export default function VariationDetail() {
                 <span className="text-[13px] text-slate-400">Leave blank if no time impact</span>
               </div>
             ) : (
-              <div className="text-[14px] text-[#1C1C1E] font-medium">
+              <div className="text-[14px] text-[#111827] font-medium">
                 {variation.eot_days_claimed != null
                   ? `${variation.eot_days_claimed} ${variation.time_implication_unit === 'hours'
                       ? `hour${variation.eot_days_claimed !== 1 ? 's' : ''}`
@@ -1170,8 +1170,8 @@ export default function VariationDetail() {
 
         {/* Documents */}
         {(documents.length > 0 || editing) && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Documents {documents.length > 0 && `(${documents.length})`}</h3>
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Documents {documents.length > 0 && `(${documents.length})`}</h3>
             <div className="space-y-2">
               {documents.map(doc => (
                 <a
@@ -1179,21 +1179,21 @@ export default function VariationDetail() {
                   href={docUrls[doc.id] || '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 bg-[#F8F8F6] rounded-md hover:bg-[#F0F0EE] transition-colors duration-[120ms]"
+                  className="flex items-center gap-3 p-3 bg-[#F5F2EA] rounded-md hover:bg-[#E7E0D2] transition-colors duration-[120ms]"
                 >
-                  <div className="text-[#6B7280]">📄</div>
+                  <div className="text-[#334155]">📄</div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[14px] font-medium text-[#1C1C1E] truncate">{doc.file_name}</div>
-                    <div className="text-[12px] text-[#9CA3AF]">{(doc.file_size / 1024).toFixed(0)} KB</div>
+                    <div className="text-[14px] font-medium text-[#111827] truncate">{doc.file_name}</div>
+                    <div className="text-[12px] text-[#64748B]">{(doc.file_size / 1024).toFixed(0)} KB</div>
                   </div>
-                  <span className="text-[12px] text-[#1B365D] font-medium flex-shrink-0">Download ↓</span>
+                  <span className="text-[12px] text-[#17212B] font-medium flex-shrink-0">Download ↓</span>
                 </a>
               ))}
             </div>
             {editing && (
               <div className="mt-3">
                 <div
-                  className="w-full px-3 py-4 border border-dashed border-[#D1D5DB] rounded-md text-center cursor-pointer hover:border-[#1B365D] hover:bg-[#F8FAFC] transition-colors duration-[120ms]"
+                  className="w-full px-3 py-4 border border-dashed border-[#D1D5DB] rounded-md text-center cursor-pointer hover:border-[#17212B] hover:bg-[#F8FAFC] transition-colors duration-[120ms]"
                   onClick={() => document.getElementById('edit-file-input')?.click()}
                 >
                   <input
@@ -1208,18 +1208,18 @@ export default function VariationDetail() {
                       }
                     }}
                   />
-                  <p className="text-[13px] text-[#6B7280]">Click to attach more files</p>
-                  <p className="text-[11px] text-[#9CA3AF] mt-1">PDF, Word, Excel, Images</p>
+                  <p className="text-[13px] text-[#334155]">Click to attach more files</p>
+                  <p className="text-[11px] text-[#64748B] mt-1">PDF, Word, Excel, Images</p>
                 </div>
                 {newFiles.length > 0 && (
                   <div className="mt-2 space-y-1">
                     {newFiles.map((f, i) => (
-                      <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-[#F8F8F6] rounded text-[13px]">
-                        <span className="text-[#1C1C1E] truncate">{f.name}</span>
+                      <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-[#F5F2EA] rounded text-[13px]">
+                        <span className="text-[#111827] truncate">{f.name}</span>
                         <button
                           type="button"
                           onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))}
-                          className="text-[#9CA3AF] hover:text-[#B25B4E] ml-2 transition-colors"
+                          className="text-[#64748B] hover:text-[#B42318] ml-2 transition-colors"
                         >
                           ✕
                         </button>
@@ -1234,15 +1234,15 @@ export default function VariationDetail() {
 
         {/* Photos */}
         {photos.length > 0 && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Photo Evidence ({photos.length})</h3>
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Photo Evidence ({photos.length})</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {photos.map(photo => (
-                <div key={photo.id} className="aspect-square bg-[#F8F8F6] rounded-md overflow-hidden border border-[#E5E7EB]">
+                <div key={photo.id} className="aspect-square bg-[#F5F2EA] rounded-md overflow-hidden border border-[#D8D2C4]">
                   {photoUrls[photo.id] ? (
                     <img src={photoUrls[photo.id]} alt="Evidence" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[#9CA3AF] text-[13px]">Loading...</div>
+                    <div className="w-full h-full flex items-center justify-center text-[#64748B] text-[13px]">Loading...</div>
                   )}
                 </div>
               ))}
@@ -1252,16 +1252,16 @@ export default function VariationDetail() {
 
         {/* Voice Notes */}
         {voiceNotes.length > 0 && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Voice Notes ({voiceNotes.length})</h3>
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Voice Notes ({voiceNotes.length})</h3>
             <div className="space-y-2">
               {voiceNotes.map(vn => (
-                <div key={vn.id} className="flex items-start gap-3 p-3 bg-[#F8F8F6] rounded-md">
-                  <div className="text-[#9CA3AF]">🎤</div>
+                <div key={vn.id} className="flex items-start gap-3 p-3 bg-[#F5F2EA] rounded-md">
+                  <div className="text-[#64748B]">🎤</div>
                   <div className="flex-1">
-                    <div className="text-[12px] text-[#9CA3AF]">{Math.round(vn.duration_seconds)}s · {formatDate(vn.captured_at)}</div>
+                    <div className="text-[12px] text-[#64748B]">{Math.round(vn.duration_seconds)}s · {formatDate(vn.captured_at)}</div>
                     {vn.transcription && (
-                      <p className="text-[13px] text-[#6B7280] mt-1.5 italic leading-relaxed">&ldquo;{vn.transcription}&rdquo;</p>
+                      <p className="text-[13px] text-[#334155] mt-1.5 italic leading-relaxed">&ldquo;{vn.transcription}&rdquo;</p>
                     )}
                   </div>
                 </div>
@@ -1285,8 +1285,8 @@ export default function VariationDetail() {
                 </>
               ) : (
                 <>
-                  <XCircle size={15} className="text-red-600" />
-                  <span className="text-[13px] font-semibold text-red-700">Rejected via email</span>
+                  <XCircle size={15} className="text-[#B42318]" />
+                  <span className="text-[13px] font-semibold text-[#971D14]">Rejected via email</span>
                 </>
               )}
               {(variation.client_approved_by_email || variation.client_email) && (
@@ -1355,20 +1355,20 @@ export default function VariationDetail() {
           ].sort((a, b) => new Date(a.at).getTime() - new Date(b.at).getTime());
 
           return (
-            <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-              <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Status History</h3>
+            <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+              <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Status History</h3>
               <div className="space-y-3">
                 {entries.map(entry => {
                   if (entry.kind === 'send') {
                     const rev = entry.rev;
                     return (
                       <div key={entry.id} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
-                        <div className="text-[#9CA3AF] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
+                        <div className="text-[#64748B] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-indigo-600 px-2 py-0.5 rounded flex-shrink-0">
+                          <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#E76F00] px-2 py-0.5 rounded flex-shrink-0">
                             📧 Sent
                           </span>
-                          <span className="text-[12px] text-[#1C1C1E] truncate">
+                          <span className="text-[12px] text-[#111827] truncate">
                             {(() => { const p = revisions.find(r => r.id === rev.variation_id); const n = p?.revision_number ?? 0; return n === 0 ? 'Original' : `Rev ${n}`; })()} → {rev.sent_to}
                             {rev.sent_cc ? ` (CC: ${rev.sent_cc})` : ''}
                           </span>
@@ -1382,14 +1382,14 @@ export default function VariationDetail() {
                   const isRejection = entry.toStatus === 'disputed' && isClientApproval;
                   return (
                     <div key={entry.id} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
-                      <div className="text-[#9CA3AF] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
+                      <div className="text-[#64748B] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
                       <div className="flex flex-col gap-1 flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           {entry.fromStatus && <StatusBadge status={entry.fromStatus} />}
-                          {entry.fromStatus && <span className="text-[#9CA3AF]">→</span>}
+                          {entry.fromStatus && <span className="text-[#64748B]">→</span>}
                           <StatusBadge status={entry.toStatus} />
                           {entry.by && !isClientApproval && (
-                            <span className="text-[12px] text-[#6B7280]">by {entry.by}</span>
+                            <span className="text-[12px] text-[#334155]">by {entry.by}</span>
                           )}
                         </div>
                         {/* Client approval/rejection detail from notes field */}
@@ -1409,8 +1409,8 @@ export default function VariationDetail() {
         })()}
         {/* Revision History */}
         {revisions.length > 1 && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Revision History</h3>
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Revision History</h3>
             <div className="space-y-1">
               {revisions.map(r => (
                 <Link
@@ -1418,8 +1418,8 @@ export default function VariationDetail() {
                   href={`/variation/${r.id}`}
                   className={`flex items-center justify-between px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ${
                     r.id === variation.id
-                      ? 'bg-[#EEF3FB] font-semibold text-[#1B365D] pointer-events-none'
-                      : 'hover:bg-[#F8F8F6] text-[#1C1C1E]'
+                      ? 'bg-[#EEF3FB] font-semibold text-[#17212B] pointer-events-none'
+                      : 'hover:bg-[#F5F2EA] text-[#111827]'
                   }`}
                 >
                   <span className="font-mono">{getVariationNumber(r)}</span>
@@ -1434,7 +1434,7 @@ export default function VariationDetail() {
       {/* Dispute Reason Dialog */}
       {showDisputeDialog && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowDisputeDialog(false)}>
-          <div className="bg-white rounded-t-xl sm:rounded-xl border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-xl sm:rounded-xl border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-2 mb-1">
               <XCircle size={18} className="text-rose-500 flex-shrink-0" />
               <h3 className="text-[15px] font-semibold text-slate-900">Rejected by Client</h3>
@@ -1541,8 +1541,8 @@ export default function VariationDetail() {
 
       {/* Sent Versions — PDF downloads for each sent revision */}
       {!isField && varRevisions.length > 0 && (
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] mx-4 md:mx-8 mb-4 ">
-          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Sent Versions</h3>
+        <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] mx-4 md:mx-8 mb-4 ">
+          <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Sent Versions</h3>
           <div className="space-y-2">
             {varRevisions.map((rev) => {
               // Look up the parent variation's revision_number to get the correct label
@@ -1552,11 +1552,11 @@ export default function VariationDetail() {
               return (
               <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-slate-50 rounded-md border border-slate-100">
                 <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#1B365D] px-2 py-0.5 rounded flex-shrink-0">
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#17212B] px-2 py-0.5 rounded flex-shrink-0">
                     {revLabel}
                   </span>
                   <div className="min-w-0">
-                    <div className="text-[13px] text-[#1C1C1E] truncate">Sent to {rev.sent_to}</div>
+                    <div className="text-[13px] text-[#111827] truncate">Sent to {rev.sent_to}</div>
                     {rev.sent_cc && <div className="text-[11px] text-slate-400 truncate">CC: {rev.sent_cc}</div>}
                     <div className="text-[11px] text-slate-400">
                       {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
@@ -1607,17 +1607,17 @@ export default function VariationDetail() {
       {/* Awaiting Client Response Warning Modal */}
       {showClientWarning && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowClientWarning(null)}>
-          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3 mb-3">
               <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               </div>
-              <h3 className="text-[15px] font-semibold text-[#1C1C1E]">Awaiting client response</h3>
+              <h3 className="text-[15px] font-semibold text-[#111827]">Awaiting client response</h3>
             </div>
-            <p className="text-[14px] text-[#6B7280] mb-1">
-              This variation has been submitted to <strong className="text-[#1C1C1E]">{variation.client_email}</strong> and you're still waiting on their response.
+            <p className="text-[14px] text-[#334155] mb-1">
+              This variation has been submitted to <strong className="text-[#111827]">{variation.client_email}</strong> and you're still waiting on their response.
             </p>
-            <p className="text-[13px] text-[#9CA3AF] mb-5">
+            <p className="text-[13px] text-[#64748B] mb-5">
               {showClientWarning === 'edit'
                 ? 'Editing and resubmitting will replace the current version. The client\'s existing email link will no longer work.'
                 : 'Deleting will permanently remove this variation. The client will not be notified.'}
@@ -1625,7 +1625,7 @@ export default function VariationDetail() {
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setShowClientWarning(null)}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors"
               >Cancel</button>
               <button
                 onClick={() => {
@@ -1644,20 +1644,20 @@ export default function VariationDetail() {
       {/* Delete Variation Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Delete Variation</h3>
-            <p className="text-[14px] text-[#6B7280] mb-1">
-              Are you sure you want to delete <span className="font-medium text-[#1C1C1E]">Variation #{variation.sequence_number}: {variation.title}</span>?
+          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-2">Delete Variation</h3>
+            <p className="text-[14px] text-[#334155] mb-1">
+              Are you sure you want to delete <span className="font-medium text-[#111827]">Variation #{variation.sequence_number}: {variation.title}</span>?
             </p>
-            <p className="text-[13px] text-[#9CA3AF] mb-5">This will permanently delete the variation and all associated photos, voice notes, and documents. This cannot be undone.</p>
+            <p className="text-[13px] text-[#64748B] mb-5">This will permanently delete the variation and all associated photos, voice notes, and documents. This cannot be undone.</p>
             {deleteError && (
-              <p className="text-[13px] text-[#B25B4E] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 mb-4">{deleteError}</p>
+              <p className="text-[13px] text-[#B42318] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 mb-4">{deleteError}</p>
             )}
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => { setShowDeleteConfirm(false); setDeleteError(null); }}
                 disabled={deleting}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms] disabled:opacity-40"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors duration-[120ms] disabled:opacity-40"
               >
                 Cancel
               </button>
@@ -1680,7 +1680,7 @@ export default function VariationDetail() {
               <button
                 onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
                 disabled={advancingStatus}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl disabled:opacity-40 transition-colors active:bg-indigo-700"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-[#E76F00] rounded-xl disabled:opacity-40 transition-colors active:bg-[#C75A00]"
               >
                 <Send size={15} />
                 {advancingStatus ? 'Saving…' : 'Submit to Client'}
@@ -1692,7 +1692,7 @@ export default function VariationDetail() {
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50 transition-colors"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50 transition-colors"
                 >
                   <FileText size={14} /> {sendingEmail ? '…' : 'PDF / Send'}
                 </button>
@@ -1719,14 +1719,14 @@ export default function VariationDetail() {
                 <button
                   onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
                 >
                   <Send size={14} /> {sendingEmail ? '…' : 'Resend'}
                 </button>
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
                 >
                   <FileText size={14} /> {sendingEmail ? '…' : 'PDF'}
                 </button>
@@ -1737,14 +1737,14 @@ export default function VariationDetail() {
             <>
               <button
                 onClick={startRevising}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-indigo-600 rounded-xl transition-colors active:bg-indigo-700"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-semibold text-white bg-[#E76F00] rounded-xl transition-colors active:bg-[#C75A00]"
               >
                 <ArrowUpRight size={15} /> Revise
               </button>
               <button
                 onClick={handleSendEmail}
                 disabled={sendingEmail}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
               >
                 <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
               </button>
@@ -1762,7 +1762,7 @@ export default function VariationDetail() {
               <button
                 onClick={handleSendEmail}
                 disabled={sendingEmail}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
               >
                 <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
               </button>
@@ -1772,7 +1772,7 @@ export default function VariationDetail() {
             <button
               onClick={handleSendEmail}
               disabled={sendingEmail}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#E76F00] bg-indigo-50 border border-indigo-200 rounded-xl disabled:opacity-50"
             >
               <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
             </button>

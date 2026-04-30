@@ -152,7 +152,7 @@ export default function EmailAutocomplete({
         placeholder={placeholder}
         autoFocus={autoFocus}
         autoComplete="off"
-        className={`w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md focus:ring-1 focus:ring-indigo-500 outline-none bg-white ${className}`}
+        className={`w-full px-3 py-1.5 text-[13px] border border-slate-200 rounded-md focus:ring-1 focus:ring-[#E76F00] outline-none bg-white ${className}`}
       />
       {open && suggestions.length > 0 && (
         <div
@@ -166,7 +166,7 @@ export default function EmailAutocomplete({
               onMouseDown={e => { e.preventDefault(); selectSuggestion(c); }}
               className={`w-full text-left px-3 py-2 flex items-center gap-3 hover:bg-indigo-50 transition-colors ${i === activeIdx ? 'bg-indigo-50' : ''}`}
             >
-              <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 text-[11px] font-bold text-indigo-600">
+              <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 text-[11px] font-bold text-[#E76F00]">
                 {(c.name?.[0] || c.email[0]).toUpperCase()}
               </div>
               <div className="min-w-0">

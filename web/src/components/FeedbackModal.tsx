@@ -111,7 +111,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             <p className="text-white/40 text-sm mb-6">We read every piece of feedback.</p>
             <button
               onClick={handleClose}
-              className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors"
+              className="bg-[#E76F00] hover:bg-[#E76F00] text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors"
             >
               Close
             </button>
@@ -125,7 +125,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
               placeholder="Describe the issue or suggestion..."
               rows={5}
               required
-              className="w-full bg-white/[0.08] border border-white/[0.2] rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none focus:border-indigo-400 resize-none transition-colors"
+              className="w-full bg-white/[0.08] border border-white/[0.2] rounded-xl px-4 py-3 text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#E76F00] resize-none transition-colors"
             />
 
             {/* Attachment */}
@@ -162,7 +162,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             <button
               type="submit"
               disabled={loading || !message.trim()}
-              className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white font-bold py-3 rounded-xl text-sm transition-colors"
+              className="w-full bg-[#E76F00] hover:bg-[#E76F00] disabled:opacity-40 text-white font-bold py-3 rounded-xl text-sm transition-colors"
             >
               {loading ? 'Sending…' : 'Submit feedback'}
             </button>

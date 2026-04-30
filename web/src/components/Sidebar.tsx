@@ -99,8 +99,8 @@ export default function Sidebar() {
           <div className="px-3 pb-2">
             <Link
               href="/capture"
-              
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-indigo-600 text-white text-[13px] font-semibold hover:bg-indigo-700 transition-colors"
+
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-[#E76F00] text-white text-[13px] font-semibold hover:bg-[#C75A00] transition-colors"
             >
               <Zap size={15} strokeWidth={2.5} />
               Quick Capture
@@ -126,7 +126,7 @@ export default function Sidebar() {
               >
                 <div className="flex items-center gap-2.5">
                   {active && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-indigo-500 rounded-r" />
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#E76F00] rounded-r" />
                   )}
                   <Icon
                     size={15}
@@ -164,7 +164,7 @@ export default function Sidebar() {
               <div className="w-full bg-white/10 rounded-full h-1 mb-2">
                 <div
                   className={`h-1 rounded-full transition-all ${
-                    varCount >= varLimit ? 'bg-red-400' : varCount >= varLimit - 1 ? 'bg-amber-400' : 'bg-indigo-400'
+                    varCount >= varLimit ? 'bg-red-400' : varCount >= varLimit - 1 ? 'bg-amber-400' : 'bg-[#E76F00]'
                   }`}
                   style={{ width: `${Math.min(100, (varCount / varLimit) * 100)}%` }}
                 />

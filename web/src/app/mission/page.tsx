@@ -57,8 +57,8 @@ export default function MissionControl() {
       <div className="min-h-screen bg-black text-white flex items-center justify-center font-mono">
         <form onSubmit={handleUnlock} className="text-center space-y-4">
           <h1 className="text-2xl tracking-[0.2em] uppercase text-red-500 mb-8">Restricted Access</h1>
-          <input 
-            type="password" 
+          <input
+            type="password"
             value={pinInput}
             onChange={(e) => setPinInput(e.target.value)}
             className="bg-gray-900 border border-gray-700 text-center text-xl p-2 w-40 rounded focus:border-red-500 outline-none"
@@ -94,14 +94,14 @@ export default function MissionControl() {
       </header>
 
       <main className="max-w-[1600px] mx-auto p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         {/* COL 1: STRATEGY */}
         <div className="space-y-6">
           <Section title="Strategy" icon="🎯">
             <div className="prose prose-invert prose-sm max-w-none">
               <h3 className="text-blue-400 text-xs uppercase tracking-widest font-bold mb-2">Current Mission</h3>
               <p className="text-gray-300 whitespace-pre-line leading-relaxed">{data.strategy?.mission}</p>
-              
+
               <h3 className="text-purple-400 text-xs uppercase tracking-widest font-bold mt-6 mb-2">Strategic Focus</h3>
               <p className="text-gray-300 whitespace-pre-line leading-relaxed">{data.strategy?.strategy}</p>
             </div>
@@ -118,7 +118,7 @@ export default function MissionControl() {
                   </li>
                 ))}
               </ul>
-              
+
               {data.tactics?.blocked?.length > 0 && (
                 <>
                   <h4 className="text-xs uppercase text-red-500 font-bold tracking-wider mt-4">Blocked</h4>
@@ -240,7 +240,7 @@ function StatusIndicator({ label, status }: { label: string, status: 'operationa
     pending: 'bg-yellow-500',
     down: 'bg-red-500'
   };
-  
+
   return (
     <div className="bg-gray-800 p-3 rounded border border-gray-700 flex items-center justify-between">
       <span className="text-xs font-medium text-gray-400">{label}</span>

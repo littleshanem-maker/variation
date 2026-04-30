@@ -74,8 +74,8 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
     label: 'Submitted',
     color: 'text-[#92722E]',
     bg: 'bg-[#FDF8ED]',
-    border: 'border-[#C8943E]',
-    dot: 'bg-[#C8943E]',
+    border: 'border-[#D99A00]',
+    dot: 'bg-[#D99A00]',
   },
   approved: {
     label: 'Approved',
@@ -110,15 +110,15 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
     label: 'VN Issued',
     color: 'text-[#92722E]',
     bg: 'bg-[#FDF8ED]',
-    border: 'border-[#C8943E]',
-    dot: 'bg-[#C8943E]',
+    border: 'border-[#D99A00]',
+    dot: 'bg-[#D99A00]',
   },
   acknowledged: {
     label: 'VN Acknowledged',
     color: 'text-[#3D6B5E]',
     bg: 'bg-[#F0F7F4]',
-    border: 'border-[#4A7C6F]',
-    dot: 'bg-[#4A7C6F]',
+    border: 'border-[#2E7D32]',
+    dot: 'bg-[#2E7D32]',
   },
 };
 

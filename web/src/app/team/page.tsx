@@ -183,8 +183,8 @@ export default function TeamPage() {
   }
 
   const roleBadgeColors: Record<string, string> = {
-    admin: 'bg-[#1B365D]/10 text-[#1B365D]',
-    office: 'bg-[#D4A853]/10 text-[#96752A]',
+    admin: 'bg-[#17212B]/10 text-[#17212B]',
+    office: 'bg-[#E76F00]/10 text-[#96752A]',
     field: 'bg-[#E8713A]/10 text-[#B85A2B]',
   };
 
@@ -197,20 +197,20 @@ export default function TeamPage() {
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-xl font-semibold text-[#1C1C1E]">Team</h2>
-            <p className="text-[13px] text-[#6B7280] mt-1">{company?.name} · {members.filter(m => m.is_active).length} active members</p>
+            <h2 className="text-xl font-semibold text-[#111827]">Team</h2>
+            <p className="text-[13px] text-[#334155] mt-1">{company?.name} · {members.filter(m => m.is_active).length} active members</p>
           </div>
           {isFree ? (
             <a
               href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-indigo-600 border border-indigo-200 bg-indigo-50 rounded-md hover:bg-indigo-100 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#E76F00] border border-[#D8D2C4] bg-[#FFFCF5] rounded-md hover:bg-[#F5F2EA] transition-colors"
             >
               🔒 Field accounts available on Pro →
             </a>
           ) : (
             <button
               onClick={() => setShowInvite(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
             >
               + Invite Member
             </button>
@@ -218,21 +218,21 @@ export default function TeamPage() {
         </div>
 
         {/* Active Members */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
-          <div className="px-4 md:px-5 py-3 border-b border-[#E5E7EB]">
-            <h3 className="text-[13px] font-semibold text-[#1C1C1E]">Active Members</h3>
+        <div className="bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+          <div className="px-4 md:px-5 py-3 border-b border-[#D8D2C4]">
+            <h3 className="text-[13px] font-semibold text-[#111827]">Active Members</h3>
           </div>
           {loading ? (
-            <div className="p-8 text-center text-[#9CA3AF] text-sm">Loading...</div>
+            <div className="p-8 text-center text-[#64748B] text-sm">Loading...</div>
           ) : members.filter(m => m.is_active).length === 0 ? (
-            <div className="p-8 text-center text-[#9CA3AF] text-sm">No team members yet.</div>
+            <div className="p-8 text-center text-[#64748B] text-sm">No team members yet.</div>
           ) : (
-            <div className="divide-y divide-[#F0F0EE]">
+            <div className="divide-y divide-[#E7E0D2]">
               {members.filter(m => m.is_active).map(m => (
                 <div key={m.id} className="px-4 md:px-5 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div className="flex-1 min-w-0">
-                    <div className="text-[14px] font-medium text-[#1C1C1E]">{m.display_name || m.full_name || '—'}</div>
-                    <div className="text-[12px] text-[#9CA3AF] break-all">{m.email}</div>
+                    <div className="text-[14px] font-medium text-[#111827]">{m.display_name || m.full_name || '—'}</div>
+                    <div className="text-[12px] text-[#64748B] break-all">{m.email}</div>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
                     <span className={`inline-block px-2.5 py-1 text-[12px] font-medium rounded-full capitalize ${roleBadgeColors[m.role]}`}>
@@ -240,13 +240,13 @@ export default function TeamPage() {
                     </span>
                     <button
                       onClick={() => openEditModal(m)}
-                      className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors"
+                      className="text-[12px] text-[#17212B] hover:text-[#334155] font-medium transition-colors"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleRemoveMember(m.id)}
-                      className="text-[12px] text-[#9CA3AF] hover:text-[#B25B4E] transition-colors"
+                      className="text-[12px] text-[#64748B] hover:text-[#B42318] transition-colors"
                     >
                       Remove
                     </button>
@@ -259,22 +259,22 @@ export default function TeamPage() {
 
         {/* Pending Invitations */}
         {invites.length > 0 && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
-            <div className="px-4 md:px-5 py-3 border-b border-[#E5E7EB]">
-              <h3 className="text-[13px] font-semibold text-[#1C1C1E]">Pending Invitations</h3>
+          <div className="bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="px-4 md:px-5 py-3 border-b border-[#D8D2C4]">
+              <h3 className="text-[13px] font-semibold text-[#111827]">Pending Invitations</h3>
             </div>
-            <div className="divide-y divide-[#F0F0EE]">
+            <div className="divide-y divide-[#E7E0D2]">
               {invites.map(inv => {
                 const link = `${window.location.origin}/join?token=${inv.token}`;
                 return (
                   <div key={inv.id} className="px-4 md:px-5 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div className="flex-1 min-w-0">
-                      <div className="text-[14px] text-[#1C1C1E] break-all">{inv.email}</div>
+                      <div className="text-[14px] text-[#111827] break-all">{inv.email}</div>
                       <div className="flex items-center gap-2 mt-0.5">
                         <span className={`inline-block px-2.5 py-0.5 text-[11px] font-medium rounded-full capitalize ${roleBadgeColors[inv.role]}`}>
                           {inv.role}
                         </span>
-                        <span className="text-[12px] text-[#9CA3AF]">
+                        <span className="text-[12px] text-[#64748B]">
                           Expires {new Date(inv.expires_at).toLocaleDateString()}
                         </span>
                       </div>
@@ -285,13 +285,13 @@ export default function TeamPage() {
                           navigator.clipboard.writeText(link);
                           alert('Link copied!');
                         }}
-                        className="text-[12px] text-[#1B365D] hover:text-[#24466F] font-medium transition-colors"
+                        className="text-[12px] text-[#17212B] hover:text-[#334155] font-medium transition-colors"
                       >
                         Copy Link
                       </button>
                       <button
                         onClick={() => handleRevokeInvite(inv.id)}
-                        className="text-[12px] text-[#9CA3AF] hover:text-[#B25B4E] transition-colors"
+                        className="text-[12px] text-[#64748B] hover:text-[#B42318] transition-colors"
                       >
                         Revoke
                       </button>
@@ -306,36 +306,36 @@ export default function TeamPage() {
         {/* Edit Member Modal */}
         {editMember && (
           <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setEditMember(null)}>
-            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
-              <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Edit Team Member</h3>
+            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+              <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Edit Team Member</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Display Name</label>
+                  <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Display Name</label>
                   <input
                     type="text"
                     value={editName}
                     onChange={e => setEditName(e.target.value)}
-                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none"
                     placeholder="Full name"
                     autoFocus
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Email Address</label>
+                  <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Email Address</label>
                   <input
                     type="text"
                     value={editMember.email}
                     readOnly
-                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md bg-[#F8F8F6] text-[#9CA3AF] cursor-not-allowed"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-[#F5F2EA] text-[#64748B] cursor-not-allowed"
                   />
-                  <p className="text-[11px] text-[#9CA3AF] mt-1">Email can only be changed by the member in their account settings.</p>
+                  <p className="text-[11px] text-[#64748B] mt-1">Email can only be changed by the member in their account settings.</p>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Role</label>
+                  <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Role</label>
                   <select
                     value={editRole}
                     onChange={e => setEditRole(e.target.value as UserRole)}
-                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-white"
                   >
                     <option value="field">Field — capture variations only, no pricing</option>
                     <option value="office">Office — full register, reports, pricing</option>
@@ -346,14 +346,14 @@ export default function TeamPage() {
               <div className="flex justify-end gap-2 mt-5">
                 <button
                   onClick={() => setEditMember(null)}
-                  className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms]"
+                  className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors duration-[120ms]"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveEdit}
                   disabled={savingEdit}
-                  className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
+                  className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
                 >
                   {savingEdit ? 'Saving…' : 'Save Changes'}
                 </button>
@@ -365,17 +365,17 @@ export default function TeamPage() {
         {/* Invite Modal */}
         {(showInvite || inviteLink) && (
           <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => { setShowInvite(false); setInviteLink(null); setCopied(false); }}>
-            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
               {inviteLink ? (
                 <>
-                  <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Invitation Created ✓</h3>
-                  <p className="text-[13px] text-[#6B7280] mb-4">Share this link with your team member. It expires in 7 days.</p>
+                  <h3 className="text-[15px] font-semibold text-[#111827] mb-2">Invitation Created ✓</h3>
+                  <p className="text-[13px] text-[#334155] mb-4">Share this link with your team member. It expires in 7 days.</p>
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
                       value={inviteLink}
                       readOnly
-                      className="flex-1 min-w-0 px-3 py-2 text-[13px] border border-[#E5E7EB] rounded-md bg-[#F8F8F6] text-[#1C1C1E] font-mono"
+                      className="flex-1 min-w-0 px-3 py-2 text-[13px] border border-[#D8D2C4] rounded-md bg-[#F5F2EA] text-[#111827] font-mono"
                       onClick={e => (e.target as HTMLInputElement).select()}
                     />
                     <button
@@ -384,7 +384,7 @@ export default function TeamPage() {
                         setCopied(true);
                         setTimeout(() => setCopied(false), 2000);
                       }}
-                      className="flex-shrink-0 px-3 py-2 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] transition-colors duration-[120ms] whitespace-nowrap"
+                      className="flex-shrink-0 px-3 py-2 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] transition-colors duration-[120ms] whitespace-nowrap"
                     >
                       {copied ? '✓ Copied' : 'Copy'}
                     </button>
@@ -392,7 +392,7 @@ export default function TeamPage() {
                   <div className="flex justify-end mt-5">
                     <button
                       onClick={() => { setInviteLink(null); setCopied(false); setShowInvite(false); }}
-                      className="px-4 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms]"
+                      className="px-4 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors duration-[120ms]"
                     >
                       Done
                     </button>
@@ -400,25 +400,25 @@ export default function TeamPage() {
                 </>
               ) : (
                 <>
-                  <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Invite Team Member</h3>
+                  <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Invite Team Member</h3>
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Email Address</label>
+                      <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Email Address</label>
                       <input
                         type="email"
                         value={inviteEmail}
                         onChange={e => setInviteEmail(e.target.value)}
-                        className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                        className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none"
                         placeholder="john@example.com"
                         autoFocus
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Role</label>
+                      <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Role</label>
                       <select
                         value={inviteRole}
                         onChange={e => setInviteRole(e.target.value as UserRole)}
-                        className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white"
+                        className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-white"
                       >
                         <option value="field">Field — capture variations only, no pricing</option>
                         <option value="office">Office — full register, reports, pricing</option>
@@ -429,14 +429,14 @@ export default function TeamPage() {
                   <div className="flex justify-end gap-2 mt-5">
                     <button
                       onClick={() => setShowInvite(false)}
-                      className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms]"
+                      className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors duration-[120ms]"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleInvite}
                       disabled={sending || !inviteEmail.trim()}
-                      className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors duration-[120ms]"
+                      className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors duration-[120ms]"
                     >
                       {sending ? 'Creating...' : 'Create Invitation'}
                     </button>

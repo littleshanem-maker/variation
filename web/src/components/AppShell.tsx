@@ -23,7 +23,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   if (!authed) return null;
 
   return (
-    <div className="min-h-screen bg-[#F8F8F6]">
+    <div className="min-h-screen bg-[#F5F2EA]">
       {/* Desktop sidebar — hidden on mobile */}
       <Sidebar />
 

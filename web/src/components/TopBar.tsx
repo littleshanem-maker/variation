@@ -30,14 +30,14 @@ export default function TopBar({ title }: { title: string }) {
         {/* Global creation CTAs */}
         <Link
           href="/notice/new"
-          className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-indigo-600 bg-white border border-indigo-500 hover:bg-indigo-50 rounded-lg transition-colors shadow-sm"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#E76F00] bg-white border border-[#E76F00] hover:bg-indigo-50 rounded-lg transition-colors shadow-sm"
         >
           <Plus size={15} strokeWidth={2.5} />
           New Notice
         </Link>
         <Link
           href="/variation/new"
-          className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
         >
           <Plus size={15} strokeWidth={2.5} />
           New Request

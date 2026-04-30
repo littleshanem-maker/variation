@@ -84,7 +84,7 @@ function RejectForm() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white font-semibold py-3 rounded-lg text-sm transition-colors"
+            className="w-full bg-[#B42318] hover:bg-[#971D14] disabled:opacity-50 text-white font-semibold py-3 rounded-lg text-sm transition-colors"
           >
             {submitting ? 'Submitting…' : 'Confirm Rejection'}
           </button>

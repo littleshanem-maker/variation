@@ -16,8 +16,8 @@ export default function Logo({ size = 32, className = '' }: LogoProps) {
     >
       <path
         d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-        fill="#4f46e5"
-        stroke="#4f46e5"
+        fill="#E76F00"
+        stroke="#E76F00"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"

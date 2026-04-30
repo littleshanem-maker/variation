@@ -12,8 +12,8 @@ import CostItemsTable, { type CostItem } from '@/components/CostItemsTable';
 import type { Project } from '@/lib/types';
 import ProjectPicker from '@/components/ui/ProjectPicker';
 
-const inputClass = 'w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none bg-white';
-const labelClass = 'block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1';
+const inputClass = 'w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-white';
+const labelClass = 'block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1';
 
 function NewRequestForm() {
   const router = useRouter();
@@ -233,7 +233,7 @@ function NewRequestForm() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
             <div className="w-14 h-14 rounded-2xl bg-indigo-100 flex items-center justify-center mx-auto mb-5">
-              <svg width="28" height="28" fill="none" stroke="#4f46e5" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <svg width="28" height="28" fill="none" stroke="#E76F00" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
             <h2 className="text-xl font-bold text-gray-900 mb-2">
               You've documented {limitReached.count} variation{limitReached.count !== 1 ? 's' : ''} worth ${(limitReached.totalValue / 100).toLocaleString('en-AU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} — want to keep going?
@@ -247,7 +247,7 @@ function NewRequestForm() {
             <div className="space-y-3">
               <a
                 href={`https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02`}
-                className="block w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-colors"
+                className="block w-full py-3 rounded-xl bg-[#E76F00] hover:bg-[#C75A00] text-white font-bold text-sm transition-colors"
               >
                 Upgrade to Pro — $299/mo
               </a>
@@ -278,20 +278,20 @@ function NewRequestForm() {
         <div>
           <Link
             href="/dashboard"
-            className="hidden md:flex items-center gap-2 w-full bg-white border border-[#E5E7EB] rounded-md px-4 py-3 text-[14px] font-semibold text-[#1B365D] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="hidden md:flex items-center gap-2 w-full bg-white border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-semibold text-[#17212B] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="flex-shrink-0">
               <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Back to Dashboard
           </Link>
-          <h2 className="text-xl font-semibold text-[#1C1C1E] mt-3">New Variation Request</h2>
-          <p className="text-[13px] text-[#6B7280] mt-1">Pursuant to AS 4000–1997 Cl. 36 / AS 2124–1992 Cl. 40</p>
+          <h2 className="text-xl font-semibold text-[#111827] mt-3">New Variation Request</h2>
+          <p className="text-[13px] text-[#334155] mt-1">Pursuant to AS 4000–1997 Cl. 36 / AS 2124–1992 Cl. 40</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
           {/* Core details card */}
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-4">
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-4">
 
             {/* Project */}
             <div>
@@ -299,7 +299,7 @@ function NewRequestForm() {
               {loadingProjects ? (
                 <div className="h-9 bg-slate-100 rounded-md animate-pulse" />
               ) : projects.length === 0 ? (
-                <p className="text-[13px] text-[#6B7280] py-1">No active projects. <Link href="/dashboard" className="underline text-[#1B365D]">Create one on the dashboard</Link>.</p>
+                <p className="text-[13px] text-[#334155] py-1">No active projects. <Link href="/dashboard" className="underline text-[#17212B]">Create one on the dashboard</Link>.</p>
               ) : (
                 <ProjectPicker
                   projects={projects}
@@ -356,7 +356,7 @@ function NewRequestForm() {
             {showCostBreakdown && (
               <div>
                 <label className={labelClass}>Cost Breakdown</label>
-                <div className="mt-1 bg-[#F9FAFB] rounded-lg border border-[#E5E7EB] p-3">
+                <div className="mt-1 bg-[#F9FAFB] rounded-lg border border-[#D8D2C4] p-3">
                   <CostItemsTable
                     items={costItems}
                     onChange={setCostItems}
@@ -364,7 +364,7 @@ function NewRequestForm() {
                   />
                 </div>
                 {isCostOnly && (
-                  <p className="text-[12px] text-[#6B7280] mt-2">
+                  <p className="text-[12px] text-[#334155] mt-2">
                     {claimType === 'lump_sum' && "Provide a single price for the complete scope of works."}
                     {claimType === 'cost_plus' && "Break down materials, labour, and other costs. Margin applied separately."}
                     {claimType === 'schedule_of_rates' && "Apply contract schedule rates to the quantities shown."}
@@ -382,8 +382,8 @@ function NewRequestForm() {
           </div>
 
           {/* AS Compliance card */}
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#9CA3AF]">Claim Details (AS 4000 / AS 2124)</p>
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B]">Claim Details (AS 4000 / AS 2124)</p>
 
             {/* Claim type */}
             <div>
@@ -404,7 +404,7 @@ function NewRequestForm() {
                   <input type="number" min="0" value={eotDays} onChange={e => setEotDays(e.target.value)}
                     placeholder="e.g. 5" className={`${inputClass} flex-1`} />
                   <select value={eotUnit} onChange={e => setEotUnit(e.target.value as 'days' | 'hours')}
-                    className="px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md bg-white text-[#1C1C1E] focus:outline-none focus:ring-1 focus:ring-[#1B365D]">
+                    className="px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-white text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B]">
                     <option value="hours">Hours</option>
                     <option value="days">Days</option>
                   </select>
@@ -426,13 +426,13 @@ function NewRequestForm() {
           </div>
 
           {/* Attachments card */}
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
             <AttachmentPicker files={attachments} onChange={setAttachments} label="Photos & Files (optional)" />
           </div>
 
           {/* Error */}
           {error && (
-            <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-md text-[13px] text-red-700">
+            <div className="px-4 py-3 bg-red-50 border border-red-200 rounded-md text-[13px] text-[#971D14]">
               {error}
             </div>
           )}
@@ -441,14 +441,14 @@ function NewRequestForm() {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <Link
               href="/dashboard"
-              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#6B7280] border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms] text-center"
+              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-md hover:bg-[#F5F3EF] transition-colors duration-[120ms] text-center"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={saving || loadingProjects}
-              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] text-center"
+              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)] text-center"
             >
               {saving ? 'Creating…' : 'Create Variation Request'}
             </button>

@@ -45,7 +45,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             style={{
               fontSize: '20px',
               fontWeight: 600,
-              color: '#1C1C1E',
+              color: '#111827',
               marginBottom: '8px',
             }}
           >
@@ -54,7 +54,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
           <p
             style={{
               fontSize: '15px',
-              color: '#6B7280',
+              color: '#334155',
               marginBottom: '24px',
             }}
           >
@@ -69,7 +69,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               }
             }}
             style={{
-              backgroundColor: '#1B365D',
+              backgroundColor: '#17212B',
               color: '#ffffff',
               border: 'none',
               borderRadius: '8px',

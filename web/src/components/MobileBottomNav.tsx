@@ -50,7 +50,7 @@ export default function MobileBottomNav() {
           <Link
             href="/notice/new"
             onClick={() => setFabOpen(false)}
-            className="flex items-center gap-2 px-5 py-3 bg-white border border-indigo-500 text-indigo-600 text-[15px] font-semibold rounded-2xl shadow-xl whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-3 bg-white border border-[#E76F00] text-[#E76F00] text-[15px] font-semibold rounded-2xl shadow-xl whitespace-nowrap"
           >
             <FileText size={16} />
             New Notice
@@ -58,7 +58,7 @@ export default function MobileBottomNav() {
           <Link
             href="/variation/new"
             onClick={() => setFabOpen(false)}
-            className="flex items-center gap-2 px-5 py-3 bg-indigo-600 text-white text-[15px] font-semibold rounded-2xl shadow-xl whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-3 bg-[#E76F00] text-white text-[15px] font-semibold rounded-2xl shadow-xl whitespace-nowrap"
           >
             <Plus size={16} />
             New Request
@@ -70,7 +70,7 @@ export default function MobileBottomNav() {
       {!hideFab && <button
         onClick={() => setFabOpen(prev => !prev)}
         aria-label="Create new"
-        className="fixed bottom-[76px] right-4 z-50 w-14 h-14 rounded-full bg-indigo-600 text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform md:hidden"
+        className="fixed bottom-[76px] right-4 z-50 w-14 h-14 rounded-full bg-[#E76F00] text-white shadow-xl flex items-center justify-center active:scale-95 transition-transform md:hidden"
       >
         {fabOpen
           ? <X size={24} strokeWidth={2.5} />
@@ -99,7 +99,7 @@ export default function MobileBottomNav() {
               <div className="relative">
                 <Icon size={22} strokeWidth={active ? 2.2 : 1.8} />
                 {active && (
-                  <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-indigo-500" />
+                  <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#E76F00]" />
                 )}
               </div>
               <span className="text-[10px] font-medium tracking-wide leading-none">{tab.label}</span>

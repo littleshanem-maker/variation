@@ -48,10 +48,10 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <Logo size={64} className="mb-5" />
-          <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#1C1C1E' }}>
+          <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#111827' }}>
             Welcome back
           </h1>
-          <p className="text-sm mt-1.5" style={{ color: '#6B7280' }}>
+          <p className="text-sm mt-1.5" style={{ color: '#334155' }}>
             Sign in to Variation Shield
           </p>
         </div>
@@ -60,7 +60,7 @@ export default function LoginPage() {
         {error && (
           <div
             className="mb-5 px-4 py-3 rounded-lg text-sm"
-            style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B25B4E' }}
+            style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B42318' }}
           >
             {error}
           </div>
@@ -78,11 +78,11 @@ export default function LoginPage() {
               style={{
                 padding: '12px 16px',
                 backgroundColor: '#FFFFFF',
-                border: '1px solid #E5E7EB',
-                color: '#1C1C1E',
+                border: '1px solid #D8D2C4',
+                color: '#111827',
               }}
-              onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-              onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+              onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+              onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
               placeholder="Work email"
               required
             />
@@ -97,11 +97,11 @@ export default function LoginPage() {
               style={{
                 padding: '12px 44px 12px 16px',
                 backgroundColor: '#FFFFFF',
-                border: '1px solid #E5E7EB',
-                color: '#1C1C1E',
+                border: '1px solid #D8D2C4',
+                color: '#111827',
               }}
-              onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-              onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+              onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+              onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
               placeholder="Password"
               required
             />
@@ -109,7 +109,7 @@ export default function LoginPage() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute top-1/2 -translate-y-1/2"
-              style={{ right: '12px', color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer' }}
+              style={{ right: '12px', color: '#64748B', background: 'none', border: 'none', cursor: 'pointer' }}
               tabIndex={-1}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -135,15 +135,15 @@ export default function LoginPage() {
             className="w-full rounded-lg text-base font-semibold transition-all"
             style={{
               padding: '12px',
-              backgroundColor: '#4f46e5',
+              backgroundColor: '#E76F00',
               color: '#FFFFFF',
               border: 'none',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.5 : 1,
               boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
             }}
-            onMouseEnter={e => { if (!loading) (e.target as HTMLElement).style.backgroundColor = '#4338ca'; }}
-            onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#4f46e5'; }}
+            onMouseEnter={e => { if (!loading) (e.target as HTMLElement).style.backgroundColor = '#C75A00'; }}
+            onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#E76F00'; }}
           >
             {loading ? 'Signing in...' : 'Log In'}
           </button>
@@ -153,15 +153,15 @@ export default function LoginPage() {
           <Link
             href="/forgot-password"
             className="text-sm font-medium transition-colors"
-            style={{ color: '#1B365D' }}
+            style={{ color: '#17212B' }}
           >
             Forgot Password?
           </Link>
         </div>
 
-        <p className="mt-6 text-center text-sm" style={{ color: '#6B7280' }}>
+        <p className="mt-6 text-center text-sm" style={{ color: '#334155' }}>
           Don't have an account?{' '}
-          <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="font-medium" style={{ color: '#1B365D' }}>
+          <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="font-medium" style={{ color: '#17212B' }}>
             Sign up
           </a>
         </p>

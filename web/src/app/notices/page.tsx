@@ -12,7 +12,7 @@ type NoticeWithProject = VariationNotice & { project_name: string };
 
 const STATUS_LABELS: Record<string, { label: string; bg: string; color: string; dot: string }> = {
   draft:        { label: 'Draft',        bg: 'bg-slate-100',   color: 'text-slate-600',   dot: 'bg-slate-400' },
-  issued:       { label: 'Issued',       bg: 'bg-indigo-50',   color: 'text-indigo-700',  dot: 'bg-indigo-500' },
+  issued:       { label: 'Issued',       bg: 'bg-indigo-50',   color: 'text-[#C75A00]',  dot: 'bg-[#E76F00]' },
   acknowledged: { label: 'Acknowledged', bg: 'bg-emerald-50',  color: 'text-emerald-700', dot: 'bg-emerald-500' },
 };
 
@@ -73,7 +73,7 @@ export default function NoticesPage() {
               onClick={() => setFilter(tab.key)}
               className={`flex-shrink-0 px-3 py-1.5 text-[13px] font-medium rounded-lg transition-colors ${
                 filter === tab.key
-                  ? 'bg-indigo-600 text-white'
+                  ? 'bg-[#E76F00] text-white'
                   : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
               }`}
             >
@@ -96,7 +96,7 @@ export default function NoticesPage() {
         ) : filtered.length === 0 ? (
           <div className="bg-white rounded-lg border border-slate-200 p-12 text-center">
             <p className="text-[14px] text-slate-400">No notices found.</p>
-            <Link href="/notice/new" className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-indigo-600 text-white text-[13px] font-medium rounded-lg">
+            <Link href="/notice/new" className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-[#E76F00] text-white text-[13px] font-medium rounded-lg">
               + New Notice
             </Link>
           </div>
@@ -111,7 +111,7 @@ export default function NoticesPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-[12px] font-mono font-semibold text-indigo-600">{notice.notice_number}</span>
+                      <span className="text-[12px] font-mono font-semibold text-[#E76F00]">{notice.notice_number}</span>
                       {notice.cost_flag && (
                         <span className="text-[10px] font-medium text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">Cost</span>
                       )}

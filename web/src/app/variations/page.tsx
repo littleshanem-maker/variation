@@ -47,7 +47,7 @@ function VariationsList() {
 
   async function loadData() {
     const supabase = createClient();
-    
+
     const { data: projects } = await supabase.from('projects').select('*').eq('is_active', true);
     const activeProjectIds = new Set(projects?.map(p => p.id) || []);
     const projectMap = new Map(projects?.map(p => [p.id, p.name]));
@@ -208,7 +208,7 @@ function VariationsList() {
     return (
       <>
         <TopBar title="Variation Register" />
-        <div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div>
       </>
     );
   }
@@ -253,8 +253,8 @@ function VariationsList() {
 
       <div className="p-4 md:p-8 space-y-5 md:space-y-6">
         <div>
-          <h2 className="text-xl font-semibold text-[#1C1C1E]">Variation Register</h2>
-          <p className="text-[13px] text-[#6B7280] mt-1">
+          <h2 className="text-xl font-semibold text-[#111827]">Variation Register</h2>
+          <p className="text-[13px] text-[#334155] mt-1">
             {filtered.length} variations · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value
           </p>
         </div>
@@ -263,7 +263,7 @@ function VariationsList() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-3">
           {/* Status tabs — horizontally scrollable on mobile */}
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <div className="flex bg-[#F0F0EE] p-1 rounded-md w-max">
+            <div className="flex bg-[#E7E0D2] p-1 rounded-md w-max">
               {statuses.map(s => (
                 <button
                   key={s.value}
@@ -275,8 +275,8 @@ function VariationsList() {
                   }}
                   className={`px-3 py-1.5 text-[13px] font-medium rounded-sm transition-all duration-[120ms] whitespace-nowrap ${
                     filterStatus === s.value
-                      ? 'bg-white text-[#1C1C1E] shadow-sm'
-                      : 'text-[#6B7280] hover:text-[#1C1C1E]'
+                      ? 'bg-white text-[#111827] shadow-sm'
+                      : 'text-[#334155] hover:text-[#111827]'
                   }`}
                 >
                   {s.label}
@@ -289,7 +289,7 @@ function VariationsList() {
           <select
             value={filterProject}
             onChange={e => setFilterProject(e.target.value)}
-            className="px-3 py-1.5 text-[13px] border border-[#E5E7EB] rounded-md bg-white text-[#374151] focus:outline-none focus:ring-1 focus:ring-[#1B365D] shadow-[0_1px_2px_rgba(0,0,0,0.04)] w-full sm:w-auto"
+            className="px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md bg-white text-[#374151] focus:outline-none focus:ring-1 focus:ring-[#17212B] shadow-[0_1px_2px_rgba(0,0,0,0.04)] w-full sm:w-auto"
           >
             <option value="all">All Projects</option>
             {rawProjects.map(p => (
@@ -323,19 +323,19 @@ function VariationsList() {
         </div>
 
         {sorted.length === 0 ? (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-12 text-center text-[#9CA3AF] text-sm">
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-12 text-center text-[#64748B] text-sm">
             No variations match this filter.
           </div>
         ) : (
           <>
             {/* Mobile cards — md:hidden */}
-            <div className="md:hidden divide-y divide-[#F0F0EE] bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="md:hidden divide-y divide-[#E7E0D2] bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
               {sorted.map(v => (
                 <button key={v.id} className="w-full text-left" onClick={() => setSlideOverId(v.id)}>
                   <div className="px-4 py-3 hover:bg-slate-50 transition-colors">
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <div className="text-[12px] font-mono font-semibold text-indigo-600">{getVariationNumber(v)}</div>
+                        <div className="text-[12px] font-mono font-semibold text-[#E76F00]">{getVariationNumber(v)}</div>
                         <div className="text-[14px] font-medium text-slate-800 mt-0.5 truncate">{v.title}</div>
                         <div className="text-[12px] text-slate-400 mt-0.5 truncate">{v.project_name}</div>
                       </div>
@@ -350,7 +350,7 @@ function VariationsList() {
             </div>
 
             {/* Desktop table — hidden md:block */}
-            <div className="hidden md:block bg-white rounded-md border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="hidden md:block bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[480px]" style={{tableLayout: 'fixed'}}>
                   <colgroup>
@@ -364,7 +364,7 @@ function VariationsList() {
                     <col style={{width: '40px'}} />   {/* Actions */}
                   </colgroup>
                   <thead>
-                    <tr className="border-b border-[#E5E7EB] bg-slate-50/60">
+                    <tr className="border-b border-[#D8D2C4] bg-slate-50/60">
                       <SortHeader label="Var No." field="sequence_number" />
                       <SortHeader label="Title" field="title" />
                       <SortHeader label="Project" field="project_name" className="hidden md:table-cell" />
@@ -380,17 +380,17 @@ function VariationsList() {
                       <tr
                         key={v.id}
                         onClick={() => setSlideOverId(v.id)}
-                        className={`group relative border-b border-[#F0F0EE] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}
+                        className={`group relative border-b border-[#E7E0D2] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === sorted.length - 1 ? 'border-b-0' : ''}`}
                       >
-                        <td className="px-3 md:px-4 py-3 text-[13px] font-medium text-[#1C1C1E] tabular-nums whitespace-nowrap">
+                        <td className="px-3 md:px-4 py-3 text-[13px] font-medium text-[#111827] tabular-nums whitespace-nowrap">
                           {getVariationNumber(v)}
                         </td>
                         <td className="px-3 md:px-4 py-3 max-w-[200px] overflow-hidden">
-                          <div className="truncate text-[14px] font-medium text-[#1C1C1E]">{v.title}</div>
+                          <div className="truncate text-[14px] font-medium text-[#111827]">{v.title}</div>
                         </td>
-                        <td className="px-3 md:px-4 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-[#1C1C1E]">{v.project_name}</div></td>
+                        <td className="px-3 md:px-4 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-[#111827]">{v.project_name}</div></td>
                         <td className="px-3 md:px-4 py-3 w-[110px]"><StatusBadge status={v.status} /></td>
-                        <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] text-right hidden md:table-cell whitespace-nowrap w-[90px]">{formatDate(v.captured_at)}</td>
+                        <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] text-right hidden md:table-cell whitespace-nowrap w-[90px]">{formatDate(v.captured_at)}</td>
                         <td className="px-3 md:px-4 py-3 text-right hidden lg:table-cell whitespace-nowrap">
                             {v.response_due_date ? (() => {
                               const due = new Date(v.response_due_date + 'T00:00:00');
@@ -399,13 +399,13 @@ function VariationsList() {
                               const overdue = daysLeft < 0;
                               const dueSoon = daysLeft >= 0 && daysLeft <= 3;
                               return (
-                                <span className={`text-[13px] font-medium ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#1C1C1E]'}`}>
+                                <span className={`text-[13px] font-medium ${overdue ? 'text-[#DC2626]' : dueSoon ? 'text-[#D97706]' : 'text-[#111827]'}`}>
                                   {`${String(due.getDate()).padStart(2,'0')}/${String(due.getMonth()+1).padStart(2,'0')}/${String(due.getFullYear()).slice(-2)}`}
                                 </span>
                               );
                             })() : <span className="text-[13px] text-[#D1D5DB]">—</span>}
                           </td>
-                        <td className="px-3 md:px-4 py-3 text-[14px] font-medium text-[#1C1C1E] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
+                        <td className="px-3 md:px-4 py-3 text-[14px] font-medium text-[#111827] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
                           {/* Ellipsis action menu */}
                           <td className="px-3 py-3 w-10" onClick={e => e.stopPropagation()}>
                             <DropdownMenu>
@@ -454,7 +454,7 @@ function VariationsList() {
               <span className="text-[13px] text-slate-400">{notices.filter(n => filterProject === 'all' || n.project_id === filterProject).length} notices</span>
             </div>
             {/* Mobile cards */}
-            <div className="md:hidden bg-white rounded-xl border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden divide-y divide-[#F0F0EE]">
+            <div className="md:hidden bg-white rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden divide-y divide-[#E7E0D2]">
               {notices
                 .filter(n => filterProject === 'all' || n.project_id === filterProject)
                 .map(n => {
@@ -469,7 +469,7 @@ function VariationsList() {
                       <div className="px-4 py-3 hover:bg-slate-50 transition-colors">
                         <div className="flex items-center justify-between gap-3">
                           <div className="min-w-0 flex-1">
-                            <div className="text-[12px] font-mono font-semibold text-indigo-600">{n.notice_number}</div>
+                            <div className="text-[12px] font-mono font-semibold text-[#E76F00]">{n.notice_number}</div>
                             <div className="text-[14px] font-medium text-slate-800 mt-0.5 truncate">{n.event_description}</div>
                             <div className="text-[12px] text-slate-400 mt-0.5 truncate">{n.project_name}</div>
                           </div>
@@ -487,10 +487,10 @@ function VariationsList() {
             </div>
 
             {/* Desktop table */}
-            <div className="hidden md:block bg-white rounded-xl border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+            <div className="hidden md:block bg-white rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-[#E5E7EB] bg-slate-50/60">
+                  <tr className="border-b border-[#D8D2C4] bg-slate-50/60">
                     <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
                     <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
                     <th className="text-left text-[11px] font-medium text-slate-500 uppercase tracking-wider px-3 md:px-4 py-3.5">Project</th>
@@ -513,21 +513,21 @@ function VariationsList() {
                         <tr
                           key={n.id}
                           onClick={() => window.location.href = `/notice/${n.id}`}
-                          className={`group border-b border-[#F0F0EE] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === arr.length - 1 ? 'border-b-0' : ''}`}
+                          className={`group border-b border-[#E7E0D2] hover:bg-slate-50 cursor-pointer transition-colors duration-[120ms] ease-out ${i === arr.length - 1 ? 'border-b-0' : ''}`}
                         >
-                          <td className="px-3 md:px-4 py-3 text-[13px] font-medium text-[#1C1C1E] whitespace-nowrap">{n.notice_number}</td>
+                          <td className="px-3 md:px-4 py-3 text-[13px] font-medium text-[#111827] whitespace-nowrap">{n.notice_number}</td>
                           <td className="px-3 md:px-4 py-3 max-w-[260px] overflow-hidden">
-                            <div className="truncate text-[14px] font-medium text-[#1C1C1E]">{n.event_description}</div>
+                            <div className="truncate text-[14px] font-medium text-[#111827]">{n.event_description}</div>
                           </td>
-                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E]">{n.project_name}</td>
+                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827]">{n.project_name}</td>
                           <td className="px-3 md:px-4 py-3">
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium border ${sc.color} ${sc.bg} ${sc.border}`}>
                               <span className={`w-1.5 h-1.5 rounded-full ${sc.dot}`} />
                               {sc.label}
                             </span>
                           </td>
-                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] text-right whitespace-nowrap">{formatDate(n.event_date + 'T00:00:00')}</td>
-                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#1C1C1E] text-right hidden lg:table-cell whitespace-nowrap">{n.issued_at ? formatDate(n.issued_at) : <span className="text-slate-300">—</span>}</td>
+                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] text-right whitespace-nowrap">{formatDate(n.event_date + 'T00:00:00')}</td>
+                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] text-right hidden lg:table-cell whitespace-nowrap">{n.issued_at ? formatDate(n.issued_at) : <span className="text-slate-300">—</span>}</td>
                         </tr>
                       );
                     })}
@@ -552,7 +552,7 @@ function VariationsList() {
 export default function VariationsPage() {
   return (
     <AppShell>
-      <Suspense fallback={<><TopBar title="Variation Register" /><div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Loading...</div></>}>
+      <Suspense fallback={<><TopBar title="Variation Register" /><div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div></>}>
         <VariationsList />
       </Suspense>
     </AppShell>

@@ -43,7 +43,7 @@ export default function Error({ error, reset }: ErrorProps) {
         style={{
           fontSize: '18px',
           fontWeight: 600,
-          color: '#1C1C1E',
+          color: '#111827',
           marginBottom: '8px',
         }}
       >
@@ -52,7 +52,7 @@ export default function Error({ error, reset }: ErrorProps) {
       <p
         style={{
           fontSize: '14px',
-          color: '#6B7280',
+          color: '#334155',
           marginBottom: '24px',
         }}
       >
@@ -67,7 +67,7 @@ export default function Error({ error, reset }: ErrorProps) {
           }
         }}
         style={{
-          backgroundColor: '#1B365D',
+          backgroundColor: '#17212B',
           color: '#ffffff',
           border: 'none',
           borderRadius: '8px',

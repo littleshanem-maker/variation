@@ -515,7 +515,7 @@ export default function NoticeDetail() {
   if (loading) {
     return (
       <AppShell><TopBar title="Variation Notice" />
-        <div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div>
       </AppShell>
     );
   }
@@ -523,7 +523,7 @@ export default function NoticeDetail() {
   if (!notice || !project) {
     return (
       <AppShell><TopBar title="Variation Notice" />
-        <div className="flex items-center justify-center h-96 text-[#9CA3AF] text-sm">Notice not found</div>
+        <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Notice not found</div>
       </AppShell>
     );
   }
@@ -535,7 +535,7 @@ export default function NoticeDetail() {
   // True when sent to client and still awaiting acknowledgement
   const awaitingClientResponse = notice.status === 'issued' && !!notice.client_email && !notice.acknowledged_at;
 
-  const labelClass = "block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1";
+  const labelClass = "block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1";
 
   return (
     <AppShell>
@@ -545,7 +545,7 @@ export default function NoticeDetail() {
         <div className="space-y-3">
           <Link
             href={`/project/${project.id}`}
-            className="hidden md:flex items-center gap-2 w-full bg-white border border-[#E5E7EB] rounded-md px-4 py-3 text-[14px] font-semibold text-[#1B365D] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)] truncate"
+            className="hidden md:flex items-center gap-2 w-full bg-white border border-[#D8D2C4] rounded-md px-4 py-3 text-[14px] font-semibold text-[#17212B] hover:bg-[#F0F4FA] active:bg-[#E8EFF8] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.04)] truncate"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="flex-shrink-0">
               <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -580,7 +580,7 @@ export default function NoticeDetail() {
                       }
                     }}
                     disabled={sendingEmail}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-40 shadow-sm whitespace-nowrap"
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors disabled:opacity-40 shadow-sm whitespace-nowrap"
                   >
                     <Send size={14} />
                     {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : showEmailInput ? 'Send' : 'Submit to Client'}
@@ -668,7 +668,7 @@ export default function NoticeDetail() {
             {/* File attachments */}
             <div>
               <div
-                className="w-full px-3 py-3 border border-dashed border-[#D1D5DB] rounded-md text-center cursor-pointer hover:border-[#1B365D] hover:bg-[#F8FAFC] transition-colors"
+                className="w-full px-3 py-3 border border-dashed border-[#D1D5DB] rounded-md text-center cursor-pointer hover:border-[#17212B] hover:bg-[#F8FAFC] transition-colors"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <input
@@ -679,15 +679,15 @@ export default function NoticeDetail() {
                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.heic"
                   onChange={e => { if (e.target.files) setNewFiles(prev => [...prev, ...Array.from(e.target.files!)]); }}
                 />
-                <p className="text-[13px] text-[#6B7280]">📎 Attach photos or files</p>
-                <p className="text-[11px] text-[#9CA3AF] mt-0.5">PDF, Word, Excel, Images</p>
+                <p className="text-[13px] text-[#334155]">📎 Attach photos or files</p>
+                <p className="text-[11px] text-[#64748B] mt-0.5">PDF, Word, Excel, Images</p>
               </div>
               {newFiles.length > 0 && (
                 <div className="mt-2 space-y-1">
                   {newFiles.map((f, i) => (
-                    <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-[#F8F8F6] rounded text-[13px]">
-                      <span className="text-[#1C1C1E] truncate">{f.name}</span>
-                      <button type="button" onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))} className="text-[#9CA3AF] hover:text-rose-500 ml-2">✕</button>
+                    <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-[#F5F2EA] rounded text-[13px]">
+                      <span className="text-[#111827] truncate">{f.name}</span>
+                      <button type="button" onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))} className="text-[#64748B] hover:text-rose-500 ml-2">✕</button>
                     </div>
                   ))}
                 </div>
@@ -704,7 +704,7 @@ export default function NoticeDetail() {
               <button
                 onClick={handleSaveEdit}
                 disabled={saving || !editDescription.trim()}
-                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-lg hover:bg-[#24466F] disabled:opacity-40 transition-colors"
+                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-lg hover:bg-[#334155] disabled:opacity-40 transition-colors"
               >
                 {saving ? 'Saving…' : 'Save Changes'}
               </button>
@@ -716,13 +716,13 @@ export default function NoticeDetail() {
 
 
         {/* Header Card */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
-              <div className="text-[12px] font-mono font-bold text-[#1B365D] uppercase tracking-wider mb-1 flex items-center gap-2 flex-wrap">
+              <div className="text-[12px] font-mono font-bold text-[#17212B] uppercase tracking-wider mb-1 flex items-center gap-2 flex-wrap">
                 {notice.notice_number}
                 {editing ? (
-                  <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-indigo-500 px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#E76F00] px-1.5 py-0.5 rounded">
                     {revisions.length > 0 ? `Rev ${revisions.length} — Draft` : 'Draft'}
                   </span>
                 ) : (notice.status === 'draft' || hasPendingDraft) ? (
@@ -730,58 +730,58 @@ export default function NoticeDetail() {
                     {hasPendingDraft && revisions.length > 0 ? `Rev ${revisions.length} — Draft` : 'Draft'}
                   </span>
                 ) : (notice.revision_number ?? 0) > 0 ? (
-                  <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#1B365D] px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-bold uppercase tracking-wide text-white bg-[#17212B] px-1.5 py-0.5 rounded">
                     Rev {notice.revision_number}
                   </span>
                 ) : null}
               </div>
-              <h2 className="text-xl font-semibold text-[#1C1C1E]">Variation Notice</h2>
-              <p className="text-[13px] text-[#6B7280] mt-1">{project.name} · {project.client}</p>
+              <h2 className="text-xl font-semibold text-[#111827]">Variation Notice</h2>
+              <p className="text-[13px] text-[#334155] mt-1">{project.name} · {project.client}</p>
             </div>
             <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0">
               <StatusBadge status={notice.status} />
-              {notice.issued_at && <div className="text-[12px] text-[#9CA3AF] sm:mt-2">Issued {formatDate(notice.issued_at)}</div>}
-              {notice.acknowledged_at && <div className="text-[12px] text-[#9CA3AF] sm:mt-1">Acknowledged {formatDate(notice.acknowledged_at)}</div>}
+              {notice.issued_at && <div className="text-[12px] text-[#64748B] sm:mt-2">Issued {formatDate(notice.issued_at)}</div>}
+              {notice.acknowledged_at && <div className="text-[12px] text-[#64748B] sm:mt-1">Acknowledged {formatDate(notice.acknowledged_at)}</div>}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-5 pt-4 md:pt-5 border-t border-[#F0F0EE]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-5 pt-4 md:pt-5 border-t border-[#E7E0D2]">
             {editing ? (
               <>
                 <div>
                   <label className={labelClass}>Event Date</label>
-                  <input type="date" value={editEventDate} onChange={e => setEditEventDate(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none" />
+                  <input type="date" value={editEventDate} onChange={e => setEditEventDate(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none" />
                 </div>
                 <div>
                   <label className={labelClass}>Issued By Name</label>
-                  <input type="text" value={editIssuedByName} onChange={e => setEditIssuedByName(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none" />
+                  <input type="text" value={editIssuedByName} onChange={e => setEditIssuedByName(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none" />
                 </div>
                 <div>
                   <label className={labelClass}>Issued By Email</label>
-                  <input type="email" value={editIssuedByEmail} onChange={e => setEditIssuedByEmail(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none" />
+                  <input type="email" value={editIssuedByEmail} onChange={e => setEditIssuedByEmail(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none" />
                 </div>
                 <div className="sm:col-span-3">
                   <label className={labelClass}>Contract Clause</label>
-                  <input type="text" value={editContractClause} onChange={e => setEditContractClause(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none" />
+                  <input type="text" value={editContractClause} onChange={e => setEditContractClause(e.target.value)} className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none" />
                 </div>
               </>
             ) : (
               <>
                 <div>
                   <div className={labelClass}>Event Date</div>
-                  <div className="text-[14px] text-[#1C1C1E]">{new Date(notice.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+                  <div className="text-[14px] text-[#111827]">{new Date(notice.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
                 </div>
                 {notice.issued_by_name && (
                   <div>
                     <div className={labelClass}>Issued By</div>
-                    <div className="text-[14px] text-[#1C1C1E]">{notice.issued_by_name}</div>
-                    {notice.issued_by_email && <div className="text-[12px] text-[#6B7280] mt-0.5 break-all">{notice.issued_by_email}</div>}
+                    <div className="text-[14px] text-[#111827]">{notice.issued_by_name}</div>
+                    {notice.issued_by_email && <div className="text-[12px] text-[#334155] mt-0.5 break-all">{notice.issued_by_email}</div>}
                   </div>
                 )}
                 {notice.contract_clause && (
                   <div>
                     <div className={labelClass}>Contract Clause</div>
-                    <div className="text-[14px] text-[#1C1C1E]">{notice.contract_clause}</div>
+                    <div className="text-[14px] text-[#111827]">{notice.contract_clause}</div>
                   </div>
                 )}
               </>
@@ -790,19 +790,19 @@ export default function NoticeDetail() {
         </div>
 
         {/* Event Description */}
-        <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Description of Event</h3>
+        <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Description of Event</h3>
           {editing ? (
-            <textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={5} className="w-full px-3 py-2.5 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none resize-none" />
+            <textarea value={editDescription} onChange={e => setEditDescription(e.target.value)} rows={5} className="w-full px-3 py-2.5 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none resize-none" />
           ) : (
-            <p className="text-[14px] text-[#1C1C1E] leading-relaxed whitespace-pre-wrap">{notice.event_description}</p>
+            <p className="text-[14px] text-[#111827] leading-relaxed whitespace-pre-wrap">{notice.event_description}</p>
           )}
         </div>
 
         {/* Photo Attachments */}
         {documents.length > 0 && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Attachments</h3>
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Attachments</h3>
             {/* Photos */}
             {documents.filter(d => d.file_type.startsWith('image/')).length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
@@ -812,7 +812,7 @@ export default function NoticeDetail() {
                   return (
                     <a key={d.id} href={url} target="_blank" rel="noopener noreferrer">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt={d.file_name} className="w-full h-36 object-cover rounded-lg border border-[#E5E7EB] hover:opacity-90 transition-opacity" />
+                      <img src={url} alt={d.file_name} className="w-full h-36 object-cover rounded-lg border border-[#D8D2C4] hover:opacity-90 transition-opacity" />
                     </a>
                   );
                 })}
@@ -825,12 +825,12 @@ export default function NoticeDetail() {
                   const url = docUrls[d.id];
                   return (
                     <a key={d.id} href={url || '#'} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center justify-between px-3 py-2.5 bg-[#F8F8F6] rounded-md hover:bg-[#F0F0EE] transition-colors">
+                      className="flex items-center justify-between px-3 py-2.5 bg-[#F5F2EA] rounded-md hover:bg-[#E7E0D2] transition-colors">
                       <div>
-                        <div className="text-[14px] font-medium text-[#1C1C1E] truncate">{d.file_name}</div>
-                        <div className="text-[12px] text-[#9CA3AF]">{(d.file_size / 1024).toFixed(0)} KB</div>
+                        <div className="text-[14px] font-medium text-[#111827] truncate">{d.file_name}</div>
+                        <div className="text-[12px] text-[#64748B]">{(d.file_size / 1024).toFixed(0)} KB</div>
                       </div>
-                      <span className="text-[12px] text-[#1B365D] font-medium flex-shrink-0 ml-3">Download ↓</span>
+                      <span className="text-[12px] text-[#17212B] font-medium flex-shrink-0 ml-3">Download ↓</span>
                     </a>
                   );
                 })}
@@ -840,8 +840,8 @@ export default function NoticeDetail() {
         )}
 
         {/* Implications Card — office/admin only */}
-        {!isField && <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">Impact</h3>
+        {!isField && <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <h3 className="text-[15px] font-semibold text-[#111827] mb-4">Impact</h3>
           <div className={`grid gap-4 md:gap-6 ${editing ? 'grid-cols-1' : 'grid-cols-2'}`}>
             <div className={editing || (notice.cost_flag && (notice.cost_items as any[])?.length > 0) ? 'col-span-2' : ''}>
               <div className={labelClass}>Cost Impact</div>
@@ -852,9 +852,9 @@ export default function NoticeDetail() {
                       type="checkbox"
                       checked={editCostFlag}
                       onChange={e => setEditCostFlag(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 text-indigo-600"
+                      className="w-4 h-4 rounded border-gray-300 text-[#E76F00]"
                     />
-                    <span className="text-[14px] text-[#1C1C1E]">Cost impact</span>
+                    <span className="text-[14px] text-[#111827]">Cost impact</span>
                   </label>
                   {editCostFlag && (
                     <CostItemsTable items={editCostItems} onChange={setEditCostItems} />
@@ -862,14 +862,14 @@ export default function NoticeDetail() {
                 </div>
               ) : (
                 <div>
-                  <div className={`text-[14px] font-medium mb-2 ${notice.cost_flag ? 'text-[#1C1C1E]' : 'text-[#6B7280]'}`}>
+                  <div className={`text-[14px] font-medium mb-2 ${notice.cost_flag ? 'text-[#111827]' : 'text-[#334155]'}`}>
                     {notice.cost_flag ? 'Yes' : 'No'}
                   </div>
                   {notice.cost_flag && notice.cost_items && (notice.cost_items as any[]).length > 0 && (
-                    <div className="border border-[#E5E7EB] rounded-md overflow-hidden">
+                    <div className="border border-[#D8D2C4] rounded-md overflow-hidden">
                       <table className="w-full text-[13px]">
                         <thead>
-                          <tr className="bg-slate-50 border-b border-[#E5E7EB]">
+                          <tr className="bg-slate-50 border-b border-[#D8D2C4]">
                             <th className="text-left px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider">Description</th>
                             <th className="text-right px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider w-16">Qty</th>
                             <th className="text-left px-3 py-2 text-[11px] font-medium text-slate-500 uppercase tracking-wider w-16">Unit</th>
@@ -879,17 +879,17 @@ export default function NoticeDetail() {
                         </thead>
                         <tbody>
                           {(notice.cost_items as any[]).map((item: any, i: number) => (
-                            <tr key={i} className="border-b border-[#F0F0EE] last:border-b-0">
-                              <td className="px-3 py-2 text-[#1C1C1E]">{item.description}</td>
-                              <td className="px-3 py-2 text-right text-[#1C1C1E] tabular-nums">{item.qty}</td>
-                              <td className="px-3 py-2 text-[#6B7280]">{item.unit}</td>
-                              <td className="px-3 py-2 text-right text-[#1C1C1E] tabular-nums">${Number(item.rate).toFixed(2)}</td>
-                              <td className="px-3 py-2 text-right font-medium text-[#1C1C1E] tabular-nums">${Number(item.total).toFixed(2)}</td>
+                            <tr key={i} className="border-b border-[#E7E0D2] last:border-b-0">
+                              <td className="px-3 py-2 text-[#111827]">{item.description}</td>
+                              <td className="px-3 py-2 text-right text-[#111827] tabular-nums">{item.qty}</td>
+                              <td className="px-3 py-2 text-[#334155]">{item.unit}</td>
+                              <td className="px-3 py-2 text-right text-[#111827] tabular-nums">${Number(item.rate).toFixed(2)}</td>
+                              <td className="px-3 py-2 text-right font-medium text-[#111827] tabular-nums">${Number(item.total).toFixed(2)}</td>
                             </tr>
                           ))}
-                          <tr className="bg-slate-50 border-t-2 border-[#E5E7EB]">
+                          <tr className="bg-slate-50 border-t-2 border-[#D8D2C4]">
                             <td colSpan={4} className="px-3 py-2 text-right text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Total</td>
-                            <td className="px-3 py-2 text-right font-bold text-[#1C1C1E] tabular-nums">
+                            <td className="px-3 py-2 text-right font-bold text-[#111827] tabular-nums">
                               ${(notice.cost_items as any[]).reduce((s: number, i: any) => s + (Number(i.total) || 0), 0).toFixed(2)}
                             </td>
                           </tr>
@@ -909,9 +909,9 @@ export default function NoticeDetail() {
                       type="checkbox"
                       checked={editTimeFlag}
                       onChange={e => setEditTimeFlag(e.target.checked)}
-                      className="w-4 h-4 rounded border-gray-300 text-indigo-600"
+                      className="w-4 h-4 rounded border-gray-300 text-[#E76F00]"
                     />
-                    <span className="text-[14px] text-[#1C1C1E]">Time impact</span>
+                    <span className="text-[14px] text-[#111827]">Time impact</span>
                   </label>
                   {editTimeFlag && (
                     <div className="flex gap-2 mt-1">
@@ -922,12 +922,12 @@ export default function NoticeDetail() {
                         value={editTimeDays}
                         onChange={e => setEditTimeDays(e.target.value)}
                         placeholder="0"
-                        className="w-24 px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none"
+                        className="w-24 px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none"
                       />
                       <select
                         value={editTimeUnit}
                         onChange={e => setEditTimeUnit(e.target.value as 'days' | 'hours')}
-                        className="px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] outline-none bg-white"
+                        className="px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] outline-none bg-white"
                       >
                         <option value="days">days</option>
                         <option value="hours">hours</option>
@@ -937,7 +937,7 @@ export default function NoticeDetail() {
                 </div>
               ) : (
                 <div>
-                  <div className={`text-[14px] font-medium ${notice.time_flag ? 'text-[#1C1C1E]' : 'text-[#6B7280]'}`}>
+                  <div className={`text-[14px] font-medium ${notice.time_flag ? 'text-[#111827]' : 'text-[#334155]'}`}>
                     {notice.time_flag ? 'Yes' : 'No'}
                   </div>
                   {notice.time_flag && notice.estimated_days != null && (
@@ -954,32 +954,32 @@ export default function NoticeDetail() {
         </div>}
 
         {/* Linked Variation Request — office/admin only */}
-        {!isField && <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Linked Variation Request</h3>
+        {!isField && <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Linked Variation Request</h3>
           {linkedVariation ? (
             <Link
               href={`/variation/${linkedVariation.id}`}
-              className="flex items-center justify-between p-3 bg-[#F8F8F6] rounded-md hover:bg-[#F0F0EE] transition-colors duration-[120ms]"
+              className="flex items-center justify-between p-3 bg-[#F5F2EA] rounded-md hover:bg-[#E7E0D2] transition-colors duration-[120ms]"
             >
               <div>
-                <div className="text-[13px] font-mono font-bold text-[#1B365D]">
+                <div className="text-[13px] font-mono font-bold text-[#17212B]">
                   {linkedVariation.variation_number ?? `VAR-${String(linkedVariation.sequence_number).padStart(3, '0')}`}
                 </div>
-                <div className="text-[14px] font-medium text-[#1C1C1E] mt-0.5">{linkedVariation.title}</div>
+                <div className="text-[14px] font-medium text-[#111827] mt-0.5">{linkedVariation.title}</div>
               </div>
               <div className="flex items-center gap-3 flex-shrink-0">
                 <StatusBadge status={linkedVariation.status} />
-                <span className="text-[12px] text-[#1B365D] font-medium">View →</span>
+                <span className="text-[12px] text-[#17212B] font-medium">View →</span>
               </div>
             </Link>
           ) : (
             <div className="space-y-3">
-              <p className="text-[14px] text-[#6B7280]">No Variation Request has been raised from this notice yet.</p>
+              <p className="text-[14px] text-[#334155]">No Variation Request has been raised from this notice yet.</p>
               {canCreateVR && (
                 <button
                   onClick={handleConvertToVar}
                   disabled={converting}
-                  className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white text-[14px] font-semibold rounded-md transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
+                  className="w-full py-3 px-4 bg-[#E76F00] hover:bg-[#C75A00] disabled:opacity-50 text-white text-[14px] font-semibold rounded-md transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
                 >
                   {converting ? 'Creating...' : 'Convert to Variation Request →'}
                 </button>
@@ -990,19 +990,19 @@ export default function NoticeDetail() {
 
         {/* Status History — office/admin only */}
         {!isField && revisions.length > 0 && (
-          <div className="bg-white rounded-md border border-[#E5E7EB] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-3">Status History</h3>
+          <div className="bg-white rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Status History</h3>
             <div className="space-y-3 mb-4">
               {revisions.slice().sort((a, b) => new Date(a.sent_at ?? 0).getTime() - new Date(b.sent_at ?? 0).getTime()).map((rev) => (
                 <div key={rev.id + '-timeline'} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
-                  <div className="text-[#9CA3AF] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">
+                  <div className="text-[#64748B] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">
                     {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
                   </div>
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-indigo-600 px-2 py-0.5 rounded flex-shrink-0">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#E76F00] px-2 py-0.5 rounded flex-shrink-0">
                       📧 Issued
                     </span>
-                    <span className="text-[12px] text-[#1C1C1E] truncate">
+                    <span className="text-[12px] text-[#111827] truncate">
                       {rev.revision_number === 0 ? 'Original' : `Rev ${rev.revision_number}`} → {rev.sent_to}
                       {rev.sent_cc ? ` (CC: ${rev.sent_cc})` : ''}
                     </span>
@@ -1010,17 +1010,17 @@ export default function NoticeDetail() {
                 </div>
               ))}
             </div>
-            <div className="border-t border-[#F0F0EE] pt-3">
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-[#9CA3AF] mb-2">Download sent versions</div>
+            <div className="border-t border-[#E7E0D2] pt-3">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-[#64748B] mb-2">Download sent versions</div>
             <div className="space-y-2">
               {revisions.map((rev) => (
                 <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-slate-50 rounded-md border border-slate-100">
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#1B365D] px-2 py-0.5 rounded flex-shrink-0">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-white bg-[#17212B] px-2 py-0.5 rounded flex-shrink-0">
                       {rev.revision_number === 0 ? 'Original' : `Rev ${rev.revision_number}`}
                     </span>
                     <div className="min-w-0">
-                      <div className="text-[13px] text-[#1C1C1E] truncate">
+                      <div className="text-[13px] text-[#111827] truncate">
                         Sent to {rev.sent_to}
                       </div>
                       {rev.sent_cc && (
@@ -1086,23 +1086,23 @@ export default function NoticeDetail() {
       {/* Awaiting Client Response Warning Modal */}
       {showClientWarning && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowClientWarning(null)}>
-          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
             <div className="flex items-center gap-3 mb-3">
               <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               </div>
-              <h3 className="text-[15px] font-semibold text-[#1C1C1E]">Awaiting client acknowledgement</h3>
+              <h3 className="text-[15px] font-semibold text-[#111827]">Awaiting client acknowledgement</h3>
             </div>
-            <p className="text-[14px] text-[#6B7280] mb-1">
-              This notice has been sent to <strong className="text-[#1C1C1E]">{notice.client_email}</strong> and hasn&apos;t been acknowledged yet.
+            <p className="text-[14px] text-[#334155] mb-1">
+              This notice has been sent to <strong className="text-[#111827]">{notice.client_email}</strong> and hasn&apos;t been acknowledged yet.
             </p>
-            <p className="text-[13px] text-[#9CA3AF] mb-5">
+            <p className="text-[13px] text-[#64748B] mb-5">
               {showClientWarning === 'edit'
                 ? 'Editing and reissuing will replace the current version. The client will need to be resent the updated notice.'
                 : 'Deleting will permanently remove this notice. The client will not be notified.'}
             </p>
             <div className="flex justify-end gap-2">
-              <button onClick={() => setShowClientWarning(null)} className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors">Cancel</button>
+              <button onClick={() => setShowClientWarning(null)} className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors">Cancel</button>
               <button
                 onClick={() => {
                   if (showClientWarning === 'edit') { setShowClientWarning(null); startEditing(); }
@@ -1120,33 +1120,33 @@ export default function NoticeDetail() {
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
-            <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-2">Delete Notice</h3>
-            <p className="text-[14px] text-[#6B7280] mb-1">
-              Are you sure you want to delete <span className="font-medium text-[#1C1C1E]">{notice.notice_number}</span>?
+          <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-2">Delete Notice</h3>
+            <p className="text-[14px] text-[#334155] mb-1">
+              Are you sure you want to delete <span className="font-medium text-[#111827]">{notice.notice_number}</span>?
             </p>
             {notice.status !== 'draft' ? (
-              <p className="text-[13px] text-[#C8943E] bg-[#FEF3C7] border border-[#FDE68A] rounded-md px-3 py-2 mb-4">
+              <p className="text-[13px] text-[#D99A00] bg-[#FEF3C7] border border-[#FDE68A] rounded-md px-3 py-2 mb-4">
                 This notice has been <strong>{notice.status}</strong>. Deleting it will permanently remove it from your records — ensure the client has been notified separately if needed.
               </p>
             ) : (
-              <p className="text-[13px] text-[#9CA3AF] mb-5">This cannot be undone.</p>
+              <p className="text-[13px] text-[#64748B] mb-5">This cannot be undone.</p>
             )}
             {deleteError && (
-              <p className="text-[13px] text-[#B25B4E] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 mb-4">{deleteError}</p>
+              <p className="text-[13px] text-[#B42318] bg-[#FEF2F2] border border-[#FECACA] rounded-md px-3 py-2 mb-4">{deleteError}</p>
             )}
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => { setShowDeleteConfirm(false); setDeleteError(null); }}
                 disabled={deleting}
-                className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors duration-[120ms] disabled:opacity-40"
+                className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors duration-[120ms] disabled:opacity-40"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
                 disabled={deleting}
-                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#B25B4E] rounded-md hover:bg-[#9E4D41] disabled:opacity-40 transition-colors duration-[120ms]"
+                className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#B42318] rounded-md hover:bg-[#9E4D41] disabled:opacity-40 transition-colors duration-[120ms]"
               >
                 {deleting ? 'Deleting...' : 'Delete Notice'}
               </button>

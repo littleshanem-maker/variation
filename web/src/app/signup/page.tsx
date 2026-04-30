@@ -74,8 +74,8 @@ function SignupContent() {
   const inputBase = {
     padding: '12px 16px',
     backgroundColor: '#FFFFFF',
-    border: '1px solid #E5E7EB',
-    color: '#1C1C1E',
+    border: '1px solid #D8D2C4',
+    color: '#111827',
     borderRadius: '8px',
     fontSize: '16px',
     outline: 'none',
@@ -91,10 +91,10 @@ function SignupContent() {
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <Logo size={64} className="mb-5" />
-          <h1 className="text-2xl font-semibold tracking-tight text-center" style={{ color: '#1C1C1E' }}>
+          <h1 className="text-2xl font-semibold tracking-tight text-center" style={{ color: '#111827' }}>
             {mode === 'form' ? 'Create your account' : 'Get started'}
           </h1>
-          <p className="text-sm mt-1.5 text-center" style={{ color: '#6B7280' }}>
+          <p className="text-sm mt-1.5 text-center" style={{ color: '#334155' }}>
             {mode === 'form' ? 'Start capturing variations in 60 seconds' : 'Choose how you want to get started'}
           </p>
         </div>
@@ -104,7 +104,7 @@ function SignupContent() {
             <a
               href={STRIPE_CHECKOUT}
               className="block w-full rounded-xl text-white text-sm font-semibold text-center transition-colors"
-              style={{ backgroundColor: '#4f46e5', padding: '16px 20px' }}
+              style={{ backgroundColor: '#E76F00', padding: '16px 20px' }}
             >
               <div className="text-base font-bold mb-0.5">Subscribe — $299/mo</div>
               <div className="text-xs font-normal" style={{ color: 'rgba(255,255,255,0.6)' }}>
@@ -124,7 +124,7 @@ function SignupContent() {
             )}
 
             {error && (
-              <div className="mb-5 px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B25B4E' }}>
+              <div className="mb-5 px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B42318' }}>
                 {error}
               </div>
             )}
@@ -136,8 +136,8 @@ function SignupContent() {
                   value={fullName}
                   onChange={e => setFullName(e.target.value)}
                   style={inputBase}
-                  onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   placeholder="Full name"
                   required
                   autoFocus
@@ -149,8 +149,8 @@ function SignupContent() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   style={inputBase}
-                  onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   placeholder="Work email"
                   required
                 />
@@ -161,8 +161,8 @@ function SignupContent() {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   style={{ ...inputBase, paddingRight: '48px' }}
-                  onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   placeholder="Password (min. 6 characters)"
                   minLength={6}
                   required
@@ -171,7 +171,7 @@ function SignupContent() {
                   type="button"
                   onClick={() => setShowPassword(v => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium"
-                  style={{ color: '#6B7280' }}
+                  style={{ color: '#334155' }}
                 >
                   {showPassword ? 'Hide' : 'Show'}
                 </button>
@@ -181,9 +181,9 @@ function SignupContent() {
                 type="submit"
                 disabled={loading}
                 className="w-full py-3 rounded-lg text-sm font-semibold text-white transition-colors disabled:opacity-50"
-                style={{ backgroundColor: '#1B365D' }}
-                onMouseEnter={e => { if (!loading) (e.target as HTMLElement).style.backgroundColor = '#24466F'; }}
-                onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#1B365D'; }}
+                style={{ backgroundColor: '#17212B' }}
+                onMouseEnter={e => { if (!loading) (e.target as HTMLElement).style.backgroundColor = '#334155'; }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.backgroundColor = '#17212B'; }}
               >
                 {loading ? 'Creating account…' : 'Create account'}
               </button>
@@ -193,9 +193,9 @@ function SignupContent() {
           </>
         )}
 
-        <p className="mt-6 text-center text-sm" style={{ color: '#6B7280' }}>
+        <p className="mt-6 text-center text-sm" style={{ color: '#334155' }}>
           Already have an account?{' '}
-          <Link href="/login" className="font-medium" style={{ color: '#1B365D' }}>
+          <Link href="/login" className="font-medium" style={{ color: '#17212B' }}>
             Sign in
           </Link>
         </p>

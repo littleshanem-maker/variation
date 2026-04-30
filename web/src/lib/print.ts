@@ -11,13 +11,13 @@ interface ProjectWithVariations extends Project {
 const GLOBAL_CSS = `
   @page { margin: 15mm 15mm; size: A4; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { 
+  body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-size: 9pt; 
+    font-size: 9pt;
     line-height: 1.4;
-    color: #1C1C1E; 
-    background: white; 
-    -webkit-print-color-adjust: exact; 
+    color: #111827;
+    background: white;
+    -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
@@ -25,122 +25,122 @@ const GLOBAL_CSS = `
   .tabular-nums { font-variant-numeric: tabular-nums; }
   .uppercase { text-transform: uppercase; letter-spacing: 0.05em; }
   .text-right { text-align: right; }
-  .text-muted { color: #1C1C1E; }
+  .text-muted { color: #111827; }
   .font-medium { font-weight: 500; }
   .font-semibold { font-weight: 600; }
   .font-bold { font-weight: 700; }
-  
+
   /* LAYOUT */
   .page-break { page-break-before: always; }
   .avoid-break { page-break-inside: avoid; }
   .container { max-width: 100%; margin: 0 auto; }
 
   /* HEADER */
-  .doc-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: flex-start; 
-    padding-bottom: 24px; 
-    border-bottom: 2px solid #1C1C1E; 
-    margin-bottom: 32px; 
+  .doc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 24px;
+    border-bottom: 2px solid #111827;
+    margin-bottom: 32px;
   }
-  .brand { font-size: 14pt; font-weight: 700; color: #1C1C1E; letter-spacing: -0.02em; }
-  .doc-title { font-size: 24pt; font-weight: 300; color: #1C1C1E; line-height: 1.1; margin-top: 8px; }
-  .doc-meta { text-align: right; font-size: 9pt; color: #6B7280; }
+  .brand { font-size: 14pt; font-weight: 700; color: #111827; letter-spacing: -0.02em; }
+  .doc-title { font-size: 24pt; font-weight: 300; color: #111827; line-height: 1.1; margin-top: 8px; }
+  .doc-meta { text-align: right; font-size: 9pt; color: #334155; }
   .meta-row { margin-bottom: 4px; }
 
   /* SUMMARY BOXES */
-  .summary-grid { 
-    display: grid; 
-    grid-template-columns: repeat(4, 1fr); 
-    gap: 16px; 
-    margin-bottom: 40px; 
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
   }
-  .summary-card { 
-    border: 1px solid #E5E7EB; 
-    padding: 16px; 
-    border-radius: 4px; 
+  .summary-card {
+    border: 1px solid #D8D2C4;
+    padding: 16px;
+    border-radius: 4px;
   }
-  .summary-label { font-size: 8pt; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-  .summary-value { font-size: 16pt; font-weight: 600; color: #1C1C1E; }
+  .summary-label { font-size: 8pt; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .summary-value { font-size: 16pt; font-weight: 600; color: #111827; }
 
   /* TABLES */
   table { width: 100%; border-collapse: collapse; font-size: 9pt; }
-  th { 
-    text-align: left; 
-    padding: 12px 8px; 
-    border-bottom: 1px solid #1C1C1E; 
-    font-weight: 600; 
-    font-size: 8pt; 
-    text-transform: uppercase; 
-    letter-spacing: 0.05em; 
-    color: #1C1C1E; 
+  th {
+    text-align: left;
+    padding: 12px 8px;
+    border-bottom: 1px solid #111827;
+    font-weight: 600;
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #111827;
   }
-  td { 
-    padding: 12px 8px; 
-    border-bottom: 1px solid #E5E7EB; 
-    vertical-align: top; 
+  td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #D8D2C4;
+    vertical-align: top;
   }
   tbody tr { page-break-inside: avoid; break-inside: avoid; }
   thead { display: table-header-group; }
-  tr.total-row td { 
-    border-top: 2px solid #1C1C1E; 
-    border-bottom: none; 
-    font-weight: 700; 
-    padding-top: 16px; 
+  tr.total-row td {
+    border-top: 2px solid #111827;
+    border-bottom: none;
+    font-weight: 700;
+    padding-top: 16px;
   }
-  
+
   /* VARIATION DETAIL SPECIFIC */
   .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 32px; }
   .field-group { margin-bottom: 24px; }
-  .field-label { font-size: 8pt; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
-  .field-value { font-size: 10pt; color: #1C1C1E; font-weight: 500; }
+  .field-label { font-size: 8pt; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .field-value { font-size: 10pt; color: #111827; font-weight: 500; }
   .field-value.large { font-size: 12pt; }
-  
-  .description-box { 
-    border-top: 1px solid #E5E7EB; 
-    border-bottom: 1px solid #E5E7EB; 
-    padding: 24px 0; 
-    margin: 32px 0; 
+
+  .description-box {
+    border-top: 1px solid #D8D2C4;
+    border-bottom: 1px solid #D8D2C4;
+    padding: 24px 0;
+    margin: 32px 0;
   }
   .description-text { font-size: 10pt; line-height: 1.6; white-space: pre-wrap; }
 
-  .photo-grid { 
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 16px; 
-    margin-top: 24px; 
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 24px;
   }
-  .photo-item { 
-    break-inside: avoid; 
-    border: 1px solid #E5E7EB; 
-    padding: 8px; 
-    background: #F9FAFB; 
+  .photo-item {
+    break-inside: avoid;
+    border: 1px solid #D8D2C4;
+    padding: 8px;
+    background: #F9FAFB;
   }
-  .photo-img { 
-    width: 100%; 
-    height: 240px; 
-    object-fit: cover; 
-    display: block; 
-    margin-bottom: 8px; 
+  .photo-img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    display: block;
+    margin-bottom: 8px;
   }
-  .photo-caption { font-size: 8pt; color: #6B7280; }
+  .photo-caption { font-size: 8pt; color: #334155; }
 
   /* FOOTER */
-  .footer { 
+  .footer {
     margin-top: 32px;
-    padding-top: 12px; 
-    border-top: 1px solid #E5E7EB; 
-    font-size: 8pt; 
-    color: #9CA3AF; 
-    display: flex; 
-    justify-content: space-between; 
+    padding-top: 12px;
+    border-top: 1px solid #D8D2C4;
+    font-size: 8pt;
+    color: #64748B;
+    display: flex;
+    justify-content: space-between;
   }
 `;
 
 // Inline SVG for the Variation Shield logo (purple shield with V chevron)
-const VS_LOGO_SVG_16 = `<svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#4f46e5"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,255,255,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const VS_LOGO_SVG_32 = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#4f46e5"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,255,255,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const VS_LOGO_SVG_16 = `<svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#E76F00"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,255,255,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const VS_LOGO_SVG_32 = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#E76F00"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,255,255,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 // ------------------------------------------------------------------
 // HELPER: CREATE & OPEN BLOB
@@ -203,7 +203,7 @@ export function printRegister(projects: ProjectWithVariations[], companyName?: s
   const projectSections = projects.map(p => {
     if (p.variations.length === 0) return '';
     const pTotal = p.variations.reduce((s, v) => s + v.estimated_value, 0);
-    
+
     const rows = p.variations.map(v => {
       const dueDate = v.response_due_date ? formatDate(v.response_due_date + 'T00:00:00') : '—';
       return `
@@ -220,7 +220,7 @@ export function printRegister(projects: ProjectWithVariations[], companyName?: s
 
     return `
       <div class="avoid-break" style="margin-bottom: 40px;">
-        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; border-bottom:1px solid #E5E7EB; padding-bottom:8px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; border-bottom:1px solid #D8D2C4; padding-bottom:8px;">
           <h3 style="font-size:12pt; font-weight:600;">${escapeHtml(p.name)}</h3>
           <span style="font-size:10pt; font-weight:600;">${formatCurrency(pTotal)}</span>
         </div>
@@ -324,7 +324,7 @@ export function getFilteredRegisterHtml(
       <div>
         <div class="brand">${escapeHtml(companyName || 'Variation Shield')}</div>
         <div class="doc-title">Variation Register</div>
-        <div style="font-size:10pt; color:#6B7280; margin-top:4px;">${escapeHtml(label)}</div>
+        <div style="font-size:10pt; color:#334155; margin-top:4px;">${escapeHtml(label)}</div>
       </div>
       <div class="doc-meta">
         <div class="meta-row">Generated: ${now}</div>
@@ -406,7 +406,7 @@ export function printProjectRegister(project: Project, variations: Variation[], 
           <div class="brand">${escapeHtml(companyName || 'Variation Shield')}</div>
         </div>
         <div class="doc-title">${escapeHtml(project.name)}</div>
-        <div style="font-size:11pt; color:#6B7280; margin-top:4px;">${escapeHtml(project.client)}</div>
+        <div style="font-size:11pt; color:#334155; margin-top:4px;">${escapeHtml(project.client)}</div>
       </div>
       <div class="doc-meta">
         <div class="meta-row">Generated: ${now}</div>
@@ -478,7 +478,7 @@ function buildCompanyHeader(companyName: string, companyInfo?: CompanyPrintInfo)
     companyInfo?.abn ? `ABN ${escapeHtml(companyInfo.abn)}` : '',
     companyInfo?.address ? escapeHtml(companyInfo.address) : '',
     companyInfo?.phone ? escapeHtml(companyInfo.phone) : '',
-  ].filter(Boolean).map(s => `<div style="font-size:8pt;color:#6B7280;margin-top:2px;">${s}</div>`).join('');
+  ].filter(Boolean).map(s => `<div style="font-size:8pt;color:#334155;margin-top:2px;">${s}</div>`).join('');
   return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">${logoImg}<div>${nameBlock}${meta}</div></div>`;
 }
 
@@ -498,8 +498,8 @@ function buildNoticeHtml(
 
   const costAnswer = notice.cost_flag ? 'Yes' : 'No';
   const timeAnswer = notice.time_flag ? 'Yes' : 'No';
-  const costColour = notice.cost_flag ? '#1C1C1E' : '#6B7280';
-  const timeColour = notice.time_flag ? '#1C1C1E' : '#6B7280';
+  const costColour = notice.cost_flag ? '#111827' : '#334155';
+  const timeColour = notice.time_flag ? '#111827' : '#334155';
 
   return `
     <div class="doc-header">
@@ -508,7 +508,7 @@ function buildNoticeHtml(
         <div class="doc-title">Variation Notice</div>
       </div>
       <div class="doc-meta">
-        <div class="meta-row" style="font-size:11pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(notice.notice_number)}${(notice.revision_number ?? 0) > 0 ? ` Rev ${notice.revision_number}` : ''}</div>
+        <div class="meta-row" style="font-size:11pt; font-weight:700; color:#111827; margin-bottom:6px;">${escapeHtml(notice.notice_number)}${(notice.revision_number ?? 0) > 0 ? ` Rev ${notice.revision_number}` : ''}</div>
         <div class="meta-row">Date: ${issuedFormatted}</div>
         <div class="meta-row">Status: <strong>Issued</strong></div>
       </div>
@@ -544,22 +544,22 @@ function buildNoticeHtml(
     <div style="margin-bottom:32px;">
       <table style="width:auto; border-collapse:collapse;">
         <tr>
-          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Cost Impact</td>
+          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#334155; white-space:nowrap;">Cost Impact</td>
           <td style="padding:6px 0; font-size:10pt; font-weight:600; color:${costColour};">
             ${costAnswer}
-            ${notice.cost_flag && (notice as any).cost_items?.length > 0 ? `<span style="margin-left:12px; font-size:9pt; font-weight:400; color:#6B7280;">(see breakdown below)</span>` : ''}
+            ${notice.cost_flag && (notice as any).cost_items?.length > 0 ? `<span style="margin-left:12px; font-size:9pt; font-weight:400; color:#334155;">(see breakdown below)</span>` : ''}
           </td>
         </tr>
         <tr>
-          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Time Impact</td>
+          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#334155; white-space:nowrap;">Time Impact</td>
           <td style="padding:6px 0; font-size:10pt; font-weight:600; color:${timeColour};">
             ${timeAnswer}
-            ${notice.time_flag && notice.estimated_days != null ? `<span style="margin-left:12px; color:#1C1C1E;">${notice.estimated_days} ${notice.time_implication_unit === 'hours' ? `hour${notice.estimated_days !== 1 ? 's' : ''}` : `day${notice.estimated_days !== 1 ? 's' : ''}`}</span>` : ''}
+            ${notice.time_flag && notice.estimated_days != null ? `<span style="margin-left:12px; color:#111827;">${notice.estimated_days} ${notice.time_implication_unit === 'hours' ? `hour${notice.estimated_days !== 1 ? 's' : ''}` : `day${notice.estimated_days !== 1 ? 's' : ''}`}</span>` : ''}
           </td>
         </tr>
         ${notice.contract_clause ? `
         <tr>
-          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#6B7280; white-space:nowrap;">Contract Clause</td>
+          <td style="padding:6px 16px 6px 0; font-size:9pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; color:#334155; white-space:nowrap;">Contract Clause</td>
           <td style="padding:6px 0; font-size:10pt;">${escapeHtml(notice.contract_clause)}</td>
         </tr>
         ` : ''}
@@ -568,30 +568,30 @@ function buildNoticeHtml(
 
     ${notice.cost_flag && (notice as any).cost_items?.length > 0 ? `
     <div style="margin-bottom:32px;">
-      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#6B7280; margin-bottom:10px;">Cost Breakdown</div>
+      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#334155; margin-bottom:10px;">Cost Breakdown</div>
       <table style="width:100%; border-collapse:collapse; font-size:9pt;">
         <thead>
-          <tr style="border-bottom:1px solid #E5E7EB;">
-            <th style="text-align:left; padding:4px 8px 6px 0; color:#6B7280; font-weight:600;">Description</th>
-            <th style="text-align:right; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:60px;">Qty</th>
-            <th style="text-align:left; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:50px;">Unit</th>
-            <th style="text-align:right; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:80px;">Rate</th>
-            <th style="text-align:right; padding:4px 0 6px 0; color:#6B7280; font-weight:600; width:80px;">Total</th>
+          <tr style="border-bottom:1px solid #D8D2C4;">
+            <th style="text-align:left; padding:4px 8px 6px 0; color:#334155; font-weight:600;">Description</th>
+            <th style="text-align:right; padding:4px 8px 6px 0; color:#334155; font-weight:600; width:60px;">Qty</th>
+            <th style="text-align:left; padding:4px 8px 6px 0; color:#334155; font-weight:600; width:50px;">Unit</th>
+            <th style="text-align:right; padding:4px 8px 6px 0; color:#334155; font-weight:600; width:80px;">Rate</th>
+            <th style="text-align:right; padding:4px 0 6px 0; color:#334155; font-weight:600; width:80px;">Total</th>
           </tr>
         </thead>
         <tbody>
           ${(notice as any).cost_items.map((item: any) => `
           <tr style="border-bottom:1px solid #F5F5F5;">
-            <td style="padding:5px 8px 5px 0; color:#1C1C1E;">${escapeHtml(item.description || '—')}</td>
-            <td style="padding:5px 8px 5px 0; text-align:right; color:#1C1C1E;">${item.qty}</td>
-            <td style="padding:5px 8px 5px 0; color:#6B7280;">${escapeHtml(item.unit || '')}</td>
-            <td style="padding:5px 8px 5px 0; text-align:right; color:#1C1C1E;">$${Number(item.rate).toFixed(2)}</td>
-            <td style="padding:5px 0; text-align:right; font-weight:600; color:#1C1C1E;">$${Number(item.total).toFixed(2)}</td>
+            <td style="padding:5px 8px 5px 0; color:#111827;">${escapeHtml(item.description || '—')}</td>
+            <td style="padding:5px 8px 5px 0; text-align:right; color:#111827;">${item.qty}</td>
+            <td style="padding:5px 8px 5px 0; color:#334155;">${escapeHtml(item.unit || '')}</td>
+            <td style="padding:5px 8px 5px 0; text-align:right; color:#111827;">$${Number(item.rate).toFixed(2)}</td>
+            <td style="padding:5px 0; text-align:right; font-weight:600; color:#111827;">$${Number(item.total).toFixed(2)}</td>
           </tr>
           `).join('')}
-          <tr style="border-top:2px solid #E5E7EB;">
-            <td colspan="4" style="padding:8px 8px 4px 0; font-weight:700; font-size:9pt; text-align:right; color:#6B7280; text-transform:uppercase; letter-spacing:0.05em;">Total</td>
-            <td style="padding:8px 0 4px 0; font-weight:700; font-size:10pt; text-align:right; color:#1C1C1E;">$${(notice as any).cost_items.reduce((s: number, i: any) => s + (Number(i.total) || 0), 0).toFixed(2)}</td>
+          <tr style="border-top:2px solid #D8D2C4;">
+            <td colspan="4" style="padding:8px 8px 4px 0; font-weight:700; font-size:9pt; text-align:right; color:#334155; text-transform:uppercase; letter-spacing:0.05em;">Total</td>
+            <td style="padding:8px 0 4px 0; font-weight:700; font-size:10pt; text-align:right; color:#111827;">$${(notice as any).cost_items.reduce((s: number, i: any) => s + (Number(i.total) || 0), 0).toFixed(2)}</td>
           </tr>
         </tbody>
       </table>
@@ -602,11 +602,11 @@ function buildNoticeHtml(
       A formal Variation Request will be submitted in accordance with the contract.
     </div>
 
-    <div style="display:flex; justify-content:space-between; padding-top:24px; border-top:1px solid #E5E7EB;">
+    <div style="display:flex; justify-content:space-between; padding-top:24px; border-top:1px solid #D8D2C4;">
       <div>
         <div class="field-label">Issued by</div>
         <div class="field-value">${escapeHtml(notice.issued_by_name || '—')}</div>
-        ${notice.issued_by_email ? `<div style="font-size:9pt; color:#6B7280; margin-top:2px;">${escapeHtml(notice.issued_by_email)}</div>` : ''}
+        ${notice.issued_by_email ? `<div style="font-size:9pt; color:#334155; margin-top:2px;">${escapeHtml(notice.issued_by_email)}</div>` : ''}
       </div>
       <div style="text-align:right;">
         <div class="field-label">${escapeHtml(notice.notice_number)}</div>
@@ -614,52 +614,52 @@ function buildNoticeHtml(
       </div>
     </div>
 
-    <div style="margin-top:32px; padding-top:20px; border-top:2px solid #E5E7EB;">
-      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9CA3AF; margin-bottom:12px;">Document Information</div>
+    <div style="margin-top:32px; padding-top:20px; border-top:2px solid #D8D2C4;">
+      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#64748B; margin-bottom:12px;">Document Information</div>
       <table style="width:100%; border-collapse:collapse; font-size:9pt;">
         <tr>
-          <td style="padding:4px 0; color:#6B7280; width:160px; vertical-align:top;">Notice Number</td>
-          <td style="padding:4px 0; font-weight:600; color:#1C1C1E;">${notice.notice_number}</td>
-          <td style="padding:4px 0; color:#6B7280; width:160px; vertical-align:top;">Created</td>
-          <td style="padding:4px 0; color:#1C1C1E;">${formatDocDate(notice.created_at)}</td>
+          <td style="padding:4px 0; color:#334155; width:160px; vertical-align:top;">Notice Number</td>
+          <td style="padding:4px 0; font-weight:600; color:#111827;">${notice.notice_number}</td>
+          <td style="padding:4px 0; color:#334155; width:160px; vertical-align:top;">Created</td>
+          <td style="padding:4px 0; color:#111827;">${formatDocDate(notice.created_at)}</td>
         </tr>
         <tr>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Status</td>
-          <td style="padding:4px 0; font-weight:600; color:#1C1C1E; text-transform:capitalize;">${notice.status}</td>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Issued</td>
-          <td style="padding:4px 0; color:#1C1C1E;">${notice.issued_at ? formatDocDate(notice.issued_at) : '—'}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top;">Status</td>
+          <td style="padding:4px 0; font-weight:600; color:#111827; text-transform:capitalize;">${notice.status}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top;">Issued</td>
+          <td style="padding:4px 0; color:#111827;">${notice.issued_at ? formatDocDate(notice.issued_at) : '—'}</td>
         </tr>
         ${notice.acknowledged_at ? `
         <tr>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Acknowledged</td>
-          <td style="padding:4px 0; color:#1C1C1E;" colspan="3">${formatDocDate(notice.acknowledged_at)}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top;">Acknowledged</td>
+          <td style="padding:4px 0; color:#111827;" colspan="3">${formatDocDate(notice.acknowledged_at)}</td>
         </tr>
         ` : ''}
         <tr>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Sent By</td>
-          <td style="padding:4px 0; font-weight:600; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.name || notice.issued_by_name || '—')}</td>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Email</td>
-          <td style="padding:4px 0; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.email || notice.issued_by_email || '—')}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top; padding-top:12px;">Sent By</td>
+          <td style="padding:4px 0; font-weight:600; color:#111827; padding-top:12px;">${escapeHtml(sender.name || notice.issued_by_name || '—')}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top; padding-top:12px;">Email</td>
+          <td style="padding:4px 0; color:#111827; padding-top:12px;">${escapeHtml(sender.email || notice.issued_by_email || '—')}</td>
         </tr>
         <tr>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Company</td>
-          <td style="padding:4px 0; color:#1C1C1E;" colspan="3">${escapeHtml(companyName || '—')}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top;">Company</td>
+          <td style="padding:4px 0; color:#111827;" colspan="3">${escapeHtml(companyName || '—')}</td>
         </tr>
         <tr>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Generated</td>
-          <td style="padding:4px 0; color:#1C1C1E;" colspan="3">${formatDocDate(new Date().toISOString())}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top;">Generated</td>
+          <td style="padding:4px 0; color:#111827;" colspan="3">${formatDocDate(new Date().toISOString())}</td>
         </tr>
       </table>
     </div>
 
     ${buildAttachmentsSection(documents || [], docUrls || {})}
 
-    <div style="margin-top:16px; padding:12px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB; margin-bottom:16px;">
-      <div style="font-size:8pt; color:#6B7280; margin-bottom:6px;">TO: ${escapeHtml(project.client)}</div>
+    <div style="margin-top:16px; padding:12px 0; border-top:1px solid #D8D2C4; border-bottom:1px solid #D8D2C4; margin-bottom:16px;">
+      <div style="font-size:8pt; color:#334155; margin-bottom:6px;">TO: ${escapeHtml(project.client)}</div>
       <div style="font-size:7.5pt; line-height:1.5; color:#374151; margin-bottom:6px;">
         ${getNoticeLanguage(companyInfo?.preferredStandard)}
       </div>
-      <div style="font-size:7pt; color:#9CA3AF; line-height:1.5;">
+      <div style="font-size:7pt; color:#64748B; line-height:1.5;">
         The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
       </div>
     </div>
@@ -731,7 +731,7 @@ function buildAttachmentsSection(documents: Document[], docUrls: Record<string, 
 
   return `
     <div class="avoid-break" style="margin-bottom:32px;">
-      <h3 style="font-size:11pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:16px; border-bottom:1px solid #E5E7EB; padding-bottom:8px;">Attachments</h3>
+      <h3 style="font-size:11pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:16px; border-bottom:1px solid #D8D2C4; padding-bottom:8px;">Attachments</h3>
       ${imageDocs.length > 0 ? `
         <div class="photo-grid" style="margin-bottom:16px;">
           ${imageDocs.map(d => {
@@ -742,7 +742,7 @@ function buildAttachmentsSection(documents: Document[], docUrls: Record<string, 
               <img src="${url}" class="photo-img" />
               <div class="photo-caption" style="font-size:8pt; color:#374151; margin-top:4px; line-height:1.4;">
                 <strong>${escapeHtml(d.file_name)}</strong><br/>
-                ${uploadedStr ? `<span style="color:#6B7280;">Uploaded: ${uploadedStr}</span>` : ''}
+                ${uploadedStr ? `<span style="color:#334155;">Uploaded: ${uploadedStr}</span>` : ''}
               </div>
             </div>`;
           }).join('')}
@@ -753,8 +753,8 @@ function buildAttachmentsSection(documents: Document[], docUrls: Record<string, 
           ${otherDocs.map(d => `
             <li style="padding:8px 0; border-bottom:1px solid #F0F0F0; font-size:9pt; color:#374151;">
               📎 ${escapeHtml(d.file_name)}
-              <span style="color:#9CA3AF; font-size:8pt; margin-left:8px;">(${(d.file_size / 1024).toFixed(0)} KB)</span>
-              ${d.uploaded_at ? `<span style="color:#9CA3AF; font-size:8pt; margin-left:8px;">· ${formatUploadDateTime(d.uploaded_at)}</span>` : ''}
+              <span style="color:#64748B; font-size:8pt; margin-left:8px;">(${(d.file_size / 1024).toFixed(0)} KB)</span>
+              ${d.uploaded_at ? `<span style="color:#64748B; font-size:8pt; margin-left:8px;">· ${formatUploadDateTime(d.uploaded_at)}</span>` : ''}
             </li>
           `).join('')}
         </ul>
@@ -781,7 +781,7 @@ function buildVariationHtml(
 
   const photoGrid = photos.length > 0 ? `
     <div class="avoid-break">
-      <h3 style="font-size:11pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:16px; border-bottom:1px solid #E5E7EB; padding-bottom:8px;">Photographic Evidence</h3>
+      <h3 style="font-size:11pt; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:16px; border-bottom:1px solid #D8D2C4; padding-bottom:8px;">Photographic Evidence</h3>
       <div class="photo-grid">
         ${photos.map(p => {
           const url = photoUrls[p.id];
@@ -791,7 +791,7 @@ function buildVariationHtml(
               <img src="${url}" class="photo-img" />
               <div class="photo-caption" style="font-size:8pt; color:#374151; margin-top:4px; line-height:1.4;">
                 <strong>Photo Evidence</strong><br/>
-                <span style="color:#6B7280;">Captured: ${formatDocDate(p.captured_at)}</span>
+                <span style="color:#334155;">Captured: ${formatDocDate(p.captured_at)}</span>
               </div>
             </div>
           `;
@@ -819,7 +819,7 @@ function buildVariationHtml(
         <div class="doc-title">Variation Request</div>
       </div>
       <div class="doc-meta">
-        <div class="meta-row" style="font-size:11pt; font-weight:700; color:#1C1C1E; margin-bottom:6px;">${escapeHtml(varNumber)}</div>
+        <div class="meta-row" style="font-size:11pt; font-weight:700; color:#111827; margin-bottom:6px;">${escapeHtml(varNumber)}</div>
         <div class="meta-row">Date: ${formatDocDate(variation.captured_at)}</div>
         <div class="meta-row">Status: <strong>${status}</strong></div>
       </div>
@@ -846,7 +846,7 @@ function buildVariationHtml(
         ${variation.response_due_date ? `
         <div class="field-group">
           <div class="field-label">Response Due</div>
-          <div class="field-value" style="color:${new Date(variation.response_due_date + 'T00:00:00') < new Date() ? '#DC2626' : '#1C1C1E'};">${formatDocDateOnly(variation.response_due_date + 'T00:00:00')}</div>
+          <div class="field-value" style="color:${new Date(variation.response_due_date + 'T00:00:00') < new Date() ? '#DC2626' : '#111827'};">${formatDocDateOnly(variation.response_due_date + 'T00:00:00')}</div>
         </div>
         ` : ''}
         <div class="field-group">
@@ -883,30 +883,30 @@ function buildVariationHtml(
 
     ${(variation as any).cost_items?.length > 0 ? `
     <div style="margin-bottom:32px;">
-      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#6B7280; margin-bottom:10px;">Cost Breakdown</div>
+      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#334155; margin-bottom:10px;">Cost Breakdown</div>
       <table style="width:100%; border-collapse:collapse; font-size:9pt;">
         <thead>
-          <tr style="border-bottom:1px solid #E5E7EB;">
-            <th style="text-align:left; padding:4px 8px 6px 0; color:#6B7280; font-weight:600;">Description</th>
-            <th style="text-align:right; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:60px;">Qty</th>
-            <th style="text-align:left; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:50px;">Unit</th>
-            <th style="text-align:right; padding:4px 8px 6px 0; color:#6B7280; font-weight:600; width:80px;">Rate</th>
-            <th style="text-align:right; padding:4px 0 6px 0; color:#6B7280; font-weight:600; width:80px;">Total</th>
+          <tr style="border-bottom:1px solid #D8D2C4;">
+            <th style="text-align:left; padding:4px 8px 6px 0; color:#334155; font-weight:600;">Description</th>
+            <th style="text-align:right; padding:4px 8px 6px 0; color:#334155; font-weight:600; width:60px;">Qty</th>
+            <th style="text-align:left; padding:4px 8px 6px 0; color:#334155; font-weight:600; width:50px;">Unit</th>
+            <th style="text-align:right; padding:4px 8px 6px 0; color:#334155; font-weight:600; width:80px;">Rate</th>
+            <th style="text-align:right; padding:4px 0 6px 0; color:#334155; font-weight:600; width:80px;">Total</th>
           </tr>
         </thead>
         <tbody>
           ${(variation as any).cost_items.map((item: any) => `
           <tr style="border-bottom:1px solid #F5F5F5;">
-            <td style="padding:5px 8px 5px 0; color:#1C1C1E;">${escapeHtml(item.description || '—')}</td>
-            <td style="padding:5px 8px 5px 0; text-align:right; color:#1C1C1E;">${item.qty}</td>
-            <td style="padding:5px 8px 5px 0; color:#6B7280;">${escapeHtml(item.unit || '')}</td>
-            <td style="padding:5px 8px 5px 0; text-align:right; color:#1C1C1E;">$${Number(item.rate).toFixed(2)}</td>
-            <td style="padding:5px 0; text-align:right; font-weight:600; color:#1C1C1E;">$${Number(item.total).toFixed(2)}</td>
+            <td style="padding:5px 8px 5px 0; color:#111827;">${escapeHtml(item.description || '—')}</td>
+            <td style="padding:5px 8px 5px 0; text-align:right; color:#111827;">${item.qty}</td>
+            <td style="padding:5px 8px 5px 0; color:#334155;">${escapeHtml(item.unit || '')}</td>
+            <td style="padding:5px 8px 5px 0; text-align:right; color:#111827;">$${Number(item.rate).toFixed(2)}</td>
+            <td style="padding:5px 0; text-align:right; font-weight:600; color:#111827;">$${Number(item.total).toFixed(2)}</td>
           </tr>
           `).join('')}
-          <tr style="border-top:2px solid #E5E7EB;">
-            <td colspan="4" style="padding:8px 8px 4px 0; font-weight:700; font-size:9pt; text-align:right; color:#6B7280; text-transform:uppercase; letter-spacing:0.05em;">Total</td>
-            <td style="padding:8px 0 4px 0; font-weight:700; font-size:10pt; text-align:right; color:#1C1C1E;">$${(variation as any).cost_items.reduce((s: number, i: any) => s + (Number(i.total) || 0), 0).toFixed(2)}</td>
+          <tr style="border-top:2px solid #D8D2C4;">
+            <td colspan="4" style="padding:8px 8px 4px 0; font-weight:700; font-size:9pt; text-align:right; color:#334155; text-transform:uppercase; letter-spacing:0.05em;">Total</td>
+            <td style="padding:8px 0 4px 0; font-weight:700; font-size:10pt; text-align:right; color:#111827;">$${(variation as any).cost_items.reduce((s: number, i: any) => s + (Number(i.total) || 0), 0).toFixed(2)}</td>
           </tr>
         </tbody>
       </table>
@@ -915,8 +915,8 @@ function buildVariationHtml(
 
     ${variation.eot_days_claimed != null ? `
     <div style="margin-bottom:32px;">
-      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#6B7280; margin-bottom:8px;">Time Impact</div>
-      <div style="font-size:10pt; font-weight:600; color:#1C1C1E;">
+      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#334155; margin-bottom:8px;">Time Impact</div>
+      <div style="font-size:10pt; font-weight:600; color:#111827;">
         ${variation.eot_days_claimed} ${variation.time_implication_unit === 'hours'
           ? `hour${variation.eot_days_claimed !== 1 ? 's' : ''}`
           : `day${variation.eot_days_claimed !== 1 ? 's' : ''}`} extension claimed
@@ -925,57 +925,57 @@ function buildVariationHtml(
     ` : ''}
 
     <div style="padding-top:12px; margin-bottom:16px;">
-      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#9CA3AF; margin-bottom:8px;">Document Information</div>
+      <div style="font-size:9pt; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#64748B; margin-bottom:8px;">Document Information</div>
       <table style="width:100%; border-collapse:collapse; font-size:9pt;">
         <tr>
-          <td style="padding:4px 0; color:#6B7280; width:160px; vertical-align:top;">Variation No.</td>
-          <td style="padding:4px 0; font-weight:600; color:#1C1C1E;">${escapeHtml(varNumber)}</td>
-          <td style="padding:4px 0; color:#6B7280; width:160px; vertical-align:top;">Captured</td>
-          <td style="padding:4px 0; color:#1C1C1E;">${formatDocDate(variation.captured_at)}</td>
+          <td style="padding:4px 0; color:#334155; width:160px; vertical-align:top;">Variation No.</td>
+          <td style="padding:4px 0; font-weight:600; color:#111827;">${escapeHtml(varNumber)}</td>
+          <td style="padding:4px 0; color:#334155; width:160px; vertical-align:top;">Captured</td>
+          <td style="padding:4px 0; color:#111827;">${formatDocDate(variation.captured_at)}</td>
         </tr>
         <tr>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Status</td>
-          <td style="padding:4px 0; font-weight:600; color:#1C1C1E;">${escapeHtml(status)}</td>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Last Updated</td>
-          <td style="padding:4px 0; color:#1C1C1E;">${formatDocDate(variation.updated_at)}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top;">Status</td>
+          <td style="padding:4px 0; font-weight:600; color:#111827;">${escapeHtml(status)}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top;">Last Updated</td>
+          <td style="padding:4px 0; color:#111827;">${formatDocDate(variation.updated_at)}</td>
         </tr>
         <tr>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Submitted By</td>
-          <td style="padding:4px 0; font-weight:600; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.name || variation.requestor_name || '—')}</td>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top; padding-top:12px;">Email</td>
-          <td style="padding:4px 0; color:#1C1C1E; padding-top:12px;">${escapeHtml(sender.email || variation.requestor_email || '—')}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top; padding-top:12px;">Submitted By</td>
+          <td style="padding:4px 0; font-weight:600; color:#111827; padding-top:12px;">${escapeHtml(sender.name || variation.requestor_name || '—')}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top; padding-top:12px;">Email</td>
+          <td style="padding:4px 0; color:#111827; padding-top:12px;">${escapeHtml(sender.email || variation.requestor_email || '—')}</td>
         </tr>
         <tr>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Company</td>
-          <td style="padding:4px 0; color:#1C1C1E;" colspan="3">${escapeHtml(companyName || '—')}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top;">Company</td>
+          <td style="padding:4px 0; color:#111827;" colspan="3">${escapeHtml(companyName || '—')}</td>
         </tr>
         <tr>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Generated</td>
-          <td style="padding:4px 0; color:#1C1C1E;" colspan="3">${formatDocDate(new Date().toISOString())}</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top;">Generated</td>
+          <td style="padding:4px 0; color:#111827;" colspan="3">${formatDocDate(new Date().toISOString())}</td>
         </tr>
         ${variation.evidence_hash ? `
         <tr>
-          <td style="padding:4px 0; color:#6B7280; vertical-align:top;">Document Ref</td>
-          <td style="padding:4px 0; font-family:monospace; font-size:8pt; color:#6B7280;" colspan="3">${variation.evidence_hash.substring(0, 16)}...</td>
+          <td style="padding:4px 0; color:#334155; vertical-align:top;">Document Ref</td>
+          <td style="padding:4px 0; font-family:monospace; font-size:8pt; color:#334155;" colspan="3">${variation.evidence_hash.substring(0, 16)}...</td>
         </tr>
         ` : ''}
         ${revisions && revisions.length > 1 ? `
         <tr>
           <td colspan="4" style="padding-top:14px; padding-bottom:6px;">
-            <div style="font-size:8pt; color:#6B7280; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; border-top:1px solid #E5E7EB; padding-top:12px;">Revision History</div>
+            <div style="font-size:8pt; color:#334155; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; border-top:1px solid #D8D2C4; padding-top:12px;">Revision History</div>
             <table style="width:100%; border-collapse:collapse; font-size:9pt;">
               <tr>
-                <th style="text-align:left; color:#6B7280; font-weight:500; padding-bottom:4px; width:180px;">Variation No.</th>
-                <th style="text-align:left; color:#6B7280; font-weight:500; padding-bottom:4px; width:160px;">Date</th>
-                <th style="text-align:left; color:#6B7280; font-weight:500; padding-bottom:4px;">Status</th>
+                <th style="text-align:left; color:#334155; font-weight:500; padding-bottom:4px; width:180px;">Variation No.</th>
+                <th style="text-align:left; color:#334155; font-weight:500; padding-bottom:4px; width:160px;">Date</th>
+                <th style="text-align:left; color:#334155; font-weight:500; padding-bottom:4px;">Status</th>
               </tr>
               ${revisions.map(r => {
                 const revNum = getVariationNumber(r);
                 const isCurrent = r.id === variation.id;
                 return `<tr style="${isCurrent ? 'font-weight:600;' : ''}">
-                  <td style="padding:3px 0; color:#1C1C1E; font-family:monospace;">${escapeHtml(revNum)}${isCurrent ? ' ◀' : ''}</td>
-                  <td style="padding:3px 0; color:#6B7280;">${formatDocDate(r.captured_at)}</td>
-                  <td style="padding:3px 0; color:#1C1C1E; text-transform:capitalize;">${escapeHtml(r.status)}</td>
+                  <td style="padding:3px 0; color:#111827; font-family:monospace;">${escapeHtml(revNum)}${isCurrent ? ' ◀' : ''}</td>
+                  <td style="padding:3px 0; color:#334155;">${formatDocDate(r.captured_at)}</td>
+                  <td style="padding:3px 0; color:#111827; text-transform:capitalize;">${escapeHtml(r.status)}</td>
                 </tr>`;
               }).join('')}
             </table>
@@ -989,11 +989,11 @@ function buildVariationHtml(
 
     ${buildAttachmentsSection(documents || [], docUrls || {})}
 
-    <div style="margin-top:16px; padding:12px 0; border-top:1px solid #E5E7EB; border-bottom:1px solid #E5E7EB; margin-bottom:16px;">
+    <div style="margin-top:16px; padding:12px 0; border-top:1px solid #D8D2C4; border-bottom:1px solid #D8D2C4; margin-bottom:16px;">
       <div style="font-size:7.5pt; line-height:1.5; margin-bottom:6px; color:#374151;">
         ${getNoticeLanguage(companyInfo?.preferredStandard)}
       </div>
-      <div style="font-size:7pt; color:#9CA3AF; line-height:1.5;">
+      <div style="font-size:7pt; color:#64748B; line-height:1.5;">
         The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
       </div>
     </div>

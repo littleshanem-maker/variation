@@ -285,20 +285,20 @@ export default function Dashboard() {
     <AppShell>
       <TopBar title="Executive Risk Overview" />
       <div className="flex items-center justify-center h-96">
-        <div className="text-[#9CA3AF] text-sm">Loading...</div>
+        <div className="text-[#64748B] text-sm">Loading...</div>
       </div>
     </AppShell>
   );
 
   if (error === 'not_authenticated') {
     if (typeof window !== 'undefined') window.location.href = '/login';
-    return <div className="min-h-screen flex items-center justify-center"><p className="text-[#9CA3AF] text-sm">Redirecting to login...</p></div>;
+    return <div className="min-h-screen flex items-center justify-center"><p className="text-[#64748B] text-sm">Redirecting to login...</p></div>;
   }
 
   if (error) return (
     <AppShell>
       <TopBar title="Executive Risk Overview" />
-      <div className="flex items-center justify-center h-96"><p className="text-[#B25B4E] text-sm">Error: {error}</p></div>
+      <div className="flex items-center justify-center h-96"><p className="text-[#B42318] text-sm">Error: {error}</p></div>
     </AppShell>
   );
 
@@ -318,14 +318,14 @@ export default function Dashboard() {
             <div className="flex items-start justify-between mb-3">
               <div>
                 <h3 className="font-bold text-indigo-900 text-base">Welcome! Let's capture your first variation.</h3>
-                <p className="text-indigo-700 text-sm mt-1">Start by creating a project, then log your first scope change.</p>
+                <p className="text-[#C75A00] text-sm mt-1">Start by creating a project, then log your first scope change.</p>
               </div>
-              <button onClick={() => setOnboardingDismissed(true)} className="text-indigo-400 hover:text-indigo-600 text-xs">✕</button>
+              <button onClick={() => setOnboardingDismissed(true)} className="text-[#E76F00] hover:text-[#E76F00] text-xs">✕</button>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mt-4">
               <button
                 onClick={() => setShowNewProject(true)}
-                className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
+                className="flex items-center gap-2 bg-[#E76F00] hover:bg-[#E76F00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
               >
                 <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
                 Create your first project
@@ -347,7 +347,7 @@ export default function Dashboard() {
           <select
             value={filterProject}
             onChange={e => setFilterProject(e.target.value)}
-            className="px-3 py-1.5 text-[13px] border border-[#E5E7EB] rounded-md bg-white text-[#374151] focus:outline-none focus:ring-1 focus:ring-[#1B365D] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md bg-white text-[#374151] focus:outline-none focus:ring-1 focus:ring-[#17212B] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
           >
             <option value="all">All Projects</option>
             {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -356,7 +356,7 @@ export default function Dashboard() {
           <select
             value={filterDateRange}
             onChange={e => setFilterDateRange(e.target.value as DateRangeKey)}
-            className="px-3 py-1.5 text-[13px] border border-[#E5E7EB] rounded-md bg-white text-[#374151] focus:outline-none focus:ring-1 focus:ring-[#1B365D] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md bg-white text-[#374151] focus:outline-none focus:ring-1 focus:ring-[#17212B] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
           >
             <option value="all">All Time</option>
             <option value="week">This Week</option>
@@ -367,7 +367,7 @@ export default function Dashboard() {
 
           <select
             disabled
-            className="px-3 py-1.5 text-[13px] border border-[#E5E7EB] rounded-md bg-white text-[#9CA3AF] opacity-60 cursor-not-allowed shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md bg-white text-[#64748B] opacity-60 cursor-not-allowed shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
           >
             <option>All Managers</option>
           </select>
@@ -379,25 +379,25 @@ export default function Dashboard() {
 
             {/* Card 1: Cash Flow at Risk */}
             <Link href="/variations?status=at_risk">
-              <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)] hover:shadow-md transition-shadow">
+              <div className="bg-white rounded-xl border border-[#D8D2C4] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)] hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-4">
-                  <span className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider">Cash Flow at Risk</span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-50 text-red-600">
+                  <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider">Cash Flow at Risk</span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-50 text-[#B42318]">
                     {atRiskVars.length} unresolved
                   </span>
                 </div>
                 <div className="text-[34px] font-black tabular-nums leading-none text-rose-600">
                   {formatCurrency(atRiskTotal)}
                 </div>
-                <div className="mt-2 text-[12px] text-[#9CA3AF]">Disputed + draft + captured</div>
+                <div className="mt-2 text-[12px] text-[#64748B]">Disputed + draft + captured</div>
               </div>
             </Link>
 
             {/* Card 2: Pending Approval */}
             <Link href="/variations?status=submitted">
-              <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)] hover:shadow-md transition-shadow">
+              <div className="bg-white rounded-xl border border-[#D8D2C4] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)] hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-4">
-                  <span className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider">Pending Approval</span>
+                  <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider">Pending Approval</span>
                   {submittedVars.length > 0 && (
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-600">
                       {submittedVars.length} submitted
@@ -407,16 +407,16 @@ export default function Dashboard() {
                 <div className="text-[34px] font-black tabular-nums leading-none text-[#B45309]">
                   {formatCurrency(submittedTotal)}
                 </div>
-                <div className="mt-2 text-[12px] text-[#9CA3AF]">
+                <div className="mt-2 text-[12px] text-[#64748B]">
                   {submittedVars.length > 0 ? `Avg. ${avgSubmittedDays} days old` : 'No pending variations'}
                 </div>
               </div>
             </Link>
 
             {/* Card 3: Recovery Rate */}
-            <div className="bg-white rounded-xl border border-[#E5E7EB] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)]">
+            <div className="bg-white rounded-xl border border-[#D8D2C4] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)]">
               <div className="flex items-start justify-between mb-4">
-                <span className="text-[11px] font-semibold text-[#9CA3AF] uppercase tracking-wider">Recovery Rate</span>
+                <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider">Recovery Rate</span>
                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600">
                   {formatCurrency(paidTotal)} paid
                 </span>
@@ -425,7 +425,7 @@ export default function Dashboard() {
                 <span className="text-[34px] font-black tabular-nums text-slate-900">{recoveryRate}%</span>
                 <TrendingUp size={20} className="text-emerald-500 mb-0.5" strokeWidth={2.5} />
               </div>
-              <div className="mt-2 text-[12px] text-[#9CA3AF]">
+              <div className="mt-2 text-[12px] text-[#64748B]">
                 of {formatCurrency(grandTotal)} total variations
               </div>
             </div>
@@ -439,12 +439,12 @@ export default function Dashboard() {
           {/* Project Financial Health — full width */}
           <div className="w-full">
             <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
-              <h2 className="text-[16px] font-bold text-[#1C1C1E]">Project Financial Health (Visual)</h2>
+              <h2 className="text-[16px] font-bold text-[#111827]">Project Financial Health (Visual)</h2>
               <div className="flex items-center gap-2">
                 {!isField && (
                   <button
                     onClick={() => setShowNewProject(true)}
-                    className="flex items-center gap-1 px-3 py-1.5 text-[12px] font-medium text-[#6B7280] bg-white border border-[#E5E7EB] rounded-md hover:bg-[#F5F3EF] transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                    className="flex items-center gap-1 px-3 py-1.5 text-[12px] font-medium text-[#334155] bg-white border border-[#D8D2C4] rounded-md hover:bg-[#F5F3EF] transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
                   >
                     + New Project
                   </button>
@@ -453,16 +453,16 @@ export default function Dashboard() {
             </div>
 
             {projects.length === 0 ? (
-              <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-12 text-center">
-                <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <div className="bg-white rounded-xl border border-[#D8D2C4] shadow-sm p-12 text-center">
+                <div className="w-12 h-12 bg-[#E76F00] rounded-xl flex items-center justify-center mx-auto mb-4">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </div>
-                <h3 className="text-[18px] font-semibold text-[#1C1C1E] mb-2">Welcome to Variation Shield</h3>
-                <p className="text-[14px] text-[#6B7280] mb-1">Start by creating your first project.</p>
-                <p className="text-[14px] text-[#6B7280] mb-8">Then capture a variation in under 60 seconds.</p>
+                <h3 className="text-[18px] font-semibold text-[#111827] mb-2">Welcome to Variation Shield</h3>
+                <p className="text-[14px] text-[#334155] mb-1">Start by creating your first project.</p>
+                <p className="text-[14px] text-[#334155] mb-8">Then capture a variation in under 60 seconds.</p>
                 <Link
                   href="/onboarding"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[14px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[14px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] transition-colors"
                 >
                   Create your first project →
                 </Link>
@@ -476,13 +476,13 @@ export default function Dashboard() {
                     const atRisk = p.variations.filter(v => ['disputed', 'draft', 'captured'].includes(v.status)).reduce((s, v) => s + (v.estimated_value || 0), 0);
                     return (
                       <Link key={p.id} href={`/project/${p.id}`}>
-                        <div className="bg-white rounded-md border border-[#E5E7EB] px-4 py-3 flex items-center justify-between hover:bg-[#F5F3EF] transition-colors">
+                        <div className="bg-white rounded-md border border-[#D8D2C4] px-4 py-3 flex items-center justify-between hover:bg-[#F5F3EF] transition-colors">
                           <div className="min-w-0 mr-3">
-                            <div className="text-[14px] font-semibold text-[#1C1C1E] truncate">{p.name}</div>
-                            <div className="text-[12px] text-[#6B7280] truncate">{p.client}</div>
+                            <div className="text-[14px] font-semibold text-[#111827] truncate">{p.name}</div>
+                            <div className="text-[12px] text-[#334155] truncate">{p.client}</div>
                           </div>
                           <div className="flex-shrink-0 text-right">
-                            <div className="text-[13px] font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(totalVal)}</div>
+                            <div className="text-[13px] font-semibold text-[#111827] tabular-nums">{formatCurrency(totalVal)}</div>
                             {atRisk > 0 && <div className="text-[11px] text-[#DC2626] font-medium tabular-nums">{formatCurrency(atRisk)} at risk</div>}
                           </div>
                         </div>
@@ -492,9 +492,9 @@ export default function Dashboard() {
                 </div>
 
                 {/* Desktop: stacked bar chart */}
-                <div className="hidden md:block bg-white rounded-xl border border-[#E5E7EB] shadow-[0_1px_2px_rgba(0,0,0,0.04)] p-5 space-y-2">
+                <div className="hidden md:block bg-white rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] p-5 space-y-2">
                   {barChartData.length === 0 ? (
-                    <p className="text-[13px] text-[#9CA3AF] text-center py-6">No variation data to display.</p>
+                    <p className="text-[13px] text-[#64748B] text-center py-6">No variation data to display.</p>
                   ) : (
                     barChartData.map(p => {
                       const barW = (p.totalValue / maxBarValue) * 100;
@@ -509,7 +509,7 @@ export default function Dashboard() {
                             <div className="min-w-0">
                             <Link
                               href={`/project/${p.id}`}
-                              className="text-[13px] font-semibold text-[#1C1C1E] hover:text-indigo-600 transition-colors leading-tight"
+                              className="text-[13px] font-semibold text-[#111827] hover:text-[#E76F00] transition-colors leading-tight"
                             >
                               {p.name}
                             </Link>
@@ -517,7 +517,7 @@ export default function Dashboard() {
                             </div>
                             {!isField && (
                               <div className="flex-shrink-0 text-right">
-                                <span className="text-[13px] font-semibold text-[#1C1C1E] tabular-nums">{formatCurrency(p.totalValue)}</span>
+                                <span className="text-[13px] font-semibold text-[#111827] tabular-nums">{formatCurrency(p.totalValue)}</span>
                                 {p.disputed > 0 && (
                                   <span className="ml-2 text-[11px] text-rose-600 font-medium tabular-nums">{formatCurrency(p.disputed)} disputed</span>
                                 )}
@@ -528,11 +528,11 @@ export default function Dashboard() {
                           <div className="w-full h-[18px] bg-slate-100 rounded-md overflow-hidden mb-5">
                             {p.variationCount === 0 ? (
                               <div className="flex items-center h-full px-2">
-                                <span className="text-[11px] text-[#9CA3AF]">No variations yet — <Link href={`/project/${p.id}`} className="underline hover:text-[#1B365D]">open project to add one</Link></span>
+                                <span className="text-[11px] text-[#64748B]">No variations yet — <Link href={`/project/${p.id}`} className="underline hover:text-[#17212B]">open project to add one</Link></span>
                               </div>
                             ) : p.totalValue === 0 ? (
                               <div className="flex items-center h-full px-2">
-                                <span className="text-[11px] text-[#9CA3AF]">{p.variationCount} variation{p.variationCount !== 1 ? 's' : ''} — no value recorded yet</span>
+                                <span className="text-[11px] text-[#64748B]">{p.variationCount} variation{p.variationCount !== 1 ? 's' : ''} — no value recorded yet</span>
                               </div>
                             ) : (
                               <div style={{ width: `${barW}%` }} className="flex h-full gap-px">
@@ -565,7 +565,7 @@ export default function Dashboard() {
                   )}
 
                   {/* Legend */}
-                  <div className="flex flex-wrap gap-4 pt-3 border-t border-[#F0F0EE]">
+                  <div className="flex flex-wrap gap-4 pt-3 border-t border-[#E7E0D2]">
                     {[
                       { color: 'bg-emerald-500', label: 'Paid / Approved' },
                       { color: 'bg-amber-400',  label: 'Submitted' },
@@ -574,7 +574,7 @@ export default function Dashboard() {
                     ].map(l => (
                       <div key={l.label} className="flex items-center gap-1.5">
                         <div className={`w-3 h-3 rounded-sm flex-shrink-0 ${l.color}`} />
-                        <span className="text-[11px] text-[#6B7280]">{l.label}</span>
+                        <span className="text-[11px] text-[#334155]">{l.label}</span>
                       </div>
                     ))}
                   </div>
@@ -587,11 +587,11 @@ export default function Dashboard() {
           {projects.length > 0 && allVariationsRaw.length === 0 && !noVariationsBannerDismissed && (
             <div
               className="w-full px-4 py-3.5 rounded-lg flex items-center justify-between gap-3"
-              style={{ backgroundColor: '#EEF2FF', border: '1px solid #C7D2FE', color: '#1E1B4B' }}
+              style={{ backgroundColor: '#FFFCF5', border: '1px solid #D8D2C4', color: '#111827' }}
             >
               <div>
                 <div className="text-[14px] font-semibold mb-0.5">⚡ No variations yet.</div>
-                <div className="text-[13px]" style={{ color: '#3730A3' }}>
+                <div className="text-[13px]" style={{ color: '#334155' }}>
                   Capture one now — it takes 60 seconds on site.{' '}
                   <Link href="/capture" className="underline font-medium hover:text-indigo-900">Capture a variation →</Link>
                 </div>
@@ -599,7 +599,7 @@ export default function Dashboard() {
               <button
                 onClick={() => setNoVariationsBannerDismissed(true)}
                 className="flex-shrink-0 text-[18px] leading-none font-light"
-                style={{ color: '#6366F1' }}
+                style={{ color: '#E76F00' }}
                 aria-label="Dismiss"
               >
                 ×
@@ -610,7 +610,7 @@ export default function Dashboard() {
           {/* Urgent Attention Feed — full width, below bar chart */}
           <div className="w-full">
             <div className="flex items-center gap-2 mb-4">
-              <h2 className="text-[16px] font-bold text-[#1C1C1E]">Urgent Attention Feed</h2>
+              <h2 className="text-[16px] font-bold text-[#111827]">Urgent Attention Feed</h2>
               {urgentItems.length > 0 && (
                 <span className="inline-flex items-center justify-center w-5 h-5 bg-[#DC2626] text-white text-[10px] font-bold rounded-full">
                   {urgentItems.length}
@@ -618,11 +618,11 @@ export default function Dashboard() {
               )}
             </div>
 
-            <div className="bg-slate-50 rounded-xl border border-[#E5E7EB] p-2 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="bg-slate-50 rounded-xl border border-[#D8D2C4] p-2 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
               {urgentItems.length === 0 ? (
                 <div className="bg-white rounded-lg p-8 text-center">
                   <div className="text-2xl mb-2">✅</div>
-                  <p className="text-[13px] text-[#6B7280]">No urgent items — all variations on track.</p>
+                  <p className="text-[13px] text-[#334155]">No urgent items — all variations on track.</p>
                 </div>
               ) : (
                 <div className="space-y-1.5">
@@ -637,7 +637,7 @@ export default function Dashboard() {
                           }`} />
                           {/* Content */}
                           <div className="flex-1 min-w-0">
-                            <div className="text-[13px] text-[#1C1C1E] leading-snug">
+                            <div className="text-[13px] text-[#111827] leading-snug">
                               <span className="font-semibold">
                                 {item.kind === 'overdue' ? 'Response Overdue: '
                                   : item.kind === 'due-soon' ? 'Due Soon: '
@@ -680,26 +680,26 @@ export default function Dashboard() {
         {/* ── New Project Modal ── */}
         {showNewProject && (
           <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowNewProject(false)}>
-            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#E5E7EB] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
-              <h3 className="text-[15px] font-semibold text-[#1C1C1E] mb-4">New Project</h3>
+            <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
+              <h3 className="text-[15px] font-semibold text-[#111827] mb-4">New Project</h3>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Project Name</label>
+                  <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Project Name</label>
                   <input type="text" value={newProjectName} onChange={e => setNewProjectName(e.target.value)}
-                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none"
                     placeholder="e.g. Northern Hospital — Mechanical" autoFocus />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-[#9CA3AF] uppercase tracking-[0.02em] mb-1">Client</label>
+                  <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Client</label>
                   <input type="text" value={newProjectClient} onChange={e => setNewProjectClient(e.target.value)}
-                    className="w-full px-3 py-2 text-[14px] border border-[#E5E7EB] rounded-md focus:ring-1 focus:ring-[#1B365D] focus:border-[#1B365D] outline-none"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none"
                     placeholder="e.g. Lendlease" />
                 </div>
               </div>
               <div className="flex justify-end gap-2 mt-5">
-                <button onClick={() => setShowNewProject(false)} className="px-3 py-1.5 text-[13px] font-medium text-[#6B7280] hover:text-[#1C1C1E] transition-colors">Cancel</button>
+                <button onClick={() => setShowNewProject(false)} className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors">Cancel</button>
                 <button onClick={handleCreateProject} disabled={creatingProject || !newProjectName.trim() || !newProjectClient.trim()}
-                  className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#1B365D] rounded-md hover:bg-[#24466F] disabled:opacity-40 transition-colors">
+                  className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors">
                   {creatingProject ? 'Creating...' : 'Create Project'}
                 </button>
               </div>

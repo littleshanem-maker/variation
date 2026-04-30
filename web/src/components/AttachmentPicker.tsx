@@ -13,7 +13,7 @@ const ACCEPT = '.jpg,.jpeg,.png,.heic,.webp,.pdf,.doc,.docx,.xls,.xlsx';
 const MAX_MB = 20;
 
 function fileIcon(file: File) {
-  if (file.type.startsWith('image/')) return <ImageIcon size={14} className="text-indigo-400 flex-shrink-0" />;
+  if (file.type.startsWith('image/')) return <ImageIcon size={14} className="text-[#E76F00] flex-shrink-0" />;
   return <FileText size={14} className="text-slate-400 flex-shrink-0" />;
 }
 
@@ -52,11 +52,11 @@ export default function AttachmentPicker({ files, onChange, label = 'Attachments
         onDrop={onDrop}
         onDragOver={e => e.preventDefault()}
         onClick={() => inputRef.current?.click()}
-        className="flex flex-col items-center justify-center gap-1.5 px-4 py-5 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/40 transition-colors"
+        className="flex flex-col items-center justify-center gap-1.5 px-4 py-5 border-2 border-dashed border-slate-200 rounded-lg cursor-pointer hover:border-[#E76F00] hover:bg-indigo-50/40 transition-colors"
       >
         <Paperclip size={18} className="text-slate-400" />
         <p className="text-[13px] text-slate-500">
-          <span className="font-medium text-indigo-600">Click to attach</span> or drag and drop
+          <span className="font-medium text-[#E76F00]">Click to attach</span> or drag and drop
         </p>
         <p className="text-[11px] text-slate-400">Photos (JPG, PNG, HEIC), PDF, Word, Excel — max {MAX_MB} MB each</p>
         <input

@@ -39,9 +39,9 @@ export default function ProjectPicker({ projects, value, onChange, required, cla
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
-        className={`w-full flex items-center justify-between border rounded-lg px-3 py-3 text-[15px] bg-white focus:outline-none focus:ring-2 focus:ring-[#1B365D]/30 transition-colors ${
-          open ? 'border-[#1B365D]' : 'border-gray-300'
-        } ${selected ? 'text-[#1C1C1E]' : 'text-gray-400'} ${className || ''}`}
+        className={`w-full flex items-center justify-between border rounded-lg px-3 py-3 text-[15px] bg-white focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 transition-colors ${
+          open ? 'border-[#17212B]' : 'border-gray-300'
+        } ${selected ? 'text-[#111827]' : 'text-gray-400'} ${className || ''}`}
       >
         <span className="truncate">{selected ? selected.name : 'Select a project…'}</span>
         <ChevronDown
@@ -52,18 +52,18 @@ export default function ProjectPicker({ projects, value, onChange, required, cla
 
       {/* Inline dropdown */}
       {open && (
-        <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-[#E5E7EB] rounded-lg shadow-lg z-40 overflow-hidden max-h-56 overflow-y-auto">
+        <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-[#D8D2C4] rounded-lg shadow-lg z-40 overflow-hidden max-h-56 overflow-y-auto">
           {projects.map((p, i) => (
             <button
               key={p.id}
               type="button"
               onClick={() => { onChange(p.id); setOpen(false); }}
-              className={`w-full flex items-center justify-between px-4 py-3.5 text-left text-[15px] text-[#1C1C1E] hover:bg-slate-50 active:bg-slate-100 transition-colors ${
-                i < projects.length - 1 ? 'border-b border-[#F0F0EE]' : ''
+              className={`w-full flex items-center justify-between px-4 py-3.5 text-left text-[15px] text-[#111827] hover:bg-slate-50 active:bg-slate-100 transition-colors ${
+                i < projects.length - 1 ? 'border-b border-[#E7E0D2]' : ''
               }`}
             >
               <span>{p.name}</span>
-              {p.id === value && <Check size={15} className="text-indigo-600 flex-shrink-0" />}
+              {p.id === value && <Check size={15} className="text-[#E76F00] flex-shrink-0" />}
             </button>
           ))}
         </div>

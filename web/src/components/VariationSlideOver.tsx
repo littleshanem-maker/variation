@@ -165,7 +165,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
             {/* Header */}
             <SheetHeader>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[12px] font-mono font-semibold text-indigo-600 uppercase tracking-wider">
+                <span className="text-[12px] font-mono font-semibold text-[#E76F00] uppercase tracking-wider">
                   {getVariationNumber(variation)}
                 </span>
                 <StatusBadge status={variation.status} />
@@ -344,7 +344,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                   </Link>
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
                     onClick={onClose}
                   >
                     <Pencil size={14} /> Revise &amp; Resubmit
@@ -364,7 +364,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                   </Link>
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
                     onClick={onClose}
                   >
                     <Pencil size={14} /> Revise &amp; Resubmit
@@ -384,7 +384,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                   </Link>
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
                     onClick={onClose}
                   >
                     <Pencil size={14} /> Revise &amp; Resubmit

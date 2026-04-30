@@ -91,7 +91,7 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
             </p>
             <button
               onClick={onClose}
-              className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors text-sm"
+              className="bg-[#E76F00] hover:bg-[#E76F00] text-white font-semibold px-6 py-2.5 rounded-lg transition-colors text-sm"
             >
               Done
             </button>
@@ -112,7 +112,7 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Dave Morrison"
-                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#E76F00] transition-colors"
                   />
                 </div>
                 <div>
@@ -123,7 +123,7 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
                     value={company}
                     onChange={e => setCompany(e.target.value)}
                     placeholder="Morrison Civil"
-                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#E76F00] transition-colors"
                   />
                 </div>
               </div>
@@ -136,7 +136,7 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="dave@morrisoncivil.com.au"
-                  className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#E76F00] transition-colors"
                 />
               </div>
 
@@ -148,7 +148,7 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
                     placeholder="0412 345 678"
-                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#E76F00] transition-colors"
                   />
                 </div>
                 <div>
@@ -158,7 +158,7 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
                     value={preferredTime}
                     onChange={e => setPreferredTime(e.target.value)}
                     placeholder="e.g. Mon morning"
-                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full bg-white/[0.05] border border-white/[0.1] rounded-lg px-3 py-2.5 text-sm text-white placeholder-white/20 focus:outline-none focus:border-[#E76F00] transition-colors"
                   />
                 </div>
               </div>
@@ -170,7 +170,7 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-sm transition-colors mt-2"
+                className="w-full bg-[#E76F00] hover:bg-[#E76F00] disabled:opacity-50 text-white font-bold py-3 rounded-xl text-sm transition-colors mt-2"
               >
                 {loading ? 'Sending…' : 'Request Demo →'}
               </button>

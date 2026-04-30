@@ -139,7 +139,7 @@ export default function OnboardingPage() {
     router.push(`/capture?project=${newId}&onboarding=true`);
   }
 
-  const inputClass = "w-full px-3 py-2.5 text-[14px] border border-[#E5E7EB] rounded-md outline-none transition-all";
+  const inputClass = "w-full px-3 py-2.5 text-[14px] border border-[#D8D2C4] rounded-md outline-none transition-all";
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12" style={{ backgroundColor: '#EEF2F7' }}>
@@ -150,21 +150,21 @@ export default function OnboardingPage() {
           <Logo size={56} className="mb-4" />
           {step === 1 ? (
             <>
-              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: '#9CA3AF' }}>Step 1 of 2</p>
-              <h1 className="text-2xl font-semibold tracking-tight text-center" style={{ color: '#1C1C1E' }}>
+              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: '#64748B' }}>Step 1 of 2</p>
+              <h1 className="text-2xl font-semibold tracking-tight text-center" style={{ color: '#111827' }}>
                 Set up your company
               </h1>
-              <p className="text-sm mt-1.5 text-center" style={{ color: '#6B7280' }}>
+              <p className="text-sm mt-1.5 text-center" style={{ color: '#334155' }}>
                 This appears on all variation documents you send.
               </p>
             </>
           ) : (
             <>
-              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: '#9CA3AF' }}>Step 2 of 2</p>
-              <h1 className="text-2xl font-semibold tracking-tight text-center" style={{ color: '#1C1C1E' }}>
+              <p className="text-[11px] font-semibold uppercase tracking-wider mb-2" style={{ color: '#64748B' }}>Step 2 of 2</p>
+              <h1 className="text-2xl font-semibold tracking-tight text-center" style={{ color: '#111827' }}>
                 Your first project
               </h1>
-              <p className="text-sm mt-1.5 text-center" style={{ color: '#6B7280' }}>
+              <p className="text-sm mt-1.5 text-center" style={{ color: '#334155' }}>
                 Now let&apos;s set up a project so you can start capturing variations.
               </p>
             </>
@@ -174,17 +174,17 @@ export default function OnboardingPage() {
         {step === 1 ? (
           <>
             {/* Step 1 Form */}
-            <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5" style={{ borderColor: '#E5E7EB' }}>
+            <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5" style={{ borderColor: '#D8D2C4' }}>
 
               {error && (
-                <div className="px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B25B4E' }}>
+                <div className="px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B42318' }}>
                   {error}
                 </div>
               )}
 
               {/* Company Name */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#9CA3AF' }}>
+                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
                   Company Name *
                 </label>
                 <input
@@ -192,8 +192,8 @@ export default function OnboardingPage() {
                   value={companyName}
                   onChange={e => setCompanyName(e.target.value)}
                   className={inputClass}
-                  onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   placeholder="e.g. Company Pty Ltd"
                   autoFocus
                 />
@@ -201,15 +201,15 @@ export default function OnboardingPage() {
 
               {/* Address */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#9CA3AF' }}>
+                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
                   Business Address <span style={{ color: '#C4C9D0', fontWeight: 400 }}>(optional)</span>
                 </label>
                 <textarea
                   value={companyAddress}
                   onChange={e => setCompanyAddress(e.target.value)}
                   className={inputClass + ' resize-none'}
-                  onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   rows={2}
                   placeholder="e.g. 12 Smith St, Melbourne VIC 3000"
                 />
@@ -217,7 +217,7 @@ export default function OnboardingPage() {
 
               {/* Phone */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#9CA3AF' }}>
+                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
                   Phone <span style={{ color: '#C4C9D0', fontWeight: 400 }}>(optional)</span>
                 </label>
                 <input
@@ -225,25 +225,25 @@ export default function OnboardingPage() {
                   value={companyPhone}
                   onChange={e => setCompanyPhone(e.target.value)}
                   className={inputClass}
-                  onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   placeholder="e.g. 03 9000 0000"
                 />
               </div>
 
               {/* Logo */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#9CA3AF' }}>
+                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
                   Company Logo <span style={{ color: '#C4C9D0', fontWeight: 400 }}>(optional)</span>
                 </label>
                 {logoPreview ? (
                   <div className="flex items-center gap-3">
-                    <img src={logoPreview} alt="Logo preview" className="h-14 w-auto rounded-md object-contain border" style={{ borderColor: '#E5E7EB' }} />
+                    <img src={logoPreview} alt="Logo preview" className="h-14 w-auto rounded-md object-contain border" style={{ borderColor: '#D8D2C4' }} />
                     <button
                       type="button"
                       onClick={() => { setLogoFile(null); setLogoPreview(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
                       className="text-[13px]"
-                      style={{ color: '#B25B4E' }}
+                      style={{ color: '#B42318' }}
                     >
                       Remove
                     </button>
@@ -253,9 +253,9 @@ export default function OnboardingPage() {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     className="w-full py-6 border-2 border-dashed rounded-lg text-[13px] text-center transition-colors"
-                    style={{ borderColor: '#E5E7EB', color: '#9CA3AF' }}
-                    onMouseEnter={e => { (e.currentTarget).style.borderColor = '#1B365D'; (e.currentTarget).style.color = '#1B365D'; }}
-                    onMouseLeave={e => { (e.currentTarget).style.borderColor = '#E5E7EB'; (e.currentTarget).style.color = '#9CA3AF'; }}
+                    style={{ borderColor: '#D8D2C4', color: '#64748B' }}
+                    onMouseEnter={e => { (e.currentTarget).style.borderColor = '#17212B'; (e.currentTarget).style.color = '#17212B'; }}
+                    onMouseLeave={e => { (e.currentTarget).style.borderColor = '#D8D2C4'; (e.currentTarget).style.color = '#64748B'; }}
                   >
                     Click to upload logo (PNG or JPG)
                   </button>
@@ -275,14 +275,14 @@ export default function OnboardingPage() {
               <button
                 onClick={handleSaveAndNext}
                 disabled={saving || !companyName.trim()}
-                className="w-full py-3 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 rounded-lg text-sm font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? 'Saving…' : 'Next →'}
               </button>
               <button
                 onClick={() => setStep(2)}
                 className="w-full py-2.5 rounded-lg text-sm font-medium"
-                style={{ color: '#6B7280', backgroundColor: 'transparent' }}
+                style={{ color: '#334155', backgroundColor: 'transparent' }}
               >
                 Skip for now
               </button>
@@ -291,17 +291,17 @@ export default function OnboardingPage() {
         ) : (
           <>
             {/* Step 2 Form */}
-            <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5" style={{ borderColor: '#E5E7EB' }}>
+            <div className="bg-white rounded-xl border shadow-sm p-6 space-y-5" style={{ borderColor: '#D8D2C4' }}>
 
               {projectError && (
-                <div className="px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B25B4E' }}>
+                <div className="px-4 py-3 rounded-lg text-sm" style={{ backgroundColor: '#FDF2F0', border: '1px solid rgba(178,91,78,0.15)', color: '#B42318' }}>
                   {projectError}
                 </div>
               )}
 
               {/* Project Name */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#9CA3AF' }}>
+                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
                   Project Name *
                 </label>
                 <input
@@ -309,8 +309,8 @@ export default function OnboardingPage() {
                   value={projectName}
                   onChange={e => setProjectName(e.target.value)}
                   className={inputClass}
-                  onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   placeholder="e.g. Austin Health — Level 6 Fitout"
                   autoFocus
                 />
@@ -318,7 +318,7 @@ export default function OnboardingPage() {
 
               {/* Client */}
               <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#9CA3AF' }}>
+                <label className="block text-[11px] font-semibold uppercase tracking-wider mb-1.5" style={{ color: '#64748B' }}>
                   Client / Head Contractor <span style={{ color: '#C4C9D0', fontWeight: 400 }}>(optional)</span>
                 </label>
                 <input
@@ -326,8 +326,8 @@ export default function OnboardingPage() {
                   value={projectClient}
                   onChange={e => setProjectClient(e.target.value)}
                   className={inputClass}
-                  onFocus={e => { e.target.style.borderColor = '#1B365D'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
-                  onBlur={e => { e.target.style.borderColor = '#E5E7EB'; e.target.style.boxShadow = 'none'; }}
+                  onFocus={e => { e.target.style.borderColor = '#17212B'; e.target.style.boxShadow = '0 0 0 3px rgba(27,54,93,0.1)'; }}
+                  onBlur={e => { e.target.style.borderColor = '#D8D2C4'; e.target.style.boxShadow = 'none'; }}
                   placeholder="e.g. Multiplex"
                 />
               </div>
@@ -338,14 +338,14 @@ export default function OnboardingPage() {
               <button
                 onClick={handleCreateProject}
                 disabled={creatingProject || !projectName.trim()}
-                className="w-full py-3 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 rounded-lg text-sm font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] disabled:bg-indigo-300 disabled:cursor-not-allowed transition-colors"
               >
                 {creatingProject ? 'Creating…' : 'Create project →'}
               </button>
               <button
                 onClick={() => router.push('/dashboard')}
                 className="w-full py-2.5 rounded-lg text-sm font-medium"
-                style={{ color: '#6B7280', backgroundColor: 'transparent' }}
+                style={{ color: '#334155', backgroundColor: 'transparent' }}
               >
                 Skip for now
               </button>

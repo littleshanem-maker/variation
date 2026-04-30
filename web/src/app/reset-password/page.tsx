@@ -56,10 +56,10 @@ export default function ResetPasswordPage() {
       <div className="w-full max-w-sm mx-auto px-6">
         <div className="flex flex-col items-center mb-8">
           <Logo size={64} className="mb-5" />
-          <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#1C1C1E' }}>
+          <h1 className="text-2xl font-semibold tracking-tight" style={{ color: '#111827' }}>
             Set new password
           </h1>
-          <p className="text-sm mt-1.5" style={{ color: '#6B7280' }}>
+          <p className="text-sm mt-1.5" style={{ color: '#334155' }}>
             Choose a strong password for your account
           </p>
         </div>
@@ -67,13 +67,13 @@ export default function ResetPasswordPage() {
         {done ? (
           <div className="bg-white rounded-2xl p-6 shadow-sm text-center">
             <div className="text-3xl mb-3">✅</div>
-            <h2 className="font-semibold text-[#1C1C1E] mb-2">Password updated</h2>
-            <p className="text-sm text-[#6B7280]">Redirecting you to the app...</p>
+            <h2 className="font-semibold text-[#111827] mb-2">Password updated</h2>
+            <p className="text-sm text-[#334155]">Redirecting you to the app...</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-sm space-y-4">
             {error && (
-              <div className="rounded-lg px-4 py-3 text-sm font-medium bg-red-50 text-red-700 border border-red-200">
+              <div className="rounded-lg px-4 py-3 text-sm font-medium bg-red-50 text-[#971D14] border border-red-200">
                 {error}
               </div>
             )}
@@ -93,7 +93,7 @@ export default function ResetPasswordPage() {
                   padding: '12px 14px',
                   border: '1px solid #D1D5DB',
                   backgroundColor: '#F9FAFB',
-                  color: '#1C1C1E',
+                  color: '#111827',
                 }}
               />
             </div>
@@ -113,7 +113,7 @@ export default function ResetPasswordPage() {
                   padding: '12px 14px',
                   border: '1px solid #D1D5DB',
                   backgroundColor: '#F9FAFB',
-                  color: '#1C1C1E',
+                  color: '#111827',
                 }}
               />
             </div>
@@ -124,7 +124,7 @@ export default function ResetPasswordPage() {
               className="w-full rounded-lg text-base font-semibold transition-all"
               style={{
                 padding: '12px',
-                backgroundColor: '#4f46e5',
+                backgroundColor: '#E76F00',
                 color: '#FFFFFF',
                 border: 'none',
                 cursor: loading || !password || !confirm ? 'not-allowed' : 'pointer',
@@ -135,7 +135,7 @@ export default function ResetPasswordPage() {
             </button>
 
             <div className="text-center">
-              <Link href="/login" className="text-sm font-medium" style={{ color: '#6B7280' }}>
+              <Link href="/login" className="text-sm font-medium" style={{ color: '#334155' }}>
                 ← Back to login
               </Link>
             </div>
