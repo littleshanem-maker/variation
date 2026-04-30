@@ -76,10 +76,10 @@ export default function NotificationsPage() {
         ) : (
           <>
             <div className="flex items-center justify-between mb-3">
-              <p className="text-[13px] text-slate-500">{notifications.length} unseen</p>
+              <p className="text-[13px] text-slate-500"><span className="num">{notifications.length}</span> unseen</p>
               <button
                 onClick={handleMarkAllSeen}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-medium text-[#334155] border border-[#D8D2C4] bg-[#FFFCF5] rounded-lg hover:bg-[#F5F2EA] transition-colors"
               >
                 <CheckCircle size={13} className="text-emerald-500" /> Mark all as seen
               </button>
@@ -93,7 +93,7 @@ export default function NotificationsPage() {
                   <button
                     key={v.id}
                     onClick={() => handleClick(v)}
-                    className="w-full text-left flex items-start gap-4 px-4 py-3.5 bg-white border border-slate-100 rounded-lg hover:bg-slate-50 transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                    className="w-full text-left flex items-start gap-4 px-4 py-3.5 bg-[#FFFCF5] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
                   >
                     <div className="flex-shrink-0 mt-0.5">
                       {isApproved
@@ -102,8 +102,8 @@ export default function NotificationsPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[12px] font-mono font-bold text-[#111827]">{varRef}</span>
-                        <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded-full ${isApproved ? 'text-emerald-700 bg-emerald-50' : 'text-rose-700 bg-rose-50'}`}>
+                        <span className="mono text-[12px] text-[#111827]">{varRef}</span>
+                        <span className={`cond text-[11px] px-1.5 py-0.5 rounded-full ${isApproved ? 'text-[#1F5223] bg-[#E5F0E6]' : 'text-[#7A1810] bg-[#FBE6E4]'}`}>
                           {isApproved ? 'Approved' : 'Disputed'}
                         </span>
                         <span className="text-[11px] text-slate-400">via email link</span>
@@ -117,7 +117,7 @@ export default function NotificationsPage() {
                       )}
                     </div>
                     <div className="flex-shrink-0 flex flex-col items-end gap-1">
-                      <div className="text-[11px] text-[#111827]">{v.client_approved_at ? formatDateTime(v.client_approved_at) : ''}</div>
+                      <div className="num text-[11px] text-[#111827]">{v.client_approved_at ? formatDateTime(v.client_approved_at) : ''}</div>
                       <ArrowUpRight size={14} className="text-slate-300" />
                     </div>
                   </button>

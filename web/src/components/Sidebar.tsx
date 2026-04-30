@@ -30,8 +30,8 @@ interface NavItem {
 
 const nav: NavItem[] = [
   { label: 'Dashboard',          href: '/dashboard',      icon: LayoutDashboard },
-  { label: 'Variation Register', href: '/variations',     icon: ClipboardList,  roles: ['admin', 'office'] },
-  { label: 'Archived Projects',  href: '/archived',       icon: Archive,        roles: ['admin', 'office'] },
+  { label: 'Variation register', href: '/variations',     icon: ClipboardList,  roles: ['admin', 'office'] },
+  { label: 'Archived projects',  href: '/archived',       icon: Archive,        roles: ['admin', 'office'] },
   { label: 'Team',               href: '/team',           icon: Users,          roles: ['admin'] },
   { label: 'Notifications',      href: '/notifications',  icon: Bell,           roles: ['admin', 'office'] },
   { label: 'Settings',           href: '/settings',       icon: Settings },
@@ -81,35 +81,29 @@ export default function Sidebar() {
   return (
     <>
 
-      {/* Sidebar panel */}
-      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[240px] bg-[#0f172a] text-white flex-col z-50">
-        {/* Logo */}
+      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 w-[240px] bg-[#17212B] text-white flex-col z-50">
         <div className="px-6 py-6">
           <a href="https://variationshield.com.au" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <Logo size={32} />
             <span className="font-semibold text-[15px] tracking-tight">Variation Shield</span>
           </a>
           {company && (
-            <div className="mt-2 text-[11px] text-white/40 truncate">{company.name}</div>
+            <div className="mt-2 text-[12px] text-[#6B7280] truncate">{company.name}</div>
           )}
         </div>
 
-        {/* Quick Capture shortcut (field-visible) */}
         {role === 'field' && (
           <div className="px-3 pb-2">
             <Link
               href="/capture"
-
-              className="flex items-center gap-2.5 px-3 py-2 rounded-lg bg-[#E76F00] text-white text-[13px] font-semibold hover:bg-[#C75A00] transition-colors"
+              className="flex items-center gap-2.5 px-3 py-2 border border-[#E76F00] bg-[#E76F00] text-white text-[13px] font-medium hover:bg-[#C75A00] hover:border-[#C75A00] hover:-translate-y-px transition-all"
             >
               <Zap size={15} strokeWidth={2.5} />
-              Quick Capture
+              Quick capture
             </Link>
-
           </div>
         )}
 
-        {/* Nav items */}
         <nav className="flex-1 px-3 pt-1 space-y-0.5">
           {visibleNav.map((item) => {
             const Icon = item.icon;
@@ -118,10 +112,10 @@ export default function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-md text-[13px] transition-colors duration-[120ms] ease-out ${
+                className={`relative flex items-center justify-between gap-2.5 px-3 py-2.5 text-[13px] transition-colors duration-[120ms] ease-out ${
                   active
-                    ? 'text-white font-semibold'
-                    : 'text-white/40 hover:text-white/75 hover:bg-white/[0.04] font-medium'
+                    ? 'text-[#FFFCF5] font-medium bg-white/[0.04]'
+                    : 'text-white/55 hover:text-[#FFFCF5] hover:bg-white/[0.03] font-medium'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
@@ -136,7 +130,7 @@ export default function Sidebar() {
                   {item.label}
                 </div>
                 {item.href === '/notifications' && notifCount > 0 && (
-                  <span className="flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold bg-rose-500 text-white rounded-full">
+                  <span className="num flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-medium bg-[#B42318] text-white rounded-full">
                     {notifCount > 99 ? '99+' : notifCount}
                   </span>
                 )}
@@ -146,51 +140,50 @@ export default function Sidebar() {
         </nav>
 
 
-        {/* Free tier usage counter */}
         {plan === 'free' && varLimit !== null && (
           <div className="px-4 pb-2">
             <div className={`rounded-lg px-3 py-2.5 text-[11px] ${
               varCount >= varLimit
-                ? 'bg-red-500/10 border border-red-500/20'
+                ? 'bg-[#FBE6E4] border border-[#B42318]/20'
                 : varCount >= varLimit - 1
-                ? 'bg-amber-500/10 border border-amber-500/20'
+                ? 'bg-[#FBF1D6] border border-[#D99A00]/20'
                 : 'bg-white/[0.04] border border-white/[0.08]'
             }`}>
-              <div className={`font-semibold mb-1 ${
-                varCount >= varLimit ? 'text-red-400' : varCount >= varLimit - 1 ? 'text-amber-400' : 'text-white/60'
+              <div className={`mb-1 ${
+                varCount >= varLimit ? 'text-[#7A1810]' : varCount >= varLimit - 1 ? 'text-[#8C6500]' : 'text-white/70'
               }`}>
-                {varCount} / {varLimit} variations used
+                <span className="cond text-[11px]">Usage</span>{' '}
+                <span className="num">{varCount}</span> / <span className="num">{varLimit}</span> variations used
               </div>
               <div className="w-full bg-white/10 rounded-full h-1 mb-2">
                 <div
                   className={`h-1 rounded-full transition-all ${
-                    varCount >= varLimit ? 'bg-red-400' : varCount >= varLimit - 1 ? 'bg-amber-400' : 'bg-[#E76F00]'
+                    varCount >= varLimit ? 'bg-[#B42318]' : varCount >= varLimit - 1 ? 'bg-[#D99A00]' : 'bg-[#E76F00]'
                   }`}
                   style={{ width: `${Math.min(100, (varCount / varLimit) * 100)}%` }}
                 />
               </div>
               {varCount >= varLimit ? (
-                <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="text-red-400 hover:text-red-300 font-semibold">
-                  Upgrade to capture more →
+                <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="text-[#7A1810] hover:text-[#B42318] font-medium">
+                  Upgrade to capture more
                 </a>
               ) : (
-                <span className="text-white/30">{varLimit - varCount} remaining</span>
+                <span className="text-white/40"><span className="num">{varLimit - varCount}</span> remaining</span>
               )}
             </div>
           </div>
         )}
 
-        {/* Footer */}
         <div className="px-3 py-4 space-y-1">
           <button
             onClick={() => setFeedbackOpen(true)}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-[13px] font-medium text-white/40 hover:text-white/75 hover:bg-white/[0.04] transition-colors"
+            className="w-full flex items-center gap-2.5 px-3 py-2 text-[13px] font-medium text-white/55 hover:text-[#FFFCF5] hover:bg-white/[0.03] transition-colors"
           >
             <MessageSquare size={15} strokeWidth={1.8} className="text-white/50" />
             Feedback
           </button>
           <div className="px-3 pt-1">
-            <div className="text-[11px] text-white/25 capitalize">{role} access</div>
+            <div className="cond text-[11px] text-white/30 capitalize">{role} access</div>
           </div>
         </div>
       </aside>

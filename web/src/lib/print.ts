@@ -12,7 +12,7 @@ const GLOBAL_CSS = `
   @page { margin: 15mm 15mm; size: A4; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 9pt;
     line-height: 1.4;
     color: #111827;
@@ -22,7 +22,9 @@ const GLOBAL_CSS = `
   }
 
   /* UTILS */
-  .tabular-nums { font-variant-numeric: tabular-nums; }
+  .tabular-nums { font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif; font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1, "zero" 0; }
+  .cond { font-family: 'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif; letter-spacing: 0.06em; font-weight: 500; }
+  .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
   .uppercase { text-transform: uppercase; letter-spacing: 0.05em; }
   .text-right { text-align: right; }
   .text-muted { color: #111827; }
@@ -138,7 +140,7 @@ const GLOBAL_CSS = `
   }
 `;
 
-// Inline SVG for the Variation Shield logo (purple shield with V chevron)
+// Inline SVG for the Variation Shield logo
 const VS_LOGO_SVG_16 = `<svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#E76F00"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,255,255,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const VS_LOGO_SVG_32 = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#E76F00"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,255,255,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="white" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 

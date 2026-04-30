@@ -5,40 +5,62 @@
   --color-surface: #FFFCF5;
   --color-text-primary: #111827;
   --color-text-secondary: #334155;
-  --color-text-muted: #64748B;
+  --color-text-muted: #6B7280;
   --color-navy: #17212B;
   --color-navy-light: #334155;
   --color-border: #D8D2C4;
-  --color-border-light: #E7E0D2;
+  --color-border-light: #D8D2C4;
   --color-hover: #EFE9DC;
   --color-gold: #E76F00;
+  --color-gold-hover: #C75A00;
   --color-status-approved: #2E7D32;
   --color-status-submitted: #D99A00;
   --color-status-disputed: #B42318;
-  --color-status-draft: #64748B;
-  --color-status-paid: #111827;
-  --color-status-at-risk: #D99A00;
-  --font-sans: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
-  --font-condensed: var(--font-plex-condensed), 'IBM Plex Sans Condensed', var(--font-sans);
-}
-
-html {
-  font-feature-settings: 'tnum' 1, 'lnum' 1;
+  --color-status-draft: #D8D2C4;
+  --color-pill-success-bg: #E5F0E6;
+  --color-pill-success-fg: #1F5223;
+  --color-pill-warning-bg: #FBF1D6;
+  --color-pill-warning-fg: #8C6500;
+  --color-pill-danger-bg: #FBE6E4;
+  --color-pill-danger-fg: #7A1810;
+  --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-condensed: 'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 body {
   background-color: var(--color-base);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1, 'lnum' 1;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tabular numerals for financial figures */
+.num,
 .tabular-nums {
+  font-family: var(--font-sans);
+  font-feature-settings: 'tnum' 1, 'zero' 0;
   font-variant-numeric: tabular-nums;
+}
+
+.cond {
+  font-family: var(--font-condensed);
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+.lbl {
+  font-family: var(--font-condensed);
+  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.mono {
+  font-family: var(--font-mono);
 }
 
 /* Prevent iOS auto-zoom on input focus (requires font-size >= 16px on mobile) */
@@ -53,25 +75,4 @@ body {
   select {
     font-size: 16px !important;
   }
-
-
-}
-
-
-/* Construction-commercial visual refresh */
-.font-condensed,
-[class*="tracking-wider"],
-[class*="tracking-widest"],
-[class*="uppercase"],
-[class*="status"],
-.tabular-nums {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: 'tnum' 1, 'lnum' 1;
-}
-
-[class*="tracking-wider"],
-[class*="tracking-widest"],
-[class*="uppercase"] {
-  font-family: var(--font-condensed);
-  letter-spacing: 0.055em;
 }

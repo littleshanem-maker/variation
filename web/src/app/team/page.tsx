@@ -183,36 +183,36 @@ export default function TeamPage() {
   }
 
   const roleBadgeColors: Record<string, string> = {
-    admin: 'bg-[#17212B]/10 text-[#17212B]',
-    office: 'bg-[#E76F00]/10 text-[#96752A]',
-    field: 'bg-[#E8713A]/10 text-[#B85A2B]',
+    admin: 'bg-[#F5F2EA] text-[#17212B]',
+    office: 'bg-[#FBF1D6] text-[#8C6500]',
+    field: 'bg-[#E5F0E6] text-[#1F5223]',
   };
 
   if (!isAdmin) return null;
 
   return (
     <AppShell>
-      <TopBar title="Team Management" />
+      <TopBar title="Team" />
       <div className="p-4 md:p-8 max-w-3xl space-y-5 md:space-y-6">
         {/* Header */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="text-xl font-semibold text-[#111827]">Team</h2>
-            <p className="text-[13px] text-[#334155] mt-1">{company?.name} · {members.filter(m => m.is_active).length} active members</p>
+            <p className="text-[13px] text-[#334155] mt-1">{company?.name} · <span className="num">{members.filter(m => m.is_active).length}</span> active members</p>
           </div>
           {isFree ? (
             <a
               href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02"
               className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#E76F00] border border-[#D8D2C4] bg-[#FFFCF5] rounded-md hover:bg-[#F5F2EA] transition-colors"
             >
-              🔒 Field accounts available on Pro →
+              🔒 Field accounts available on pro
             </a>
           ) : (
             <button
               onClick={() => setShowInvite(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(0,0,0,0.1)]"
             >
-              + Invite Member
+              + Invite member
             </button>
           )}
         </div>
@@ -220,7 +220,7 @@ export default function TeamPage() {
         {/* Active Members */}
         <div className="bg-white rounded-md border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
           <div className="px-4 md:px-5 py-3 border-b border-[#D8D2C4]">
-            <h3 className="text-[13px] font-semibold text-[#111827]">Active Members</h3>
+            <h3 className="text-[13px] font-medium text-[#111827]">Active members</h3>
           </div>
           {loading ? (
             <div className="p-8 text-center text-[#64748B] text-sm">Loading...</div>
@@ -235,7 +235,7 @@ export default function TeamPage() {
                     <div className="text-[12px] text-[#64748B] break-all">{m.email}</div>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
-                    <span className={`inline-block px-2.5 py-1 text-[12px] font-medium rounded-full capitalize ${roleBadgeColors[m.role]}`}>
+                    <span className={`cond inline-block px-2.5 py-1 text-[12px] rounded-full capitalize ${roleBadgeColors[m.role]}`}>
                       {m.role}
                     </span>
                     <button

@@ -50,18 +50,18 @@ export default function MobileBottomNav() {
           <Link
             href="/notice/new"
             onClick={() => setFabOpen(false)}
-            className="flex items-center gap-2 px-5 py-3 bg-white border border-[#E76F00] text-[#E76F00] text-[15px] font-semibold rounded-2xl shadow-xl whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-3 bg-[#FFFCF5] border border-[#D8D2C4] text-[#C75A00] text-[15px] font-medium shadow-[0_2px_6px_rgba(17,24,39,0.08)] whitespace-nowrap"
           >
             <FileText size={16} />
-            New Notice
+            New notice
           </Link>
           <Link
             href="/variation/new"
             onClick={() => setFabOpen(false)}
-            className="flex items-center gap-2 px-5 py-3 bg-[#E76F00] text-white text-[15px] font-semibold rounded-2xl shadow-xl whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-3 bg-[#E76F00] border border-[#E76F00] text-white text-[15px] font-medium shadow-[0_2px_6px_rgba(17,24,39,0.12)] whitespace-nowrap"
           >
             <Plus size={16} />
-            New Request
+            New request
           </Link>
         </div>
       )}
@@ -81,7 +81,7 @@ export default function MobileBottomNav() {
       <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 
       {/* Bottom nav bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-[#0f172a] border-t border-white/[0.08] flex items-stretch h-16 safe-area-inset-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-[#17212B] border-t border-white/[0.08] flex items-stretch h-16 safe-area-inset-bottom">
         {tabs.map(tab => {
           const Icon = tab.icon;
           const active = isActive(tab.href);
@@ -102,7 +102,7 @@ export default function MobileBottomNav() {
                   <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#E76F00]" />
                 )}
               </div>
-              <span className="text-[10px] font-medium tracking-wide leading-none">{tab.label}</span>
+              <span className="text-[10px] font-medium leading-none">{tab.label}</span>
             </Link>
           );
         })}
@@ -111,7 +111,7 @@ export default function MobileBottomNav() {
           className="flex-1 flex flex-col items-center justify-center gap-1 py-1 text-white/35 hover:text-white/60 transition-colors"
         >
           <MessageSquare size={22} strokeWidth={1.8} />
-          <span className="text-[10px] font-medium tracking-wide leading-none">Feedback</span>
+          <span className="text-[10px] font-medium leading-none">Feedback</span>
         </button>
       </nav>
     </>

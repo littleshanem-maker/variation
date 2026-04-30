@@ -15,8 +15,8 @@ export default function MobileNav() {
       <a href="#pricing" className="py-3.5 text-sm text-[#334155] border-b border-[#D8D2C4] active:text-[#111827]" onClick={close}>Pricing</a>
       <Link href="/calculator" className="py-3.5 text-sm text-[#334155] border-b border-[#D8D2C4] active:text-[#111827]" onClick={close}>ROI Calculator</Link>
       <Link href="/login" className="py-3.5 text-sm text-[#334155] border-b border-[#D8D2C4] active:text-[#111827]">Login</Link>
-      <DemoButton className="my-3 w-full text-center bg-[#E76F00] hover:bg-[#C75A00] text-white text-sm font-semibold px-4 py-3 rounded-md">Book a 15-Minute Demo</DemoButton>
-      <Link href="/signup/free" className="w-full text-center border border-[#D8D2C4] text-[#111827] text-sm font-semibold px-4 py-3 rounded-md">Try Free</Link>
+      <DemoButton className="my-3 w-full text-center bg-[#E76F00] hover:bg-[#C75A00] text-white text-sm font-semibold px-4 py-3 rounded-md">Book a 15-minute demo</DemoButton>
+      <Link href="/signup/free" className="w-full text-center border border-[#D8D2C4] text-[#111827] text-sm font-semibold px-4 py-3 rounded-md">Try free</Link>
     </div>
   );
 }

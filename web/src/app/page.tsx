@@ -37,9 +37,9 @@ export default function LandingPage() {
             <Link href="/calculator" className="hover:text-[#111827] transition-colors">ROI Calculator</Link>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm font-semibold text-[#334155] hover:text-[#111827] border border-[#D8D2C4] hover:border-[#334155] px-4 py-2 rounded-lg transition-all hidden md:block">Login</Link>
+            <Link href="/login" className="text-sm font-semibold text-[#334155] hover:text-[#111827] border border-[#D8D2C4] hover:border-[#334155] px-4 py-2 rounded-lg transition-all hidden md:block">Log in</Link>
             <DemoButton className="bg-[#E76F00] hover:bg-[#C75A00] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors hidden md:block">
-              Book a 15-Minute Demo
+              Book a 15-minute demo
             </DemoButton>
             <MobileMenuButton />
           </div>
@@ -71,11 +71,11 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-white font-bold px-8 py-4 rounded-md text-base transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-              Book a 15-Minute Demo
+              Book a 15-minute demo
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
             <Link href="/signup/free" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-semibold px-8 py-4 rounded-md text-base transition-colors">
-              Try Free
+              Try free
             </Link>
           </div>
 
@@ -256,7 +256,7 @@ export default function LandingPage() {
             Variation Shield works best when it is tested on live jobs, not clicked through once and forgotten. Early customers get direct setup support so the team can capture real variations from site and see whether the workflow fits.
           </p>
           <DemoButton className="inline-flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-white font-bold px-8 py-4 rounded-md text-base transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-            Book a 15-Minute Demo
+            Book a 15-minute demo
             <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </DemoButton>
         </div>
@@ -272,7 +272,7 @@ export default function LandingPage() {
           <div className="bg-[#FFFCF5] border border-[#D8D2C4] rounded-md p-8 text-left relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-[#E76F00] rounded-t-2xl" />
             <div className="inline-flex items-center gap-1.5 bg-[#D99A00]/10 border border-[#D99A00]/25 rounded-sm px-3 py-1 text-xs font-bold text-[#D99A00] uppercase tracking-wider mb-5">
-              First 10 Customers
+              First 10 customers
             </div>
             <div className="flex items-baseline gap-3 mb-1">
               <span className="text-5xl font-bold">$299</span>
@@ -301,7 +301,7 @@ export default function LandingPage() {
             </ul>
 
             <DemoButton className="flex items-center justify-center gap-2 w-full bg-[#E76F00] hover:bg-[#C75A00] text-white font-bold py-4 rounded-md text-base transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-              Book a 15-Minute Demo
+              Book a 15-minute demo
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
             <p className="text-center text-[#64748B] text-xs mt-3">If Variation Shield does not help you capture more than $299 of variation value in the first 30 days, we’ll refund the pilot fee.</p>
@@ -311,7 +311,7 @@ export default function LandingPage() {
             <h3 className="font-bold text-lg mb-2">Want to look around first?</h3>
             <p className="text-[#334155] text-sm leading-relaxed mb-5">Create a limited free account with 1 project and 3 test variations. No credit card required.</p>
             <Link href="/signup/free" className="inline-flex items-center justify-center bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-semibold px-6 py-3 rounded-md text-sm transition-colors">
-              Try Free
+              Try free
             </Link>
           </div>
 
@@ -332,11 +332,11 @@ export default function LandingPage() {
           <p className="text-[#334155] text-lg mb-10">Book a short demo, set up a live-job pilot, and see whether the workflow fits your team.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-white font-bold px-8 py-4 rounded-md text-base transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-              Book a 15-Minute Demo
+              Book a 15-minute demo
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
             <Link href="/signup/free" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-semibold px-8 py-4 rounded-md text-base transition-colors">
-              Try Free
+              Try free
             </Link>
           </div>
         </div>
@@ -357,7 +357,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-6">
             <Link href="/login" className="hover:text-[#334155] transition-colors">Login</Link>
-            <DemoButton className="hover:text-[#334155] transition-colors">Book Demo</DemoButton>
+            <DemoButton className="hover:text-[#334155] transition-colors">Book demo</DemoButton>
             <a href="https://leveragedsystems.com.au" className="hover:text-[#334155] transition-colors">Leveraged Systems</a>
           </div>
           <div>© 2026 Leveraged Systems. All rights reserved.</div>

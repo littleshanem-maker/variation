@@ -264,7 +264,7 @@ export default function Dashboard() {
           value: v.estimated_value || 0,
           daysOld: daysSince(v.captured_at),
           kind: daysOverdue === 0 ? 'due-soon' : 'overdue',
-          extra: daysOverdue === 0 ? 'Due today' : `${daysOverdue}d overdue`,
+          extra: daysOverdue === 0 ? 'Due today' : `${daysOverdue} days overdue`,
         });
         seen.add(v.id);
       }
@@ -283,7 +283,7 @@ export default function Dashboard() {
 
   if (loading) return (
     <AppShell>
-      <TopBar title="Executive Risk Overview" />
+      <TopBar title="Executive risk overview" />
       <div className="flex items-center justify-center h-96">
         <div className="text-[#64748B] text-sm">Loading...</div>
       </div>
@@ -297,7 +297,7 @@ export default function Dashboard() {
 
   if (error) return (
     <AppShell>
-      <TopBar title="Executive Risk Overview" />
+      <TopBar title="Executive risk overview" />
       <div className="flex items-center justify-center h-96"><p className="text-[#B42318] text-sm">Error: {error}</p></div>
     </AppShell>
   );
@@ -307,25 +307,25 @@ export default function Dashboard() {
   return (
     <AppShell>
       <TopBar
-        title="Executive Risk Overview"
+        title="Executive risk overview"
       />
 
       <div className="p-4 md:p-8 space-y-6 pb-24 md:pb-8">
 
         {/* ── Free Tier Onboarding Card ── */}
         {companyPlan === 'free' && projects.length === 0 && !onboardingDismissed && (
-          <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-6">
+          <div className="bg-[#FBF1D6] border border-[#D8D2C4] rounded-xl p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="font-bold text-indigo-900 text-base">Welcome! Let's capture your first variation.</h3>
-                <p className="text-[#C75A00] text-sm mt-1">Start by creating a project, then log your first scope change.</p>
+                <h3 className="text-base font-medium text-[#111827]">Welcome. Let&apos;s capture your first variation.</h3>
+                <p className="text-[#334155] text-sm mt-1">Start by creating a project, then log your first scope change.</p>
               </div>
               <button onClick={() => setOnboardingDismissed(true)} className="text-[#E76F00] hover:text-[#E76F00] text-xs">✕</button>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mt-4">
               <button
                 onClick={() => setShowNewProject(true)}
-                className="flex items-center gap-2 bg-[#E76F00] hover:bg-[#E76F00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
+                className="flex items-center gap-2 bg-[#E76F00] border border-[#E76F00] hover:bg-[#C75A00] hover:border-[#C75A00] text-white text-sm font-medium px-4 py-2.5 rounded-lg transition-all hover:-translate-y-px"
               >
                 <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
                 Create your first project
@@ -336,9 +336,9 @@ export default function Dashboard() {
 
         {/* ── Free Tier Usage Banner ── */}
         {companyPlan === 'free' && variationLimit !== null && variationCount > 0 && variationCount < variationLimit && (
-          <div className={`rounded-lg px-4 py-3 text-sm flex items-center justify-between ${variationCount >= variationLimit - 1 ? 'bg-amber-50 border border-amber-200 text-amber-800' : 'bg-blue-50 border border-blue-200 text-blue-800'}`}>
-            <span>{variationCount} of {variationLimit} free variations used{variationCount >= variationLimit - 1 ? ' — last one!' : ''}</span>
-            <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="font-semibold underline ml-3 text-xs">Upgrade to Pro →</a>
+          <div className={`rounded-lg px-4 py-3 text-sm flex items-center justify-between ${variationCount >= variationLimit - 1 ? 'bg-[#FBF1D6] border border-[#D8D2C4] text-[#8C6500]' : 'bg-[#FFFCF5] border border-[#D8D2C4] text-[#334155]'}`}>
+            <span><span className="num">{variationCount}</span> of <span className="num">{variationLimit}</span> free variations used{variationCount >= variationLimit - 1 ? ' — last one.' : ''}</span>
+            <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="font-medium underline ml-3 text-xs">Upgrade to pro</a>
           </div>
         )}
 
@@ -347,29 +347,29 @@ export default function Dashboard() {
           <select
             value={filterProject}
             onChange={e => setFilterProject(e.target.value)}
-            className="px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md bg-white text-[#374151] focus:outline-none focus:ring-1 focus:ring-[#17212B] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="h-9 px-3 text-[14px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B] shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
           >
-            <option value="all">All Projects</option>
+            <option value="all">All projects</option>
             {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
 
           <select
             value={filterDateRange}
             onChange={e => setFilterDateRange(e.target.value as DateRangeKey)}
-            className="px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md bg-white text-[#374151] focus:outline-none focus:ring-1 focus:ring-[#17212B] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="h-9 px-3 text-[14px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#111827] focus:outline-none focus:ring-1 focus:ring-[#17212B] shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
           >
-            <option value="all">All Time</option>
-            <option value="week">This Week</option>
-            <option value="month">This Month</option>
-            <option value="30d">Last 30 Days</option>
-            <option value="90d">Last 90 Days</option>
+            <option value="all">All time</option>
+            <option value="week">This week</option>
+            <option value="month">This month</option>
+            <option value="30d">Last 30 days</option>
+            <option value="90d">Last 90 days</option>
           </select>
 
           <select
             disabled
-            className="px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md bg-white text-[#64748B] opacity-60 cursor-not-allowed shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="h-9 px-3 text-[14px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#6B7280] opacity-60 cursor-not-allowed shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
           >
-            <option>All Managers</option>
+            <option>All managers</option>
           </select>
         </div>
 
@@ -379,54 +379,54 @@ export default function Dashboard() {
 
             {/* Card 1: Cash Flow at Risk */}
             <Link href="/variations?status=at_risk">
-              <div className="bg-white rounded-xl border border-[#D8D2C4] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)] hover:shadow-md transition-shadow">
+              <div className="bg-[#FFFCF5] rounded-xl border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)] hover:shadow-[0_2px_4px_rgba(17,24,39,0.08)] transition-shadow">
                 <div className="flex items-start justify-between mb-4">
-                  <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider">Cash Flow at Risk</span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-red-50 text-[#B42318]">
-                    {atRiskVars.length} unresolved
+                  <span className="lbl">Cash flow at risk</span>
+                  <span className="cond inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-[#FBE6E4] text-[#7A1810]">
+                    <span className="num">{atRiskVars.length}</span>&nbsp;unresolved
                   </span>
                 </div>
-                <div className="text-[34px] font-black tabular-nums leading-none text-rose-600">
+                <div className="num text-[32px] font-medium leading-none text-[#B42318]">
                   {formatCurrency(atRiskTotal)}
                 </div>
-                <div className="mt-2 text-[12px] text-[#64748B]">Disputed + draft + captured</div>
+                <div className="mt-2 text-[12px] text-[#334155]">Disputed + draft + captured</div>
               </div>
             </Link>
 
             {/* Card 2: Pending Approval */}
             <Link href="/variations?status=submitted">
-              <div className="bg-white rounded-xl border border-[#D8D2C4] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)] hover:shadow-md transition-shadow">
+              <div className="bg-[#FFFCF5] rounded-xl border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)] hover:shadow-[0_2px_4px_rgba(17,24,39,0.08)] transition-shadow">
                 <div className="flex items-start justify-between mb-4">
-                  <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider">Pending Approval</span>
+                  <span className="lbl">Pending approval</span>
                   {submittedVars.length > 0 && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-600">
-                      {submittedVars.length} submitted
+                    <span className="cond inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-[#FBF1D6] text-[#8C6500]">
+                      <span className="num">{submittedVars.length}</span>&nbsp;submitted
                     </span>
                   )}
                 </div>
-                <div className="text-[34px] font-black tabular-nums leading-none text-[#B45309]">
+                <div className="num text-[32px] font-medium leading-none text-[#C75A00]">
                   {formatCurrency(submittedTotal)}
                 </div>
-                <div className="mt-2 text-[12px] text-[#64748B]">
-                  {submittedVars.length > 0 ? `Avg. ${avgSubmittedDays} days old` : 'No pending variations'}
+                <div className="mt-2 text-[12px] text-[#334155]">
+                  {submittedVars.length > 0 ? <>Average <span className="num">{avgSubmittedDays}</span> days old</> : 'No pending variations'}
                 </div>
               </div>
             </Link>
 
             {/* Card 3: Recovery Rate */}
-            <div className="bg-white rounded-xl border border-[#D8D2C4] p-5 shadow-[0_1px_3px_rgba(0,0,0,0.07)]">
+            <div className="bg-[#FFFCF5] rounded-xl border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
               <div className="flex items-start justify-between mb-4">
-                <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider">Recovery Rate</span>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-600">
-                  {formatCurrency(paidTotal)} paid
+                <span className="lbl">Recovery rate</span>
+                <span className="cond inline-flex items-center px-2 py-0.5 rounded-full text-[11px] bg-[#E5F0E6] text-[#1F5223]">
+                  <span className="num">{formatCurrency(paidTotal)}</span>&nbsp;paid
                 </span>
               </div>
               <div className="flex items-baseline gap-2 leading-none">
-                <span className="text-[34px] font-black tabular-nums text-slate-900">{recoveryRate}%</span>
-                <TrendingUp size={20} className="text-emerald-500 mb-0.5" strokeWidth={2.5} />
+                <span className="num text-[32px] font-medium text-[#111827]">{recoveryRate}%</span>
+                <TrendingUp size={20} className="text-[#2E7D32] mb-0.5" strokeWidth={2.5} />
               </div>
-              <div className="mt-2 text-[12px] text-[#64748B]">
-                of {formatCurrency(grandTotal)} total variations
+              <div className="mt-2 text-[12px] text-[#334155]">
+                of <span className="num">{formatCurrency(grandTotal)}</span> total variations
               </div>
             </div>
 
@@ -439,32 +439,32 @@ export default function Dashboard() {
           {/* Project Financial Health — full width */}
           <div className="w-full">
             <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
-              <h2 className="text-[16px] font-bold text-[#111827]">Project Financial Health (Visual)</h2>
+              <h2 className="text-[18px] font-medium text-[#111827]">Project financial health</h2>
               <div className="flex items-center gap-2">
                 {!isField && (
                   <button
                     onClick={() => setShowNewProject(true)}
-                    className="flex items-center gap-1 px-3 py-1.5 text-[12px] font-medium text-[#334155] bg-white border border-[#D8D2C4] rounded-md hover:bg-[#F5F3EF] transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+                    className="flex items-center gap-1 px-3 py-1.5 text-[12px] font-medium text-[#334155] bg-[#FFFCF5] border border-[#D8D2C4] rounded-md hover:bg-[#F5F3EF] transition-all hover:-translate-y-px shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
                   >
-                    + New Project
+                    + New project
                   </button>
                 )}
               </div>
             </div>
 
             {projects.length === 0 ? (
-              <div className="bg-white rounded-xl border border-[#D8D2C4] shadow-sm p-12 text-center">
+              <div className="bg-[#FFFCF5] rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] p-12 text-center">
                 <div className="w-12 h-12 bg-[#E76F00] rounded-xl flex items-center justify-center mx-auto mb-4">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </div>
-                <h3 className="text-[18px] font-semibold text-[#111827] mb-2">Welcome to Variation Shield</h3>
+                <h3 className="text-[18px] font-medium text-[#111827] mb-2">Welcome to Variation Shield</h3>
                 <p className="text-[14px] text-[#334155] mb-1">Start by creating your first project.</p>
                 <p className="text-[14px] text-[#334155] mb-8">Then capture a variation in under 60 seconds.</p>
                 <Link
                   href="/onboarding"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[14px] font-semibold text-white bg-[#E76F00] hover:bg-[#C75A00] transition-colors"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[14px] font-medium text-white bg-[#E76F00] border border-[#E76F00] hover:bg-[#C75A00] hover:border-[#C75A00] transition-all hover:-translate-y-px"
                 >
-                  Create your first project →
+                  Create your first project
                 </Link>
               </div>
             ) : (
@@ -476,14 +476,14 @@ export default function Dashboard() {
                     const atRisk = p.variations.filter(v => ['disputed', 'draft', 'captured'].includes(v.status)).reduce((s, v) => s + (v.estimated_value || 0), 0);
                     return (
                       <Link key={p.id} href={`/project/${p.id}`}>
-                        <div className="bg-white rounded-md border border-[#D8D2C4] px-4 py-3 flex items-center justify-between hover:bg-[#F5F3EF] transition-colors">
+                        <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] px-4 py-3 flex items-center justify-between hover:bg-[#F5F3EF] transition-colors">
                           <div className="min-w-0 mr-3">
                             <div className="text-[14px] font-semibold text-[#111827] truncate">{p.name}</div>
                             <div className="text-[12px] text-[#334155] truncate">{p.client}</div>
                           </div>
                           <div className="flex-shrink-0 text-right">
-                            <div className="text-[13px] font-semibold text-[#111827] tabular-nums">{formatCurrency(totalVal)}</div>
-                            {atRisk > 0 && <div className="text-[11px] text-[#DC2626] font-medium tabular-nums">{formatCurrency(atRisk)} at risk</div>}
+                            <div className="num text-[13px] font-medium text-[#111827]">{formatCurrency(totalVal)}</div>
+                            {atRisk > 0 && <div className="text-[11px] text-[#B42318] font-medium"><span className="num">{formatCurrency(atRisk)}</span> at risk</div>}
                           </div>
                         </div>
                       </Link>
@@ -492,7 +492,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Desktop: stacked bar chart */}
-                <div className="hidden md:block bg-white rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(0,0,0,0.04)] p-5 space-y-2">
+                <div className="hidden md:block bg-[#FFFCF5] rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] p-5 space-y-2">
                   {barChartData.length === 0 ? (
                     <p className="text-[13px] text-[#64748B] text-center py-6">No variation data to display.</p>
                   ) : (
@@ -509,23 +509,23 @@ export default function Dashboard() {
                             <div className="min-w-0">
                             <Link
                               href={`/project/${p.id}`}
-                              className="text-[13px] font-semibold text-[#111827] hover:text-[#E76F00] transition-colors leading-tight"
+                              className="text-[14px] font-medium text-[#111827] hover:text-[#E76F00] transition-colors leading-tight"
                             >
                               {p.name}
                             </Link>
-                            {p.client && <div className="text-[11px] text-slate-400 truncate">{p.client}</div>}
+                            {p.client && <div className="text-[12px] text-[#334155] truncate">{p.client}</div>}
                             </div>
                             {!isField && (
                               <div className="flex-shrink-0 text-right">
-                                <span className="text-[13px] font-semibold text-[#111827] tabular-nums">{formatCurrency(p.totalValue)}</span>
+                                <span className="num text-[13px] font-medium text-[#111827]">{formatCurrency(p.totalValue)}</span>
                                 {p.disputed > 0 && (
-                                  <span className="ml-2 text-[11px] text-rose-600 font-medium tabular-nums">{formatCurrency(p.disputed)} disputed</span>
+                                  <span className="ml-2 text-[11px] text-[#B42318] font-medium"><span className="num">{formatCurrency(p.disputed)}</span> disputed</span>
                                 )}
                               </div>
                             )}
                           </div>
                           {/* Bar — segments are clickable links to filtered register */}
-                          <div className="w-full h-[18px] bg-slate-100 rounded-md overflow-hidden mb-5">
+                          <div className="w-full h-[18px] bg-[#F5F2EA] rounded-md overflow-hidden mb-5 border border-[#D8D2C4]">
                             {p.variationCount === 0 ? (
                               <div className="flex items-center h-full px-2">
                                 <span className="text-[11px] text-[#64748B]">No variations yet — <Link href={`/project/${p.id}`} className="underline hover:text-[#17212B]">open project to add one</Link></span>
@@ -538,22 +538,22 @@ export default function Dashboard() {
                               <div style={{ width: `${barW}%` }} className="flex h-full gap-px">
                                 {paidPct > 0 && (
                                   <Link href={`/variations?status=approved&project=${p.id}`} style={{ width: `${paidPct}%` }}
-                                    className="bg-emerald-500 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
+                                    className="bg-[#2E7D32] h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
                                     title={`Paid / Approved: ${formatCurrency(p.paid)}`} />
                                 )}
                                 {subPct > 0 && (
                                   <Link href={`/variations?status=submitted&project=${p.id}`} style={{ width: `${subPct}%` }}
-                                    className="bg-amber-400 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
+                                    className="bg-[#D99A00] h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
                                     title={`Submitted: ${formatCurrency(p.submitted)}`} />
                                 )}
                                 {dispPct > 0 && (
                                   <Link href={`/variations?status=disputed&project=${p.id}`} style={{ width: `${dispPct}%` }}
-                                    className="bg-rose-500 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
+                                    className="bg-[#B42318] h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
                                     title={`Disputed: ${formatCurrency(p.disputed)}`} />
                                 )}
                                 {otherPct > 0 && (
                                   <Link href={`/variations?status=draft&project=${p.id}`} style={{ width: `${otherPct}%` }}
-                                    className="bg-slate-300 h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
+                                    className="bg-[#D8D2C4] h-full min-w-[2px] hover:brightness-110 transition-all cursor-pointer"
                                     title={`Draft: ${formatCurrency(p.other)}`} />
                                 )}
                               </div>
@@ -567,14 +567,14 @@ export default function Dashboard() {
                   {/* Legend */}
                   <div className="flex flex-wrap gap-4 pt-3 border-t border-[#E7E0D2]">
                     {[
-                      { color: 'bg-emerald-500', label: 'Paid / Approved' },
-                      { color: 'bg-amber-400',  label: 'Submitted' },
-                      { color: 'bg-rose-500',   label: 'Disputed' },
-                      { color: 'bg-slate-300',  label: 'Draft' },
+                      { color: 'bg-[#2E7D32]', label: 'Paid / approved' },
+                      { color: 'bg-[#D99A00]',  label: 'Submitted' },
+                      { color: 'bg-[#B42318]',   label: 'Disputed' },
+                      { color: 'bg-[#D8D2C4]',  label: 'Draft' },
                     ].map(l => (
                       <div key={l.label} className="flex items-center gap-1.5">
                         <div className={`w-3 h-3 rounded-sm flex-shrink-0 ${l.color}`} />
-                        <span className="text-[11px] text-[#334155]">{l.label}</span>
+                        <span className="text-[12px] text-[#334155]">{l.label}</span>
                       </div>
                     ))}
                   </div>
@@ -593,7 +593,7 @@ export default function Dashboard() {
                 <div className="text-[14px] font-semibold mb-0.5">⚡ No variations yet.</div>
                 <div className="text-[13px]" style={{ color: '#334155' }}>
                   Capture one now — it takes 60 seconds on site.{' '}
-                  <Link href="/capture" className="underline font-medium hover:text-indigo-900">Capture a variation →</Link>
+                  <Link href="/capture" className="underline font-medium hover:text-[#17212B]">Capture a variation</Link>
                 </div>
               </div>
               <button
@@ -610,15 +610,15 @@ export default function Dashboard() {
           {/* Urgent Attention Feed — full width, below bar chart */}
           <div className="w-full">
             <div className="flex items-center gap-2 mb-4">
-              <h2 className="text-[16px] font-bold text-[#111827]">Urgent Attention Feed</h2>
+              <h2 className="text-[18px] font-medium text-[#111827]">Urgent attention feed</h2>
               {urgentItems.length > 0 && (
-                <span className="inline-flex items-center justify-center w-5 h-5 bg-[#DC2626] text-white text-[10px] font-bold rounded-full">
+                <span className="num inline-flex items-center justify-center w-5 h-5 bg-[#B42318] text-white text-[10px] font-medium rounded-full">
                   {urgentItems.length}
                 </span>
               )}
             </div>
 
-            <div className="bg-slate-50 rounded-xl border border-[#D8D2C4] p-2 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="bg-[#F5F2EA] rounded-xl border border-[#D8D2C4] p-2 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
               {urgentItems.length === 0 ? (
                 <div className="bg-white rounded-lg p-8 text-center">
                   <div className="text-2xl mb-2">✅</div>
@@ -628,23 +628,23 @@ export default function Dashboard() {
                 <div className="space-y-1.5">
                   {urgentItems.map(item => (
                     <Link key={item.id} href={`/variation/${item.variationId}?from=dashboard`}>
-                      <div className="bg-white rounded-lg px-4 py-3.5 hover:bg-slate-50 transition-colors shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+                      <div className="bg-[#FFFCF5] rounded-lg px-4 py-3.5 hover:bg-[#F5F2EA] transition-colors shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
                         <div className="flex items-start gap-3">
                           {/* Dot indicator */}
                           <div className={`flex-shrink-0 mt-1.5 w-2 h-2 rounded-full ${
-                            item.kind === 'overdue' ? 'bg-rose-500' :
-                            item.kind === 'disputed' ? 'bg-rose-400' : 'bg-amber-400'
+                            item.kind === 'overdue' ? 'bg-[#B42318]' :
+                            item.kind === 'disputed' ? 'bg-[#B42318]' : 'bg-[#D99A00]'
                           }`} />
                           {/* Content */}
                           <div className="flex-1 min-w-0">
                             <div className="text-[13px] text-[#111827] leading-snug">
                               <span className="font-semibold">
-                                {item.kind === 'overdue' ? 'Response Overdue: '
-                                  : item.kind === 'due-soon' ? 'Due Soon: '
-                                  : 'Dispute Escalation: '}
+                                {item.kind === 'overdue' ? 'Response overdue: '
+                                  : item.kind === 'due-soon' ? 'Due soon: '
+                                  : 'Dispute escalation: '}
                               </span>
                               {item.kind === 'overdue'
-                                ? `${item.projectName} — "${item.title}" response is ${item.extra}`
+                                ? <>{item.projectName} — &quot;{item.title}&quot; response is <span className="num">{item.extra?.split(' ')[0]}</span> days overdue</>
                                 : item.kind === 'due-soon'
                                 ? `${item.projectName} — "${item.title}" — ${item.extra}`
                                 : `${item.extra} at ${item.projectName} marked 'Disputed'`
@@ -652,16 +652,16 @@ export default function Dashboard() {
                             </div>
                             <div className="mt-1.5">
                               {item.kind === 'overdue' ? (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-rose-50 text-rose-700">
+                                <span className="cond inline-flex items-center px-2 py-0.5 rounded-md text-[11px] bg-[#FBE6E4] text-[#7A1810]">
                                   Overdue
                                 </span>
                               ) : item.kind === 'disputed' ? (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-rose-50 text-rose-700">
+                                <span className="cond inline-flex items-center px-2 py-0.5 rounded-md text-[11px] bg-[#FBE6E4] text-[#7A1810]">
                                   Disputed
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700">
-                                  Due Soon
+                                <span className="cond inline-flex items-center px-2 py-0.5 rounded-md text-[11px] bg-[#FBF1D6] text-[#8C6500]">
+                                  Due soon
                                 </span>
                               )}
                             </div>
@@ -681,16 +681,16 @@ export default function Dashboard() {
         {showNewProject && (
           <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/20 px-0 sm:px-4" onClick={() => setShowNewProject(false)}>
             <div className="bg-white rounded-t-xl sm:rounded-md border border-[#D8D2C4] shadow-lg p-6 w-full sm:max-w-md" onClick={e => e.stopPropagation()}>
-              <h3 className="text-[15px] font-semibold text-[#111827] mb-4">New Project</h3>
+              <h3 className="text-[15px] font-medium text-[#111827] mb-4">New project</h3>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Project Name</label>
+                  <label className="cond block text-[11px] text-[#334155] mb-1">Project name</label>
                   <input type="text" value={newProjectName} onChange={e => setNewProjectName(e.target.value)}
                     className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none"
                     placeholder="e.g. Northern Hospital — Mechanical" autoFocus />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] mb-1">Client</label>
+                  <label className="cond block text-[11px] text-[#334155] mb-1">Client</label>
                   <input type="text" value={newProjectClient} onChange={e => setNewProjectClient(e.target.value)}
                     className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none"
                     placeholder="e.g. Lendlease" />
@@ -700,7 +700,7 @@ export default function Dashboard() {
                 <button onClick={() => setShowNewProject(false)} className="px-3 py-1.5 text-[13px] font-medium text-[#334155] hover:text-[#111827] transition-colors">Cancel</button>
                 <button onClick={handleCreateProject} disabled={creatingProject || !newProjectName.trim() || !newProjectClient.trim()}
                   className="px-4 py-1.5 text-[13px] font-medium text-white bg-[#17212B] rounded-md hover:bg-[#334155] disabled:opacity-40 transition-colors">
-                  {creatingProject ? 'Creating...' : 'Create Project'}
+                  {creatingProject ? 'Creating...' : 'Create project'}
                 </button>
               </div>
             </div>

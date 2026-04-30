@@ -60,7 +60,7 @@ export default function ArchivedProjects() {
   if (loading) {
     return (
       <AppShell>
-        <TopBar title="Archived Projects" />
+        <TopBar title="Archived projects" />
         <div className="flex items-center justify-center h-96 text-[#64748B] text-sm">Loading...</div>
       </AppShell>
     );
@@ -68,14 +68,14 @@ export default function ArchivedProjects() {
 
   return (
     <AppShell>
-      <TopBar title="Archived Projects" />
+      <TopBar title="Archived projects" />
       <div className="p-4 md:p-8 space-y-5 md:space-y-6">
         <div>
           <Link href="/dashboard" className="text-[12px] text-[#17212B] hover:text-[#334155] font-medium transition-colors duration-[120ms]">
             ← Back to Dashboard
           </Link>
           <div className="mt-3">
-            <h2 className="text-xl font-semibold text-[#111827]">Archived Projects</h2>
+            <h2 className="text-xl font-medium text-[#111827]">Archived projects</h2>
             <p className="text-[13px] text-[#334155] mt-1">Projects archived from the dashboard. Unarchive to make them active again.</p>
           </div>
         </div>
@@ -113,11 +113,11 @@ export default function ArchivedProjects() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-[#D8D2C4]">
-                    <th className="text-left text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] px-5 py-3">Project</th>
-                    <th className="text-left text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] px-5 py-3">Client</th>
-                    <th className="text-right text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] px-5 py-3">Variations</th>
-                    <th className="text-right text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] px-5 py-3">Total Value</th>
-                    <th className="text-right text-[11px] font-medium text-[#64748B] uppercase tracking-[0.02em] px-5 py-3">Created</th>
+                    <th className="cond text-left text-[11px] text-[#334155] px-5 py-3">Project</th>
+                    <th className="cond text-left text-[11px] text-[#334155] px-5 py-3">Client</th>
+                    <th className="cond text-right text-[11px] text-[#334155] px-5 py-3">Variations</th>
+                    <th className="cond text-right text-[11px] text-[#334155] px-5 py-3">Total value</th>
+                    <th className="cond text-right text-[11px] text-[#334155] px-5 py-3">Created</th>
                     <th className="px-5 py-3"></th>
                   </tr>
                 </thead>
@@ -131,9 +131,9 @@ export default function ArchivedProjects() {
                       >
                         <td className="px-5 py-2.5 text-[14px] font-medium text-[#111827]">{p.name}</td>
                         <td className="px-5 py-2.5 text-[13px] text-[#334155]">{p.client}</td>
-                        <td className="px-5 py-2.5 text-[13px] text-[#334155] text-right tabular-nums">{p.variations.length}</td>
-                        <td className="px-5 py-2.5 text-[14px] font-medium text-[#111827] text-right tabular-nums">{formatCurrency(totalValue)}</td>
-                        <td className="px-5 py-2.5 text-[13px] text-[#334155] text-right">{formatDate(p.created_at)}</td>
+                        <td className="num px-5 py-2.5 text-[13px] text-[#334155] text-right">{p.variations.length}</td>
+                        <td className="num px-5 py-2.5 text-[14px] font-medium text-[#111827] text-right">{formatCurrency(totalValue)}</td>
+                        <td className="num px-5 py-2.5 text-[13px] text-[#334155] text-right">{formatDate(p.created_at)}</td>
                         <td className="px-5 py-2.5 text-right">
                           <button
                             onClick={() => handleUnarchive(p.id)}
