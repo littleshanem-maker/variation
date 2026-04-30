@@ -150,8 +150,8 @@ export default function SettingsPage() {
 
   const roleBadgeColors: Record<string, string> = {
     admin: 'bg-[#17212B]/10 text-[#17212B]',
-    office: 'bg-[#E76F00]/10 text-[#8C6500]',
-    field: 'bg-[#E76F00]/10 text-[#8C6500]',
+    office: 'bg-[#B84C00]/10 text-[#8C6500]',
+    field: 'bg-[#B84C00]/10 text-[#8C6500]',
   };
 
   return (
@@ -192,7 +192,7 @@ export default function SettingsPage() {
                     {nameSaved ? '✓ Saved' : savingName ? '…' : 'Save'}
                   </button>
                 </div>
-                <p className="text-[12px] text-[#6B7280] mt-1">Used as &ldquo;Issued By&rdquo; on new notices.</p>
+                <p className="text-[12px] text-[#4B5563] mt-1">Used as &ldquo;Issued By&rdquo; on new notices.</p>
               </div>
 
               {/* Change Password */}
@@ -249,26 +249,26 @@ export default function SettingsPage() {
 
               {/* Logo */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-2">Company Logo</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#4B5563] mb-2">Company Logo</label>
                 <div className="flex items-center gap-4">
                   {logoUrl ? (
                     <img src={logoUrl} alt="Company logo" className="h-14 w-14 object-contain rounded-md border border-[#D8D2C4] bg-[#FFFCF5] p-1" />
                   ) : (
-                    <div className="h-14 w-14 rounded-md border border-dashed border-[#D8D2C4] flex items-center justify-center text-[#6B7280] text-xs text-center">No logo</div>
+                    <div className="h-14 w-14 rounded-md border border-dashed border-[#D8D2C4] flex items-center justify-center text-[#4B5563] text-xs text-center">No logo</div>
                   )}
                   <div>
                     <label className="cursor-pointer inline-block px-3 py-2 text-[13px] font-medium text-[#17212B] bg-[#17212B]/5 border border-[#17212B]/20 rounded-md hover:bg-[#17212B]/10 transition-colors">
                       {logoUploading ? 'Uploading…' : logoUrl ? 'Replace logo' : 'Upload logo'}
                       <input type="file" accept="image/png,image/jpeg,image/svg+xml,image/webp" className="hidden" onChange={handleLogoUpload} disabled={logoUploading} />
                     </label>
-                    <p className="text-[11px] text-[#6B7280] mt-1">PNG, JPG or SVG · Appears on all printed documents</p>
+                    <p className="text-[11px] text-[#4B5563] mt-1">PNG, JPG or SVG · Appears on all printed documents</p>
                   </div>
                 </div>
               </div>
 
               {/* Company Name */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-1.5">Company Name</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#4B5563] mb-1.5">Company Name</label>
                 <input
                   type="text"
                   value={companyName}
@@ -279,7 +279,7 @@ export default function SettingsPage() {
 
               {/* ABN */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-1.5">ABN</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#4B5563] mb-1.5">ABN</label>
                 <input
                   type="text"
                   value={companyAbn}
@@ -291,7 +291,7 @@ export default function SettingsPage() {
 
               {/* Address */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-1.5">Address</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#4B5563] mb-1.5">Address</label>
                 <input
                   type="text"
                   value={companyAddress}
@@ -303,7 +303,7 @@ export default function SettingsPage() {
 
               {/* Phone */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-1.5">Phone</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#4B5563] mb-1.5">Phone</label>
                 <input
                   type="text"
                   value={companyPhone}
@@ -315,7 +315,7 @@ export default function SettingsPage() {
 
               {/* Contract Standard */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#6B7280] mb-1.5">Contract Standard</label>
+                <label className="block text-[11px] font-medium uppercase tracking-widest text-[#4B5563] mb-1.5">Contract Standard</label>
                 <select
                   value={preferredStandard}
                   onChange={e => setPreferredStandard(e.target.value as any)}
@@ -325,7 +325,7 @@ export default function SettingsPage() {
                   <option value="AS4000">AS 4000–1997 only (Clause 36)</option>
                   <option value="AS2124">AS 2124–1992 only (Clause 40)</option>
                 </select>
-                <p className="text-[11px] text-[#6B7280] mt-1">Applied to the notice language on all printed Variation Requests and Notices</p>
+                <p className="text-[11px] text-[#4B5563] mt-1">Applied to the notice language on all printed Variation Requests and Notices</p>
               </div>
 
               <div className="flex items-center gap-3 pt-1">
@@ -346,7 +346,7 @@ export default function SettingsPage() {
         <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
           <h3 className="text-[16px] font-medium text-[#111827] border-b border-[#D8D2C4] pb-3 mb-4">About</h3>
           <p className="text-[14px] text-[#334155]">Variation Shield · <span className="capitalize">{role}</span> Access</p>
-          <p className="text-[13px] text-[#6B7280] mt-1">Version 2.1.0 · Leveraged Systems</p>
+          <p className="text-[13px] text-[#4B5563] mt-1">Version 2.1.0 · Leveraged Systems</p>
         </div>
 
       </div>

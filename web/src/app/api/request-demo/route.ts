@@ -37,12 +37,12 @@ export async function POST(req: NextRequest) {
             <span style="background:#334155;color:#FFFCF5;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;letter-spacing:0.05em;">DEMO REQUEST</span>
           </div>
           <h2 style="margin:0 0 8px;font-size:22px;font-weight:500;">${name}</h2>
-          <p style="margin:0 0 24px;color:#6B7280;font-size:15px;">${company}</p>
+          <p style="margin:0 0 24px;color:#4B5563;font-size:15px;">${company}</p>
           <table style="width:100%;border-collapse:collapse;">
-            <tr><td style="padding:8px 0;color:#6B7280;font-size:13px;width:120px;">Email</td><td style="padding:8px 0;font-size:14px;"><a href="mailto:${email}" style="color:#334155;">${email}</a></td></tr>
-            ${phone ? `<tr><td style="padding:8px 0;color:#6B7280;font-size:13px;">Phone</td><td style="padding:8px 0;font-size:14px;">${phone}</td></tr>` : ''}
-            ${preferredTime ? `<tr><td style="padding:8px 0;color:#6B7280;font-size:13px;">Preferred time</td><td style="padding:8px 0;font-size:14px;">${preferredTime}</td></tr>` : ''}
-            <tr><td style="padding:8px 0;color:#6B7280;font-size:13px;">Submitted</td><td style="padding:8px 0;font-size:14px;">${submittedAt} AEDT</td></tr>
+            <tr><td style="padding:8px 0;color:#4B5563;font-size:13px;width:120px;">Email</td><td style="padding:8px 0;font-size:14px;"><a href="mailto:${email}" style="color:#334155;">${email}</a></td></tr>
+            ${phone ? `<tr><td style="padding:8px 0;color:#4B5563;font-size:13px;">Phone</td><td style="padding:8px 0;font-size:14px;">${phone}</td></tr>` : ''}
+            ${preferredTime ? `<tr><td style="padding:8px 0;color:#4B5563;font-size:13px;">Preferred time</td><td style="padding:8px 0;font-size:14px;">${preferredTime}</td></tr>` : ''}
+            <tr><td style="padding:8px 0;color:#4B5563;font-size:13px;">Submitted</td><td style="padding:8px 0;font-size:14px;">${submittedAt} AEDT</td></tr>
           </table>
           <div style="margin-top:28px;padding-top:20px;border-top:1px solid rgba(255,252,245,0.08);">
             <a href="mailto:${email}?subject=Re: Variation Shield Demo" style="display:inline-block;background:#334155;color:#FFFCF5;padding:12px 24px;border-radius:8px;font-weight:500;font-size:14px;text-decoration:none;">Reply to ${name.split(' ')[0]} →</a>
@@ -59,9 +59,9 @@ export async function POST(req: NextRequest) {
       html: `
         <div style="font-family:'IBM Plex Sans',sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#111827;color:#F5F2EA;border-radius:12px;">
           <h2 style="margin:0 0 16px;font-size:22px;font-weight:500;">Thanks, ${name.split(' ')[0]}.</h2>
-          <p style="color:#6B7280;font-size:15px;line-height:1.6;margin:0 0 16px;">I'll be in touch within one business day to lock in a time that works for you.</p>
-          <p style="color:#6B7280;font-size:15px;line-height:1.6;margin:0 0 24px;">The demo takes 15 minutes. I'll walk you through capturing a variation on-site, sending it to a client, and what it looks like when they receive it.</p>
-          <p style="color:#6B7280;font-size:13px;margin:0;">— Shane<br>Founder, Variation Shield</p>
+          <p style="color:#4B5563;font-size:15px;line-height:1.6;margin:0 0 16px;">I'll be in touch within one business day to lock in a time that works for you.</p>
+          <p style="color:#4B5563;font-size:15px;line-height:1.6;margin:0 0 24px;">The demo takes 15 minutes. I'll walk you through capturing a variation on-site, sending it to a client, and what it looks like when they receive it.</p>
+          <p style="color:#4B5563;font-size:13px;margin:0;">— Shane<br>Founder, Variation Shield</p>
         </div>
       `,
     });

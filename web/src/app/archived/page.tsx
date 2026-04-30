@@ -61,7 +61,7 @@ export default function ArchivedProjects() {
     return (
       <AppShell>
         <TopBar title="Archived projects" />
-        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#4B5563] text-sm">Loading...</div>
       </AppShell>
     );
   }
@@ -81,7 +81,7 @@ export default function ArchivedProjects() {
         </div>
 
         {projects.length === 0 ? (
-          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-12 text-center text-[#6B7280] text-sm">
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-12 text-center text-[#4B5563] text-sm">
             No archived projects.
           </div>
         ) : (

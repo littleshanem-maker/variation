@@ -113,7 +113,7 @@ function VariationsList() {
 
   const SortHeader = ({ label, field, align, className = '' }: { label: string; field: SortKey; align?: 'right'; className?: string }) => (
     <th
-      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5 cursor-pointer hover:text-[#334155] select-none transition-colors duration-[120ms] ${className}`}
+      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5 cursor-pointer hover:text-[#334155] select-none transition-colors duration-[120ms] ${className}`}
       onClick={() => handleSort(field)}
     >
       {label} {sortKey === field ? (sortAsc ? '↑' : '↓') : ''}
@@ -208,7 +208,7 @@ function VariationsList() {
     return (
       <>
         <TopBar title="Variation Register" />
-        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#4B5563] text-sm">Loading...</div>
       </>
     );
   }
@@ -323,7 +323,7 @@ function VariationsList() {
         </div>
 
         {sorted.length === 0 ? (
-          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-12 text-center text-[#6B7280] text-sm">
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-12 text-center text-[#4B5563] text-sm">
             No variations match this filter.
           </div>
         ) : (
@@ -335,9 +335,9 @@ function VariationsList() {
                   <div className="px-4 py-3 hover:bg-[#F5F2EA] transition-colors">
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <div className="text-[12px] mono font-medium text-[#E76F00]">{getVariationNumber(v)}</div>
+                        <div className="text-[12px] mono font-medium text-[#B84C00]">{getVariationNumber(v)}</div>
                         <div className="text-[14px] font-medium text-[#111827] mt-0.5 truncate">{v.title}</div>
-                        <div className="text-[12px] text-[#6B7280] mt-0.5 truncate">{v.project_name}</div>
+                        <div className="text-[12px] text-[#4B5563] mt-0.5 truncate">{v.project_name}</div>
                       </div>
                       <div className="flex-shrink-0 text-right">
                         <StatusBadge status={v.status} />
@@ -411,7 +411,7 @@ function VariationsList() {
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <button
-                                  className="p-1 rounded-md text-[#6B7280] hover:text-[#334155] hover:bg-[#F5F2EA] opacity-0 group-hover:opacity-100 transition-all"
+                                  className="p-1 rounded-md text-[#4B5563] hover:text-[#334155] hover:bg-[#F5F2EA] opacity-0 group-hover:opacity-100 transition-all"
                                 >
                                   <MoreHorizontal size={16} />
                                 </button>
@@ -451,7 +451,7 @@ function VariationsList() {
           <div className="mt-8">
             <div className="flex items-center justify-between mb-3 px-1">
               <h2 className="text-[15px] font-medium text-[#111827]">Variation Notices</h2>
-              <span className="text-[13px] text-[#6B7280]">{notices.filter(n => filterProject === 'all' || n.project_id === filterProject).length} notices</span>
+              <span className="text-[13px] text-[#4B5563]">{notices.filter(n => filterProject === 'all' || n.project_id === filterProject).length} notices</span>
             </div>
             {/* Mobile cards */}
             <div className="md:hidden bg-[#FFFCF5] rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] overflow-hidden divide-y divide-[#D8D2C4]">
@@ -459,8 +459,8 @@ function VariationsList() {
                 .filter(n => filterProject === 'all' || n.project_id === filterProject)
                 .map(n => {
                   const statusConfig: Record<string, { label: string; color: string; bg: string; dot: string }> = {
-                    draft: { label: 'Draft', color: 'text-[#334155]', bg: 'bg-[#F5F2EA]', dot: 'bg-[#6B7280]' },
-                    issued: { label: 'Issued', color: 'text-[#C75A00]', bg: 'bg-[#F5F2EA]', dot: 'bg-[#D8D2C4]' },
+                    draft: { label: 'Draft', color: 'text-[#334155]', bg: 'bg-[#F5F2EA]', dot: 'bg-[#4B5563]' },
+                    issued: { label: 'Issued', color: 'text-[#9A3F00]', bg: 'bg-[#F5F2EA]', dot: 'bg-[#D8D2C4]' },
                     acknowledged: { label: 'Acknowledged', color: 'text-[#1F5223]', bg: 'bg-[#E5F0E6]', dot: 'bg-[#2E7D32]' },
                   };
                   const sc = statusConfig[n.status] || statusConfig.draft;
@@ -469,9 +469,9 @@ function VariationsList() {
                       <div className="px-4 py-3 hover:bg-[#F5F2EA] transition-colors">
                         <div className="flex items-center justify-between gap-3">
                           <div className="min-w-0 flex-1">
-                            <div className="text-[12px] mono font-medium text-[#E76F00]">{n.notice_number}</div>
+                            <div className="text-[12px] mono font-medium text-[#B84C00]">{n.notice_number}</div>
                             <div className="text-[14px] font-medium text-[#111827] mt-0.5 truncate">{n.event_description}</div>
-                            <div className="text-[12px] text-[#6B7280] mt-0.5 truncate">{n.project_name}</div>
+                            <div className="text-[12px] text-[#4B5563] mt-0.5 truncate">{n.project_name}</div>
                           </div>
                           <div className="flex-shrink-0">
                             <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium ${sc.bg} ${sc.color}`}>
@@ -491,12 +491,12 @@ function VariationsList() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-[#D8D2C4] bg-[#F5F2EA]/60">
-                    <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
-                    <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
-                    <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Project</th>
-                    <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Status</th>
-                    <th className="text-right text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Event Date</th>
-                    <th className="text-right text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5 hidden lg:table-cell">Issued</th>
+                    <th className="text-left text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
+                    <th className="text-left text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
+                    <th className="text-left text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5">Project</th>
+                    <th className="text-left text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5">Status</th>
+                    <th className="text-right text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5">Event Date</th>
+                    <th className="text-right text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5 hidden lg:table-cell">Issued</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -504,8 +504,8 @@ function VariationsList() {
                     .filter(n => filterProject === 'all' || n.project_id === filterProject)
                     .map((n, i, arr) => {
                       const statusConfig: Record<string, { label: string; color: string; bg: string; border: string; dot: string }> = {
-                        draft: { label: 'Draft', color: 'text-[#334155]', bg: 'bg-[#F5F2EA]', border: 'border-[#D8D2C4]', dot: 'bg-[#6B7280]' },
-                        issued: { label: 'Issued', color: 'text-[#C75A00]', bg: 'bg-[#F5F2EA]', border: 'border-[#D8D2C4]', dot: 'bg-[#D8D2C4]' },
+                        draft: { label: 'Draft', color: 'text-[#334155]', bg: 'bg-[#F5F2EA]', border: 'border-[#D8D2C4]', dot: 'bg-[#4B5563]' },
+                        issued: { label: 'Issued', color: 'text-[#9A3F00]', bg: 'bg-[#F5F2EA]', border: 'border-[#D8D2C4]', dot: 'bg-[#D8D2C4]' },
                         acknowledged: { label: 'Acknowledged', color: 'text-[#1F5223]', bg: 'bg-[#E5F0E6]', border: 'border-[#D8D2C4]', dot: 'bg-[#2E7D32]' },
                       };
                       const sc = statusConfig[n.status] || statusConfig.draft;
@@ -527,7 +527,7 @@ function VariationsList() {
                             </span>
                           </td>
                           <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] text-right whitespace-nowrap">{formatDate(n.event_date + 'T00:00:00')}</td>
-                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] text-right hidden lg:table-cell whitespace-nowrap">{n.issued_at ? formatDate(n.issued_at) : <span className="text-[#6B7280]">—</span>}</td>
+                          <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] text-right hidden lg:table-cell whitespace-nowrap">{n.issued_at ? formatDate(n.issued_at) : <span className="text-[#4B5563]">—</span>}</td>
                         </tr>
                       );
                     })}
@@ -552,7 +552,7 @@ function VariationsList() {
 export default function VariationsPage() {
   return (
     <AppShell>
-      <Suspense fallback={<><TopBar title="Variation Register" /><div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div></>}>
+      <Suspense fallback={<><TopBar title="Variation Register" /><div className="flex items-center justify-center h-96 text-[#4B5563] text-sm">Loading...</div></>}>
         <VariationsList />
       </Suspense>
     </AppShell>

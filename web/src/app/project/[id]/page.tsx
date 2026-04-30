@@ -115,7 +115,7 @@ function ProjectDetailContent() {
 
   const SortHeader = ({ label, field, align, className = '' }: { label: string; field: SortKey; align?: 'right'; className?: string }) => (
     <th
-      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] px-4 md:px-5 py-3 cursor-pointer hover:text-[#334155] select-none transition-colors duration-[120ms] ${className}`}
+      className={`${align === 'right' ? 'text-right' : 'text-left'} text-[11px] font-medium text-[#4B5563] uppercase tracking-[0.02em] px-4 md:px-5 py-3 cursor-pointer hover:text-[#334155] select-none transition-colors duration-[120ms] ${className}`}
       onClick={() => handleSort(field)}
     >
       {label} {sortKey === field ? (sortAsc ? '↑' : '↓') : ''}
@@ -125,7 +125,7 @@ function ProjectDetailContent() {
   if (loading) {
     return (
       <AppShell><TopBar title="Project" />
-        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#4B5563] text-sm">Loading...</div>
       </AppShell>
     );
   }
@@ -133,7 +133,7 @@ function ProjectDetailContent() {
   if (!project) {
     return (
       <AppShell><TopBar title="Project" />
-        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Project not found</div>
+        <div className="flex items-center justify-center h-96 text-[#4B5563] text-sm">Project not found</div>
       </AppShell>
     );
   }
@@ -190,7 +190,7 @@ function ProjectDetailContent() {
             <div className="flex items-center justify-between">
               <div className="flex-1 mr-4">
                 <div className="text-[14px] font-medium text-[#111827]">Require Variation Notice</div>
-                <div className="text-[12px] text-[#6B7280] mt-0.5">Enable for Tier 1 contracts that require formal notice of variation events</div>
+                <div className="text-[12px] text-[#4B5563] mt-0.5">Enable for Tier 1 contracts that require formal notice of variation events</div>
               </div>
               <button
                 type="button"
@@ -225,7 +225,7 @@ function ProjectDetailContent() {
                           <div className="text-[12px] mono font-medium text-[#111827]">{n.notice_number}</div>
                           <div className="text-[14px] font-medium text-[#111827] mt-0.5 truncate">{n.event_description}</div>
                           <div className="flex items-center gap-2 mt-1 flex-wrap">
-                            <span className="text-[12px] text-[#6B7280]">
+                            <span className="text-[12px] text-[#4B5563]">
                               {new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </span>
                             {varLabel && (
@@ -256,11 +256,11 @@ function ProjectDetailContent() {
                   </colgroup>
                   <thead>
                     <tr className="border-b border-[#D8D2C4] bg-[#F5F2EA]/60">
-                      <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
-                      <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
-                      <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Status</th>
-                      <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Event Date</th>
-                      <th className="text-left text-[11px] font-medium text-[#6B7280] uppercase tracking-wider px-3 md:px-4 py-3.5">Linked VR</th>
+                      <th className="text-left text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5">Notice No.</th>
+                      <th className="text-left text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5">Description</th>
+                      <th className="text-left text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5">Status</th>
+                      <th className="text-left text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5">Event Date</th>
+                      <th className="text-left text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3.5">Linked VR</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -274,7 +274,7 @@ function ProjectDetailContent() {
                             <td className="px-3 md:px-4 py-3"><StatusBadge status={n.status} /></td>
                             <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] whitespace-nowrap">{new Date(n.event_date + 'T00:00:00').toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                             <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] whitespace-nowrap">
-                              {linkedVar ? (linkedVar.variation_number ?? `VAR-${String(linkedVar.sequence_number).padStart(3, '0')}`) : <span className="text-[#6B7280]">—</span>}
+                              {linkedVar ? (linkedVar.variation_number ?? `VAR-${String(linkedVar.sequence_number).padStart(3, '0')}`) : <span className="text-[#4B5563]">—</span>}
                             </td>
                           </tr>
                         </Link>
@@ -290,7 +290,7 @@ function ProjectDetailContent() {
         <h3 className="text-[13px] font-medium text-[#334155] uppercase tracking-[0.04em] mb-2">Variation Requests</h3>
 
         {variations.length === 0 ? (
-          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-12 text-center text-[#6B7280] text-sm">
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-12 text-center text-[#4B5563] text-sm">
             No variations captured for this project yet.
           </div>
         ) : (
@@ -367,7 +367,7 @@ function ProjectDetailContent() {
                 This will also permanently delete all <span className="font-medium">{variations.length} variation{variations.length !== 1 ? 's' : ''}</span> and their associated data. This cannot be undone.
               </p>
             ) : (
-              <p className="text-[13px] text-[#6B7280] mb-5">This cannot be undone.</p>
+              <p className="text-[13px] text-[#4B5563] mb-5">This cannot be undone.</p>
             )}
             <div className="flex justify-end gap-2">
               <button
@@ -397,7 +397,7 @@ function ProjectDetailContent() {
             <p className="text-[14px] text-[#334155] mb-1">
               Archive <span className="font-medium text-[#111827]">{project.name}</span>?
             </p>
-            <p className="text-[13px] text-[#6B7280] mb-5">
+            <p className="text-[13px] text-[#4B5563] mb-5">
               The project and its {variations.length} variation{variations.length !== 1 ? 's' : ''} will be hidden from the dashboard. You can unarchive at any time from the Archived Projects page.
             </p>
             <div className="flex justify-end gap-2">
@@ -425,7 +425,7 @@ function ProjectDetailContent() {
 
 export default function ProjectDetail() {
   return (
-    <Suspense fallback={<AppShell><TopBar title="Project" /><div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div></AppShell>}>
+    <Suspense fallback={<AppShell><TopBar title="Project" /><div className="flex items-center justify-center h-96 text-[#4B5563] text-sm">Loading...</div></AppShell>}>
       <ProjectDetailContent />
     </Suspense>
   );

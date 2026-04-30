@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
             <span style="background:#334155;color:#FFFCF5;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;letter-spacing:0.05em;">PRODUCT FEEDBACK</span>
           </div>
           <h2 style="margin:0 0 4px;font-size:18px;font-weight:500;">${userName}</h2>
-          <p style="margin:0 0 20px;color:#6B7280;font-size:13px;">${companyName}${userEmail ? ` · ${userEmail}` : ''}</p>
+          <p style="margin:0 0 20px;color:#4B5563;font-size:13px;">${companyName}${userEmail ? ` · ${userEmail}` : ''}</p>
           <div style="background:rgba(255,252,245,0.04);border:1px solid rgba(255,252,245,0.08);border-radius:10px;padding:16px 20px;margin-bottom:20px;">
             <p style="margin:0;font-size:14px;line-height:1.7;color:#D8D2C4;white-space:pre-wrap;">${message.trim()}</p>
           </div>

@@ -31,7 +31,7 @@ export function SheetContent({
         )}
       >
         {children}
-        <Dialog.Close className="absolute top-4 right-4 p-1.5 rounded-md text-[#6B7280] hover:text-[#334155] hover:bg-[#F5F2EA] transition-colors">
+        <Dialog.Close className="absolute top-4 right-4 p-1.5 rounded-md text-[#4B5563] hover:text-[#334155] hover:bg-[#F5F2EA] transition-colors">
           <X size={18} />
         </Dialog.Close>
       </Dialog.Content>
@@ -73,7 +73,7 @@ export function SheetTitle({ children, className }: { children: React.ReactNode;
 
 export function SheetDescription({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <Dialog.Description className={cn('text-[13px] text-[#6B7280] mt-0.5', className)}>
+    <Dialog.Description className={cn('text-[13px] text-[#4B5563] mt-0.5', className)}>
       {children}
     </Dialog.Description>
   );

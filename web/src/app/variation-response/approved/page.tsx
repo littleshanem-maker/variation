@@ -20,7 +20,7 @@ function ApprovedContent() {
         <p className="text-[#334155] text-sm leading-relaxed mb-2">
           <strong className="text-[#111827]">{ref}</strong> has been approved.
         </p>
-        <p className="text-[#6B7280] text-sm leading-relaxed">
+        <p className="text-[#4B5563] text-sm leading-relaxed">
           The contractor has been notified. Thank you for your response.
         </p>
       </div>

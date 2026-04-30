@@ -13,7 +13,7 @@ import type { Project } from '@/lib/types';
 import ProjectPicker from '@/components/ui/ProjectPicker';
 
 const inputClass = 'w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md focus:ring-1 focus:ring-[#17212B] focus:border-[#17212B] outline-none bg-[#FFFCF5]';
-const labelClass = 'block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1';
+const labelClass = 'block text-[11px] font-medium text-[#4B5563] uppercase tracking-[0.02em] mb-1';
 
 function NewRequestForm() {
   const router = useRouter();
@@ -233,7 +233,7 @@ function NewRequestForm() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#111827]/60 backdrop-blur-sm p-4">
           <div className="bg-[#FFFCF5] rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
             <div className="w-14 h-14 rounded-2xl bg-[#F5F2EA] flex items-center justify-center mx-auto mb-5">
-              <svg width="28" height="28" fill="none" stroke="#E76F00" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <svg width="28" height="28" fill="none" stroke="#B84C00" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
             <h2 className="text-xl font-medium text-[#111827] mb-2">
               You've documented {limitReached.count} variation{limitReached.count !== 1 ? 's' : ''} worth ${(limitReached.totalValue / 100).toLocaleString('en-AU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} — want to keep going?
@@ -241,13 +241,13 @@ function NewRequestForm() {
             <p className="text-[#334155] text-sm mb-2">
               Upgrade to Pro and keep capturing — unlimited variations, projects, and team members.
             </p>
-            <p className="text-[#6B7280] text-xs mb-7">
+            <p className="text-[#4B5563] text-xs mb-7">
               Or export what you have and go back to spreadsheets.
             </p>
             <div className="space-y-3">
               <a
                 href={`https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02`}
-                className="block w-full py-3 rounded-xl bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium text-sm transition-colors"
+                className="block w-full py-3 rounded-xl bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium text-sm transition-colors"
               >
                 Upgrade to Pro — $299/mo
               </a>
@@ -261,12 +261,12 @@ function NewRequestForm() {
               </a>
               <button
                 onClick={handleExportCsv}
-                className="block w-full py-3 rounded-xl text-[#6B7280] text-sm hover:text-[#334155] transition-colors"
+                className="block w-full py-3 rounded-xl text-[#4B5563] text-sm hover:text-[#334155] transition-colors"
               >
                 Export My Data
               </button>
             </div>
-            <p className="text-xs text-[#6B7280] mt-5">
+            <p className="text-xs text-[#4B5563] mt-5">
               Your existing {limitReached.count} variations are safe — you can still view, edit, and download them.
             </p>
           </div>
@@ -383,7 +383,7 @@ function NewRequestForm() {
 
           {/* AS Compliance card */}
           <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 md:p-6 shadow-[0_1px_2px_rgba(17,24,39,0.04)] space-y-4">
-            <p className="text-[11px] font-medium uppercase tracking-wider text-[#6B7280]">Claim Details (AS 4000 / AS 2124)</p>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-[#4B5563]">Claim Details (AS 4000 / AS 2124)</p>
 
             {/* Claim type */}
             <div>
@@ -448,7 +448,7 @@ function NewRequestForm() {
             <button
               type="submit"
               disabled={saving || loadingProjects}
-              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)] text-center"
+              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)] text-center"
             >
               {saving ? 'Creating…' : 'Create Variation Request'}
             </button>
@@ -461,7 +461,7 @@ function NewRequestForm() {
 
 export default function NewVariationPage() {
   return (
-    <Suspense fallback={<AppShell><TopBar title="New Variation Request" /><div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading…</div></AppShell>}>
+    <Suspense fallback={<AppShell><TopBar title="New Variation Request" /><div className="flex items-center justify-center h-96 text-[#4B5563] text-sm">Loading…</div></AppShell>}>
       <NewRequestForm />
     </Suspense>
   );

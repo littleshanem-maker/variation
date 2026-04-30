@@ -62,13 +62,13 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
       {/* Table header — desktop */}
       <div className="hidden sm:grid grid-cols-[2fr_80px_90px_100px_90px_32px] gap-2 px-1">
         {['Description', 'Qty', 'Unit', 'Rate ($)', 'Total', ''].map(h => (
-          <div key={h} className="text-[10px] font-medium uppercase tracking-wider" style={{ color: '#6B7280' }}>{h}</div>
+          <div key={h} className="text-[10px] font-medium uppercase tracking-wider" style={{ color: '#4B5563' }}>{h}</div>
         ))}
       </div>
 
       {/* Rows */}
       {items.length === 0 && (
-        <div className="text-[13px] text-center py-4" style={{ color: '#6B7280' }}>
+        <div className="text-[13px] text-center py-4" style={{ color: '#4B5563' }}>
           No items yet — click Add Row below.
         </div>
       )}
@@ -76,7 +76,7 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
       {items.map((item, idx) => (
         <div key={item.id} className="rounded-lg border border-[#D8D2C4] bg-[#FFFCF5] p-3 sm:p-0 sm:rounded-none sm:border-0 sm:bg-transparent space-y-2 sm:space-y-0">
           {/* Mobile label */}
-          <div className="sm:hidden text-[11px] font-medium uppercase tracking-wider" style={{ color: '#6B7280' }}>Item {idx + 1}</div>
+          <div className="sm:hidden text-[11px] font-medium uppercase tracking-wider" style={{ color: '#4B5563' }}>Item {idx + 1}</div>
 
           {/* Mobile: description row */}
           <div className="sm:hidden flex items-center gap-2">
@@ -92,7 +92,7 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
               onClick={() => removeRow(item.id)}
               className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded hover:bg-[#FBE6E4] transition-colors"
             >
-              <Trash2 size={15} style={{ color: '#6B7280' }} />
+              <Trash2 size={15} style={{ color: '#4B5563' }} />
             </button>
           </div>
 
@@ -100,7 +100,7 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
           <div className="sm:hidden grid grid-cols-[1fr_90px_1fr_auto] gap-2 items-center">
             {/* Qty */}
             <div>
-              <div className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: '#6B7280' }}>Qty</div>
+              <div className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: '#4B5563' }}>Qty</div>
               <input
                 type="number"
                 value={item.qty}
@@ -113,7 +113,7 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
             </div>
             {/* Unit */}
             <div>
-              <div className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: '#6B7280' }}>Unit</div>
+              <div className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: '#4B5563' }}>Unit</div>
               <select
                 value={item.unit}
                 onChange={e => update(item.id, 'unit', e.target.value)}
@@ -124,9 +124,9 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
             </div>
             {/* Rate */}
             <div>
-              <div className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: '#6B7280' }}>Rate ($)</div>
+              <div className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: '#4B5563' }}>Rate ($)</div>
               <div className="relative">
-                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[12px]" style={{ color: '#6B7280' }}>$</span>
+                <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[12px]" style={{ color: '#4B5563' }}>$</span>
                 <input
                   type="number"
                   value={item.rate}
@@ -140,7 +140,7 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
             </div>
             {/* Total */}
             <div className="text-right">
-              <div className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: '#6B7280' }}>Total</div>
+              <div className="text-[10px] font-medium uppercase tracking-wider mb-1" style={{ color: '#4B5563' }}>Total</div>
               <div className="px-1 py-1.5 text-[13px] font-medium tabular-nums" style={{ color: '#111827' }}>
                 ${item.total.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
@@ -173,7 +173,7 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
               {UNITS.map(u => <option key={u} value={u}>{u}</option>)}
             </select>
             <div className="relative">
-              <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[12px]" style={{ color: '#6B7280' }}>$</span>
+              <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[12px]" style={{ color: '#4B5563' }}>$</span>
               <input
                 type="number"
                 value={item.rate}
@@ -192,7 +192,7 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
               onClick={() => removeRow(item.id)}
               className="flex items-center justify-center w-7 h-7 rounded hover:bg-[#FBE6E4] transition-colors"
             >
-              <Trash2 size={14} style={{ color: '#6B7280' }} />
+              <Trash2 size={14} style={{ color: '#4B5563' }} />
             </button>
           </div>
         </div>
@@ -211,7 +211,7 @@ export default function CostItemsTable({ items, onChange, onTotalChange }: Props
         </button>
 
         <div className="flex items-center gap-3">
-          <span className="text-[12px] font-medium uppercase tracking-wider" style={{ color: '#6B7280' }}>Total</span>
+          <span className="text-[12px] font-medium uppercase tracking-wider" style={{ color: '#4B5563' }}>Total</span>
           <span className="text-[16px] font-medium tabular-nums" style={{ color: '#111827' }}>
             ${grandTotal.toLocaleString('en-AU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>

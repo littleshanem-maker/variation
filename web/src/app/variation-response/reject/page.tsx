@@ -50,7 +50,7 @@ function RejectForm() {
           <p className="text-[#334155] text-sm leading-relaxed mb-2">
             <strong className="text-[#111827]">{ref}</strong> has been rejected.
           </p>
-          <p className="text-[#6B7280] text-sm leading-relaxed">
+          <p className="text-[#4B5563] text-sm leading-relaxed">
             The contractor has been notified. Thank you for your response.
           </p>
         </div>
@@ -70,7 +70,7 @@ function RejectForm() {
             </div>
           </div>
           <h1 className="text-xl font-medium text-[#111827] mb-2">Reject {ref}</h1>
-          <p className="text-[#6B7280] text-sm">Please provide a reason (optional but helpful).</p>
+          <p className="text-[#4B5563] text-sm">Please provide a reason (optional but helpful).</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <textarea
@@ -78,7 +78,7 @@ function RejectForm() {
             onChange={e => setComment(e.target.value)}
             placeholder="e.g. Cost breakdown not aligned with contract rates, please revise labour hours."
             rows={4}
-            className="w-full bg-[#F5F2EA] border border-[#D8D2C4] rounded-lg px-4 py-3 text-[#111827] text-sm placeholder:text-[#6B7280] resize-none focus:outline-none focus:ring-2 focus:ring-[#FBE6E4] focus:border-[#B42318]"
+            className="w-full bg-[#F5F2EA] border border-[#D8D2C4] rounded-lg px-4 py-3 text-[#111827] text-sm placeholder:text-[#4B5563] resize-none focus:outline-none focus:ring-2 focus:ring-[#FBE6E4] focus:border-[#B42318]"
           />
           {error && <p className="text-[#B42318] text-sm">{error}</p>}
           <button
@@ -88,7 +88,7 @@ function RejectForm() {
           >
             {submitting ? 'Submitting…' : 'Confirm Rejection'}
           </button>
-          <p className="text-center text-[#6B7280] text-xs">
+          <p className="text-center text-[#4B5563] text-xs">
             Changed your mind?{' '}
             <a
               href={`/api/variation-response?token=${token}&action=approve${respondentEmail ? `&respondent=${encodeURIComponent(respondentEmail)}` : ''}`}

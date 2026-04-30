@@ -41,12 +41,12 @@ export default function ProjectPicker({ projects, value, onChange, required, cla
         onClick={() => setOpen(o => !o)}
         className={`w-full flex items-center justify-between border rounded-lg px-3 py-3 text-[15px] bg-[#FFFCF5] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 transition-colors ${
           open ? 'border-[#17212B]' : 'border-[#D8D2C4]'
-        } ${selected ? 'text-[#111827]' : 'text-[#6B7280]'} ${className || ''}`}
+        } ${selected ? 'text-[#111827]' : 'text-[#4B5563]'} ${className || ''}`}
       >
         <span className="truncate">{selected ? selected.name : 'Select a project…'}</span>
         <ChevronDown
           size={16}
-          className={`flex-shrink-0 text-[#6B7280] ml-2 transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
+          className={`flex-shrink-0 text-[#4B5563] ml-2 transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
         />
       </button>
 
@@ -63,7 +63,7 @@ export default function ProjectPicker({ projects, value, onChange, required, cla
               }`}
             >
               <span>{p.name}</span>
-              {p.id === value && <Check size={15} className="text-[#E76F00] flex-shrink-0" />}
+              {p.id === value && <Check size={15} className="text-[#B84C00] flex-shrink-0" />}
             </button>
           ))}
         </div>

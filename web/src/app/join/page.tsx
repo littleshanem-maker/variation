@@ -181,7 +181,7 @@ function JoinForm() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#FFFCF5]">
-        <p className="text-[#6B7280] text-sm">Loading invitation...</p>
+        <p className="text-[#4B5563] text-sm">Loading invitation...</p>
       </div>
     );
   }
@@ -301,7 +301,7 @@ function JoinForm() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute top-1/2 -translate-y-1/2"
-                style={{ right: '12px', color: '#6B7280', background: 'none', border: 'none', cursor: 'pointer' }}
+                style={{ right: '12px', color: '#4B5563', background: 'none', border: 'none', cursor: 'pointer' }}
                 tabIndex={-1}
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -345,7 +345,7 @@ function JoinForm() {
           </a>
         </div>
 
-        <p className="text-center text-xs mt-10 text-[#6B7280]">
+        <p className="text-center text-xs mt-10 text-[#4B5563]">
           Leveraged Systems · Leveraged Systems
         </p>
       </div>
@@ -357,7 +357,7 @@ export default function JoinPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-[#FFFCF5]">
-        <p className="text-[#6B7280] text-sm">Loading...</p>
+        <p className="text-[#4B5563] text-sm">Loading...</p>
       </div>
     }>
       <JoinForm />

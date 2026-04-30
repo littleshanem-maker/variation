@@ -20,7 +20,7 @@ interface Props {
   onStatusChange?: () => void;
 }
 
-const metaLabel = 'text-[10px] font-medium uppercase tracking-wider text-[#6B7280]';
+const metaLabel = 'text-[10px] font-medium uppercase tracking-wider text-[#4B5563]';
 const metaValue = 'text-[14px] font-medium text-[#111827] mt-0.5';
 
 export default function VariationSlideOver({ variationId, open, onClose, onStatusChange }: Props) {
@@ -157,7 +157,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
     <Sheet open={open} onOpenChange={o => { if (!o) onClose(); }}>
       <SheetContent>
         {loading || !variation ? (
-          <div className="flex items-center justify-center h-full text-[#6B7280] text-sm">
+          <div className="flex items-center justify-center h-full text-[#4B5563] text-sm">
             {loading ? 'Loading…' : 'Not found'}
           </div>
         ) : (
@@ -165,7 +165,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
             {/* Header */}
             <SheetHeader>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-[12px] mono font-medium text-[#E76F00] uppercase tracking-wider">
+                <span className="text-[12px] mono font-medium text-[#B84C00] uppercase tracking-wider">
                   {getVariationNumber(variation)}
                 </span>
                 <StatusBadge status={variation.status} />
@@ -273,7 +273,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
               {variation.notes && (
                 <div>
                   <div className={`${metaLabel} mb-2`}>Notes</div>
-                  <p className="text-[13px] text-[#6B7280] leading-relaxed whitespace-pre-wrap">{variation.notes}</p>
+                  <p className="text-[13px] text-[#4B5563] leading-relaxed whitespace-pre-wrap">{variation.notes}</p>
                 </div>
               )}
 
@@ -286,13 +286,13 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                       <div key={photo.id} className="aspect-video bg-[#F5F2EA] rounded-lg overflow-hidden">
                         {photoUrls[photo.id]
                           ? <img src={photoUrls[photo.id]} alt="Evidence" className="w-full h-full object-cover" />
-                          : <div className="w-full h-full flex items-center justify-center text-[#6B7280] text-xs">Loading…</div>
+                          : <div className="w-full h-full flex items-center justify-center text-[#4B5563] text-xs">Loading…</div>
                         }
                       </div>
                     ))}
                   </div>
                   {photos.length > 4 && (
-                    <p className="text-[11px] text-[#6B7280] mt-1">+{photos.length - 4} more — open full detail to view all</p>
+                    <p className="text-[11px] text-[#4B5563] mt-1">+{photos.length - 4} more — open full detail to view all</p>
                   )}
                 </div>
               )}
@@ -344,7 +344,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                   </Link>
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-lg transition-colors shadow-sm"
                     onClick={onClose}
                   >
                     <Pencil size={14} /> Revise &amp; Resubmit
@@ -364,7 +364,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                   </Link>
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-lg transition-colors shadow-sm"
                     onClick={onClose}
                   >
                     <Pencil size={14} /> Revise &amp; Resubmit
@@ -384,7 +384,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                   </Link>
                   <Link
                     href={`/variation/${variation.id}`}
-                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-lg transition-colors shadow-sm"
                     onClick={onClose}
                   >
                     <Pencil size={14} /> Revise &amp; Resubmit

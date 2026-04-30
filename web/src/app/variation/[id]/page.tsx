@@ -631,7 +631,7 @@ export default function VariationDetail() {
   if (loading) {
     return (
       <AppShell><TopBar title="Variation" />
-        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#4B5563] text-sm">Loading...</div>
       </AppShell>
     );
   }
@@ -639,7 +639,7 @@ export default function VariationDetail() {
   if (!variation || !project) {
     return (
       <AppShell><TopBar title="Variation" />
-        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Variation not found</div>
+        <div className="flex items-center justify-center h-96 text-[#4B5563] text-sm">Variation not found</div>
       </AppShell>
     );
   }
@@ -653,8 +653,8 @@ export default function VariationDetail() {
   // True when sent to client and awaiting their response
   const awaitingClientResponse = isSubmitted && !!variation.client_email && !variation.client_approval_response;
 
-  const inputClass = "w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-lg focus:ring-2 focus:ring-[#E76F00] focus:border-[#E76F00] outline-none transition-shadow";
-  const labelClass = "block text-[11px] font-medium uppercase tracking-wider text-[#6B7280] mb-1";
+  const inputClass = "w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-lg focus:ring-2 focus:ring-[#B84C00] focus:border-[#B84C00] outline-none transition-shadow";
+  const labelClass = "block text-[11px] font-medium uppercase tracking-wider text-[#4B5563] mb-1";
 
   const STATUS_TRANSITIONS: Record<string, string[]> = {
     draft:     ['submitted'],
@@ -672,7 +672,7 @@ export default function VariationDetail() {
     disputed:  'Mark Disputed',
   };
   const STATUS_ACTION_STYLES: Record<string, string> = {
-    submitted: 'text-[#8C6500] border-[#D99A00] hover:bg-[#FBF1D6]',
+    submitted: 'text-[#8C6500] border-[#8C6500] hover:bg-[#FBF1D6]',
     approved:  'text-[#1F5223] border-[#2E7D32] hover:bg-[#E5F0E6]',
     rejected:  'text-[#334155] border-[#334155] hover:bg-[#F5F2EA]',
     disputed:  'text-[#7A1810] border-[#B42318] hover:bg-[#FBE6E4]',
@@ -733,7 +733,7 @@ export default function VariationDetail() {
                       }
                     }}
                     disabled={sendingEmail}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg disabled:opacity-40 transition-colors shadow-sm whitespace-nowrap"
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-lg disabled:opacity-40 transition-colors shadow-sm whitespace-nowrap"
                   >
                     <Send size={14} />
                     {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : showEmailInput ? 'Send' : 'Submit to Client'}
@@ -763,7 +763,7 @@ export default function VariationDetail() {
                   </>
                 )}
                 {isDisputed && !isField && (
-                  <button onClick={startRevising} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm">
+                  <button onClick={startRevising} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-lg transition-colors shadow-sm">
                     <ArrowUpRight size={14} /> Revise &amp; Resubmit
                   </button>
                 )}
@@ -820,7 +820,7 @@ export default function VariationDetail() {
                     labelSuffix="(optional — internal team)"
                   />
                   <div className="flex items-center gap-2 pt-1">
-                    <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-[#6B7280] hover:text-[#334155]">Cancel</button>
+                    <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-[#4B5563] hover:text-[#334155]">Cancel</button>
                   </div>
                 </div>
               )}
@@ -850,7 +850,7 @@ export default function VariationDetail() {
 
         {/* Linked Variation Notice Banner */}
         {linkedNotice && (
-          <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-[#FBF1D6] border border-[#D99A00]/30 rounded-md text-[13px]">
+          <div className="flex flex-wrap items-center gap-3 px-4 py-3 bg-[#FBF1D6] border border-[#8C6500]/30 rounded-md text-[13px]">
             <span className="mono font-medium text-[#17212B]">{linkedNotice.notice_number}</span>
             <span className="text-[#334155]">—</span>
             {linkedNotice.issued_at
@@ -903,17 +903,17 @@ export default function VariationDetail() {
                     <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-medium flex-shrink-0 ${
                         isCurrent
-                          ? step.key === 'disputed' ? 'bg-[#B42318] text-[#FFFCF5]' : 'bg-[#E76F00] text-[#FFFCF5]'
+                          ? step.key === 'disputed' ? 'bg-[#B42318] text-[#FFFCF5]' : 'bg-[#B84C00] text-[#FFFCF5]'
                           : isDone
                           ? 'bg-[#2E7D32] text-[#FFFCF5]'
-                          : 'bg-[#F5F2EA] text-[#6B7280]'
+                          : 'bg-[#F5F2EA] text-[#4B5563]'
                       }`}>
                         {isDone ? '✓' : i + 1}
                       </div>
                       <span className={`text-[10px] font-medium text-center leading-tight hidden sm:block ${
                         isCurrent
-                          ? step.key === 'disputed' ? 'text-[#B42318]' : 'text-[#E76F00]'
-                          : isDone ? 'text-[#2E7D32]' : 'text-[#6B7280]'
+                          ? step.key === 'disputed' ? 'text-[#B42318]' : 'text-[#B84C00]'
+                          : isDone ? 'text-[#2E7D32]' : 'text-[#4B5563]'
                       }`}>{step.label}</span>
                     </div>
                     {i < steps.length - 1 && (
@@ -973,12 +973,12 @@ export default function VariationDetail() {
               <div>
                 <label className={labelClass}>Response Due Date <span className="text-[#B42318]">*</span></label>
                 <input type="date" required value={editDueDate} onChange={e => setEditDueDate(e.target.value)} className={inputClass} />
-                <p className="text-[11px] text-[#6B7280] mt-1">Date by which a response to this variation is required</p>
+                <p className="text-[11px] text-[#4B5563] mt-1">Date by which a response to this variation is required</p>
               </div>
               <div>
                 <label className={labelClass}>Client Email</label>
                 <input type="email" value={editClientEmail} onChange={e => setEditClientEmail(e.target.value)} className={inputClass} placeholder="e.g. engineer@clientcompany.com.au" />
-                <p className="text-[11px] text-[#6B7280] mt-1">If set, Submit to Client will email the variation directly with Approve/Reject buttons</p>
+                <p className="text-[11px] text-[#4B5563] mt-1">If set, Submit to Client will email the variation directly with Approve/Reject buttons</p>
               </div>
             </div>
           ) : (
@@ -988,7 +988,7 @@ export default function VariationDetail() {
                   <div className="flex items-center gap-2 mb-1">
                     <div className="text-[12px] mono font-medium text-[#17212B] uppercase tracking-wider">{getVariationNumber(variation)}</div>
                     {editing ? (
-                      <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#E76F00] px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#B84C00] px-1.5 py-0.5 rounded">
                         {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0) + 1} — Draft` : 'Draft'}
                       </span>
                     ) : hasPendingDraft ? (
@@ -1012,20 +1012,20 @@ export default function VariationDetail() {
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-5 pt-4 border-t border-[#D8D2C4]">
                 <div>
-                  <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Instruction Source</div>
+                  <div className="text-[11px] font-medium uppercase tracking-widest text-[#4B5563]">Instruction Source</div>
                   <div className="text-[15px] text-[#111827] mt-1 capitalize truncate">{variation.instruction_source?.replace(/_/g, ' ')}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Instructed By</div>
+                  <div className="text-[11px] font-medium uppercase tracking-widest text-[#4B5563]">Instructed By</div>
                   <div className="text-[15px] text-[#111827] mt-1 truncate">{variation.instructed_by || '—'}</div>
                 </div>
                 <div>
-                  <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Captured</div>
+                  <div className="text-[11px] font-medium uppercase tracking-widest text-[#4B5563]">Captured</div>
                   <div className="text-[15px] text-[#111827] mt-1 whitespace-nowrap">{formatDate(variation.captured_at)}</div>
                 </div>
                 {(variation.requestor_name || variation.requestor_email) && (
                   <div>
-                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Submitted By</div>
+                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#4B5563]">Submitted By</div>
                     <div className="text-[15px] text-[#111827] mt-1 truncate">{variation.requestor_name || '—'}</div>
                     {variation.requestor_email && (
                       <div className="text-[12px] text-[#334155] mt-0.5 break-all">{variation.requestor_email}</div>
@@ -1034,13 +1034,13 @@ export default function VariationDetail() {
                 )}
                 {variation.reference_doc && (
                   <div>
-                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Reference Document</div>
+                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#4B5563]">Reference Document</div>
                     <div className="text-[15px] text-[#111827] mt-1 truncate">{variation.reference_doc}</div>
                   </div>
                 )}
                 {variation.client_email && (
                   <div>
-                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Client Email</div>
+                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#4B5563]">Client Email</div>
                     <div className="text-[15px] text-[#111827] mt-1 break-all">{variation.client_email}</div>
                   </div>
                 )}
@@ -1052,7 +1052,7 @@ export default function VariationDetail() {
                   const dueSoon = daysLeft >= 0 && daysLeft <= 3;
                   return (
                     <div>
-                      <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Response Due</div>
+                      <div className="text-[11px] font-medium uppercase tracking-widest text-[#4B5563]">Response Due</div>
                       <div className={`text-[15px] font-medium mt-1 ${overdue ? 'text-[#B42318]' : dueSoon ? 'text-[#8C6500]' : 'text-[#111827]'}`}>
                         {due.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })}
                       </div>
@@ -1064,8 +1064,8 @@ export default function VariationDetail() {
                 })()}
                 {variation.evidence_hash && (
                   <div className="sm:col-span-2">
-                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#6B7280]">Evidence Hash</div>
-                    <div className="text-[11px] text-[#6B7280] mt-1 mono break-all">{variation.evidence_hash}</div>
+                    <div className="text-[11px] font-medium uppercase tracking-widest text-[#4B5563]">Evidence Hash</div>
+                    <div className="text-[11px] text-[#4B5563] mt-1 mono break-all">{variation.evidence_hash}</div>
                   </div>
                 )}
               </div>
@@ -1117,7 +1117,7 @@ export default function VariationDetail() {
               <div className="space-y-1">
                 {((variation as any).cost_items || []).map((item: any) => (
                   <div key={item.id} className="flex justify-between text-[13px] py-1 border-b border-[#D8D2C4]">
-                    <span className="text-[#111827]">{item.description} <span className="text-[#6B7280]">({item.qty} {item.unit} @ ${item.rate})</span></span>
+                    <span className="text-[#111827]">{item.description} <span className="text-[#4B5563]">({item.qty} {item.unit} @ ${item.rate})</span></span>
                     <span className="font-medium tabular-nums">${item.total?.toFixed(2)}</span>
                   </div>
                 ))}
@@ -1153,7 +1153,7 @@ export default function VariationDetail() {
                   <option value="days">days</option>
                   <option value="hours">hours</option>
                 </select>
-                <span className="text-[13px] text-[#6B7280]">Leave blank if no time impact</span>
+                <span className="text-[13px] text-[#4B5563]">Leave blank if no time impact</span>
               </div>
             ) : (
               <div className="text-[14px] text-[#111827] font-medium">
@@ -1161,7 +1161,7 @@ export default function VariationDetail() {
                   ? `${variation.eot_days_claimed} ${variation.time_implication_unit === 'hours'
                       ? `hour${variation.eot_days_claimed !== 1 ? 's' : ''}`
                       : `day${variation.eot_days_claimed !== 1 ? 's' : ''}`} extension claimed`
-                  : <span className="text-[#6B7280] font-normal">Time impact flagged — enter days/hours to quantify</span>
+                  : <span className="text-[#4B5563] font-normal">Time impact flagged — enter days/hours to quantify</span>
                 }
               </div>
             )}
@@ -1184,7 +1184,7 @@ export default function VariationDetail() {
                   <div className="text-[#334155]">📄</div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[14px] font-medium text-[#111827] truncate">{doc.file_name}</div>
-                    <div className="text-[12px] text-[#6B7280]">{(doc.file_size / 1024).toFixed(0)} KB</div>
+                    <div className="text-[12px] text-[#4B5563]">{(doc.file_size / 1024).toFixed(0)} KB</div>
                   </div>
                   <span className="text-[12px] text-[#17212B] font-medium flex-shrink-0">Download ↓</span>
                 </a>
@@ -1209,7 +1209,7 @@ export default function VariationDetail() {
                     }}
                   />
                   <p className="text-[13px] text-[#334155]">Click to attach more files</p>
-                  <p className="text-[11px] text-[#6B7280] mt-1">PDF, Word, Excel, Images</p>
+                  <p className="text-[11px] text-[#4B5563] mt-1">PDF, Word, Excel, Images</p>
                 </div>
                 {newFiles.length > 0 && (
                   <div className="mt-2 space-y-1">
@@ -1219,7 +1219,7 @@ export default function VariationDetail() {
                         <button
                           type="button"
                           onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))}
-                          className="text-[#6B7280] hover:text-[#B42318] ml-2 transition-colors"
+                          className="text-[#4B5563] hover:text-[#B42318] ml-2 transition-colors"
                         >
                           ✕
                         </button>
@@ -1242,7 +1242,7 @@ export default function VariationDetail() {
                   {photoUrls[photo.id] ? (
                     <img src={photoUrls[photo.id]} alt="Evidence" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[#6B7280] text-[13px]">Loading...</div>
+                    <div className="w-full h-full flex items-center justify-center text-[#4B5563] text-[13px]">Loading...</div>
                   )}
                 </div>
               ))}
@@ -1257,9 +1257,9 @@ export default function VariationDetail() {
             <div className="space-y-2">
               {voiceNotes.map(vn => (
                 <div key={vn.id} className="flex items-start gap-3 p-3 bg-[#F5F2EA] rounded-md">
-                  <div className="text-[#6B7280]">🎤</div>
+                  <div className="text-[#4B5563]">🎤</div>
                   <div className="flex-1">
-                    <div className="text-[12px] text-[#6B7280]">{Math.round(vn.duration_seconds)}s · {formatDate(vn.captured_at)}</div>
+                    <div className="text-[12px] text-[#4B5563]">{Math.round(vn.duration_seconds)}s · {formatDate(vn.captured_at)}</div>
                     {vn.transcription && (
                       <p className="text-[13px] text-[#334155] mt-1.5 italic leading-relaxed">&ldquo;{vn.transcription}&rdquo;</p>
                     )}
@@ -1290,17 +1290,17 @@ export default function VariationDetail() {
                 </>
               )}
               {(variation.client_approved_by_email || variation.client_email) && (
-                <span className="text-[11px] text-[#6B7280]">
+                <span className="text-[11px] text-[#4B5563]">
                   by {variation.client_approved_by_email || variation.client_email}
                 </span>
               )}
               {variation.client_approved_at && (
-                <span className="text-[11px] text-[#6B7280]">{formatDateTime(variation.client_approved_at)}</span>
+                <span className="text-[11px] text-[#4B5563]">{formatDateTime(variation.client_approved_at)}</span>
               )}
             </div>
             {variation.client_approval_comment && (
               <p className="text-[12px] text-[#334155] mt-1 pl-5">
-                <span className="font-medium text-[#6B7280]">Comment: </span>
+                <span className="font-medium text-[#4B5563]">Comment: </span>
                 &ldquo;{variation.client_approval_comment}&rdquo;
               </p>
             )}
@@ -1363,9 +1363,9 @@ export default function VariationDetail() {
                     const rev = entry.rev;
                     return (
                       <div key={entry.id} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
-                        <div className="text-[#6B7280] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
+                        <div className="text-[#4B5563] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#E76F00] px-2 py-0.5 rounded flex-shrink-0">
+                          <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#B84C00] px-2 py-0.5 rounded flex-shrink-0">
                             📧 Sent
                           </span>
                           <span className="text-[12px] text-[#111827] truncate">
@@ -1382,11 +1382,11 @@ export default function VariationDetail() {
                   const isRejection = entry.toStatus === 'disputed' && isClientApproval;
                   return (
                     <div key={entry.id} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
-                      <div className="text-[#6B7280] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
+                      <div className="text-[#4B5563] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
                       <div className="flex flex-col gap-1 flex-1 min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           {entry.fromStatus && <StatusBadge status={entry.fromStatus} />}
-                          {entry.fromStatus && <span className="text-[#6B7280]">→</span>}
+                          {entry.fromStatus && <span className="text-[#4B5563]">→</span>}
                           <StatusBadge status={entry.toStatus} />
                           {entry.by && !isClientApproval && (
                             <span className="text-[12px] text-[#334155]">by {entry.by}</span>
@@ -1397,7 +1397,7 @@ export default function VariationDetail() {
                           <div className="text-[12px] text-[#334155] pl-1">{entry.notes}</div>
                         )}
                         {entry.notes && !isClientApproval && (
-                          <div className="text-[11px] text-[#6B7280] pl-1">{entry.notes}</div>
+                          <div className="text-[11px] text-[#4B5563] pl-1">{entry.notes}</div>
                         )}
                       </div>
                     </div>
@@ -1439,7 +1439,7 @@ export default function VariationDetail() {
               <XCircle size={18} className="text-[#B42318] flex-shrink-0" />
               <h3 className="text-[15px] font-medium text-[#111827]">Rejected by Client</h3>
             </div>
-            <p className="text-[13px] text-[#6B7280] mb-4">Record the reason for rejection. This will be saved against the variation.</p>
+            <p className="text-[13px] text-[#4B5563] mb-4">Record the reason for rejection. This will be saved against the variation.</p>
             <textarea
               value={disputeReason}
               onChange={e => setDisputeReason(e.target.value)}
@@ -1477,7 +1477,7 @@ export default function VariationDetail() {
                       <button
                         type="button"
                         onClick={() => setRejectionFiles(prev => prev.filter((_, idx) => idx !== i))}
-                        className="ml-2 text-[#6B7280] hover:text-[#B42318] flex-shrink-0"
+                        className="ml-2 text-[#4B5563] hover:text-[#B42318] flex-shrink-0"
                       >✕</button>
                     </li>
                   ))}
@@ -1557,8 +1557,8 @@ export default function VariationDetail() {
                   </span>
                   <div className="min-w-0">
                     <div className="text-[13px] text-[#111827] truncate">Sent to {rev.sent_to}</div>
-                    {rev.sent_cc && <div className="text-[11px] text-[#6B7280] truncate">CC: {rev.sent_cc}</div>}
-                    <div className="text-[11px] text-[#6B7280]">
+                    {rev.sent_cc && <div className="text-[11px] text-[#4B5563] truncate">CC: {rev.sent_cc}</div>}
+                    <div className="text-[11px] text-[#4B5563]">
                       {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
                     </div>
                   </div>
@@ -1617,7 +1617,7 @@ export default function VariationDetail() {
             <p className="text-[14px] text-[#334155] mb-1">
               This variation has been submitted to <strong className="text-[#111827]">{variation.client_email}</strong> and you're still waiting on their response.
             </p>
-            <p className="text-[13px] text-[#6B7280] mb-5">
+            <p className="text-[13px] text-[#4B5563] mb-5">
               {showClientWarning === 'edit'
                 ? 'Editing and resubmitting will replace the current version. The client\'s existing email link will no longer work.'
                 : 'Deleting will permanently remove this variation. The client will not be notified.'}
@@ -1632,7 +1632,7 @@ export default function VariationDetail() {
                   if (showClientWarning === 'edit') { setShowClientWarning(null); startEditing(); }
                   else { setShowClientWarning(null); setShowDeleteConfirm(true); }
                 }}
-                className={`px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] rounded-lg transition-colors ${showClientWarning === 'delete' ? 'bg-[#B42318] hover:bg-[#7A1810]' : 'bg-[#D99A00] hover:bg-[#8C6500]'}`}
+                className={`px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] rounded-lg transition-colors ${showClientWarning === 'delete' ? 'bg-[#B42318] hover:bg-[#7A1810]' : 'bg-[#8C6500] hover:bg-[#8C6500]'}`}
               >
                 {showClientWarning === 'edit' ? 'Edit anyway' : 'Delete anyway'}
               </button>
@@ -1649,7 +1649,7 @@ export default function VariationDetail() {
             <p className="text-[14px] text-[#334155] mb-1">
               Are you sure you want to delete <span className="font-medium text-[#111827]">Variation #{variation.sequence_number}: {variation.title}</span>?
             </p>
-            <p className="text-[13px] text-[#6B7280] mb-5">This will permanently delete the variation and all associated photos, voice notes, and documents. This cannot be undone.</p>
+            <p className="text-[13px] text-[#4B5563] mb-5">This will permanently delete the variation and all associated photos, voice notes, and documents. This cannot be undone.</p>
             {deleteError && (
               <p className="text-[13px] text-[#B42318] bg-[#FBE6E4] border border-[#FBE6E4] rounded-md px-3 py-2 mb-4">{deleteError}</p>
             )}
@@ -1680,7 +1680,7 @@ export default function VariationDetail() {
               <button
                 onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
                 disabled={advancingStatus}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] rounded-xl disabled:opacity-40 transition-colors active:bg-[#C75A00]"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#B84C00] rounded-xl disabled:opacity-40 transition-colors active:bg-[#9A3F00]"
               >
                 <Send size={15} />
                 {advancingStatus ? 'Saving…' : 'Submit to Client'}
@@ -1692,7 +1692,7 @@ export default function VariationDetail() {
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50 transition-colors"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50 transition-colors"
                 >
                   <FileText size={14} /> {sendingEmail ? '…' : 'PDF / Send'}
                 </button>
@@ -1719,14 +1719,14 @@ export default function VariationDetail() {
                 <button
                   onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
                 >
                   <Send size={14} /> {sendingEmail ? '…' : 'Resend'}
                 </button>
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
                 >
                   <FileText size={14} /> {sendingEmail ? '…' : 'PDF'}
                 </button>
@@ -1737,14 +1737,14 @@ export default function VariationDetail() {
             <>
               <button
                 onClick={startRevising}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] rounded-xl transition-colors active:bg-[#C75A00]"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#B84C00] rounded-xl transition-colors active:bg-[#9A3F00]"
               >
                 <ArrowUpRight size={15} /> Revise
               </button>
               <button
                 onClick={handleSendEmail}
                 disabled={sendingEmail}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
               >
                 <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
               </button>
@@ -1762,7 +1762,7 @@ export default function VariationDetail() {
               <button
                 onClick={handleSendEmail}
                 disabled={sendingEmail}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
               >
                 <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
               </button>
@@ -1772,7 +1772,7 @@ export default function VariationDetail() {
             <button
               onClick={handleSendEmail}
               disabled={sendingEmail}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
             >
               <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
             </button>

@@ -515,7 +515,7 @@ export default function NoticeDetail() {
   if (loading) {
     return (
       <AppShell><TopBar title="Variation Notice" />
-        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Loading...</div>
+        <div className="flex items-center justify-center h-96 text-[#4B5563] text-sm">Loading...</div>
       </AppShell>
     );
   }
@@ -523,7 +523,7 @@ export default function NoticeDetail() {
   if (!notice || !project) {
     return (
       <AppShell><TopBar title="Variation Notice" />
-        <div className="flex items-center justify-center h-96 text-[#6B7280] text-sm">Notice not found</div>
+        <div className="flex items-center justify-center h-96 text-[#4B5563] text-sm">Notice not found</div>
       </AppShell>
     );
   }
@@ -535,7 +535,7 @@ export default function NoticeDetail() {
   // True when sent to client and still awaiting acknowledgement
   const awaitingClientResponse = notice.status === 'issued' && !!notice.client_email && !notice.acknowledged_at;
 
-  const labelClass = "block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1";
+  const labelClass = "block text-[11px] font-medium text-[#4B5563] uppercase tracking-[0.02em] mb-1";
 
   return (
     <AppShell>
@@ -580,7 +580,7 @@ export default function NoticeDetail() {
                       }
                     }}
                     disabled={sendingEmail}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors disabled:opacity-40 shadow-sm whitespace-nowrap"
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-lg transition-colors disabled:opacity-40 shadow-sm whitespace-nowrap"
                   >
                     <Send size={14} />
                     {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : showEmailInput ? 'Send' : 'Submit to Client'}
@@ -657,7 +657,7 @@ export default function NoticeDetail() {
                     labelSuffix="(optional — internal team)"
                   />
                   <div className="flex items-center gap-2 pt-1">
-                    <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-[#6B7280] hover:text-[#334155]">Cancel</button>
+                    <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-[#4B5563] hover:text-[#334155]">Cancel</button>
                   </div>
                 </div>
               )}
@@ -680,14 +680,14 @@ export default function NoticeDetail() {
                   onChange={e => { if (e.target.files) setNewFiles(prev => [...prev, ...Array.from(e.target.files!)]); }}
                 />
                 <p className="text-[13px] text-[#334155]">📎 Attach photos or files</p>
-                <p className="text-[11px] text-[#6B7280] mt-0.5">PDF, Word, Excel, Images</p>
+                <p className="text-[11px] text-[#4B5563] mt-0.5">PDF, Word, Excel, Images</p>
               </div>
               {newFiles.length > 0 && (
                 <div className="mt-2 space-y-1">
                   {newFiles.map((f, i) => (
                     <div key={i} className="flex items-center justify-between px-3 py-1.5 bg-[#F5F2EA] rounded text-[13px]">
                       <span className="text-[#111827] truncate">{f.name}</span>
-                      <button type="button" onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))} className="text-[#6B7280] hover:text-[#B42318] ml-2">✕</button>
+                      <button type="button" onClick={() => setNewFiles(prev => prev.filter((_, j) => j !== i))} className="text-[#4B5563] hover:text-[#B42318] ml-2">✕</button>
                     </div>
                   ))}
                 </div>
@@ -722,7 +722,7 @@ export default function NoticeDetail() {
               <div className="text-[12px] mono font-medium text-[#17212B] uppercase tracking-wider mb-1 flex items-center gap-2 flex-wrap">
                 {notice.notice_number}
                 {editing ? (
-                  <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#E76F00] px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#B84C00] px-1.5 py-0.5 rounded">
                     {revisions.length > 0 ? `Rev ${revisions.length} — Draft` : 'Draft'}
                   </span>
                 ) : (notice.status === 'draft' || hasPendingDraft) ? (
@@ -740,8 +740,8 @@ export default function NoticeDetail() {
             </div>
             <div className="flex sm:flex-col items-center sm:items-end gap-3 sm:gap-0">
               <StatusBadge status={notice.status} />
-              {notice.issued_at && <div className="text-[12px] text-[#6B7280] sm:mt-2">Issued {formatDate(notice.issued_at)}</div>}
-              {notice.acknowledged_at && <div className="text-[12px] text-[#6B7280] sm:mt-1">Acknowledged {formatDate(notice.acknowledged_at)}</div>}
+              {notice.issued_at && <div className="text-[12px] text-[#4B5563] sm:mt-2">Issued {formatDate(notice.issued_at)}</div>}
+              {notice.acknowledged_at && <div className="text-[12px] text-[#4B5563] sm:mt-1">Acknowledged {formatDate(notice.acknowledged_at)}</div>}
             </div>
           </div>
 
@@ -828,7 +828,7 @@ export default function NoticeDetail() {
                       className="flex items-center justify-between px-3 py-2.5 bg-[#F5F2EA] rounded-md hover:bg-[#D8D2C4] transition-colors">
                       <div>
                         <div className="text-[14px] font-medium text-[#111827] truncate">{d.file_name}</div>
-                        <div className="text-[12px] text-[#6B7280]">{(d.file_size / 1024).toFixed(0)} KB</div>
+                        <div className="text-[12px] text-[#4B5563]">{(d.file_size / 1024).toFixed(0)} KB</div>
                       </div>
                       <span className="text-[12px] text-[#17212B] font-medium flex-shrink-0 ml-3">Download ↓</span>
                     </a>
@@ -852,7 +852,7 @@ export default function NoticeDetail() {
                       type="checkbox"
                       checked={editCostFlag}
                       onChange={e => setEditCostFlag(e.target.checked)}
-                      className="w-4 h-4 rounded border-[#D8D2C4] text-[#E76F00]"
+                      className="w-4 h-4 rounded border-[#D8D2C4] text-[#B84C00]"
                     />
                     <span className="text-[14px] text-[#111827]">Cost impact</span>
                   </label>
@@ -870,11 +870,11 @@ export default function NoticeDetail() {
                       <table className="w-full text-[13px]">
                         <thead>
                           <tr className="bg-[#F5F2EA] border-b border-[#D8D2C4]">
-                            <th className="text-left px-3 py-2 text-[11px] font-medium text-[#6B7280] uppercase tracking-wider">Description</th>
-                            <th className="text-right px-3 py-2 text-[11px] font-medium text-[#6B7280] uppercase tracking-wider w-16">Qty</th>
-                            <th className="text-left px-3 py-2 text-[11px] font-medium text-[#6B7280] uppercase tracking-wider w-16">Unit</th>
-                            <th className="text-right px-3 py-2 text-[11px] font-medium text-[#6B7280] uppercase tracking-wider w-20">Rate</th>
-                            <th className="text-right px-3 py-2 text-[11px] font-medium text-[#6B7280] uppercase tracking-wider w-24">Total</th>
+                            <th className="text-left px-3 py-2 text-[11px] font-medium text-[#4B5563] uppercase tracking-wider">Description</th>
+                            <th className="text-right px-3 py-2 text-[11px] font-medium text-[#4B5563] uppercase tracking-wider w-16">Qty</th>
+                            <th className="text-left px-3 py-2 text-[11px] font-medium text-[#4B5563] uppercase tracking-wider w-16">Unit</th>
+                            <th className="text-right px-3 py-2 text-[11px] font-medium text-[#4B5563] uppercase tracking-wider w-20">Rate</th>
+                            <th className="text-right px-3 py-2 text-[11px] font-medium text-[#4B5563] uppercase tracking-wider w-24">Total</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -888,7 +888,7 @@ export default function NoticeDetail() {
                             </tr>
                           ))}
                           <tr className="bg-[#F5F2EA] border-t-2 border-[#D8D2C4]">
-                            <td colSpan={4} className="px-3 py-2 text-right text-[11px] font-medium text-[#6B7280] uppercase tracking-wider">Total</td>
+                            <td colSpan={4} className="px-3 py-2 text-right text-[11px] font-medium text-[#4B5563] uppercase tracking-wider">Total</td>
                             <td className="px-3 py-2 text-right font-medium text-[#111827] tabular-nums">
                               ${(notice.cost_items as any[]).reduce((s: number, i: any) => s + (Number(i.total) || 0), 0).toFixed(2)}
                             </td>
@@ -909,7 +909,7 @@ export default function NoticeDetail() {
                       type="checkbox"
                       checked={editTimeFlag}
                       onChange={e => setEditTimeFlag(e.target.checked)}
-                      className="w-4 h-4 rounded border-[#D8D2C4] text-[#E76F00]"
+                      className="w-4 h-4 rounded border-[#D8D2C4] text-[#B84C00]"
                     />
                     <span className="text-[14px] text-[#111827]">Time impact</span>
                   </label>
@@ -979,7 +979,7 @@ export default function NoticeDetail() {
                 <button
                   onClick={handleConvertToVar}
                   disabled={converting}
-                  className="w-full py-3 px-4 bg-[#E76F00] hover:bg-[#C75A00] disabled:opacity-50 text-[#FFFCF5] text-[14px] font-medium rounded-md transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)]"
+                  className="w-full py-3 px-4 bg-[#B84C00] hover:bg-[#9A3F00] disabled:opacity-50 text-[#FFFCF5] text-[14px] font-medium rounded-md transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)]"
                 >
                   {converting ? 'Creating...' : 'Convert to Variation Request →'}
                 </button>
@@ -995,11 +995,11 @@ export default function NoticeDetail() {
             <div className="space-y-3 mb-4">
               {revisions.slice().sort((a, b) => new Date(a.sent_at ?? 0).getTime() - new Date(b.sent_at ?? 0).getTime()).map((rev) => (
                 <div key={rev.id + '-timeline'} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
-                  <div className="text-[#6B7280] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">
+                  <div className="text-[#4B5563] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">
                     {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
                   </div>
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#E76F00] px-2 py-0.5 rounded flex-shrink-0">
+                    <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#B84C00] px-2 py-0.5 rounded flex-shrink-0">
                       📧 Issued
                     </span>
                     <span className="text-[12px] text-[#111827] truncate">
@@ -1011,7 +1011,7 @@ export default function NoticeDetail() {
               ))}
             </div>
             <div className="border-t border-[#D8D2C4] pt-3">
-              <div className="text-[11px] font-medium uppercase tracking-wider text-[#6B7280] mb-2">Download sent versions</div>
+              <div className="text-[11px] font-medium uppercase tracking-wider text-[#4B5563] mb-2">Download sent versions</div>
             <div className="space-y-2">
               {revisions.map((rev) => (
                 <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-[#F5F2EA] rounded-md border border-[#D8D2C4]">
@@ -1024,9 +1024,9 @@ export default function NoticeDetail() {
                         Sent to {rev.sent_to}
                       </div>
                       {rev.sent_cc && (
-                        <div className="text-[11px] text-[#6B7280] truncate">CC: {rev.sent_cc}</div>
+                        <div className="text-[11px] text-[#4B5563] truncate">CC: {rev.sent_cc}</div>
                       )}
-                      <div className="text-[11px] text-[#6B7280]">
+                      <div className="text-[11px] text-[#4B5563]">
                         {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
                       </div>
                     </div>
@@ -1096,7 +1096,7 @@ export default function NoticeDetail() {
             <p className="text-[14px] text-[#334155] mb-1">
               This notice has been sent to <strong className="text-[#111827]">{notice.client_email}</strong> and hasn&apos;t been acknowledged yet.
             </p>
-            <p className="text-[13px] text-[#6B7280] mb-5">
+            <p className="text-[13px] text-[#4B5563] mb-5">
               {showClientWarning === 'edit'
                 ? 'Editing and reissuing will replace the current version. The client will need to be resent the updated notice.'
                 : 'Deleting will permanently remove this notice. The client will not be notified.'}
@@ -1108,7 +1108,7 @@ export default function NoticeDetail() {
                   if (showClientWarning === 'edit') { setShowClientWarning(null); startEditing(); }
                   else { setShowClientWarning(null); setShowDeleteConfirm(true); }
                 }}
-                className={`px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] rounded-lg transition-colors ${showClientWarning === 'delete' ? 'bg-[#B42318] hover:bg-[#7A1810]' : 'bg-[#D99A00] hover:bg-[#8C6500]'}`}
+                className={`px-4 py-1.5 text-[13px] font-medium text-[#FFFCF5] rounded-lg transition-colors ${showClientWarning === 'delete' ? 'bg-[#B42318] hover:bg-[#7A1810]' : 'bg-[#8C6500] hover:bg-[#8C6500]'}`}
               >
                 {showClientWarning === 'edit' ? 'Edit anyway' : 'Delete anyway'}
               </button>
@@ -1126,11 +1126,11 @@ export default function NoticeDetail() {
               Are you sure you want to delete <span className="font-medium text-[#111827]">{notice.notice_number}</span>?
             </p>
             {notice.status !== 'draft' ? (
-              <p className="text-[13px] text-[#D99A00] bg-[#FBF1D6] border border-[#D8D2C4] rounded-md px-3 py-2 mb-4">
+              <p className="text-[13px] text-[#8C6500] bg-[#FBF1D6] border border-[#D8D2C4] rounded-md px-3 py-2 mb-4">
                 This notice has been <strong>{notice.status}</strong>. Deleting it will permanently remove it from your records — ensure the client has been notified separately if needed.
               </p>
             ) : (
-              <p className="text-[13px] text-[#6B7280] mb-5">This cannot be undone.</p>
+              <p className="text-[13px] text-[#4B5563] mb-5">This cannot be undone.</p>
             )}
             {deleteError && (
               <p className="text-[13px] text-[#B42318] bg-[#FBE6E4] border border-[#FBE6E4] rounded-md px-3 py-2 mb-4">{deleteError}</p>

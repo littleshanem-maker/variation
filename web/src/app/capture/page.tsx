@@ -384,19 +384,19 @@ function CapturePageContent() {
         {/* Detail */}
         <div className="px-5 py-4 text-center border-b border-[#D8D2C4]">
           <div className="text-[22px] font-medium text-[#111827]">{result.variationNumber}</div>
-          <div className="text-[13px] text-[#6B7280] mt-0.5">{result.projectName}</div>
+          <div className="text-[13px] text-[#4B5563] mt-0.5">{result.projectName}</div>
         </div>
         {/* Actions */}
         <div className="px-5 py-4 flex flex-col gap-2">
           <button
             onClick={handleCaptureAnother}
-            className="w-full bg-[#E76F00] text-[#FFFCF5] font-medium py-3 rounded-xl text-[15px] transition-colors active:bg-[#C75A00]"
+            className="w-full bg-[#B84C00] text-[#FFFCF5] font-medium py-3 rounded-xl text-[15px] transition-colors active:bg-[#9A3F00]"
           >
             Capture Another
           </button>
           <Link
             href={`/notice/${result.variationId}`}
-            className="block w-full text-center text-[#6B7280] font-medium py-2 text-[13px]"
+            className="block w-full text-center text-[#4B5563] font-medium py-2 text-[13px]"
           >
             View Notice →
           </Link>
@@ -432,7 +432,7 @@ function CapturePageContent() {
               <button
                 onClick={() => setBannerDismissed(true)}
                 className="flex-shrink-0 text-[16px] leading-none mt-0.5"
-                style={{ color: '#E76F00' }}
+                style={{ color: '#B84C00' }}
                 aria-label="Dismiss"
               >
                 ×
@@ -442,7 +442,7 @@ function CapturePageContent() {
 
           {/* Context note for non-field users (non-onboarding only) */}
           {!isOnboarding && !roleLoading && !isField && (
-            <div className="mb-4 px-4 py-2.5 bg-[#FBF1D6] border border-[#D99A00]/40 rounded-lg text-xs text-[#8C6500]">
+            <div className="mb-4 px-4 py-2.5 bg-[#FBF1D6] border border-[#8C6500]/40 rounded-lg text-xs text-[#8C6500]">
               Quick notice mode — for the full register,{' '}
               <Link href="/dashboard" className="underline">go to Dashboard</Link>.
             </div>
@@ -498,7 +498,7 @@ function CapturePageContent() {
                       ? 'e.g. Additional blockwork to Level 3 corridor'
                       : 'Describe the change — what was directed, by whom, where on site'
                   }
-                  className="w-full border border-[#D8D2C4] rounded-lg px-3 py-3 text-[15px] text-[#111827] resize-none focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-[#6B7280]"
+                  className="w-full border border-[#D8D2C4] rounded-lg px-3 py-3 text-[15px] text-[#111827] resize-none focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-[#4B5563]"
                   required
                 />
               </div>
@@ -526,7 +526,7 @@ function CapturePageContent() {
                           value={instructedBy}
                           onChange={(e) => setInstructedBy(e.target.value)}
                           placeholder="e.g. Site foreman, client rep, engineer"
-                          className="w-full border border-[#D8D2C4] rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-[#6B7280]"
+                          className="w-full border border-[#D8D2C4] rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-[#4B5563]"
                         />
                       </div>
 
@@ -547,7 +547,7 @@ function CapturePageContent() {
                       {!isField && (
                       <div>
                         <label className="block text-sm font-medium text-[#334155] mb-1.5">
-                          Response due date <span className="text-[#6B7280] font-normal">(optional)</span>
+                          Response due date <span className="text-[#4B5563] font-normal">(optional)</span>
                         </label>
                         <input
                           type="date"
@@ -561,7 +561,7 @@ function CapturePageContent() {
                       {/* Photo */}
                       <div>
                         <label className="block text-sm font-medium text-[#334155] mb-1.5">
-                          Photo evidence <span className="text-[#6B7280] font-normal">(optional)</span>
+                          Photo evidence <span className="text-[#4B5563] font-normal">(optional)</span>
                         </label>
                         {photoPreview ? (
                           <div className="relative">
@@ -617,7 +617,7 @@ function CapturePageContent() {
                       value={instructedBy}
                       onChange={(e) => setInstructedBy(e.target.value)}
                       placeholder="e.g. Site foreman, client rep, engineer"
-                      className="w-full border border-[#D8D2C4] rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-[#6B7280]"
+                      className="w-full border border-[#D8D2C4] rounded-lg px-3 py-2 text-[14px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#17212B]/30 focus:border-[#17212B] placeholder:text-[#4B5563]"
                     />
                   </div>
 
@@ -652,7 +652,7 @@ function CapturePageContent() {
                   {/* Photo */}
                   <div>
                     <label className="block text-sm font-medium text-[#334155] mb-1.5">
-                      Photo evidence <span className="text-[#6B7280] font-normal">(optional)</span>
+                      Photo evidence <span className="text-[#4B5563] font-normal">(optional)</span>
                     </label>
                     {photoPreview ? (
                       <div className="relative">
@@ -705,7 +705,7 @@ function CapturePageContent() {
               <button
                 type="submit"
                 disabled={submitting || loadingProjects || (!isOnboarding && projects.length === 0)}
-                className="w-full bg-[#E76F00] hover:bg-[#C75A00] active:bg-[#C75A00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed text-[#FFFCF5] font-medium py-4 px-6 rounded-xl text-base transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#B84C00] hover:bg-[#9A3F00] active:bg-[#9A3F00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed text-[#FFFCF5] font-medium py-4 px-6 rounded-xl text-base transition-colors flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <>
@@ -720,7 +720,7 @@ function CapturePageContent() {
           </div>
 
           {!isField && (
-            <p className="text-center text-xs text-[#6B7280] mt-6">
+            <p className="text-center text-xs text-[#4B5563] mt-6">
               <Link href="/dashboard" className="hover:underline">← Back to Dashboard</Link>
             </p>
           )}
@@ -731,12 +731,12 @@ function CapturePageContent() {
       {isField && (
         <div className="fixed bottom-0 left-0 right-0 bg-[#17212B] flex items-center justify-around px-2 py-3 z-50">
           <Link href="/field" className="flex flex-col items-center gap-1 px-10 py-1">
-            <Home size={20} className="text-[#6B7280]" />
-            <span className="text-[10px] font-medium text-[#6B7280]">Home</span>
+            <Home size={20} className="text-[#4B5563]" />
+            <span className="text-[10px] font-medium text-[#4B5563]">Home</span>
           </Link>
           <Link href="/settings" className="flex flex-col items-center gap-1 px-10 py-1">
-            <Settings size={20} className="text-[#6B7280]" />
-            <span className="text-[10px] font-medium text-[#6B7280]">Settings</span>
+            <Settings size={20} className="text-[#4B5563]" />
+            <span className="text-[10px] font-medium text-[#4B5563]">Settings</span>
           </Link>
         </div>
       )}
@@ -750,7 +750,7 @@ export default function CapturePage() {
       <div className="min-h-screen bg-[#F5F2EA] flex flex-col">
         <CaptureHeader />
         <div className="flex-1 flex items-center justify-center">
-          <div className="text-[#6B7280] text-sm">Loading…</div>
+          <div className="text-[#4B5563] text-sm">Loading…</div>
         </div>
       </div>
     }>
@@ -765,7 +765,7 @@ function CaptureHeader() {
     <header className="bg-[#17212B] text-[#FFFCF5] px-5 pt-12 pb-5">
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-[#E76F00] rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="w-7 h-7 bg-[#B84C00] rounded-lg flex items-center justify-center flex-shrink-0">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFCF5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>

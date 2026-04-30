@@ -150,7 +150,7 @@ export default function OnboardingPage() {
           <Logo size={56} className="mb-4" />
           {step === 1 ? (
             <>
-              <p className="text-[11px] font-medium uppercase tracking-wider mb-2" style={{ color: '#6B7280' }}>Step 1 of 2</p>
+              <p className="text-[11px] font-medium uppercase tracking-wider mb-2" style={{ color: '#4B5563' }}>Step 1 of 2</p>
               <h1 className="text-2xl font-medium tracking-tight text-center" style={{ color: '#111827' }}>
                 Set up your company
               </h1>
@@ -160,7 +160,7 @@ export default function OnboardingPage() {
             </>
           ) : (
             <>
-              <p className="text-[11px] font-medium uppercase tracking-wider mb-2" style={{ color: '#6B7280' }}>Step 2 of 2</p>
+              <p className="text-[11px] font-medium uppercase tracking-wider mb-2" style={{ color: '#4B5563' }}>Step 2 of 2</p>
               <h1 className="text-2xl font-medium tracking-tight text-center" style={{ color: '#111827' }}>
                 Your first project
               </h1>
@@ -184,7 +184,7 @@ export default function OnboardingPage() {
 
               {/* Company Name */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#4B5563' }}>
                   Company Name *
                 </label>
                 <input
@@ -201,8 +201,8 @@ export default function OnboardingPage() {
 
               {/* Address */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
-                  Business Address <span style={{ color: '#6B7280', fontWeight: 400 }}>(optional)</span>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#4B5563' }}>
+                  Business Address <span style={{ color: '#4B5563', fontWeight: 400 }}>(optional)</span>
                 </label>
                 <textarea
                   value={companyAddress}
@@ -217,8 +217,8 @@ export default function OnboardingPage() {
 
               {/* Phone */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
-                  Phone <span style={{ color: '#6B7280', fontWeight: 400 }}>(optional)</span>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#4B5563' }}>
+                  Phone <span style={{ color: '#4B5563', fontWeight: 400 }}>(optional)</span>
                 </label>
                 <input
                   type="tel"
@@ -233,8 +233,8 @@ export default function OnboardingPage() {
 
               {/* Logo */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
-                  Company Logo <span style={{ color: '#6B7280', fontWeight: 400 }}>(optional)</span>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#4B5563' }}>
+                  Company Logo <span style={{ color: '#4B5563', fontWeight: 400 }}>(optional)</span>
                 </label>
                 {logoPreview ? (
                   <div className="flex items-center gap-3">
@@ -253,9 +253,9 @@ export default function OnboardingPage() {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     className="w-full py-6 border-2 border-dashed rounded-lg text-[13px] text-center transition-colors"
-                    style={{ borderColor: '#D8D2C4', color: '#6B7280' }}
+                    style={{ borderColor: '#D8D2C4', color: '#4B5563' }}
                     onMouseEnter={e => { (e.currentTarget).style.borderColor = '#17212B'; (e.currentTarget).style.color = '#17212B'; }}
-                    onMouseLeave={e => { (e.currentTarget).style.borderColor = '#D8D2C4'; (e.currentTarget).style.color = '#6B7280'; }}
+                    onMouseLeave={e => { (e.currentTarget).style.borderColor = '#D8D2C4'; (e.currentTarget).style.color = '#4B5563'; }}
                   >
                     Click to upload logo (PNG or JPG)
                   </button>
@@ -275,7 +275,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleSaveAndNext}
                 disabled={saving || !companyName.trim()}
-                className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? 'Saving…' : 'Next →'}
               </button>
@@ -301,7 +301,7 @@ export default function OnboardingPage() {
 
               {/* Project Name */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#4B5563' }}>
                   Project Name *
                 </label>
                 <input
@@ -318,8 +318,8 @@ export default function OnboardingPage() {
 
               {/* Client */}
               <div>
-                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#6B7280' }}>
-                  Client / Head Contractor <span style={{ color: '#6B7280', fontWeight: 400 }}>(optional)</span>
+                <label className="block text-[11px] font-medium uppercase tracking-wider mb-1.5" style={{ color: '#4B5563' }}>
+                  Client / Head Contractor <span style={{ color: '#4B5563', fontWeight: 400 }}>(optional)</span>
                 </label>
                 <input
                   type="text"
@@ -338,7 +338,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleCreateProject}
                 disabled={creatingProject || !projectName.trim()}
-                className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed transition-colors"
               >
                 {creatingProject ? 'Creating…' : 'Create project →'}
               </button>

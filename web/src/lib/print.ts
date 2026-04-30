@@ -134,15 +134,15 @@ const GLOBAL_CSS = `
     padding-top: 12px;
     border-top: 1px solid #D8D2C4;
     font-size: 8pt;
-    color: #6B7280;
+    color: #4B5563;
     display: flex;
     justify-content: space-between;
   }
 `;
 
 // Inline SVG for the Variation Shield logo
-const VS_LOGO_SVG_16 = `<svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#E76F00"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,252,245,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="#FFFCF5" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const VS_LOGO_SVG_32 = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#E76F00"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,252,245,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="#FFFCF5" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const VS_LOGO_SVG_16 = `<svg width="16" height="16" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#B84C00"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,252,245,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="#FFFCF5" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const VS_LOGO_SVG_32 = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 2L5 6.8V15.6C5 22.2 9.8 28.1 16 30C22.2 28.1 27 22.2 27 15.6V6.8L16 2Z" fill="#B84C00"/><path d="M16 4.2L7 8.4V15.6C7 21 11 26 16 27.7V4.2Z" fill="rgba(255,252,245,0.07)"/><path d="M10.5 12L16 21L21.5 12" stroke="#FFFCF5" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
 // ------------------------------------------------------------------
 // HELPER: CREATE & OPEN BLOB
@@ -617,7 +617,7 @@ function buildNoticeHtml(
     </div>
 
     <div style="margin-top:32px; padding-top:20px; border-top:2px solid #D8D2C4;">
-      <div style="font-size:9pt; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:#6B7280; margin-bottom:12px;">Document Information</div>
+      <div style="font-size:9pt; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:#4B5563; margin-bottom:12px;">Document Information</div>
       <table style="width:100%; border-collapse:collapse; font-size:9pt;">
         <tr>
           <td style="padding:4px 0; color:#334155; width:160px; vertical-align:top;">Notice Number</td>
@@ -661,7 +661,7 @@ function buildNoticeHtml(
       <div style="font-size:7.5pt; line-height:1.5; color:#334155; margin-bottom:6px;">
         ${getNoticeLanguage(companyInfo?.preferredStandard)}
       </div>
-      <div style="font-size:7pt; color:#6B7280; line-height:1.5;">
+      <div style="font-size:7pt; color:#4B5563; line-height:1.5;">
         The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
       </div>
     </div>
@@ -755,8 +755,8 @@ function buildAttachmentsSection(documents: Document[], docUrls: Record<string, 
           ${otherDocs.map(d => `
             <li style="padding:8px 0; border-bottom:1px solid #F5F2EA; font-size:9pt; color:#334155;">
               📎 ${escapeHtml(d.file_name)}
-              <span style="color:#6B7280; font-size:8pt; margin-left:8px;">(${(d.file_size / 1024).toFixed(0)} KB)</span>
-              ${d.uploaded_at ? `<span style="color:#6B7280; font-size:8pt; margin-left:8px;">· ${formatUploadDateTime(d.uploaded_at)}</span>` : ''}
+              <span style="color:#4B5563; font-size:8pt; margin-left:8px;">(${(d.file_size / 1024).toFixed(0)} KB)</span>
+              ${d.uploaded_at ? `<span style="color:#4B5563; font-size:8pt; margin-left:8px;">· ${formatUploadDateTime(d.uploaded_at)}</span>` : ''}
             </li>
           `).join('')}
         </ul>
@@ -927,7 +927,7 @@ function buildVariationHtml(
     ` : ''}
 
     <div style="padding-top:12px; margin-bottom:16px;">
-      <div style="font-size:9pt; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:#6B7280; margin-bottom:8px;">Document Information</div>
+      <div style="font-size:9pt; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:#4B5563; margin-bottom:8px;">Document Information</div>
       <table style="width:100%; border-collapse:collapse; font-size:9pt;">
         <tr>
           <td style="padding:4px 0; color:#334155; width:160px; vertical-align:top;">Variation No.</td>
@@ -995,7 +995,7 @@ function buildVariationHtml(
       <div style="font-size:7.5pt; line-height:1.5; margin-bottom:6px; color:#334155;">
         ${getNoticeLanguage(companyInfo?.preferredStandard)}
       </div>
-      <div style="font-size:7pt; color:#6B7280; line-height:1.5;">
+      <div style="font-size:7pt; color:#4B5563; line-height:1.5;">
         The Contractor reserves all rights to claim additional time and cost in connection with this Variation in accordance with the Contract. The Principal/Superintendent is requested to provide written confirmation of this direction and the agreed adjustment within the time specified under the Contract.
       </div>
     </div>

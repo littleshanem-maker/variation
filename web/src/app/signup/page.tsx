@@ -104,7 +104,7 @@ function SignupContent() {
             <a
               href={STRIPE_CHECKOUT}
               className="block w-full rounded-xl text-[#FFFCF5] text-sm font-medium text-center transition-colors"
-              style={{ backgroundColor: '#E76F00', padding: '16px 20px' }}
+              style={{ backgroundColor: '#B84C00', padding: '16px 20px' }}
             >
               <div className="text-base font-medium mb-0.5">Subscribe — $299/mo</div>
               <div className="text-xs font-normal" style={{ color: 'rgba(255,252,245,0.6)' }}>

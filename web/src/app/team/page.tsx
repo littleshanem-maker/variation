@@ -203,7 +203,7 @@ export default function TeamPage() {
           {isFree ? (
             <a
               href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#E76F00] border border-[#D8D2C4] bg-[#FFFCF5] rounded-md hover:bg-[#F5F2EA] transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#B84C00] border border-[#D8D2C4] bg-[#FFFCF5] rounded-md hover:bg-[#F5F2EA] transition-colors"
             >
               🔒 Field accounts available on pro
             </a>
@@ -223,16 +223,16 @@ export default function TeamPage() {
             <h3 className="text-[13px] font-medium text-[#111827]">Active members</h3>
           </div>
           {loading ? (
-            <div className="p-8 text-center text-[#6B7280] text-sm">Loading...</div>
+            <div className="p-8 text-center text-[#4B5563] text-sm">Loading...</div>
           ) : members.filter(m => m.is_active).length === 0 ? (
-            <div className="p-8 text-center text-[#6B7280] text-sm">No team members yet.</div>
+            <div className="p-8 text-center text-[#4B5563] text-sm">No team members yet.</div>
           ) : (
             <div className="divide-y divide-[#D8D2C4]">
               {members.filter(m => m.is_active).map(m => (
                 <div key={m.id} className="px-4 md:px-5 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="text-[14px] font-medium text-[#111827]">{m.display_name || m.full_name || '—'}</div>
-                    <div className="text-[12px] text-[#6B7280] break-all">{m.email}</div>
+                    <div className="text-[12px] text-[#4B5563] break-all">{m.email}</div>
                   </div>
                   <div className="flex items-center gap-3 flex-shrink-0">
                     <span className={`cond inline-block px-2.5 py-1 text-[12px] rounded-full capitalize ${roleBadgeColors[m.role]}`}>
@@ -246,7 +246,7 @@ export default function TeamPage() {
                     </button>
                     <button
                       onClick={() => handleRemoveMember(m.id)}
-                      className="text-[12px] text-[#6B7280] hover:text-[#B42318] transition-colors"
+                      className="text-[12px] text-[#4B5563] hover:text-[#B42318] transition-colors"
                     >
                       Remove
                     </button>
@@ -274,7 +274,7 @@ export default function TeamPage() {
                         <span className={`inline-block px-2.5 py-0.5 text-[11px] font-medium rounded-full capitalize ${roleBadgeColors[inv.role]}`}>
                           {inv.role}
                         </span>
-                        <span className="text-[12px] text-[#6B7280]">
+                        <span className="text-[12px] text-[#4B5563]">
                           Expires {new Date(inv.expires_at).toLocaleDateString()}
                         </span>
                       </div>
@@ -291,7 +291,7 @@ export default function TeamPage() {
                       </button>
                       <button
                         onClick={() => handleRevokeInvite(inv.id)}
-                        className="text-[12px] text-[#6B7280] hover:text-[#B42318] transition-colors"
+                        className="text-[12px] text-[#4B5563] hover:text-[#B42318] transition-colors"
                       >
                         Revoke
                       </button>
@@ -310,7 +310,7 @@ export default function TeamPage() {
               <h3 className="text-[15px] font-medium text-[#111827] mb-4">Edit Team Member</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1">Display Name</label>
+                  <label className="block text-[11px] font-medium text-[#4B5563] uppercase tracking-[0.02em] mb-1">Display Name</label>
                   <input
                     type="text"
                     value={editName}
@@ -321,17 +321,17 @@ export default function TeamPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1">Email Address</label>
+                  <label className="block text-[11px] font-medium text-[#4B5563] uppercase tracking-[0.02em] mb-1">Email Address</label>
                   <input
                     type="text"
                     value={editMember.email}
                     readOnly
-                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-[#F5F2EA] text-[#6B7280] cursor-not-allowed"
+                    className="w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-md bg-[#F5F2EA] text-[#4B5563] cursor-not-allowed"
                   />
-                  <p className="text-[11px] text-[#6B7280] mt-1">Email can only be changed by the member in their account settings.</p>
+                  <p className="text-[11px] text-[#4B5563] mt-1">Email can only be changed by the member in their account settings.</p>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1">Role</label>
+                  <label className="block text-[11px] font-medium text-[#4B5563] uppercase tracking-[0.02em] mb-1">Role</label>
                   <select
                     value={editRole}
                     onChange={e => setEditRole(e.target.value as UserRole)}
@@ -403,7 +403,7 @@ export default function TeamPage() {
                   <h3 className="text-[15px] font-medium text-[#111827] mb-4">Invite Team Member</h3>
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1">Email Address</label>
+                      <label className="block text-[11px] font-medium text-[#4B5563] uppercase tracking-[0.02em] mb-1">Email Address</label>
                       <input
                         type="email"
                         value={inviteEmail}
@@ -414,7 +414,7 @@ export default function TeamPage() {
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-medium text-[#6B7280] uppercase tracking-[0.02em] mb-1">Role</label>
+                      <label className="block text-[11px] font-medium text-[#4B5563] uppercase tracking-[0.02em] mb-1">Role</label>
                       <select
                         value={inviteRole}
                         onChange={e => setInviteRole(e.target.value as UserRole)}

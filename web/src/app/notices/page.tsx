@@ -11,8 +11,8 @@ import type { VariationNotice } from '@/lib/types';
 type NoticeWithProject = VariationNotice & { project_name: string };
 
 const STATUS_LABELS: Record<string, { label: string; bg: string; color: string; dot: string }> = {
-  draft:        { label: 'Draft',        bg: 'bg-[#F5F2EA]',   color: 'text-[#334155]',   dot: 'bg-[#6B7280]' },
-  issued:       { label: 'Issued',       bg: 'bg-[#F5F2EA]',   color: 'text-[#C75A00]',  dot: 'bg-[#E76F00]' },
+  draft:        { label: 'Draft',        bg: 'bg-[#F5F2EA]',   color: 'text-[#334155]',   dot: 'bg-[#4B5563]' },
+  issued:       { label: 'Issued',       bg: 'bg-[#F5F2EA]',   color: 'text-[#9A3F00]',  dot: 'bg-[#B84C00]' },
   acknowledged: { label: 'Acknowledged', bg: 'bg-[#E5F0E6]',  color: 'text-[#1F5223]', dot: 'bg-[#2E7D32]' },
 };
 
@@ -73,13 +73,13 @@ export default function NoticesPage() {
               onClick={() => setFilter(tab.key)}
               className={`flex-shrink-0 px-3 py-1.5 text-[13px] font-medium rounded-lg transition-colors ${
                 filter === tab.key
-                  ? 'bg-[#E76F00] text-[#FFFCF5]'
+                  ? 'bg-[#B84C00] text-[#FFFCF5]'
                   : 'bg-[#FFFCF5] text-[#334155] border border-[#D8D2C4] hover:bg-[#F5F2EA]'
               }`}
             >
               {tab.label}
               {tab.count > 0 && (
-                <span className={`ml-1.5 text-[11px] ${filter === tab.key ? 'text-[#FFFCF5]' : 'text-[#6B7280]'}`}>
+                <span className={`ml-1.5 text-[11px] ${filter === tab.key ? 'text-[#FFFCF5]' : 'text-[#4B5563]'}`}>
                   {tab.count}
                 </span>
               )}
@@ -95,8 +95,8 @@ export default function NoticesPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="bg-[#FFFCF5] rounded-lg border border-[#D8D2C4] p-12 text-center">
-            <p className="text-[14px] text-[#6B7280]">No notices found.</p>
-            <Link href="/notice/new" className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-[#E76F00] text-[#FFFCF5] text-[13px] font-medium rounded-lg">
+            <p className="text-[14px] text-[#4B5563]">No notices found.</p>
+            <Link href="/notice/new" className="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-[#B84C00] text-[#FFFCF5] text-[13px] font-medium rounded-lg">
               + New Notice
             </Link>
           </div>
@@ -111,12 +111,12 @@ export default function NoticesPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-[12px] mono font-medium text-[#E76F00]">{notice.notice_number}</span>
+                      <span className="text-[12px] mono font-medium text-[#B84C00]">{notice.notice_number}</span>
                       {notice.cost_flag && (
                         <span className="text-[10px] font-medium text-[#8C6500] bg-[#FBF1D6] px-1.5 py-0.5 rounded">Cost</span>
                       )}
                       {notice.time_flag && (
-                        <span className="text-[10px] font-medium text-[#E76F00] bg-[#F5F2EA] px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] font-medium text-[#B84C00] bg-[#F5F2EA] px-1.5 py-0.5 rounded">
                           Time{notice.estimated_days ? ` +${notice.estimated_days}d` : ''}
                         </span>
                       )}
@@ -124,7 +124,7 @@ export default function NoticesPage() {
                     <p className="text-[14px] font-medium text-[#111827] leading-snug line-clamp-2">
                       {notice.event_description}
                     </p>
-                    <p className="text-[12px] text-[#6B7280] mt-1">{notice.project_name} · {formatDate(notice.event_date)}</p>
+                    <p className="text-[12px] text-[#4B5563] mt-1">{notice.project_name} · {formatDate(notice.event_date)}</p>
                   </div>
                   <div className="flex-shrink-0 text-right">
                     <NoticeBadge status={notice.status} />

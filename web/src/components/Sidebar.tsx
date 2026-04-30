@@ -88,7 +88,7 @@ export default function Sidebar() {
             <span className="font-medium text-[15px] tracking-tight">Variation Shield</span>
           </a>
           {company && (
-            <div className="mt-2 text-[12px] text-[#6B7280] truncate">{company.name}</div>
+            <div className="mt-2 text-[12px] text-[#4B5563] truncate">{company.name}</div>
           )}
         </div>
 
@@ -96,7 +96,7 @@ export default function Sidebar() {
           <div className="px-3 pb-2">
             <Link
               href="/capture"
-              className="flex items-center gap-2.5 px-3 py-2 border border-[#E76F00] bg-[#E76F00] text-[#FFFCF5] text-[13px] font-medium hover:bg-[#C75A00] hover:border-[#C75A00] hover:-translate-y-px transition-all"
+              className="flex items-center gap-2.5 px-3 py-2 border border-[#B84C00] bg-[#B84C00] text-[#FFFCF5] text-[13px] font-medium hover:bg-[#9A3F00] hover:border-[#9A3F00] hover:-translate-y-px transition-all"
             >
               <Zap size={15} strokeWidth={2.5} />
               Quick capture
@@ -120,7 +120,7 @@ export default function Sidebar() {
               >
                 <div className="flex items-center gap-2.5">
                   {active && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#E76F00] rounded-r" />
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 bg-[#B84C00] rounded-r" />
                   )}
                   <Icon
                     size={15}
@@ -146,7 +146,7 @@ export default function Sidebar() {
               varCount >= varLimit
                 ? 'bg-[#FBE6E4] border border-[#B42318]/20'
                 : varCount >= varLimit - 1
-                ? 'bg-[#FBF1D6] border border-[#D99A00]/20'
+                ? 'bg-[#FBF1D6] border border-[#8C6500]/20'
                 : 'bg-[#FFFCF5]/[0.04] border border-[#FFFCF5]/[0.08]'
             }`}>
               <div className={`mb-1 ${
@@ -158,7 +158,7 @@ export default function Sidebar() {
               <div className="w-full bg-[#FFFCF5]/10 rounded-full h-1 mb-2">
                 <div
                   className={`h-1 rounded-full transition-all ${
-                    varCount >= varLimit ? 'bg-[#B42318]' : varCount >= varLimit - 1 ? 'bg-[#D99A00]' : 'bg-[#E76F00]'
+                    varCount >= varLimit ? 'bg-[#B42318]' : varCount >= varLimit - 1 ? 'bg-[#8C6500]' : 'bg-[#B84C00]'
                   }`}
                   style={{ width: `${Math.min(100, (varCount / varLimit) * 100)}%` }}
                 />

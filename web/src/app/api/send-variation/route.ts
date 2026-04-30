@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
         </tr>
         <tr>
           <td style="background:#FFFCF5;border-top:1px solid #D8D2C4;padding:16px 32px;">
-            <p style="margin:0;color:#6B7280;font-size:11px;line-height:1.5;">
+            <p style="margin:0;color:#4B5563;font-size:11px;line-height:1.5;">
               Sent via <a href="https://variationshield.com.au" style="color:#334155;text-decoration:none;">Variation Shield</a> on behalf of ${companyName}.
               This variation was submitted on ${new Date().toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: 'numeric' })}.
             </p>
@@ -182,7 +182,7 @@ export async function POST(req: NextRequest) {
         <!-- Footer -->
         <tr>
           <td style="background:#FFFCF5;border-top:1px solid #D8D2C4;padding:16px 32px;">
-            <p style="margin:0;color:#6B7280;font-size:11px;line-height:1.5;">
+            <p style="margin:0;color:#4B5563;font-size:11px;line-height:1.5;">
               Sent via <a href="https://variationshield.com.au" style="color:#334155;text-decoration:none;">Variation Shield</a> on behalf of ${companyName}.
               This variation was submitted on ${new Date().toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: 'numeric' })}.
             </p>

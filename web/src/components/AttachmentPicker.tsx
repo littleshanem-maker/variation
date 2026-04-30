@@ -13,8 +13,8 @@ const ACCEPT = '.jpg,.jpeg,.png,.heic,.webp,.pdf,.doc,.docx,.xls,.xlsx';
 const MAX_MB = 20;
 
 function fileIcon(file: File) {
-  if (file.type.startsWith('image/')) return <ImageIcon size={14} className="text-[#E76F00] flex-shrink-0" />;
-  return <FileText size={14} className="text-[#6B7280] flex-shrink-0" />;
+  if (file.type.startsWith('image/')) return <ImageIcon size={14} className="text-[#B84C00] flex-shrink-0" />;
+  return <FileText size={14} className="text-[#4B5563] flex-shrink-0" />;
 }
 
 function formatSize(bytes: number) {
@@ -43,7 +43,7 @@ export default function AttachmentPicker({ files, onChange, label = 'Attachments
 
   return (
     <div>
-      <label className="block text-[11px] font-medium uppercase tracking-wider text-[#6B7280] mb-1.5">
+      <label className="block text-[11px] font-medium uppercase tracking-wider text-[#4B5563] mb-1.5">
         {label}
       </label>
 
@@ -52,13 +52,13 @@ export default function AttachmentPicker({ files, onChange, label = 'Attachments
         onDrop={onDrop}
         onDragOver={e => e.preventDefault()}
         onClick={() => inputRef.current?.click()}
-        className="flex flex-col items-center justify-center gap-1.5 px-4 py-5 border-2 border-dashed border-[#D8D2C4] rounded-lg cursor-pointer hover:border-[#E76F00] hover:bg-[#F5F2EA]/40 transition-colors"
+        className="flex flex-col items-center justify-center gap-1.5 px-4 py-5 border-2 border-dashed border-[#D8D2C4] rounded-lg cursor-pointer hover:border-[#B84C00] hover:bg-[#F5F2EA]/40 transition-colors"
       >
-        <Paperclip size={18} className="text-[#6B7280]" />
-        <p className="text-[13px] text-[#6B7280]">
-          <span className="font-medium text-[#E76F00]">Click to attach</span> or drag and drop
+        <Paperclip size={18} className="text-[#4B5563]" />
+        <p className="text-[13px] text-[#4B5563]">
+          <span className="font-medium text-[#B84C00]">Click to attach</span> or drag and drop
         </p>
-        <p className="text-[11px] text-[#6B7280]">Photos (JPG, PNG, HEIC), PDF, Word, Excel — max {MAX_MB} MB each</p>
+        <p className="text-[11px] text-[#4B5563]">Photos (JPG, PNG, HEIC), PDF, Word, Excel — max {MAX_MB} MB each</p>
         <input
           ref={inputRef}
           type="file"
@@ -76,11 +76,11 @@ export default function AttachmentPicker({ files, onChange, label = 'Attachments
             <li key={i} className="flex items-center gap-2 px-3 py-2 bg-[#F5F2EA] border border-[#D8D2C4] rounded-lg">
               {fileIcon(file)}
               <span className="flex-1 text-[13px] text-[#334155] truncate min-w-0">{file.name}</span>
-              <span className="text-[11px] text-[#6B7280] flex-shrink-0">{formatSize(file.size)}</span>
+              <span className="text-[11px] text-[#4B5563] flex-shrink-0">{formatSize(file.size)}</span>
               <button
                 type="button"
                 onClick={e => { e.stopPropagation(); removeFile(i); }}
-                className="flex-shrink-0 text-[#6B7280] hover:text-[#B42318] transition-colors"
+                className="flex-shrink-0 text-[#4B5563] hover:text-[#B42318] transition-colors"
               >
                 <X size={14} />
               </button>

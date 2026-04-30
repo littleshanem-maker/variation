@@ -60,7 +60,7 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
     color: 'text-[#334155]',
     bg: 'bg-[#F5F2EA]',
     border: 'border-[#D8D2C4]',
-    dot: 'bg-[#6B7280]',
+    dot: 'bg-[#4B5563]',
   },
   captured: {
     // Legacy alias for draft — backward compat
@@ -68,14 +68,14 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
     color: 'text-[#334155]',
     bg: 'bg-[#F5F2EA]',
     border: 'border-[#D8D2C4]',
-    dot: 'bg-[#6B7280]',
+    dot: 'bg-[#4B5563]',
   },
   submitted: {
     label: 'Submitted',
     color: 'text-[#8C6500]',
     bg: 'bg-[#FBF1D6]',
-    border: 'border-[#D99A00]',
-    dot: 'bg-[#D99A00]',
+    border: 'border-[#8C6500]',
+    dot: 'bg-[#8C6500]',
   },
   approved: {
     label: 'Approved',
@@ -110,8 +110,8 @@ export const STATUS_CONFIG: Record<string, { label: string; color: string; bg: s
     label: 'VN issued',
     color: 'text-[#8C6500]',
     bg: 'bg-[#FBF1D6]',
-    border: 'border-[#D99A00]',
-    dot: 'bg-[#D99A00]',
+    border: 'border-[#8C6500]',
+    dot: 'bg-[#8C6500]',
   },
   acknowledged: {
     label: 'VN acknowledged',

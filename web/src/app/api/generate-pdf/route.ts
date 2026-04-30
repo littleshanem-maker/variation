@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     const page = await browser.newPage();
 
     const watermarkFooterHtml = isFree ? `
-    <div style="position: fixed; bottom: 0; left: 0; right: 0; text-align: center; font-size: 9px; color: #6B7280; padding: 6px 0; border-top: 1px solid #D8D2C4;">
+    <div style="position: fixed; bottom: 0; left: 0; right: 0; text-align: center; font-size: 9px; color: #4B5563; padding: 6px 0; border-top: 1px solid #D8D2C4;">
       Generated with Variation Shield — variationshield.com.au | Upgrade to Pro to remove this watermark
     </div>` : '';
 
