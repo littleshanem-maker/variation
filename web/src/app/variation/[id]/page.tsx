@@ -653,7 +653,7 @@ export default function VariationDetail() {
   // True when sent to client and awaiting their response
   const awaitingClientResponse = isSubmitted && !!variation.client_email && !variation.client_approval_response;
 
-  const inputClass = "w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-lg focus:ring-2 focus:ring-[#B84C00] focus:border-[#B84C00] outline-none transition-shadow";
+  const inputClass = "w-full px-3 py-2 text-[14px] border border-[#D8D2C4] rounded-lg focus:ring-2 focus:ring-[#E76F00] focus:border-[#E76F00] outline-none transition-shadow";
   const labelClass = "block text-[11px] font-medium uppercase tracking-wider text-[#4B5563] mb-1";
 
   const STATUS_TRANSITIONS: Record<string, string[]> = {
@@ -733,7 +733,7 @@ export default function VariationDetail() {
                       }
                     }}
                     disabled={sendingEmail}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-lg disabled:opacity-40 transition-colors shadow-sm whitespace-nowrap"
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg disabled:opacity-40 transition-colors shadow-sm whitespace-nowrap"
                   >
                     <Send size={14} />
                     {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : showEmailInput ? 'Send' : 'Submit to Client'}
@@ -763,7 +763,7 @@ export default function VariationDetail() {
                   </>
                 )}
                 {isDisputed && !isField && (
-                  <button onClick={startRevising} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-lg transition-colors shadow-sm">
+                  <button onClick={startRevising} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors shadow-sm">
                     <ArrowUpRight size={14} /> Revise &amp; Resubmit
                   </button>
                 )}
@@ -903,7 +903,7 @@ export default function VariationDetail() {
                     <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-medium flex-shrink-0 ${
                         isCurrent
-                          ? step.key === 'disputed' ? 'bg-[#B42318] text-[#FFFCF5]' : 'bg-[#B84C00] text-[#FFFCF5]'
+                          ? step.key === 'disputed' ? 'bg-[#B42318] text-[#FFFCF5]' : 'bg-[#E76F00] text-[#FFFCF5]'
                           : isDone
                           ? 'bg-[#2E7D32] text-[#FFFCF5]'
                           : 'bg-[#F5F2EA] text-[#4B5563]'
@@ -912,7 +912,7 @@ export default function VariationDetail() {
                       </div>
                       <span className={`text-[10px] font-medium text-center leading-tight hidden sm:block ${
                         isCurrent
-                          ? step.key === 'disputed' ? 'text-[#B42318]' : 'text-[#B84C00]'
+                          ? step.key === 'disputed' ? 'text-[#B42318]' : 'text-[#E76F00]'
                           : isDone ? 'text-[#2E7D32]' : 'text-[#4B5563]'
                       }`}>{step.label}</span>
                     </div>
@@ -988,7 +988,7 @@ export default function VariationDetail() {
                   <div className="flex items-center gap-2 mb-1">
                     <div className="text-[12px] mono font-medium text-[#17212B] uppercase tracking-wider">{getVariationNumber(variation)}</div>
                     {editing ? (
-                      <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#B84C00] px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#E76F00] px-1.5 py-0.5 rounded">
                         {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0) + 1} — Draft` : 'Draft'}
                       </span>
                     ) : hasPendingDraft ? (
@@ -1365,7 +1365,7 @@ export default function VariationDetail() {
                       <div key={entry.id} className="flex flex-wrap items-start gap-2 md:gap-4 text-[13px]">
                         <div className="text-[#4B5563] tabular-nums text-[12px] pt-0.5 w-36 flex-shrink-0">{formatDateTime(entry.at)}</div>
                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#B84C00] px-2 py-0.5 rounded flex-shrink-0">
+                          <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#E76F00] px-2 py-0.5 rounded flex-shrink-0">
                             📧 Sent
                           </span>
                           <span className="text-[12px] text-[#111827] truncate">
@@ -1680,7 +1680,7 @@ export default function VariationDetail() {
               <button
                 onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
                 disabled={advancingStatus}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#B84C00] rounded-xl disabled:opacity-40 transition-colors active:bg-[#9A3F00]"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] rounded-xl disabled:opacity-40 transition-colors active:bg-[#C75A00]"
               >
                 <Send size={15} />
                 {advancingStatus ? 'Saving…' : 'Submit to Client'}
@@ -1692,7 +1692,7 @@ export default function VariationDetail() {
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50 transition-colors"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50 transition-colors"
                 >
                   <FileText size={14} /> {sendingEmail ? '…' : 'PDF / Send'}
                 </button>
@@ -1719,14 +1719,14 @@ export default function VariationDetail() {
                 <button
                   onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
                 >
                   <Send size={14} /> {sendingEmail ? '…' : 'Resend'}
                 </button>
                 <button
                   onClick={handleSendEmail}
                   disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
                 >
                   <FileText size={14} /> {sendingEmail ? '…' : 'PDF'}
                 </button>
@@ -1737,14 +1737,14 @@ export default function VariationDetail() {
             <>
               <button
                 onClick={startRevising}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#B84C00] rounded-xl transition-colors active:bg-[#9A3F00]"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] rounded-xl transition-colors active:bg-[#C75A00]"
               >
                 <ArrowUpRight size={15} /> Revise
               </button>
               <button
                 onClick={handleSendEmail}
                 disabled={sendingEmail}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
               >
                 <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
               </button>
@@ -1762,7 +1762,7 @@ export default function VariationDetail() {
               <button
                 onClick={handleSendEmail}
                 disabled={sendingEmail}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
               >
                 <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
               </button>
@@ -1772,7 +1772,7 @@ export default function VariationDetail() {
             <button
               onClick={handleSendEmail}
               disabled={sendingEmail}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#B84C00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
             >
               <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
             </button>

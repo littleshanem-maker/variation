@@ -111,7 +111,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             <p className="text-[#FFFCF5]/40 text-sm mb-6">We read every piece of feedback.</p>
             <button
               onClick={handleClose}
-              className="bg-[#B84C00] hover:bg-[#B84C00] text-[#FFFCF5] font-medium px-5 py-2.5 rounded-lg text-sm transition-colors"
+              className="bg-[#E76F00] hover:bg-[#E76F00] text-[#FFFCF5] font-medium px-5 py-2.5 rounded-lg text-sm transition-colors"
             >
               Close
             </button>
@@ -125,7 +125,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
               placeholder="Describe the issue or suggestion..."
               rows={5}
               required
-              className="w-full bg-[#FFFCF5]/[0.08] border border-[#FFFCF5]/[0.2] rounded-xl px-4 py-3 text-sm text-[#FFFCF5] placeholder-#FFFCF5/40 focus:outline-none focus:border-[#B84C00] resize-none transition-colors"
+              className="w-full bg-[#FFFCF5]/[0.08] border border-[#FFFCF5]/[0.2] rounded-xl px-4 py-3 text-sm text-[#FFFCF5] placeholder-#FFFCF5/40 focus:outline-none focus:border-[#E76F00] resize-none transition-colors"
             />
 
             {/* Attachment */}
@@ -162,7 +162,7 @@ export default function FeedbackModal({ isOpen, onClose }: FeedbackModalProps) {
             <button
               type="submit"
               disabled={loading || !message.trim()}
-              className="w-full bg-[#B84C00] hover:bg-[#B84C00] disabled:opacity-40 text-[#FFFCF5] font-medium py-3 rounded-xl text-sm transition-colors"
+              className="w-full bg-[#E76F00] hover:bg-[#E76F00] disabled:opacity-40 text-[#FFFCF5] font-medium py-3 rounded-xl text-sm transition-colors"
             >
               {loading ? 'Sending…' : 'Submit feedback'}
             </button>

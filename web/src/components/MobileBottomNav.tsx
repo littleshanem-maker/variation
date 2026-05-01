@@ -50,7 +50,7 @@ export default function MobileBottomNav() {
           <Link
             href="/notice/new"
             onClick={() => setFabOpen(false)}
-            className="flex items-center gap-2 px-5 py-3 bg-[#FFFCF5] border border-[#D8D2C4] text-[#9A3F00] text-[15px] font-medium shadow-[0_2px_6px_rgba(17,24,39,0.08)] whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-3 bg-[#FFFCF5] border border-[#D8D2C4] text-[#C75A00] text-[15px] font-medium shadow-[0_2px_6px_rgba(17,24,39,0.08)] whitespace-nowrap"
           >
             <FileText size={16} />
             New notice
@@ -58,7 +58,7 @@ export default function MobileBottomNav() {
           <Link
             href="/variation/new"
             onClick={() => setFabOpen(false)}
-            className="flex items-center gap-2 px-5 py-3 bg-[#B84C00] border border-[#B84C00] text-[#FFFCF5] text-[15px] font-medium shadow-[0_2px_6px_rgba(17,24,39,0.12)] whitespace-nowrap"
+            className="flex items-center gap-2 px-5 py-3 bg-[#E76F00] border border-[#E76F00] text-[#FFFCF5] text-[15px] font-medium shadow-[0_2px_6px_rgba(17,24,39,0.12)] whitespace-nowrap"
           >
             <Plus size={16} />
             New request
@@ -70,7 +70,7 @@ export default function MobileBottomNav() {
       {!hideFab && <button
         onClick={() => setFabOpen(prev => !prev)}
         aria-label="Create new"
-        className="fixed bottom-[76px] right-4 z-50 w-14 h-14 rounded-full bg-[#B84C00] text-[#FFFCF5] shadow-xl flex items-center justify-center active:scale-95 transition-transform md:hidden"
+        className="fixed bottom-[76px] right-4 z-50 w-14 h-14 rounded-full bg-[#E76F00] text-[#FFFCF5] shadow-xl flex items-center justify-center active:scale-95 transition-transform md:hidden"
       >
         {fabOpen
           ? <X size={24} strokeWidth={2.5} />
@@ -99,7 +99,7 @@ export default function MobileBottomNav() {
               <div className="relative">
                 <Icon size={22} strokeWidth={active ? 2.2 : 1.8} />
                 {active && (
-                  <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#B84C00]" />
+                  <span className="absolute -top-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#E76F00]" />
                 )}
               </div>
               <span className="text-[10px] font-medium leading-none">{tab.label}</span>

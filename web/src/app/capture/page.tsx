@@ -390,7 +390,7 @@ function CapturePageContent() {
         <div className="px-5 py-4 flex flex-col gap-2">
           <button
             onClick={handleCaptureAnother}
-            className="w-full bg-[#B84C00] text-[#FFFCF5] font-medium py-3 rounded-xl text-[15px] transition-colors active:bg-[#9A3F00]"
+            className="w-full bg-[#E76F00] text-[#FFFCF5] font-medium py-3 rounded-xl text-[15px] transition-colors active:bg-[#C75A00]"
           >
             Capture Another
           </button>
@@ -432,7 +432,7 @@ function CapturePageContent() {
               <button
                 onClick={() => setBannerDismissed(true)}
                 className="flex-shrink-0 text-[16px] leading-none mt-0.5"
-                style={{ color: '#B84C00' }}
+                style={{ color: '#E76F00' }}
                 aria-label="Dismiss"
               >
                 ×
@@ -705,7 +705,7 @@ function CapturePageContent() {
               <button
                 type="submit"
                 disabled={submitting || loadingProjects || (!isOnboarding && projects.length === 0)}
-                className="w-full bg-[#B84C00] hover:bg-[#9A3F00] active:bg-[#9A3F00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed text-[#FFFCF5] font-medium py-4 px-6 rounded-xl text-base transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-[#E76F00] hover:bg-[#C75A00] active:bg-[#C75A00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed text-[#FFFCF5] font-medium py-4 px-6 rounded-xl text-base transition-colors flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <>
@@ -765,7 +765,7 @@ function CaptureHeader() {
     <header className="bg-[#17212B] text-[#FFFCF5] px-5 pt-12 pb-5">
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 bg-[#B84C00] rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="w-7 h-7 bg-[#E76F00] rounded-lg flex items-center justify-center flex-shrink-0">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFCF5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>

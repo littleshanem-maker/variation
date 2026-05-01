@@ -321,7 +321,7 @@ function NewNoticeForm() {
           <button
             onClick={() => handleSave(false)}
             disabled={saving || !projectId || !eventDescription.trim()}
-            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)] text-center"
+            className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)] text-center"
           >
             {saving ? 'Creating…' : 'Create Variation Notice'}
           </button>

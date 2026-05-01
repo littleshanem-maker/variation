@@ -22,7 +22,7 @@ export default function LandingPage() {
       {/* NAV */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-[#FFFCF5]/95 border-b border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.06)]">
         <a href="https://variationshield.com.au" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-[#B84C00] rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-[#E76F00] rounded-lg flex items-center justify-center">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFFCF5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
             </svg>
@@ -38,7 +38,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm font-medium text-[#334155] hover:text-[#111827] border border-[#D8D2C4] hover:border-[#334155] px-4 py-2 rounded-lg transition-all hidden md:block">Log in</Link>
-            <DemoButton className="bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] text-sm font-medium px-4 py-2 rounded-lg transition-colors hidden md:block">
+            <DemoButton className="bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] text-sm font-medium px-4 py-2 rounded-lg transition-colors hidden md:block">
               Book a 15-minute demo
             </DemoButton>
             <MobileMenuButton />
@@ -55,13 +55,13 @@ export default function LandingPage() {
         </div>
 
         <div className="relative z-10 max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-[#FFFCF5] border border-[#D8D2C4] rounded-sm px-3 py-1.5 text-xs font-medium text-[#9A3F00] uppercase tracking-widest mb-8">
+          <div className="inline-flex items-center gap-2 bg-[#FFFCF5] border border-[#D8D2C4] rounded-sm px-3 py-1.5 text-xs font-medium text-[#C75A00] uppercase tracking-widest mb-8">
             Built for Australian Subcontractors
           </div>
 
           <h1 className="text-5xl md:text-7xl font-medium tracking-tight leading-[1.05] mb-6 text-[#111827]">
             Every variation.<br />
-            <span className="text-[#B84C00]">Documented. Paid.</span>
+            <span className="text-[#E76F00]">Documented. Paid.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-[#334155] max-w-2xl mx-auto leading-relaxed mb-10">
@@ -70,7 +70,7 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
+            <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
               Book a 15-minute demo
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
@@ -100,7 +100,7 @@ export default function LandingPage() {
       <section className="py-16 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-[#B84C00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Sound familiar?</p>
+            <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Sound familiar?</p>
             <h2 className="text-3xl md:text-5xl font-medium tracking-tight">Three things costing you money right now</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
@@ -122,7 +122,7 @@ export default function LandingPage() {
               },
             ].map((p) => (
               <div key={p.n} className="bg-[#FFFCF5] border border-[#D8D2C4] rounded-md p-8 text-center flex flex-col items-center">
-                <div className="text-5xl font-medium text-[#B84C00]/25 mb-4 leading-none">{p.n}</div>
+                <div className="text-5xl font-medium text-[#E76F00]/25 mb-4 leading-none">{p.n}</div>
                 <h3 className="text-lg font-medium mb-3">{p.title}</h3>
                 <p className="text-[#334155] text-sm leading-relaxed">{p.body}</p>
               </div>
@@ -135,41 +135,41 @@ export default function LandingPage() {
       <section className="py-24 px-6 bg-[#FFFCF5] border-y border-[#D8D2C4]" id="how-it-works">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-[#B84C00] text-xs font-medium tracking-[0.055em] uppercase mb-3">The system</p>
+            <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">The system</p>
             <h2 className="text-3xl md:text-5xl font-medium tracking-tight">From site to signed in 60 seconds</h2>
             <p className="text-[#334155] mt-4 max-w-lg mx-auto">No complex workflows. No training required. Three steps and the variation is documented before you walk to the next task.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {/* Step 1 */}
             <div className="bg-[#FFFCF5] border border-[#D8D2C4] rounded-md p-8 text-center flex flex-col items-center">
-              <div className="w-12 h-12 rounded-md bg-[#B84C00]/15 border border-[#B84C00]/20 flex items-center justify-center mb-6">
-                <svg width="22" height="22" fill="none" stroke="#B84C00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <div className="w-12 h-12 rounded-md bg-[#E76F00]/15 border border-[#E76F00]/20 flex items-center justify-center mb-6">
+                <svg width="22" height="22" fill="none" stroke="#E76F00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                   <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
                 </svg>
               </div>
-              <p className="text-sm font-medium tracking-[0.055em] uppercase text-[#9A3F00] mb-3">Step 01</p>
+              <p className="text-sm font-medium tracking-[0.055em] uppercase text-[#C75A00] mb-3">Step 01</p>
               <h3 className="text-[16px] font-medium mb-3">Capture on site</h3>
               <p className="text-[#4B5563] text-sm leading-relaxed">Open the app. Add photos, description, cost and time impact. Under 60 seconds. Works offline — syncs when back in range.</p>
             </div>
             {/* Step 2 */}
             <div className="bg-[#FFFCF5] border border-[#D8D2C4] rounded-md p-8 text-center flex flex-col items-center">
-              <div className="w-12 h-12 rounded-md bg-[#B84C00]/15 border border-[#B84C00]/20 flex items-center justify-center mb-6">
-                <svg width="22" height="22" fill="none" stroke="#B84C00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <div className="w-12 h-12 rounded-md bg-[#E76F00]/15 border border-[#E76F00]/20 flex items-center justify-center mb-6">
+                <svg width="22" height="22" fill="none" stroke="#E76F00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
                 </svg>
               </div>
-              <p className="text-sm font-medium tracking-[0.055em] uppercase text-[#9A3F00] mb-3">Step 02</p>
+              <p className="text-sm font-medium tracking-[0.055em] uppercase text-[#C75A00] mb-3">Step 02</p>
               <h3 className="text-[16px] font-medium mb-3">Send to your client</h3>
               <p className="text-[#4B5563] text-sm leading-relaxed">Generate a professional PDF and send it directly from the app. The client approves or rejects via a secure link — no phone calls needed.</p>
             </div>
             {/* Step 3 */}
             <div className="bg-[#FFFCF5] border border-[#D8D2C4] rounded-md p-8 text-center flex flex-col items-center">
-              <div className="w-12 h-12 rounded-md bg-[#B84C00]/15 border border-[#B84C00]/20 flex items-center justify-center mb-6">
-                <svg width="22" height="22" fill="none" stroke="#B84C00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <div className="w-12 h-12 rounded-md bg-[#E76F00]/15 border border-[#E76F00]/20 flex items-center justify-center mb-6">
+                <svg width="22" height="22" fill="none" stroke="#E76F00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                   <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
                 </svg>
               </div>
-              <p className="text-sm font-medium tracking-[0.055em] uppercase text-[#9A3F00] mb-3">Step 03</p>
+              <p className="text-sm font-medium tracking-[0.055em] uppercase text-[#C75A00] mb-3">Step 03</p>
               <h3 className="text-[16px] font-medium mb-3">Track to payment</h3>
               <p className="text-[#4B5563] text-sm leading-relaxed">Every variation tracked from draft to approved to paid. Your PM sees everything in real time. No chasing. No arguing at final account.</p>
             </div>
@@ -181,7 +181,7 @@ export default function LandingPage() {
       <section className="py-24 px-6" id="features">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-[#B84C00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Features</p>
+            <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Features</p>
             <h2 className="text-3xl md:text-5xl font-medium tracking-tight">Built for the way subbies actually work</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-5">
@@ -189,36 +189,36 @@ export default function LandingPage() {
               {
                 title: '60-Second Capture',
                 body: 'Photo, description, cost breakdown. Captured on site before you walk to the next task. Time-stamped automatically.',
-                icon: <svg width="20" height="20" fill="none" stroke="#B84C00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>,
+                icon: <svg width="20" height="20" fill="none" stroke="#E76F00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>,
               },
               {
                 title: 'Send to Client',
                 body: 'Professional variation requests sent directly from the app via email. Client approves or rejects with one click — tracked in your dashboard.',
-                icon: <svg width="20" height="20" fill="none" stroke="#B84C00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
+                icon: <svg width="20" height="20" fill="none" stroke="#E76F00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
               },
               {
                 title: 'Print-Ready PDFs',
                 body: "Variation registers and requests that look like they came from a Tier 1 contractor. The kind the client's commercial team processes first.",
-                icon: <svg width="20" height="20" fill="none" stroke="#B84C00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>,
+                icon: <svg width="20" height="20" fill="none" stroke="#E76F00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>,
               },
               {
                 title: 'Field + Office Roles',
                 body: 'Supervisors capture on site — no dollar values visible. PMs see everything in the office dashboard. Right information to the right people.',
-                icon: <svg width="20" height="20" fill="none" stroke="#B84C00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+                icon: <svg width="20" height="20" fill="none" stroke="#E76F00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
               },
               {
                 title: 'Works Offline',
                 body: "No site Wi-Fi? No problem. Capture offline, sync automatically when you're back in range. Nothing gets lost.",
-                icon: <svg width="20" height="20" fill="none" stroke="#B84C00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>,
+                icon: <svg width="20" height="20" fill="none" stroke="#E76F00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>,
               },
               {
                 title: 'Real-Time Dashboard',
                 body: 'Every variation across every project — approved, submitted, disputed — at a glance. Know exactly where your money stands.',
-                icon: <svg width="20" height="20" fill="none" stroke="#B84C00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
+                icon: <svg width="20" height="20" fill="none" stroke="#E76F00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
               },
             ].map((f) => (
               <div key={f.title} className="bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] rounded-md p-7 text-center flex flex-col items-center transition-colors">
-                <div className="w-11 h-11 rounded-md bg-[#B84C00]/15 border border-[#B84C00]/20 flex items-center justify-center mb-5">
+                <div className="w-11 h-11 rounded-md bg-[#E76F00]/15 border border-[#E76F00]/20 flex items-center justify-center mb-5">
                   {f.icon}
                 </div>
                 <h3 className="font-medium text-[16px] mb-2">{f.title}</h3>
@@ -232,7 +232,7 @@ export default function LandingPage() {
       {/* CREDIBILITY */}
       <section className="py-24 px-6 bg-[#FFFCF5] border-y border-[#D8D2C4]">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#9A3F00] text-xs font-medium tracking-[0.055em] uppercase mb-6">Why this exists</p>
+          <p className="text-[#C75A00] text-xs font-medium tracking-[0.055em] uppercase mb-6">Why this exists</p>
           <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-8 text-[#111827]">Built from the other side of the desk</h2>
           <div className="space-y-5 text-[#17212B] text-[16px] leading-relaxed text-left">
             <p>We spent 15 years as project managers on Tier 1 and Tier 2 infrastructure projects across Australia. Our job was processing variation claims from subcontractors — and deciding which ones got paid.</p>
@@ -250,12 +250,12 @@ export default function LandingPage() {
       {/* FOUNDER-LED ONBOARDING */}
       <section className="py-20 px-6 bg-[#FFFCF5] border-y border-[#D8D2C4]">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#B84C00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Founder-led onboarding</p>
+          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Founder-led onboarding</p>
           <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-5">Not just a login — we help you test it properly</h2>
           <p className="text-[#334155] text-[16px] md:text-lg leading-relaxed mb-8">
             Variation Shield works best when it is tested on live jobs, not clicked through once and forgotten. Early customers get direct setup support so the team can capture real variations from site and see whether the workflow fits.
           </p>
-          <DemoButton className="inline-flex items-center justify-center gap-2 bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
+          <DemoButton className="inline-flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
             Book a 15-minute demo
             <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </DemoButton>
@@ -265,7 +265,7 @@ export default function LandingPage() {
       {/* PRICING */}
       <section className="py-24 px-6" id="pricing">
         <div className="max-w-lg mx-auto text-center">
-          <p className="text-[#B84C00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Pricing</p>
+          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Pricing</p>
           <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-4">Start with a 30-day live-job pilot</h2>
           <p className="text-[#334155] mb-12">Use Variation Shield on real work for 30 days. We’ll help you set it up, add your first project, and capture live variation notices before they get missed, delayed or disputed.</p>
 
@@ -299,7 +299,7 @@ export default function LandingPage() {
               ))}
             </ul>
 
-            <DemoButton className="flex items-center justify-center gap-2 w-full bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
+            <DemoButton className="flex items-center justify-center gap-2 w-full bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
               Book a 15-minute demo
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
@@ -330,7 +330,7 @@ export default function LandingPage() {
           <h2 className="text-3xl md:text-5xl font-medium tracking-tight mb-4">Stop leaving money on the table</h2>
           <p className="text-[#334155] text-lg mb-10">Book a short demo, set up a live-job pilot, and see whether the workflow fits your team.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
+            <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
               Book a 15-minute demo
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
@@ -345,7 +345,7 @@ export default function LandingPage() {
       <footer className="border-t border-[#D8D2C4] px-6 py-8">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#4B5563]">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-[#B84C00] rounded flex items-center justify-center">
+            <div className="w-6 h-6 bg-[#E76F00] rounded flex items-center justify-center">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#FFFCF5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>

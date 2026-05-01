@@ -580,7 +580,7 @@ export default function NoticeDetail() {
                       }
                     }}
                     disabled={sendingEmail}
-                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-lg transition-colors disabled:opacity-40 shadow-sm whitespace-nowrap"
+                    className="flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg transition-colors disabled:opacity-40 shadow-sm whitespace-nowrap"
                   >
                     <Send size={14} />
                     {sendStage === 'pdf' ? 'Building PDF…' : sendStage === 'sending' ? 'Sending…' : showEmailInput ? 'Send' : 'Submit to Client'}
@@ -722,7 +722,7 @@ export default function NoticeDetail() {
               <div className="text-[12px] mono font-medium text-[#17212B] uppercase tracking-wider mb-1 flex items-center gap-2 flex-wrap">
                 {notice.notice_number}
                 {editing ? (
-                  <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#B84C00] px-1.5 py-0.5 rounded">
+                  <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#E76F00] px-1.5 py-0.5 rounded">
                     {revisions.length > 0 ? `Rev ${revisions.length} — Draft` : 'Draft'}
                   </span>
                 ) : (notice.status === 'draft' || hasPendingDraft) ? (
@@ -852,7 +852,7 @@ export default function NoticeDetail() {
                       type="checkbox"
                       checked={editCostFlag}
                       onChange={e => setEditCostFlag(e.target.checked)}
-                      className="w-4 h-4 rounded border-[#D8D2C4] text-[#B84C00]"
+                      className="w-4 h-4 rounded border-[#D8D2C4] text-[#E76F00]"
                     />
                     <span className="text-[14px] text-[#111827]">Cost impact</span>
                   </label>
@@ -909,7 +909,7 @@ export default function NoticeDetail() {
                       type="checkbox"
                       checked={editTimeFlag}
                       onChange={e => setEditTimeFlag(e.target.checked)}
-                      className="w-4 h-4 rounded border-[#D8D2C4] text-[#B84C00]"
+                      className="w-4 h-4 rounded border-[#D8D2C4] text-[#E76F00]"
                     />
                     <span className="text-[14px] text-[#111827]">Time impact</span>
                   </label>
@@ -979,7 +979,7 @@ export default function NoticeDetail() {
                 <button
                   onClick={handleConvertToVar}
                   disabled={converting}
-                  className="w-full py-3 px-4 bg-[#B84C00] hover:bg-[#9A3F00] disabled:opacity-50 text-[#FFFCF5] text-[14px] font-medium rounded-md transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)]"
+                  className="w-full py-3 px-4 bg-[#E76F00] hover:bg-[#C75A00] disabled:opacity-50 text-[#FFFCF5] text-[14px] font-medium rounded-md transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)]"
                 >
                   {converting ? 'Creating...' : 'Convert to Variation Request →'}
                 </button>
@@ -999,7 +999,7 @@ export default function NoticeDetail() {
                     {rev.sent_at ? new Date(rev.sent_at).toLocaleString('en-AU', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
                   </div>
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#B84C00] px-2 py-0.5 rounded flex-shrink-0">
+                    <span className="text-[11px] font-medium uppercase tracking-wider text-[#FFFCF5] bg-[#E76F00] px-2 py-0.5 rounded flex-shrink-0">
                       📧 Issued
                     </span>
                     <span className="text-[12px] text-[#111827] truncate">

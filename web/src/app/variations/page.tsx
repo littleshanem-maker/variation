@@ -338,7 +338,7 @@ function VariationsList() {
                   <div className="px-4 py-3 hover:bg-[#F5F2EA] transition-colors">
                     <div className="flex items-center justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <div className="text-[12px] mono font-medium text-[#B84C00]">{getVariationNumber(v)}</div>
+                        <div className="text-[12px] mono font-medium text-[#E76F00]">{getVariationNumber(v)}</div>
                         <div className="text-[14px] font-medium text-[#111827] mt-0.5 truncate">{v.title}</div>
                         <div className="text-[12px] text-[#4B5563] mt-0.5 truncate">{v.project_name}</div>
                       </div>
@@ -463,7 +463,7 @@ function VariationsList() {
                 .map(n => {
                   const statusConfig: Record<string, { label: string; color: string; bg: string; dot: string }> = {
                     draft: { label: 'Draft', color: 'text-[#334155]', bg: 'bg-[#F5F2EA]', dot: 'bg-[#4B5563]' },
-                    issued: { label: 'Issued', color: 'text-[#9A3F00]', bg: 'bg-[#F5F2EA]', dot: 'bg-[#D8D2C4]' },
+                    issued: { label: 'Issued', color: 'text-[#C75A00]', bg: 'bg-[#F5F2EA]', dot: 'bg-[#D8D2C4]' },
                     acknowledged: { label: 'Acknowledged', color: 'text-[#1F5223]', bg: 'bg-[#E5F0E6]', dot: 'bg-[#2E7D32]' },
                   };
                   const sc = statusConfig[n.status] || statusConfig.draft;
@@ -472,7 +472,7 @@ function VariationsList() {
                       <div className="px-4 py-3 hover:bg-[#F5F2EA] transition-colors">
                         <div className="flex items-center justify-between gap-3">
                           <div className="min-w-0 flex-1">
-                            <div className="text-[12px] mono font-medium text-[#B84C00]">{n.notice_number}</div>
+                            <div className="text-[12px] mono font-medium text-[#E76F00]">{n.notice_number}</div>
                             <div className="text-[14px] font-medium text-[#111827] mt-0.5 truncate">{n.event_description}</div>
                             <div className="text-[12px] text-[#4B5563] mt-0.5 truncate">{n.project_name}</div>
                           </div>
@@ -508,7 +508,7 @@ function VariationsList() {
                     .map((n, i, arr) => {
                       const statusConfig: Record<string, { label: string; color: string; bg: string; border: string; dot: string }> = {
                         draft: { label: 'Draft', color: 'text-[#334155]', bg: 'bg-[#F5F2EA]', border: 'border-[#D8D2C4]', dot: 'bg-[#4B5563]' },
-                        issued: { label: 'Issued', color: 'text-[#9A3F00]', bg: 'bg-[#F5F2EA]', border: 'border-[#D8D2C4]', dot: 'bg-[#D8D2C4]' },
+                        issued: { label: 'Issued', color: 'text-[#C75A00]', bg: 'bg-[#F5F2EA]', border: 'border-[#D8D2C4]', dot: 'bg-[#D8D2C4]' },
                         acknowledged: { label: 'Acknowledged', color: 'text-[#1F5223]', bg: 'bg-[#E5F0E6]', border: 'border-[#D8D2C4]', dot: 'bg-[#2E7D32]' },
                       };
                       const sc = statusConfig[n.status] || statusConfig.draft;

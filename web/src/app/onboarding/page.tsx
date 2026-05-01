@@ -275,7 +275,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleSaveAndNext}
                 disabled={saving || !companyName.trim()}
-                className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed transition-colors"
               >
                 {saving ? 'Saving…' : 'Next →'}
               </button>
@@ -338,7 +338,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleCreateProject}
                 disabled={creatingProject || !projectName.trim()}
-                className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed transition-colors"
+                className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] disabled:bg-[#D8D2C4] disabled:cursor-not-allowed transition-colors"
               >
                 {creatingProject ? 'Creating…' : 'Create project →'}
               </button>

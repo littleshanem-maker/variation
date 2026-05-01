@@ -320,12 +320,12 @@ export default function Dashboard() {
                 <h3 className="text-base font-medium text-[#111827]">Welcome. Let&apos;s capture your first variation.</h3>
                 <p className="text-[#334155] text-sm mt-1">Start by creating a project, then log your first scope change.</p>
               </div>
-              <button onClick={() => setOnboardingDismissed(true)} className="text-[#B84C00] hover:text-[#B84C00] text-xs">✕</button>
+              <button onClick={() => setOnboardingDismissed(true)} className="text-[#E76F00] hover:text-[#E76F00] text-xs">✕</button>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 mt-4">
               <button
                 onClick={() => setShowNewProject(true)}
-                className="flex items-center gap-2 bg-[#B84C00] border border-[#B84C00] hover:bg-[#9A3F00] hover:border-[#9A3F00] text-[#FFFCF5] text-sm font-medium px-4 py-2.5 rounded-lg transition-all hover:-translate-y-px"
+                className="flex items-center gap-2 bg-[#E76F00] border border-[#E76F00] hover:bg-[#C75A00] hover:border-[#C75A00] text-[#FFFCF5] text-sm font-medium px-4 py-2.5 rounded-lg transition-all hover:-translate-y-px"
               >
                 <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
                 Create your first project
@@ -404,7 +404,7 @@ export default function Dashboard() {
                     </span>
                   )}
                 </div>
-                <div className="num text-[32px] font-medium leading-none text-[#9A3F00]">
+                <div className="num text-[32px] font-medium leading-none text-[#C75A00]">
                   {formatCurrency(submittedTotal)}
                 </div>
                 <div className="mt-2 text-[12px] text-[#334155]">
@@ -454,7 +454,7 @@ export default function Dashboard() {
 
             {projects.length === 0 ? (
               <div className="bg-[#FFFCF5] rounded-xl border border-[#D8D2C4] shadow-[0_1px_2px_rgba(17,24,39,0.04)] p-12 text-center">
-                <div className="w-12 h-12 bg-[#B84C00] rounded-xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 bg-[#E76F00] rounded-xl flex items-center justify-center mx-auto mb-4">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFCF5" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </div>
                 <h3 className="text-[18px] font-medium text-[#111827] mb-2">Welcome to Variation Shield</h3>
@@ -462,7 +462,7 @@ export default function Dashboard() {
                 <p className="text-[14px] text-[#334155] mb-8">Then capture a variation in under 60 seconds.</p>
                 <Link
                   href="/onboarding"
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[14px] font-medium text-[#FFFCF5] bg-[#B84C00] border border-[#B84C00] hover:bg-[#9A3F00] hover:border-[#9A3F00] transition-all hover:-translate-y-px"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] border border-[#E76F00] hover:bg-[#C75A00] hover:border-[#C75A00] transition-all hover:-translate-y-px"
                 >
                   Create your first project
                 </Link>
@@ -509,7 +509,7 @@ export default function Dashboard() {
                             <div className="min-w-0">
                             <Link
                               href={`/project/${p.id}`}
-                              className="text-[14px] font-medium text-[#111827] hover:text-[#B84C00] transition-colors leading-tight"
+                              className="text-[14px] font-medium text-[#111827] hover:text-[#E76F00] transition-colors leading-tight"
                             >
                               {p.name}
                             </Link>
@@ -599,7 +599,7 @@ export default function Dashboard() {
               <button
                 onClick={() => setNoVariationsBannerDismissed(true)}
                 className="flex-shrink-0 text-[18px] leading-none font-light"
-                style={{ color: '#B84C00' }}
+                style={{ color: '#E76F00' }}
                 aria-label="Dismiss"
               >
                 ×

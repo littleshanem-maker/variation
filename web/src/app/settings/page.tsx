@@ -150,8 +150,8 @@ export default function SettingsPage() {
 
   const roleBadgeColors: Record<string, string> = {
     admin: 'bg-[#17212B]/10 text-[#17212B]',
-    office: 'bg-[#B84C00]/10 text-[#8C6500]',
-    field: 'bg-[#B84C00]/10 text-[#8C6500]',
+    office: 'bg-[#E76F00]/10 text-[#8C6500]',
+    field: 'bg-[#E76F00]/10 text-[#8C6500]',
   };
 
   return (

@@ -233,7 +233,7 @@ function NewRequestForm() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#111827]/60 backdrop-blur-sm p-4">
           <div className="bg-[#FFFCF5] rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
             <div className="w-14 h-14 rounded-2xl bg-[#F5F2EA] flex items-center justify-center mx-auto mb-5">
-              <svg width="28" height="28" fill="none" stroke="#B84C00" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <svg width="28" height="28" fill="none" stroke="#E76F00" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
             <h2 className="text-xl font-medium text-[#111827] mb-2">
               You've documented {limitReached.count} variation{limitReached.count !== 1 ? 's' : ''} worth ${(limitReached.totalValue / 100).toLocaleString('en-AU', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} — want to keep going?
@@ -247,7 +247,7 @@ function NewRequestForm() {
             <div className="space-y-3">
               <a
                 href={`https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02`}
-                className="block w-full py-3 rounded-xl bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium text-sm transition-colors"
+                className="block w-full py-3 rounded-xl bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium text-sm transition-colors"
               >
                 Upgrade to Pro — $299/mo
               </a>
@@ -448,7 +448,7 @@ function NewRequestForm() {
             <button
               type="submit"
               disabled={saving || loadingProjects}
-              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#B84C00] hover:bg-[#9A3F00] rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)] text-center"
+              className="flex-1 sm:flex-none px-4 py-2.5 sm:py-2 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-md disabled:opacity-40 transition-colors duration-[120ms] shadow-[0_1px_2px_rgba(17,24,39,0.1)] text-center"
             >
               {saving ? 'Creating…' : 'Create Variation Request'}
             </button>

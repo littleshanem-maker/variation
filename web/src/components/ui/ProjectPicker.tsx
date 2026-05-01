@@ -63,7 +63,7 @@ export default function ProjectPicker({ projects, value, onChange, required, cla
               }`}
             >
               <span>{p.name}</span>
-              {p.id === value && <Check size={15} className="text-[#B84C00] flex-shrink-0" />}
+              {p.id === value && <Check size={15} className="text-[#E76F00] flex-shrink-0" />}
             </button>
           ))}
         </div>

@@ -203,7 +203,7 @@ export default function TeamPage() {
           {isFree ? (
             <a
               href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#B84C00] border border-[#D8D2C4] bg-[#FFFCF5] rounded-md hover:bg-[#F5F2EA] transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#E76F00] border border-[#D8D2C4] bg-[#FFFCF5] rounded-md hover:bg-[#F5F2EA] transition-colors"
             >
               🔒 Field accounts available on pro
             </a>

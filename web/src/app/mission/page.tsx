@@ -78,7 +78,7 @@ export default function MissionControl() {
   }
 
   return (
-    <div className="min-h-screen bg-[#17212B] text-[#D8D2C4] font-sans selection:bg-[#B84C00]/20">
+    <div className="min-h-screen bg-[#17212B] text-[#D8D2C4] font-sans selection:bg-[#E76F00]/20">
       {/* Header */}
       <header className="border-b border-[#334155] bg-[#111827]/70 backdrop-blur sticky top-0 z-10">
         <div className="max-w-[1600px] mx-auto px-6 h-16 flex items-center justify-between">
@@ -99,7 +99,7 @@ export default function MissionControl() {
         <div className="space-y-6">
           <Section title="Strategy" icon="🎯">
             <div className="prose prose-invert prose-sm max-w-none">
-              <h3 className="cond text-[#B84C00] text-xs mb-2">Current mission</h3>
+              <h3 className="cond text-[#E76F00] text-xs mb-2">Current mission</h3>
               <p className="text-[#D8D2C4] whitespace-pre-line leading-relaxed">{data.strategy?.mission}</p>
 
               <h3 className="cond text-[#8C6500] text-xs mt-6 mb-2">Strategic focus</h3>
@@ -142,7 +142,7 @@ export default function MissionControl() {
               {/* Doing */}
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="cond text-xs text-[#B84C00]">In progress</h3>
+                  <h3 className="cond text-xs text-[#E76F00]">In progress</h3>
                   <span className="num text-xs bg-[#FBF1D6] text-[#8C6500] px-2 py-0.5 rounded-full">{data.kanban?.inProgress?.length || 0}</span>
                 </div>
                 <div className="space-y-2">
@@ -224,7 +224,7 @@ function Section({ title, icon, children }: { title: string, icon: string, child
 }
 
 function Card({ text, status }: { text: string, status: 'doing' | 'todo' | 'done' }) {
-  const border = status === 'doing' ? 'border-l-2 border-l-[#B84C00]' : 'border-l-2 border-l-[#334155]';
+  const border = status === 'doing' ? 'border-l-2 border-l-[#E76F00]' : 'border-l-2 border-l-[#334155]';
   return (
     <div className={`bg-[#17212B] p-3 rounded text-sm text-[#D8D2C4] ${border} shadow-sm`}>
       {text}

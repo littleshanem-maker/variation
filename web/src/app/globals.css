@@ -11,8 +11,8 @@
   --color-border: #D8D2C4;
   --color-border-light: #D8D2C4;
   --color-hover: #F5F2EA;
-  --color-gold: #B84C00;
-  --color-gold-hover: #9A3F00;
+  --color-gold: #E76F00;
+  --color-gold-hover: #C75A00;
   --color-status-approved: #2E7D32;
   --color-status-submitted: #8C6500;
   --color-status-disputed: #B42318;
@@ -24,6 +24,15 @@
   --color-pill-danger-bg: #FBE6E4;
   --color-pill-danger-fg: #7A1810;
   --font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --color-safety-orange: #E76F00;
+  --color-burnt-orange: #C75A00;
+  --color-deep-charcoal: #111827;
+  --color-asphalt: #17212B;
+  --color-steel-slate: #334155;
+  --color-warm-concrete: #F5F2EA;
+  --color-off-white: #FFFCF5;
+  --color-concrete-grey: #D8D2C4;
+
   --font-condensed: 'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif;
   --mono: 'IBM Plex Mono', ui-monospace, monospace;
 }

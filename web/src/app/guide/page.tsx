@@ -120,7 +120,7 @@ export default function GuidePage() {
           <p className="text-[#FFFCF5]/50 text-sm mb-4">Once it's on your home screen, tap it to log in and you're ready to go.</p>
           <Link
             href="/login"
-            className="inline-flex items-center gap-2 bg-[#B84C00] hover:bg-[#9A3F00] text-[#FFFCF5] font-medium px-6 py-3 rounded-xl text-sm transition-colors"
+            className="inline-flex items-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium px-6 py-3 rounded-xl text-sm transition-colors"
           >
             Log in to Variation Shield
             <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>

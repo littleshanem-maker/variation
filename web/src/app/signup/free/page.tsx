@@ -156,7 +156,7 @@ function FreeSignupContent() {
             type="submit"
             disabled={loading}
             className="w-full py-3 rounded-lg text-sm font-medium text-[#FFFCF5] transition-colors disabled:opacity-50"
-            style={{ backgroundColor: '#B84C00' }}
+            style={{ backgroundColor: '#E76F00' }}
           >
             {loading ? 'Creating account…' : 'Create free account'}
           </button>
@@ -175,7 +175,7 @@ function FreeSignupContent() {
 
         <p className="mt-3 text-center text-sm" style={{ color: '#334155' }}>
           Ready to go Pro?{' '}
-          <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="font-medium" style={{ color: '#B84C00' }}>
+          <a href="https://buy.stripe.com/3cI00j9wN8ZQ1Gs90XfrW02" className="font-medium" style={{ color: '#E76F00' }}>
             Subscribe — $299/mo
           </a>
         </p>
