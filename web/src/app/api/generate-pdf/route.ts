@@ -50,9 +50,10 @@ export async function POST(req: NextRequest) {
     tbody tr { page-break-inside: avoid !important; break-inside: avoid !important; }
     thead { display: table-header-group; }
     .avoid-break { page-break-inside: avoid !important; break-inside: avoid !important; }
+    body { background: #fff !important; }
   </style>
 </head>
-<body>
+<body style="background:#fff;">
   <div style="padding: 0;">
     ${html}
   </div>
