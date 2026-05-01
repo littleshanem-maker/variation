@@ -277,9 +277,9 @@ export default function LandingPage() {
               <span className="text-5xl font-medium">$299</span>
               <span className="text-[#334155] text-lg">+ GST / month</span>
             </div>
-            <p className="text-[#8C6500] text-sm font-medium mb-1">$299/month early adopter rate, locked for 12 months</p>
-            <p className="text-[#334155] text-xs mb-1">Limited places available: $299/month. Standard price will be $499/month.</p>
-            <p className="text-[#4B5563] text-xs mb-8">If it helps, continue at the $299/month early adopter rate. Cancel anytime.</p>
+            <p className="text-[#111827] text-sm font-medium mb-1">$299/month early adopter rate, locked for 12 months</p>
+            <p className="text-[#334155] text-sm mb-1">Limited places available: $299/month. Standard price will be $499/month.</p>
+            <p className="text-[#4B5563] text-sm mb-8">If it helps, continue at the $299/month early adopter rate. Cancel anytime.</p>
 
             <ul className="space-y-3 mb-8">
               {[
