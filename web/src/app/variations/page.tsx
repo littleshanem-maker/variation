@@ -259,10 +259,10 @@ function VariationsList() {
           </p>
         </div>
 
-        {/* Filters row */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-          {/* Status tabs — horizontally scrollable on mobile */}
-          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+        {/* Status filter tabs — row 1 */}
+        <div className="flex flex-col gap-3">
+          {/* Status tabs */}
+          <div className="overflow-x-auto -mx-4 px-4">
             <div className="flex bg-[#D8D2C4] p-1 rounded-md w-max">
               {statuses.map(s => (
                 <button
@@ -285,41 +285,44 @@ function VariationsList() {
             </div>
           </div>
 
-          {/* Project filter dropdown */}
-          <select
-            value={filterProject}
-            onChange={e => setFilterProject(e.target.value)}
-            className="px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#334155] focus:outline-none focus:ring-1 focus:ring-[#17212B] shadow-[0_1px_2px_rgba(17,24,39,0.04)] w-full sm:w-auto"
-          >
-            <option value="all">All Projects</option>
-            {rawProjects.map(p => (
-              <option key={p.id} value={p.id}>{p.name}</option>
-            ))}
-          </select>
+          {/* Row 2: Project filter + exports */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Project filter dropdown */}
+            <select
+              value={filterProject}
+              onChange={e => setFilterProject(e.target.value)}
+              className="px-3 py-1.5 text-[13px] border border-[#D8D2C4] rounded-md bg-[#FFFCF5] text-[#334155] focus:outline-none focus:ring-1 focus:ring-[#17212B] shadow-[0_1px_2px_rgba(17,24,39,0.04)] w-full sm:w-auto"
+            >
+              <option value="all">All Projects</option>
+              {rawProjects.map(p => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
 
-          {/* Export to Excel */}
-          <button
-            onClick={handleExportExcel}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#1F5223] bg-[#E5F0E6] border border-[#E5F0E6] rounded-md hover:bg-[#E5F0E6] transition-colors shadow-[0_1px_2px_rgba(17,24,39,0.04)] whitespace-nowrap"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-            </svg>
-            Export Excel
-          </button>
+            {/* Export to Excel */}
+            <button
+              onClick={handleExportExcel}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#1F5223] bg-[#E5F0E6] border border-[#E5F0E6] rounded-md hover:bg-[#E5F0E6] transition-colors shadow-[0_1px_2px_rgba(17,24,39,0.04)] whitespace-nowrap"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              Export Excel
+            </button>
 
-          {/* Export to PDF */}
-          <button
-            onClick={handleExportPdf}
-            disabled={exportingPdf}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#7A1810] bg-[#FBE6E4] border border-[#FBE6E4] rounded-md hover:bg-[#FBE6E4] transition-colors shadow-[0_1px_2px_rgba(17,24,39,0.04)] whitespace-nowrap disabled:opacity-50 disabled:cursor-wait"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
-            </svg>
-            {exportingPdf ? 'Generating…' : 'Export PDF'}
-          </button>
+            {/* Export to PDF */}
+            <button
+              onClick={handleExportPdf}
+              disabled={exportingPdf}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-medium text-[#7A1810] bg-[#FBE6E4] border border-[#FBE6E4] rounded-md hover:bg-[#FBE6E4] transition-colors shadow-[0_1px_2px_rgba(17,24,39,0.04)] whitespace-nowrap disabled:opacity-50 disabled:cursor-wait"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+              </svg>
+              {exportingPdf ? 'Generating…' : 'Export PDF'}
+            </button>
+          </div>
         </div>
 
         {sorted.length === 0 ? (
