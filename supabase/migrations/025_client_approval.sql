@@ -5,7 +5,7 @@
 ALTER TABLE public.variations
   ADD COLUMN IF NOT EXISTS client_email TEXT,
   ADD COLUMN IF NOT EXISTS approval_token UUID DEFAULT gen_random_uuid() UNIQUE,
-  ADD COLUMN IF NOT EXISTS approval_token_expires_at TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '30 days'),
+  ADD COLUMN IF NOT EXISTS approval_token_expires_at TIMESTAMPTZ DEFAULT (NOW() + INTERVAL '60 days'),
   ADD COLUMN IF NOT EXISTS client_approval_response TEXT, -- 'approved' | 'rejected'
   ADD COLUMN IF NOT EXISTS client_approval_comment TEXT,
   ADD COLUMN IF NOT EXISTS client_approved_at TIMESTAMPTZ;
