@@ -10,9 +10,11 @@ export default function MobileMenuButton() {
       }}
       aria-label="Menu"
     >
-      <span className="block w-5 h-0.5 bg-[#111827]/60 rounded" />
-      <span className="block w-5 h-0.5 bg-[#111827]/60 rounded" />
-      <span className="block w-5 h-0.5 bg-[#111827]/60 rounded" />
+      <svg width="20" height="16" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect y="0" width="20" height="2" rx="1" fill="#111827" fillOpacity="0.7"/>
+        <rect y="7" width="20" height="2" rx="1" fill="#111827" fillOpacity="0.7"/>
+        <rect y="14" width="20" height="2" rx="1" fill="#111827" fillOpacity="0.7"/>
+      </svg>
     </button>
   );
 }
