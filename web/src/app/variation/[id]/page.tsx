@@ -446,6 +446,9 @@ export default function VariationDetail() {
     try {
       const supabase = createClient();
 
+      // Guard: prevent double-send (concurrent calls could both see revCount=0 before either inserts)
+      if (sendingEmail) return;
+
       // Count existing snapshots — that IS the new revision number
       const { count: revCount } = await supabase
         .from('variation_request_revisions')

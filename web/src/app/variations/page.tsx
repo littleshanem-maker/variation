@@ -58,12 +58,29 @@ function VariationsList() {
       .select('*')
       .order('captured_at', { ascending: false });
 
+    // Fetch the latest sent revision number for each variation
+    const { data: revisionSnapshots } = await supabase
+      .from('variation_request_revisions')
+      .select('variation_id, revision_number')
+      .order('revision_number', { ascending: false });
+
+    // Map: variation_id → latest revision_number (first row per variation due to DESC ordering)
+    const latestRevisionMap = new Map<string, number>();
+    if (revisionSnapshots) {
+      for (const snap of revisionSnapshots) {
+        if (!latestRevisionMap.has(snap.variation_id)) {
+          latestRevisionMap.set(snap.variation_id, snap.revision_number);
+        }
+      }
+    }
+
     if (vars) {
       const activeVars = vars.filter(v => activeProjectIds.has(v.project_id));
       const dedupedVars = dedupeToLatestRevision(activeVars);
       const enriched = dedupedVars.map(v => ({
         ...v,
-        project_name: projectMap.get(v.project_id) || 'Unknown Project'
+        project_name: projectMap.get(v.project_id) || 'Unknown Project',
+        _sentRevision: latestRevisionMap.get(v.id) ?? null,
       }));
       setVariations(enriched);
 
@@ -140,7 +157,7 @@ function VariationsList() {
       'Title': v.title,
       'Project': v.project_name,
       'Status': v.status.charAt(0).toUpperCase() + v.status.slice(1),
-
+      'Revision': v._sentRevision !== null ? `Rev ${v._sentRevision}` : '',
       'Value (AUD)': (v.estimated_value || 0) / 100,
       'Captured': v.captured_at ? new Date(v.captured_at).toLocaleDateString('en-AU') : '',
       'Due Date': v.response_due_date ? (() => { const d = new Date(v.response_due_date + 'T00:00:00'); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()).slice(-2)}`; })() : '',
@@ -151,7 +168,7 @@ function VariationsList() {
     // Column widths
     ws['!cols'] = [
       { wch: 10 }, { wch: 40 }, { wch: 30 }, { wch: 12 },
-      { wch: 20 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
+      { wch: 10 }, { wch: 20 }, { wch: 14 }, { wch: 14 }, { wch: 14 },
     ];
 
     // Format Value column as currency
@@ -363,6 +380,7 @@ function VariationsList() {
                     <col />                            {/* Title — flex */}
                     <col style={{width: '180px'}} />  {/* Project */}
                     <col style={{width: '110px'}} />  {/* Status */}
+                    <col style={{width: '70px'}} />   {/* Revision */}
                     <col style={{width: '90px'}} />   {/* Captured */}
                     <col style={{width: '90px'}} />   {/* Due Date */}
                     <col style={{width: '100px'}} />  {/* Value */}
@@ -374,6 +392,7 @@ function VariationsList() {
                       <SortHeader label="Title" field="title" />
                       <SortHeader label="Project" field="project_name" className="hidden md:table-cell" />
                       <SortHeader label="Status" field="status" />
+                      <th className="w-[70px] text-left text-[11px] font-medium text-[#4B5563] uppercase tracking-wider px-3 md:px-4 py-3">Rev</th>
                       <SortHeader label="Captured" field="captured_at" align="right" className="hidden md:table-cell" />
                       <SortHeader label="Due Date" field="response_due_date" align="right" className="hidden lg:table-cell" />
                       <SortHeader label="Value" field="estimated_value" align="right" className="hidden sm:table-cell" />
@@ -395,6 +414,13 @@ function VariationsList() {
                         </td>
                         <td className="px-3 md:px-4 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-[#111827]">{v.project_name}</div></td>
                         <td className="px-3 md:px-4 py-3 w-[110px]"><StatusBadge status={v.status} /></td>
+                        <td className="px-3 md:px-4 py-3 w-[70px]">
+                          {v._sentRevision !== null ? (
+                            <span className="text-[13px] font-medium text-[#334155]">Rev {v._sentRevision}</span>
+                          ) : (
+                            <span className="text-[13px] text-[#D8D2C4]">—</span>
+                          )}
+                        </td>
                         <td className="px-3 md:px-4 py-3 text-[13px] text-[#111827] text-right hidden md:table-cell whitespace-nowrap w-[90px]">{formatDate(v.captured_at)}</td>
                         <td className="px-3 md:px-4 py-3 text-right hidden lg:table-cell whitespace-nowrap">
                             {v.response_due_date ? (() => {

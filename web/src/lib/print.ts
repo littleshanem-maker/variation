@@ -310,6 +310,7 @@ export function getFilteredRegisterHtml(
       <td class="font-medium">${escapeHtml(v.title)}</td>
       <td>${escapeHtml(v.project_name)}</td>
       <td>${getStatusConfig(v.status).label}</td>
+      <td class="text-center">${(v as any)._sentRevision != null ? `Rev ${(v as any)._sentRevision}` : '—'}</td>
       <td class="text-right tabular-nums">${formatDate(v.captured_at)}</td>
       <td class="text-right tabular-nums">${dueDate}</td>
       <td class="text-right tabular-nums font-medium">${formatCurrency(v.estimated_value)}</td>
@@ -360,6 +361,7 @@ export function getFilteredRegisterHtml(
           <th>Title</th>
           <th style="width:130px">Project</th>
           <th style="width:110px">Status</th>
+          <th style="width:60px; text-align:center">Rev</th>
           <th style="width:80px; text-align:right">Captured</th>
           <th style="width:80px; text-align:right">Due Date</th>
           <th style="width:90px; text-align:right">Value</th>
@@ -368,7 +370,7 @@ export function getFilteredRegisterHtml(
       <tbody>${rows}</tbody>
       <tfoot>
         <tr class="total-row">
-          <td colspan="6" class="text-right">Total</td>
+          <td colspan="7" class="text-right">Total</td>
           <td class="text-right tabular-nums">${formatCurrency(totalValue)}</td>
         </tr>
       </tfoot>
