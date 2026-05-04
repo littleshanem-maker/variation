@@ -164,6 +164,10 @@ export default function VariationDetail() {
           claim_type: editClaimType || null,
           status: 'draft',
           captured_at: new Date().toISOString(),
+          client_approval_response: variation.client_approval_response ?? null,
+          client_approval_comment: variation.client_approval_comment ?? null,
+          client_approved_at: variation.client_approved_at ?? null,
+          client_approved_by_email: variation.client_approved_by_email ?? null,
         })
         .select()
         .single();
