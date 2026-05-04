@@ -35,7 +35,7 @@ function NewRequestForm() {
   const [estimatedValue, setEstimatedValue] = useState('');
   const [costItems, setCostItems] = useState<CostItem[]>([]);
   const [responseDueDate, setResponseDueDate] = useState('');
-  const [claimType, setClaimType] = useState<'lump_sum' | 'cost_plus' | 'schedule_of_rates' | 'time_only' | 'cost_and_time'>('lump_sum');
+  const [claimType, setClaimType] = useState<'lump_sum' | 'cost_plus' | 'schedule_of_rates' | 'time_impact_only' | 'cost_and_time'>('lump_sum');
   const [eotDays, setEotDays] = useState('');
   const [eotUnit, setEotUnit] = useState<'days' | 'hours'>('days');
   const [basisOfValuation, setBasisOfValuation] = useState('');
@@ -212,7 +212,7 @@ function NewRequestForm() {
 
   const isCostOnly = claimType === 'lump_sum' || claimType === 'cost_plus' || claimType === 'schedule_of_rates';
   const showCostBreakdown = isCostOnly || claimType === 'cost_and_time';
-  const showEot = claimType === 'time_only' || claimType === 'cost_and_time';
+  const showEot = claimType === 'time_impact_only' || claimType === 'cost_and_time';
 
   function handleExportCsv() {
     // Trigger CSV download via the export API
@@ -392,7 +392,7 @@ function NewRequestForm() {
                 <option value="lump_sum">Lump Sum</option>
                 <option value="cost_plus">Cost Plus</option>
                 <option value="schedule_of_rates">Schedule of Rates</option>
-                <option value="time_only">Time Impact Only</option>
+                <option value="time_impact_only">Time Impact Only</option>
                 <option value="cost_and_time">Cost & Time</option>
               </select>
             </div>

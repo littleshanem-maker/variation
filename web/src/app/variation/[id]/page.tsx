@@ -83,6 +83,7 @@ export default function VariationDetail() {
   const [editClientEmail, setEditClientEmail] = useState('');
   const [editEotDays, setEditEotDays] = useState('');
   const [editTimeUnit, setEditTimeUnit] = useState<'days' | 'hours'>('days');
+  const [editClaimType, setEditClaimType] = useState<string>('');
   const [newFiles, setNewFiles] = useState<File[]>([]);
 
   useEffect(() => { loadVariation(); }, [id]);
@@ -116,6 +117,7 @@ export default function VariationDetail() {
     setEditClientEmail(variation.client_email || '');
     setEditEotDays(variation.eot_days_claimed != null ? String(variation.eot_days_claimed) : '');
     setEditTimeUnit((variation.time_implication_unit as 'days' | 'hours') || 'days');
+    setEditClaimType(variation.claim_type || 'lump_sum');
     setNewFiles([]);
     setEditing(true); setHasPendingDraft(true);
   }
@@ -159,6 +161,7 @@ export default function VariationDetail() {
           client_email: editClientEmail.trim() || null,
           eot_days_claimed: editEotDays ? parseFloat(editEotDays) : null,
           time_implication_unit: editEotDays ? editTimeUnit : null,
+          claim_type: editClaimType || null,
           status: 'draft',
           captured_at: new Date().toISOString(),
         })
