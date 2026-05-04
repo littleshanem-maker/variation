@@ -10,6 +10,7 @@ import { formatCurrency } from '@/lib/utils';
 import { printRegister } from '@/lib/print';
 import { useRole } from '@/lib/role';
 import type { Project, Variation } from '@/lib/types';
+import { dedupeToLatestRevision } from '@/lib/dedupeVariations';
 
 type DateRangeKey = 'all' | 'week' | 'month' | '30d' | '90d';
 
@@ -87,7 +88,9 @@ export default function Dashboard() {
     });
 
     const activeProjectIds = new Set(uniqueProjects.map((p: Project) => p.id));
-    const allVariations = (variationsData || []).filter((v: Variation) => activeProjectIds.has(v.project_id));
+    const allVariations = dedupeToLatestRevision(
+      (variationsData || []).filter((v: Variation) => activeProjectIds.has(v.project_id))
+    );
     setAllVariationsRaw(allVariations);
 
     setProjects(uniqueProjects.map((p: Project) => ({

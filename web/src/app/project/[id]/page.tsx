@@ -11,6 +11,7 @@ import { formatCurrency, formatDate, getVariationNumber } from '@/lib/utils';
 import { printProjectRegister } from '@/lib/print';
 import { useRole } from '@/lib/role';
 import type { Project, Variation, VariationNotice } from '@/lib/types';
+import { dedupeToLatestRevision } from '@/lib/dedupeVariations';
 
 type SortKey = 'sequence_number' | 'title' | 'status' | 'instruction_source' | 'estimated_value' | 'captured_at';
 
@@ -52,7 +53,7 @@ function ProjectDetailContent() {
       .eq('project_id', id)
       .order('sequence_number');
     setProject(proj);
-    setVariations(vars || []);
+    setVariations(dedupeToLatestRevision(vars || []));
     setNotices(noticesData || []);
     setLoading(false);
   }

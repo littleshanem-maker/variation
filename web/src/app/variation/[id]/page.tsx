@@ -18,6 +18,7 @@ import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice, VariationRequestRevision } from '@/lib/types';
 import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight, FileText } from 'lucide-react';
 import EmailAutocomplete from '@/components/EmailAutocomplete';
+import VariationTimeline from '@/components/VariationTimeline';
 
 const EDITABLE_STATUSES = ['draft', 'captured'];
 const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
@@ -297,19 +298,10 @@ export default function VariationDetail() {
     const supabase = createClient();
     const oldStatus = variation.status;
 
-    // When resubmitting after a withdraw, increment revision_number
+    // Revision number is now managed exclusively by the Revise flow (Mechanism B)
+    // and the content-hash check in the Submit to Client flow.
+    // Do NOT increment revision_number on status change alone.
     let updatePayload: Record<string, unknown> = { status: newStatus };
-    if (newStatus === 'submitted') {
-      const { data: prevSubmits } = await supabase
-        .from('status_changes')
-        .select('id')
-        .eq('variation_id', variation.id)
-        .eq('to_status', 'submitted')
-        .limit(1);
-      if (prevSubmits && prevSubmits.length > 0) {
-        updatePayload.revision_number = (variation.revision_number ?? 0) + 1;
-      }
-    }
 
     const { error } = await supabase.from('variations').update(updatePayload).eq('id', variation.id);
     if (error) {
@@ -892,51 +884,15 @@ export default function VariationDetail() {
           </div>
         )}
 
-        {/* Progress Stepper */}
-        {!editing && (() => {
-          const isRejected = variation.status === 'disputed';
-          const steps = [
-            { key: 'draft',     label: 'Draft' },
-            { key: 'submitted', label: 'Submitted to Client' },
-            { key: isRejected ? 'disputed' : 'approved', label: isRejected ? 'Rejected' : 'Approved' },
-            { key: 'paid',      label: 'Paid' },
-          ];
-          const ORDER = ['draft', 'captured', 'submitted', 'approved', 'disputed', 'paid'];
-          const currentIdx = ORDER.indexOf(variation.status);
-          return (
-            <div className="flex items-center gap-0 bg-[#FFFCF5] border border-[#D8D2C4] rounded-md px-4 py-3 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
-              {steps.map((step, i) => {
-                const stepOrder = ORDER.indexOf(step.key);
-                const isCurrent = variation.status === step.key || (step.key === 'draft' && variation.status === 'captured');
-                const isDone = !isCurrent && currentIdx > stepOrder;
-                const isNext = !isCurrent && !isDone;
-                return (
-                  <div key={step.key} className="flex items-center flex-1 min-w-0">
-                    <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-medium flex-shrink-0 ${
-                        isCurrent
-                          ? step.key === 'disputed' ? 'bg-[#B42318] text-[#FFFCF5]' : 'bg-[#E76F00] text-[#FFFCF5]'
-                          : isDone
-                          ? 'bg-[#2E7D32] text-[#FFFCF5]'
-                          : 'bg-[#F5F2EA] text-[#4B5563]'
-                      }`}>
-                        {isDone ? '✓' : i + 1}
-                      </div>
-                      <span className={`text-[10px] font-medium text-center leading-tight hidden sm:block ${
-                        isCurrent
-                          ? step.key === 'disputed' ? 'text-[#B42318]' : 'text-[#E76F00]'
-                          : isDone ? 'text-[#2E7D32]' : 'text-[#4B5563]'
-                      }`}>{step.label}</span>
-                    </div>
-                    {i < steps.length - 1 && (
-                      <div className={`h-[2px] flex-1 mx-1 ${isDone ? 'bg-[#2E7D32]' : 'bg-[#D8D2C4]'}`} />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })()}
+        {/* Status Timeline */}
+        {!editing && (
+          <VariationTimeline
+            currentStatus={variation.status}
+            statusHistory={statusHistory}
+            responseDueDate={variation.response_due_date}
+            revisionNumber={variation.revision_number}
+          />
+        )}
 
         {/* Header Card */}
         <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">

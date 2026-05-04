@@ -13,6 +13,7 @@ import { getFilteredRegisterHtml, openRegisterForPrint } from '@/lib/print';
 import { htmlToPdfBlob } from '@/lib/pdf';
 import { useRole } from '@/lib/role';
 import type { Variation, Project, VariationNotice } from '@/lib/types';
+import { dedupeToLatestRevision } from '@/lib/dedupeVariations';
 import * as XLSX from 'xlsx';
 import { MoreHorizontal, Pencil, Send, Trash2 } from 'lucide-react';
 
@@ -59,7 +60,8 @@ function VariationsList() {
 
     if (vars) {
       const activeVars = vars.filter(v => activeProjectIds.has(v.project_id));
-      const enriched = activeVars.map(v => ({
+      const dedupedVars = dedupeToLatestRevision(activeVars);
+      const enriched = dedupedVars.map(v => ({
         ...v,
         project_name: projectMap.get(v.project_id) || 'Unknown Project'
       }));
@@ -67,7 +69,7 @@ function VariationsList() {
 
       const projectsWithVars = (projects || []).map(p => ({
         ...p,
-        variations: activeVars.filter(v => v.project_id === p.id),
+        variations: dedupedVars.filter(v => v.project_id === p.id),
       }));
       setRawProjects(projectsWithVars);
     }

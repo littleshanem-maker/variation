@@ -1,9 +1,13 @@
 /**
- * Sync Service — Phase 2
+ * Sync Service — Phase 2 (FIXED)
  *
  * Bidirectional sync between local SQLite and Supabase.
  * Strategy: Local-first, push pending on connectivity, pull server changes.
- * Conflict resolution: Last-write-wins with server timestamp.
+ *
+ * CRITICAL CHANGES from original:
+ * 1. Push uses insert-or-update instead of upsert — only touches mobile-owned fields
+ * 2. Pull updates existing local records when server is newer (was: skip if exists)
+ * 3. New columns from web schema are pulled but never pushed
  *
  * Works fully offline without Supabase configured.
  */
@@ -92,15 +96,24 @@ export async function syncPendingChanges(): Promise<SyncResult> {
     }
 
     // ---- PUSH: Local → Server ----
+    // IMPORTANT: Use insert-or-update, NOT upsert.
+    // Only push mobile-owned fields. Never touch web-only fields.
 
-    // 1. Sync pending projects
+    // 1. Push pending projects
     const pendingProjects = await db.getAllAsync<any>(
       "SELECT * FROM projects WHERE sync_status = 'pending'"
     );
     for (const project of pendingProjects) {
       try {
-        const { error } = await supabase.from('projects').upsert({
-          id: project.id,
+        // Check if project exists on server
+        const { data: existing } = await supabase
+          .from('projects')
+          .select('id')
+          .eq('id', project.id)
+          .maybeSingle();
+
+        // Mobile-owned project fields (never include company_id — server trigger handles it)
+        const mobileProjectFields = {
           name: project.name,
           client: project.client,
           reference: project.reference,
@@ -109,27 +122,55 @@ export async function syncPendingChanges(): Promise<SyncResult> {
           longitude: project.longitude,
           contract_type: project.contract_type,
           is_active: project.is_active,
-          created_at: project.created_at,
           updated_at: project.updated_at,
-        }, { onConflict: 'id' });
+        };
+
+        let error;
+        if (existing) {
+          // UPDATE — only mobile-owned fields, preserves company_id, client_email, etc.
+          ({ error } = await supabase
+            .from('projects')
+            .update(mobileProjectFields)
+            .eq('id', project.id));
+        } else {
+          // INSERT — new project. Server trigger auto-sets company_id.
+          ({ error } = await supabase
+            .from('projects')
+            .insert({
+              id: project.id,
+              ...mobileProjectFields,
+              created_at: project.created_at,
+            }));
+        }
 
         if (!error) {
           await db.runAsync("UPDATE projects SET sync_status = 'synced' WHERE id = ?", project.id);
           pushed++;
+        } else {
+          console.error('[Sync] Project push failed:', error);
         }
       } catch (e) {
         console.error('[Sync] Project push failed:', e);
       }
     }
 
-    // 2. Sync pending variations
+    // 2. Push pending variations
     const pendingVariations = await db.getAllAsync<any>(
       "SELECT * FROM variations WHERE sync_status = 'pending'"
     );
     for (const variation of pendingVariations) {
       try {
-        const { error } = await supabase.from('variations').upsert({
-          id: variation.id,
+        const { data: existing } = await supabase
+          .from('variations')
+          .select('id')
+          .eq('id', variation.id)
+          .maybeSingle();
+
+        // Mobile-owned variation fields — everything the mobile app captures.
+        // Deliberately excludes: revision_number, parent_id, cost_items, client_email,
+        // cc_emails, approval_token, client_approval_*, claim_type, eot_days_claimed,
+        // basis_of_valuation, time_implication_unit, response_due_date, notice_id
+        const mobileVariationFields = {
           project_id: variation.project_id,
           sequence_number: variation.sequence_number,
           title: variation.title,
@@ -142,28 +183,47 @@ export async function syncPendingChanges(): Promise<SyncResult> {
           captured_at: variation.captured_at,
           latitude: variation.latitude,
           longitude: variation.longitude,
+          location_accuracy: variation.location_accuracy,
           evidence_hash: variation.evidence_hash,
           notes: variation.notes,
           ai_description: variation.ai_description,
           ai_transcription: variation.ai_transcription,
-        }, { onConflict: 'id' });
+        };
+
+        let error;
+        if (existing) {
+          // UPDATE — only mobile-owned fields, preserves all web-only fields
+          ({ error } = await supabase
+            .from('variations')
+            .update(mobileVariationFields)
+            .eq('id', variation.id));
+        } else {
+          // INSERT — new variation
+          ({ error } = await supabase
+            .from('variations')
+            .insert({
+              id: variation.id,
+              ...mobileVariationFields,
+            }));
+        }
 
         if (!error) {
           await db.runAsync("UPDATE variations SET sync_status = 'synced' WHERE id = ?", variation.id);
           pushed++;
+        } else {
+          console.error('[Sync] Variation push failed:', error);
         }
       } catch (e) {
         console.error('[Sync] Variation push failed:', e);
       }
     }
 
-    // 3. Sync pending photos (metadata + file upload)
+    // 3. Push pending photos (metadata + file upload)
     const pendingPhotos = await db.getAllAsync<any>(
       "SELECT * FROM photo_evidence WHERE sync_status = 'pending'"
     );
     for (const photo of pendingPhotos) {
       try {
-        // Upload photo file to Supabase Storage
         if (photo.local_uri) {
            try {
              const fileData = await FileSystem.readAsStringAsync(photo.local_uri, { encoding: 'base64' });
@@ -179,6 +239,7 @@ export async function syncPendingChanges(): Promise<SyncResult> {
            }
         }
 
+        // Photos are immutable — upsert is safe here (no web-only fields to corrupt)
         const { error } = await supabase.from('photo_evidence').upsert({
           id: photo.id,
           variation_id: photo.variation_id,
@@ -195,25 +256,31 @@ export async function syncPendingChanges(): Promise<SyncResult> {
           pushed++;
         }
       } catch (e: any) {
-        console.error('[Sync] Photo push failed:', e?.message || e, 'photo_id:', photo.id, 'local_uri:', photo.local_uri);
+        console.error('[Sync] Photo push failed:', e?.message || e, 'photo_id:', photo.id);
       }
     }
 
-    // 4. Sync pending variation notices
+    // 4. Push pending variation notices
     const pendingNotices = await db.getAllAsync<any>(
       "SELECT * FROM variation_notices WHERE sync_status = 'pending'"
     );
     for (const notice of pendingNotices) {
       try {
-        const { error } = await supabase.from('variation_notices').upsert({
-          id: notice.id,
+        const { data: existing } = await supabase
+          .from('variation_notices')
+          .select('id')
+          .eq('id', notice.id)
+          .maybeSingle();
+
+        // Mobile-owned notice fields
+        const mobileNoticeFields = {
           project_id: notice.project_id,
           notice_number: notice.notice_number,
           sequence_number: notice.sequence_number,
           event_description: notice.event_description,
           event_date: notice.event_date,
-          cost_flag: Boolean(notice.cost_flag),
-          time_flag: Boolean(notice.time_flag),
+          cost_flag: notice.cost_flag,
+          time_flag: notice.time_flag,
           estimated_days: notice.estimated_days,
           contract_clause: notice.contract_clause,
           issued_by_name: notice.issued_by_name,
@@ -222,9 +289,25 @@ export async function syncPendingChanges(): Promise<SyncResult> {
           issued_at: notice.issued_at,
           acknowledged_at: notice.acknowledged_at,
           variation_id: notice.variation_id,
-          created_at: notice.created_at,
           updated_at: notice.updated_at,
-        }, { onConflict: 'id' });
+        };
+
+        let error;
+        if (existing) {
+          ({ error } = await supabase
+            .from('variation_notices')
+            .update(mobileNoticeFields)
+            .eq('id', notice.id));
+        } else {
+          ({ error } = await supabase
+            .from('variation_notices')
+            .insert({
+              id: notice.id,
+              ...mobileNoticeFields,
+              company_id: null, // server trigger or web will set this
+              created_at: notice.created_at,
+            }));
+        }
 
         if (!error) {
           await db.runAsync("UPDATE variation_notices SET sync_status = 'synced' WHERE id = ?", notice.id);
@@ -235,38 +318,37 @@ export async function syncPendingChanges(): Promise<SyncResult> {
       }
     }
 
-    // 5. Sync pending voice notes
+    // 5. Push pending voice notes (immutable — upsert is safe)
     const pendingVoice = await db.getAllAsync<any>(
       "SELECT * FROM voice_notes WHERE sync_status = 'pending'"
     );
-    for (const voice of pendingVoice) {
+    for (const vn of pendingVoice) {
       try {
-        // Upload voice file if needed
-        if (voice.local_uri) {
-           try {
-             const fileData = await FileSystem.readAsStringAsync(voice.local_uri, { encoding: 'base64' });
-             const { error: uploadError } = await supabase.storage.from('evidence').upload(`${userId}/voice/${voice.id}.m4a`, decode(fileData), {
-               contentType: 'audio/m4a',
-               upsert: true
-             });
-             if (uploadError) console.error('[Sync] Voice upload failed:', uploadError);
-           } catch {
-             console.log('[Sync] Voice file not found locally, skipping upload:', voice.local_uri);
-           }
+        if (vn.local_uri) {
+          try {
+            const fileData = await FileSystem.readAsStringAsync(vn.local_uri, { encoding: 'base64' });
+            const { error: uploadError } = await supabase.storage.from('evidence').upload(`${userId}/voice/${vn.id}.m4a`, decode(fileData), {
+              contentType: 'audio/mp4',
+              upsert: true
+            });
+            if (uploadError) console.error('[Sync] Voice upload failed:', uploadError);
+          } catch {
+            console.log('[Sync] Voice file not found locally, skipping upload');
+          }
         }
 
         const { error } = await supabase.from('voice_notes').upsert({
-          id: voice.id,
-          variation_id: voice.variation_id,
-          duration_seconds: voice.duration_seconds,
-          transcription: voice.transcription,
-          transcription_status: voice.transcription_status,
-          sha256_hash: voice.sha256_hash,
-          captured_at: voice.captured_at,
+          id: vn.id,
+          variation_id: vn.variation_id,
+          duration_seconds: vn.duration_seconds,
+          transcription: vn.transcription,
+          transcription_status: vn.transcription_status,
+          sha256_hash: vn.sha256_hash,
+          captured_at: vn.captured_at,
         }, { onConflict: 'id' });
 
         if (!error) {
-          await db.runAsync("UPDATE voice_notes SET sync_status = 'synced' WHERE id = ?", voice.id);
+          await db.runAsync("UPDATE voice_notes SET sync_status = 'synced' WHERE id = ?", vn.id);
           pushed++;
         }
       } catch (e) {
@@ -274,11 +356,35 @@ export async function syncPendingChanges(): Promise<SyncResult> {
       }
     }
 
+    // 6. Push pending status_changes (append-only — insert only, no update)
+    // status_changes don't have sync_status, so push by checking if id exists on server
+    const localStatusChanges = await db.getAllAsync<any>('SELECT * FROM status_changes');
+    for (const sc of localStatusChanges) {
+      try {
+        const { data: existing } = await supabase
+          .from('status_changes')
+          .select('id')
+          .eq('id', sc.id)
+          .maybeSingle();
+
+        if (!existing) {
+          await supabase.from('status_changes').insert({
+            id: sc.id,
+            variation_id: sc.variation_id,
+            from_status: sc.from_status,
+            to_status: sc.to_status,
+            changed_at: sc.changed_at,
+            changed_by: sc.changed_by,
+            notes: sc.notes,
+          });
+          pushed++;
+        }
+      } catch (e) {
+        console.error('[Sync] Status change push failed:', e);
+      }
+    }
+
     // ---- PULL: Server → Local ----
-    // Fetch server records and upsert locally.
-    // Skip any local record that has sync_status = 'pending' (not yet pushed).
-    // Use server updated_at (or captured_at for immutable records) to avoid
-    // overwriting newer local data with stale server data.
 
     // 1. Pull projects
     const { data: serverProjects, error: projPullErr } = await supabase
@@ -296,16 +402,41 @@ export async function syncPendingChanges(): Promise<SyncResult> {
         if (local?.sync_status === 'pending') continue;
         // Skip if local is newer or same age
         if (local && local.updated_at >= sp.updated_at) continue;
-        await db.runAsync(
-          `INSERT OR REPLACE INTO projects
-            (id, name, client, reference, address, latitude, longitude,
-             contract_type, is_active, created_at, updated_at, sync_status, remote_id)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?)`,
-          sp.id, sp.name, sp.client, sp.reference ?? '',
-          sp.address, sp.latitude, sp.longitude,
-          sp.contract_type, sp.is_active ? 1 : 0,
-          sp.created_at, sp.updated_at, null
-        );
+
+        if (local) {
+          // UPDATE existing local record with server data
+          await db.runAsync(
+            `UPDATE projects SET
+              name = ?, client = ?, reference = ?, address = ?,
+              latitude = ?, longitude = ?, contract_type = ?,
+              is_active = ?, company_id = ?, client_email = ?,
+              contract_number = ?, notice_required = ?,
+              updated_at = ?, sync_status = 'synced'
+            WHERE id = ?`,
+            sp.name, sp.client, sp.reference ?? '',
+            sp.address, sp.latitude, sp.longitude,
+            sp.contract_type, sp.is_active ? 1 : 0,
+            sp.company_id, sp.client_email,
+            sp.contract_number, sp.notice_required ? 1 : 0,
+            sp.updated_at, sp.id
+          );
+        } else {
+          // INSERT new local record
+          await db.runAsync(
+            `INSERT INTO projects
+              (id, name, client, reference, address, latitude, longitude,
+               contract_type, is_active, company_id, client_email,
+               contract_number, notice_required,
+               created_at, updated_at, sync_status, remote_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?)`,
+            sp.id, sp.name, sp.client, sp.reference ?? '',
+            sp.address, sp.latitude, sp.longitude,
+            sp.contract_type, sp.is_active ? 1 : 0,
+            sp.company_id, sp.client_email,
+            sp.contract_number, sp.notice_required ? 1 : 0,
+            sp.created_at, sp.updated_at, null
+          );
+        }
         pulled++;
       }
     }
@@ -320,27 +451,73 @@ export async function syncPendingChanges(): Promise<SyncResult> {
     } else if (serverVariations) {
       for (const sv of serverVariations) {
         const local = await db.getFirstAsync<any>(
-          'SELECT id, sync_status FROM variations WHERE id = ?',
+          'SELECT id, updated_at, sync_status FROM variations WHERE id = ?',
           sv.id
         );
         if (local?.sync_status === 'pending') continue;
-        if (local) continue; // Already synced — server wins on new records only
-        await db.runAsync(
-          `INSERT OR REPLACE INTO variations
-            (id, project_id, sequence_number, title, description,
-             instruction_source, instructed_by, reference_doc,
-             estimated_value, status, captured_at, latitude, longitude,
-             location_accuracy, evidence_hash, notes, sync_status,
-             remote_id, ai_description, ai_transcription)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?)`,
-          sv.id, sv.project_id, sv.sequence_number, sv.title,
-          sv.description ?? '', sv.instruction_source, sv.instructed_by ?? null,
-          sv.reference_doc ?? null, sv.estimated_value ?? 0, sv.status,
-          sv.captured_at, sv.latitude ?? null, sv.longitude ?? null,
-          sv.location_accuracy ?? null, sv.evidence_hash ?? null,
-          sv.notes ?? null, null,
-          sv.ai_description ?? null, sv.ai_transcription ?? null
-        );
+        if (local && local.updated_at >= sv.updated_at) continue;
+
+        if (local) {
+          // UPDATE existing — pull all fields including web-only ones for display
+          await db.runAsync(
+            `UPDATE variations SET
+              title = ?, description = ?, instruction_source = ?,
+              instructed_by = ?, reference_doc = ?, estimated_value = ?,
+              status = ?, notes = ?, ai_description = ?, ai_transcription = ?,
+              revision_number = ?, parent_id = ?, notice_id = ?,
+              response_due_date = ?, claim_type = ?, eot_days_claimed = ?,
+              basis_of_valuation = ?, time_implication_unit = ?,
+              cost_items = ?, client_email = ?, cc_emails = ?,
+              client_approval_response = ?, client_approval_comment = ?,
+              client_approved_at = ?, client_approved_by_email = ?,
+              updated_at = ?, sync_status = 'synced'
+            WHERE id = ?`,
+            sv.title, sv.description ?? '', sv.instruction_source,
+            sv.instructed_by, sv.reference_doc, sv.estimated_value ?? 0,
+            sv.status, sv.notes, sv.ai_description, sv.ai_transcription,
+            sv.revision_number ?? 0, sv.parent_id, sv.notice_id,
+            sv.response_due_date, sv.claim_type, sv.eot_days_claimed,
+            sv.basis_of_valuation, sv.time_implication_unit,
+            sv.cost_items ? JSON.stringify(sv.cost_items) : null,
+            sv.client_email, sv.cc_emails,
+            sv.client_approval_response, sv.client_approval_comment,
+            sv.client_approved_at, sv.client_approved_by_email,
+            sv.updated_at, sv.id
+          );
+        } else {
+          // INSERT new
+          await db.runAsync(
+            `INSERT INTO variations
+              (id, project_id, sequence_number, variation_number,
+               title, description, instruction_source, instructed_by,
+               reference_doc, estimated_value, status, captured_at,
+               latitude, longitude, location_accuracy, evidence_hash,
+               notes, ai_description, ai_transcription,
+               revision_number, parent_id, notice_id,
+               response_due_date, claim_type, eot_days_claimed,
+               basis_of_valuation, time_implication_unit,
+               cost_items, client_email, cc_emails,
+               client_approval_response, client_approval_comment,
+               client_approved_at, client_approved_by_email,
+               sync_status, remote_id)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?)`,
+            sv.id, sv.project_id, sv.sequence_number, sv.variation_number,
+            sv.title, sv.description ?? '', sv.instruction_source,
+            sv.instructed_by, sv.reference_doc, sv.estimated_value ?? 0,
+            sv.status, sv.captured_at,
+            sv.latitude, sv.longitude, sv.location_accuracy,
+            sv.evidence_hash, sv.notes,
+            sv.ai_description, sv.ai_transcription,
+            sv.revision_number ?? 0, sv.parent_id, sv.notice_id,
+            sv.response_due_date, sv.claim_type, sv.eot_days_claimed,
+            sv.basis_of_valuation, sv.time_implication_unit,
+            sv.cost_items ? JSON.stringify(sv.cost_items) : null,
+            sv.client_email, sv.cc_emails,
+            sv.client_approval_response, sv.client_approval_comment,
+            sv.client_approved_at, sv.client_approved_by_email,
+            null
+          );
+        }
         pulled++;
       }
     }
@@ -360,28 +537,57 @@ export async function syncPendingChanges(): Promise<SyncResult> {
         );
         if (local?.sync_status === 'pending') continue;
         if (local && local.updated_at >= sn.updated_at) continue;
-        await db.runAsync(
-          `INSERT OR REPLACE INTO variation_notices
-            (id, project_id, notice_number, sequence_number,
-             event_description, event_date, cost_flag, time_flag,
-             estimated_days, contract_clause, issued_by_name, issued_by_email,
-             status, issued_at, acknowledged_at, variation_id,
-             sync_status, remote_id, created_at, updated_at)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?)`,
-          sn.id, sn.project_id, sn.notice_number, sn.sequence_number,
-          sn.event_description, sn.event_date,
-          sn.cost_flag ? 1 : 0, sn.time_flag ? 1 : 0,
-          sn.estimated_days ?? null, sn.contract_clause ?? null,
-          sn.issued_by_name ?? null, sn.issued_by_email ?? null,
-          sn.status, sn.issued_at ?? null, sn.acknowledged_at ?? null,
-          sn.variation_id ?? null, null,
-          sn.created_at, sn.updated_at
-        );
+
+        if (local) {
+          await db.runAsync(
+            `UPDATE variation_notices SET
+              event_description = ?, event_date = ?,
+              cost_flag = ?, time_flag = ?, estimated_days = ?,
+              contract_clause = ?, issued_by_name = ?, issued_by_email = ?,
+              status = ?, issued_at = ?, acknowledged_at = ?,
+              variation_id = ?, client_email = ?, cc_emails = ?,
+              response_due_date = ?, cost_items = ?, time_implication_unit = ?,
+              updated_at = ?, sync_status = 'synced'
+            WHERE id = ?`,
+            sn.event_description, sn.event_date,
+            sn.cost_flag ? 1 : 0, sn.time_flag ? 1 : 0, sn.estimated_days,
+            sn.contract_clause, sn.issued_by_name, sn.issued_by_email,
+            sn.status, sn.issued_at, sn.acknowledged_at,
+            sn.variation_id, sn.client_email, sn.cc_emails,
+            sn.response_due_date,
+            sn.cost_items ? JSON.stringify(sn.cost_items) : null,
+            sn.time_implication_unit,
+            sn.updated_at, sn.id
+          );
+        } else {
+          await db.runAsync(
+            `INSERT INTO variation_notices
+              (id, project_id, notice_number, sequence_number,
+               event_description, event_date, cost_flag, time_flag,
+               estimated_days, contract_clause, issued_by_name, issued_by_email,
+               status, issued_at, acknowledged_at, variation_id,
+               client_email, cc_emails, response_due_date,
+               cost_items, time_implication_unit,
+               sync_status, remote_id, created_at, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'synced', ?, ?, ?)`,
+            sn.id, sn.project_id, sn.notice_number, sn.sequence_number,
+            sn.event_description, sn.event_date,
+            sn.cost_flag ? 1 : 0, sn.time_flag ? 1 : 0,
+            sn.estimated_days, sn.contract_clause,
+            sn.issued_by_name, sn.issued_by_email,
+            sn.status, sn.issued_at, sn.acknowledged_at,
+            sn.variation_id, sn.client_email, sn.cc_emails,
+            sn.response_due_date,
+            sn.cost_items ? JSON.stringify(sn.cost_items) : null,
+            sn.time_implication_unit,
+            null, sn.created_at, sn.updated_at
+          );
+        }
         pulled++;
       }
     }
 
-    // 4. Pull photo_evidence (immutable after capture — use captured_at)
+    // 4. Pull photo_evidence (immutable — insert only)
     const serverVariationIds = (serverVariations ?? []).map((v: any) => v.id);
     if (serverVariationIds.length > 0) {
       const { data: serverPhotos, error: photoPullErr } = await supabase
@@ -393,11 +599,10 @@ export async function syncPendingChanges(): Promise<SyncResult> {
       } else if (serverPhotos) {
         for (const sp of serverPhotos) {
           const local = await db.getFirstAsync<any>(
-            'SELECT id, sync_status FROM photo_evidence WHERE id = ?',
+            'SELECT id FROM photo_evidence WHERE id = ?',
             sp.id
           );
-          if (local?.sync_status === 'pending') continue;
-          if (local) continue; // Already have it and it's synced — no updates on photos
+          if (local) continue;
           await db.runAsync(
             `INSERT OR IGNORE INTO photo_evidence
               (id, variation_id, local_uri, remote_uri, sha256_hash,
@@ -412,7 +617,7 @@ export async function syncPendingChanges(): Promise<SyncResult> {
         }
       }
 
-      // 4. Pull voice_notes
+      // 5. Pull voice_notes (immutable — insert only)
       const { data: serverVoice, error: voicePullErr } = await supabase
         .from('voice_notes')
         .select('*')
@@ -422,11 +627,10 @@ export async function syncPendingChanges(): Promise<SyncResult> {
       } else if (serverVoice) {
         for (const sv of serverVoice) {
           const local = await db.getFirstAsync<any>(
-            'SELECT id, sync_status FROM voice_notes WHERE id = ?',
+            'SELECT id FROM voice_notes WHERE id = ?',
             sv.id
           );
-          if (local?.sync_status === 'pending') continue;
-          if (local) continue; // Voice notes are immutable after capture
+          if (local) continue;
           await db.runAsync(
             `INSERT OR IGNORE INTO voice_notes
               (id, variation_id, local_uri, remote_uri, duration_seconds,
@@ -443,7 +647,7 @@ export async function syncPendingChanges(): Promise<SyncResult> {
         }
       }
 
-      // 5. Pull status_changes (append-only, no sync_status column)
+      // 6. Pull status_changes (append-only)
       const { data: serverStatusChanges, error: scPullErr } = await supabase
         .from('status_changes')
         .select('*')
@@ -456,7 +660,7 @@ export async function syncPendingChanges(): Promise<SyncResult> {
             'SELECT id FROM status_changes WHERE id = ?',
             sc.id
           );
-          if (local) continue; // Already have it
+          if (local) continue;
           await db.runAsync(
             `INSERT OR IGNORE INTO status_changes
               (id, variation_id, from_status, to_status, changed_at, changed_by, notes)

@@ -128,15 +128,6 @@ async function createTables(database: SQLite.SQLiteDatabase): Promise<void> {
       FOREIGN KEY (variation_id) REFERENCES variations(id) ON DELETE CASCADE
     );
 
-    CREATE INDEX IF NOT EXISTS idx_variations_project ON variations(project_id);
-    CREATE INDEX IF NOT EXISTS idx_variations_status ON variations(status);
-    CREATE INDEX IF NOT EXISTS idx_photos_variation ON photo_evidence(variation_id);
-    CREATE INDEX IF NOT EXISTS idx_voice_variation ON voice_notes(variation_id);
-    CREATE INDEX IF NOT EXISTS idx_status_variation ON status_changes(variation_id);
-    CREATE INDEX IF NOT EXISTS idx_sync_projects ON projects(sync_status);
-    CREATE INDEX IF NOT EXISTS idx_sync_variations ON variations(sync_status);
-    CREATE INDEX IF NOT EXISTS idx_attachments_variation ON attachments(variation_id);
-
     CREATE TABLE IF NOT EXISTS variation_notices (
       id TEXT PRIMARY KEY,
       project_id TEXT NOT NULL,
@@ -161,6 +152,14 @@ async function createTables(database: SQLite.SQLiteDatabase): Promise<void> {
       FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
     );
 
+    CREATE INDEX IF NOT EXISTS idx_variations_project ON variations(project_id);
+    CREATE INDEX IF NOT EXISTS idx_variations_status ON variations(status);
+    CREATE INDEX IF NOT EXISTS idx_photos_variation ON photo_evidence(variation_id);
+    CREATE INDEX IF NOT EXISTS idx_voice_variation ON voice_notes(variation_id);
+    CREATE INDEX IF NOT EXISTS idx_status_variation ON status_changes(variation_id);
+    CREATE INDEX IF NOT EXISTS idx_sync_projects ON projects(sync_status);
+    CREATE INDEX IF NOT EXISTS idx_sync_variations ON variations(sync_status);
+    CREATE INDEX IF NOT EXISTS idx_attachments_variation ON attachments(variation_id);
     CREATE INDEX IF NOT EXISTS idx_notices_project ON variation_notices(project_id);
     CREATE INDEX IF NOT EXISTS idx_notices_sync ON variation_notices(sync_status);
   `);
@@ -196,6 +195,44 @@ async function runMigrations(database: SQLite.SQLiteDatabase): Promise<void> {
   await database.execAsync(`
     UPDATE variations SET status = 'draft' WHERE status = 'captured'
   `);
+
+  // ============================================================
+  // Migration: sync parity with Supabase web schema
+  // These columns exist in Supabase (added by migrations 004–033)
+  // and are needed so the mobile app can read/display them after
+  // pull sync, and so push sync doesn't corrupt web-created data.
+  // ============================================================
+
+  // --- projects table ---
+  await addColumn('projects', 'company_id', 'TEXT');
+  await addColumn('projects', 'client_email', 'TEXT');
+  await addColumn('projects', 'contract_number', 'TEXT');
+  await addColumn('projects', 'notice_required', 'INTEGER DEFAULT 0');
+
+  // --- variations table ---
+  await addColumn('variations', 'revision_number', 'INTEGER DEFAULT 0');
+  await addColumn('variations', 'parent_id', 'TEXT');
+  await addColumn('variations', 'notice_id', 'TEXT');
+  await addColumn('variations', 'response_due_date', 'TEXT');
+  await addColumn('variations', 'claim_type', 'TEXT');
+  await addColumn('variations', 'eot_days_claimed', 'INTEGER');
+  await addColumn('variations', 'basis_of_valuation', 'TEXT');
+  await addColumn('variations', 'time_implication_unit', 'TEXT');
+  await addColumn('variations', 'cost_items', 'TEXT');          // JSON string
+  await addColumn('variations', 'client_email', 'TEXT');
+  await addColumn('variations', 'cc_emails', 'TEXT');
+  await addColumn('variations', 'approval_token', 'TEXT');
+  await addColumn('variations', 'client_approval_response', 'TEXT');
+  await addColumn('variations', 'client_approval_comment', 'TEXT');
+  await addColumn('variations', 'client_approved_at', 'TEXT');
+  await addColumn('variations', 'client_approved_by_email', 'TEXT');
+
+  // --- variation_notices table ---
+  await addColumn('variation_notices', 'client_email', 'TEXT');
+  await addColumn('variation_notices', 'cc_emails', 'TEXT');
+  await addColumn('variation_notices', 'response_due_date', 'TEXT');
+  await addColumn('variation_notices', 'cost_items', 'TEXT');
+  await addColumn('variation_notices', 'time_implication_unit', 'TEXT');
 }
 
 export async function resetDatabase(): Promise<void> {
