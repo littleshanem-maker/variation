@@ -827,6 +827,9 @@ export default function VariationDetail() {
                     labelSuffix="(optional — internal team)"
                   />
                   <div className="flex items-center gap-2 pt-1">
+                    <button onClick={() => handleSendToClient(clientEmailInput.trim(), ccEmailInput.trim())} disabled={!clientEmailInput.trim() || sendingEmail} className="px-3 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg disabled:opacity-40 transition-colors">
+                      {sendingEmail ? 'Sending…' : 'Send'}
+                    </button>
                     <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-[#4B5563] hover:text-[#334155]">Cancel</button>
                   </div>
                 </div>
