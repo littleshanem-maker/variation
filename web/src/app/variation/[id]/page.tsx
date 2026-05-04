@@ -467,8 +467,10 @@ export default function VariationDetail() {
         cc_emails: ccEmail || null,
       }).eq('id', variation.id);
 
-      // Snapshot this revision
-      const { error: snapError } = await supabase.from('variation_request_revisions').insert({
+      // Snapshot this revision — use ON CONFLICT DO NOTHING so resending a variation
+      // (e.g. after client feedback) doesn't crash with a duplicate key error.
+      // The snapshot revision_number = existing count (0 for first send, 1 for second, etc.)
+      const { error: snapError } = await supabase.from('variation_request_revisions').upsert({
         variation_id: variation.id,
         revision_number: newRevision,
         title: variation.title,
@@ -481,6 +483,9 @@ export default function VariationDetail() {
         sent_to: toEmail,
         sent_cc: ccEmail || null,
         sent_at: new Date().toISOString(),
+      }, {
+        onConflict: 'variation_id,revision_number',
+        ignoreDuplicates: true,
       });
       if (snapError) throw new Error(`Revision save failed: ${snapError.message}`);
 
@@ -996,11 +1001,11 @@ export default function VariationDetail() {
                     <div className="text-[12px] mono font-medium text-[#17212B] uppercase tracking-wider">{getVariationNumber(variation)}</div>
                     {editing ? (
                       <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#E76F00] px-1.5 py-0.5 rounded">
-                        {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0) + 1} — Draft` : 'Draft'}
+                        {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0)} — Draft` : 'Draft'}
                       </span>
                     ) : hasPendingDraft ? (
                       <span className="text-[10px] font-medium uppercase tracking-wide text-[#8C6500] bg-[#FBF1D6] border border-[#D8D2C4] px-1.5 py-0.5 rounded">
-                        {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0) + 1} — Draft` : 'Draft'}
+                        {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0)} — Draft` : 'Draft'}
                       </span>
                     ) : variation.status === 'draft' ? (
                       <span className="text-[10px] font-medium uppercase tracking-wide text-[#8C6500] bg-[#FBF1D6] border border-[#D8D2C4] px-1.5 py-0.5 rounded">
