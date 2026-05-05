@@ -1104,8 +1104,8 @@ export default function VariationDetail() {
 
 
 
-        {/* Cost Breakdown */}
-        {(editing || (variation as any).cost_items?.length > 0) && (
+        {/* Cost Breakdown — office/admin only, never field */}
+        {!isField && (editing || (variation as any).cost_items?.length > 0) && (
           <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-5 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
             <h3 className="text-[15px] font-medium text-[#111827] mb-3">Cost Breakdown</h3>
             {editing ? (

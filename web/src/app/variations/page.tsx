@@ -274,7 +274,7 @@ function VariationsList() {
         <div>
           <h2 className="text-xl font-medium text-[#111827]">Variation Register</h2>
           <p className="text-[13px] text-[#334155] mt-1">
-            {filtered.length} variations · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value
+            {filtered.length} variations{isField ? '' : <> · <span className="tabular-nums">{formatCurrency(totalValue)}</span> total value</>}
           </p>
         </div>
 
@@ -363,7 +363,11 @@ function VariationsList() {
                       </div>
                       <div className="flex-shrink-0 text-right">
                         <StatusBadge status={v.status} />
-                        <div className="text-[13px] font-medium text-[#334155] mt-1">{formatCurrency(v.estimated_value)}</div>
+                        {isField ? (
+                          <span className="text-[13px] text-[#D8D2C4]">—</span>
+                        ) : (
+                          <div className="text-[13px] font-medium text-[#334155] mt-1">{formatCurrency(v.estimated_value)}</div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -436,7 +440,11 @@ function VariationsList() {
                               );
                             })() : <span className="text-[13px] text-[#D8D2C4]">—</span>}
                           </td>
-                        <td className="px-3 md:px-4 py-3 text-[14px] font-medium text-[#111827] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
+                        {isField ? (
+                          <span className="text-[13px] text-[#D8D2C4]">—</span>
+                        ) : (
+                          <td className="px-3 md:px-4 py-3 text-[14px] font-medium text-[#111827] text-right tabular-nums hidden sm:table-cell whitespace-nowrap">{formatCurrency(v.estimated_value)}</td>
+                        )}
                           {/* Ellipsis action menu */}
                           <td className="px-3 py-3 w-10" onClick={e => e.stopPropagation()}>
                             <DropdownMenu>
