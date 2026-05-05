@@ -43,6 +43,7 @@ export async function compressImageForPdf(imageUrl: string, maxWidth: number = 1
     };
     
     img.onerror = () => {
+      console.error('Image compression failed to load:', imageUrl);
       reject(new Error('Failed to load image'));
     };
     
@@ -57,15 +58,23 @@ export async function compressPhotosForPdf(
   photoUrls: Record<string, string>
 ): Promise<Record<string, string>> {
   const compressed: Record<string, string> = {};
+  let failureCount = 0;
   
   for (const [id, url] of Object.entries(photoUrls)) {
     try {
+      console.log(`Compressing photo ${id}...`);
       compressed[id] = await compressImageForPdf(url);
+      console.log(`✓ Photo ${id} compressed successfully`);
     } catch (error) {
-      console.error(`Failed to compress photo ${id}:`, error);
-      // Fall back to original URL if compression fails
-      compressed[id] = url;
+      failureCount++;
+      console.error(`✗ Failed to compress photo ${id}:`, error);
+      // IMPORTANT: Don't fall back to original - reject instead
+      throw new Error(`Photo compression failed. Photo may be too large for mobile browser.`);
     }
+  }
+  
+  if (failureCount > 0) {
+    console.warn(`${failureCount} photos failed to compress`);
   }
   
   return compressed;
