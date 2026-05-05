@@ -19,6 +19,7 @@ import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Docume
 import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight, FileText } from 'lucide-react';
 import EmailAutocomplete from '@/components/EmailAutocomplete';
 import { computeContentHash } from '@/lib/contentHash';
+import { compressPhotosForPdf } from '@/lib/imageCompression';
 
 const EDITABLE_STATUSES = ['draft', 'captured'];
 const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
@@ -492,7 +493,8 @@ export default function VariationDetail() {
       let pdfBase64: string | null = null;
       try {
         setSendStage('pdf');
-        const { html, css } = getVariationHtmlForPdf(variationForPdf, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
+        const compressedPhotos = await compressPhotosForPdf(photoUrls);
+        const { html, css } = getVariationHtmlForPdf(variationForPdf, project, photos, compressedPhotos, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
         // Get signed URLs for PDF attachments to merge into the document
         const pdfAttachmentUrls = documents
           .filter(d => d.file_type === 'application/pdf' && docUrls[d.id])
@@ -595,7 +597,8 @@ export default function VariationDetail() {
     setSendingEmail(true);
     try {
       const { subject, body, filename } = getVariationEmailMeta(variation, project);
-      const { html, css } = getVariationHtmlForPdf(variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
+        const compressedPhotos = await compressPhotosForPdf(photoUrls);
+      const { html, css } = getVariationHtmlForPdf(variation, project, photos, compressedPhotos, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
       const blob = await htmlToPdfBlob(html, css, undefined, company?.plan === 'free');
       const attachmentUrls = documents
         .filter(d => !d.file_type.startsWith('image/') && docUrls[d.id])
@@ -616,7 +619,8 @@ export default function VariationDetail() {
       const supabase = createClient();
       const { data: freshVar } = await supabase.from('variations').select('*').eq('id', variation.id).single();
       const varForPdf = freshVar || variation;
-      const { html, css } = getVariationHtmlForPdf(varForPdf as typeof variation, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
+        const compressedPhotos = await compressPhotosForPdf(photoUrls);
+      const { html, css } = getVariationHtmlForPdf(varForPdf as typeof variation, project, photos, compressedPhotos, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
       const pdfAttachmentUrls = documents
         .filter(d => d.file_type === 'application/pdf' && docUrls[d.id])
         .map(d => docUrls[d.id]);
@@ -1575,7 +1579,8 @@ export default function VariationDetail() {
                         client_email: rev.client_email ?? variation.client_email,
                         response_due_date: rev.response_due_date ?? variation.response_due_date,
                       };
-                      const { html, css } = getVariationHtmlForPdf(snapVar, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
+        const compressedPhotos = await compressPhotosForPdf(photoUrls);
+                      const { html, css } = getVariationHtmlForPdf(snapVar, project, photos, compressedPhotos, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
                       const blob = await htmlToPdfBlob(html, css, undefined, company?.plan === 'free');
                       const { filename } = getVariationEmailMeta(snapVar, project);
                       const revFilename = filename.replace('.pdf', rev.revision_number > 0 ? `-Rev${rev.revision_number}.pdf` : '-Original.pdf');

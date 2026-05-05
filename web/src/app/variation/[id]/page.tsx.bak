@@ -19,6 +19,7 @@ import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Docume
 import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight, FileText } from 'lucide-react';
 import EmailAutocomplete from '@/components/EmailAutocomplete';
 import { computeContentHash } from '@/lib/contentHash';
+import { compressPhotosForPdf } from '@/lib/imageCompression';
 
 const EDITABLE_STATUSES = ['draft', 'captured'];
 const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
@@ -1666,113 +1667,6 @@ export default function VariationDetail() {
               </button>
             </div>
           </div>
-        </div>
-      )}
-      {/* Mobile sticky action bar */}
-      {!editing && !isField && (
-        <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 bg-[#FFFCF5] border-t border-[#D8D2C4] px-4 py-3 flex flex-col gap-2 shadow-[0_-2px_12px_rgba(17,24,39,0.08)]">
-          {isDraft && (
-            <>
-              <button
-                onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
-                disabled={advancingStatus}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] rounded-xl disabled:opacity-40 transition-colors active:bg-[#C75A00]"
-              >
-                <Send size={15} />
-                {advancingStatus ? 'Saving…' : 'Submit to Client'}
-              </button>
-              <div className="grid grid-cols-2 gap-2">
-                <button onClick={startEditing} className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-xl hover:bg-[#F5F2EA] transition-colors">
-                  Edit
-                </button>
-                <button
-                  onClick={handleSendEmail}
-                  disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50 transition-colors"
-                >
-                  <FileText size={14} /> {sendingEmail ? '…' : 'PDF / Send'}
-                </button>
-              </div>
-            </>
-          )}
-          {isSubmitted && (
-            <>
-              <button
-                onClick={() => handleAdvanceStatus('approved')}
-                disabled={advancingStatus}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#2E7D32] rounded-xl disabled:opacity-40 transition-colors active:bg-[#2E7D32]"
-              >
-                <CheckCircle size={15} /> {advancingStatus ? '…' : 'Approved by Client'}
-              </button>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }}
-                  disabled={advancingStatus}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#B42318] bg-[#FBE6E4] border border-[#D8D2C4] rounded-xl"
-                >
-                  Rejected
-                </button>
-                <button
-                  onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
-                  disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
-                >
-                  <Send size={14} /> {sendingEmail ? '…' : 'Resend'}
-                </button>
-                <button
-                  onClick={handleSendEmail}
-                  disabled={sendingEmail}
-                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
-                >
-                  <FileText size={14} /> {sendingEmail ? '…' : 'PDF'}
-                </button>
-              </div>
-            </>
-          )}
-          {isDisputed && (
-            <>
-              <button
-                onClick={startRevising}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] rounded-xl transition-colors active:bg-[#C75A00]"
-              >
-                <ArrowUpRight size={15} /> Revise
-              </button>
-              <button
-                onClick={handleSendEmail}
-                disabled={sendingEmail}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
-              >
-                <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
-              </button>
-            </>
-          )}
-          {variation.status === 'approved' && (
-            <>
-              <button
-                onClick={() => handleAdvanceStatus('paid')}
-                disabled={advancingStatus}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#2E7D32] rounded-xl disabled:opacity-40 transition-colors active:bg-[#1F5223]"
-              >
-                <CheckCircle size={15} /> {advancingStatus ? '…' : 'Mark as Paid'}
-              </button>
-              <button
-                onClick={handleSendEmail}
-                disabled={sendingEmail}
-                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
-              >
-                <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
-              </button>
-            </>
-          )}
-          {!isDraft && !isSubmitted && !isDisputed && variation.status !== 'approved' && (
-            <button
-              onClick={handleSendEmail}
-              disabled={sendingEmail}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
-            >
-              <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
-            </button>
-          )}
         </div>
       )}
     </AppShell>
