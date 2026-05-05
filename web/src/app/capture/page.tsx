@@ -730,6 +730,11 @@ function CapturePageContent() {
     </div>
   );
 }
+
+export default function CapturePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#F5F2EA] flex flex-col">
         <CaptureHeader />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-[#4B5563] text-sm">Loading…</div>
