@@ -31,21 +31,19 @@ export default function MobileBottomNav() {
   const isActive = (href: string) =>
     href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
 
-  // Hide FAB on detail pages that have their own sticky action bar
   const hideFab = /^\/(variation|notice)\/[^/]+$/.test(pathname);
+  const showFab = role !== 'field' && !hideFab;
 
   return (
     <>
-      {/* FAB backdrop */}
-      {!hideFab && fabOpen && (
+      {showFab && fabOpen && (
         <div
           className="fixed inset-0 z-40 bg-[#111827]/20"
           onClick={() => setFabOpen(false)}
         />
       )}
 
-      {/* FAB action menu — floats above the FAB button */}
-      {!hideFab && fabOpen && (
+      {showFab && fabOpen && (
         <div className="fixed bottom-36 right-4 z-[60] flex flex-col items-end gap-3">
           <Link
             href="/notice/new"
@@ -66,8 +64,7 @@ export default function MobileBottomNav() {
         </div>
       )}
 
-      {/* FAB button — hidden on detail pages that have their own action bar */}
-      {!hideFab && <button
+      {showFab && <button
         onClick={() => setFabOpen(prev => !prev)}
         aria-label="Create new"
         className="fixed bottom-[76px] right-4 z-50 w-14 h-14 rounded-full bg-[#E76F00] text-[#FFFCF5] shadow-xl flex items-center justify-center active:scale-95 transition-transform md:hidden"
@@ -80,7 +77,6 @@ export default function MobileBottomNav() {
 
       <FeedbackModal isOpen={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
 
-      {/* Bottom nav bar */}
       <nav className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-[#17212B] border-t border-[#FFFCF5]/[0.08] flex items-stretch h-16 safe-area-inset-bottom">
         {tabs.map(tab => {
           const Icon = tab.icon;
