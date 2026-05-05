@@ -157,7 +157,7 @@ function VariationsList() {
       'Title': v.title,
       'Project': v.project_name,
       'Status': v.status.charAt(0).toUpperCase() + v.status.slice(1),
-      'Revision': v._sentRevision !== null ? `Rev ${v._sentRevision}` : '',
+      'Revision': v.revision_number !== null ? `Rev ${v.revision_number}` : '',
       'Value (AUD)': (v.estimated_value || 0) / 100,
       'Captured': v.captured_at ? new Date(v.captured_at).toLocaleDateString('en-AU') : '',
       'Due Date': v.response_due_date ? (() => { const d = new Date(v.response_due_date + 'T00:00:00'); return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()).slice(-2)}`; })() : '',

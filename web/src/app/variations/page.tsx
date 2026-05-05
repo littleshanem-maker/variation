@@ -415,8 +415,8 @@ function VariationsList() {
                         <td className="px-3 md:px-4 py-3 max-w-[160px] overflow-hidden hidden md:table-cell"><div className="truncate text-[13px] text-[#111827]">{v.project_name}</div></td>
                         <td className="px-3 md:px-4 py-3 w-[110px]"><StatusBadge status={v.status} /></td>
                         <td className="px-3 md:px-4 py-3 w-[70px]">
-                          {v._sentRevision !== null ? (
-                            <span className="text-[13px] font-medium text-[#334155]">Rev {v._sentRevision}</span>
+                          {v.revision_number !== null ? (
+                            <span className="text-[13px] font-medium text-[#334155]">Rev {v.revision_number}</span>
                           ) : (
                             <span className="text-[13px] text-[#D8D2C4]">—</span>
                           )}
