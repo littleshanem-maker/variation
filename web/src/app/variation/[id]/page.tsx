@@ -379,7 +379,7 @@ export default function VariationDetail() {
     if (docs && docs.length > 0) {
       const urls: Record<string, string> = {};
       for (const doc of docs) {
-        const { data } = await supabase.storage.from('documents').createSignedUrl(doc.storage_path, 3600);
+        const { data } = await supabase.storage.from('documents').createSignedUrl(doc.storage_path, 3600, { transform: { width: 1200, quality: 85 } });
         if (data?.signedUrl) urls[doc.id] = data.signedUrl;
       }
       setDocUrls(urls);
