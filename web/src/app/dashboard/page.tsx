@@ -484,10 +484,12 @@ export default function Dashboard() {
                             <div className="text-[14px] font-medium text-[#111827] truncate">{p.name}</div>
                             <div className="text-[12px] text-[#334155] truncate">{p.client}</div>
                           </div>
-                          <div className="flex-shrink-0 text-right">
-                            <div className="num text-[13px] font-medium text-[#111827]">{formatCurrency(totalVal)}</div>
-                            {atRisk > 0 && <div className="text-[11px] text-[#B42318] font-medium"><span className="num">{formatCurrency(atRisk)}</span> at risk</div>}
-                          </div>
+                          {!isField && (
+                            <div className="flex-shrink-0 text-right">
+                              <div className="num text-[13px] font-medium text-[#111827]">{formatCurrency(totalVal)}</div>
+                              {atRisk > 0 && <div className="text-[11px] text-[#B42318] font-medium"><span className="num">{formatCurrency(atRisk)}</span> at risk</div>}
+                            </div>
+                          )}
                         </div>
                       </Link>
                     );

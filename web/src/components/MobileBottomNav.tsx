@@ -13,6 +13,7 @@ import {
   FileText,
   X,
   MessageSquare,
+  Zap,
 } from 'lucide-react';
 
 export default function MobileBottomNav() {
@@ -23,6 +24,7 @@ export default function MobileBottomNav() {
 
   const tabs = [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: [] },
+    { label: 'Capture', href: '/capture', icon: Zap, roles: ['field'] },
     { label: 'Register', href: '/variations', icon: ClipboardList, roles: ['admin', 'office'] },
     { label: 'Notices',  href: '/notices',   icon: FileText,      roles: ['admin', 'office'] },
     { label: 'Settings', href: '/settings', icon: Settings, roles: [] },
