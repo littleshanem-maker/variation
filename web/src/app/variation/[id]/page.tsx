@@ -1,5 +1,7 @@
 'use client';
 
+'use client';
+
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -16,7 +18,7 @@ import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice, VariationRequestRevision } from '@/lib/types';
 import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight, FileText } from 'lucide-react';
 import EmailAutocomplete from '@/components/EmailAutocomplete';
-import VariationTimeline from '@/components/VariationTimeline';
+import { computeContentHash } from '@/lib/contentHash';
 
 const EDITABLE_STATUSES = ['draft', 'captured'];
 const DELETABLE_STATUSES = ['draft', 'captured', 'submitted'];
@@ -444,26 +446,31 @@ export default function VariationDetail() {
     try {
       const supabase = createClient();
 
-      // Guard: prevent double-send (concurrent calls could both see revCount=0 before either inserts)
-      if (sendingEmail) return;
+      // Content-hash-based revision: only increment if content actually changed
+      const currentHash = await computeContentHash(variation as unknown as Record<string, unknown>);
 
-      // Count existing snapshots — that IS the new revision number
-      const { count: revCount } = await supabase
+      const { data: lastRevision } = await supabase
         .from('variation_request_revisions')
-        .select('id', { count: 'exact', head: true })
-        .eq('variation_id', variation.id);
-      const newRevision = revCount ?? 0;
+        .select('content_hash, revision_number')
+        .eq('variation_id', variation.id)
+        .order('revision_number', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const contentChanged = !lastRevision || lastRevision.content_hash !== currentHash;
+      const newRevision = contentChanged
+        ? (lastRevision?.revision_number ?? -1) + 1
+        : (lastRevision?.revision_number ?? 0);
 
       // Save client email + cc to variation
       await supabase.from('variations').update({
         client_email: toEmail,
         cc_emails: ccEmail || null,
+        ...(contentChanged ? { revision_number: newRevision } : {}),
       }).eq('id', variation.id);
 
-      // Snapshot this revision — use ON CONFLICT DO NOTHING so resending a variation
-      // (e.g. after client feedback) doesn't crash with a duplicate key error.
-      // The snapshot revision_number = existing count (0 for first send, 1 for second, etc.)
-      const { error: snapError } = await supabase.from('variation_request_revisions').upsert({
+      // Snapshot this revision (always log the send, even if revision didn't change)
+      const { error: snapError } = await supabase.from('variation_request_revisions').insert({
         variation_id: variation.id,
         revision_number: newRevision,
         title: variation.title,
@@ -476,9 +483,7 @@ export default function VariationDetail() {
         sent_to: toEmail,
         sent_cc: ccEmail || null,
         sent_at: new Date().toISOString(),
-      }, {
-        onConflict: 'variation_id,revision_number',
-        ignoreDuplicates: true,
+        content_hash: currentHash,
       });
       if (snapError) throw new Error(`Revision save failed: ${snapError.message}`);
 
@@ -825,9 +830,6 @@ export default function VariationDetail() {
                     labelSuffix="(optional — internal team)"
                   />
                   <div className="flex items-center gap-2 pt-1">
-                    <button onClick={() => handleSendToClient(clientEmailInput.trim(), ccEmailInput.trim())} disabled={!clientEmailInput.trim() || sendingEmail} className="px-3 py-1.5 text-[13px] font-medium text-[#FFFCF5] bg-[#E76F00] hover:bg-[#C75A00] rounded-lg disabled:opacity-40 transition-colors">
-                      {sendingEmail ? 'Sending…' : 'Send'}
-                    </button>
                     <button onClick={() => { setShowEmailInput(false); setClientEmailInput(''); setCcEmailInput(''); }} className="text-[13px] text-[#4B5563] hover:text-[#334155]">Cancel</button>
                   </div>
                 </div>
@@ -888,14 +890,39 @@ export default function VariationDetail() {
           </div>
         )}
 
-        {/* Status Timeline */}
+        {/* Status Progress Bar */}
         {!editing && (
-          <VariationTimeline
-            currentStatus={variation.status}
-            statusHistory={statusHistory}
-            responseDueDate={variation.response_due_date}
-            revisionNumber={variation.revision_number}
-          />
+          <div className="bg-[#FFFCF5] rounded-md border border-[#D8D2C4] p-4 shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+            <div className="flex gap-1">
+              {['draft', 'submitted', 'approved', 'paid'].map((stage, i) => {
+                const ORDER = ['draft', 'captured', 'submitted', 'approved', 'rejected', 'disputed', 'paid'];
+                const currentIdx = ORDER.indexOf(variation.status);
+                const stageIdx = ORDER.indexOf(stage);
+                const isDone = currentIdx > stageIdx || (variation.status === stage);
+                const isCurrent = variation.status === stage;
+                
+                const labels: Record<string, string> = {
+                  draft: 'Draft',
+                  submitted: 'Submitted',
+                  approved: 'Approved',
+                  paid: 'Paid'
+                };
+                
+                return (
+                  <div
+                    key={stage}
+                    className="flex-1 px-3 py-2.5 text-center text-[12px] font-medium rounded transition-colors"
+                    style={{
+                      background: isDone ? '#2E7D32' : isCurrent ? '#5DCAA5' : '#F5F2EA',
+                      color: isDone || isCurrent ? '#FFFCF5' : '#9CA3AF',
+                    }}
+                  >
+                    {labels[stage]}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         )}
 
         {/* Header Card */}
@@ -961,11 +988,11 @@ export default function VariationDetail() {
                     <div className="text-[12px] mono font-medium text-[#17212B] uppercase tracking-wider">{getVariationNumber(variation)}</div>
                     {editing ? (
                       <span className="text-[10px] font-medium uppercase tracking-wide text-[#FFFCF5] bg-[#E76F00] px-1.5 py-0.5 rounded">
-                        {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0)} — Draft` : 'Draft'}
+                        {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0) + 1} — Draft` : 'Draft'}
                       </span>
                     ) : hasPendingDraft ? (
                       <span className="text-[10px] font-medium uppercase tracking-wide text-[#8C6500] bg-[#FBF1D6] border border-[#D8D2C4] px-1.5 py-0.5 rounded">
-                        {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0)} — Draft` : 'Draft'}
+                        {(variation.revision_number ?? 0) > 0 ? `Rev ${(variation.revision_number ?? 0) + 1} — Draft` : 'Draft'}
                       </span>
                     ) : variation.status === 'draft' ? (
                       <span className="text-[10px] font-medium uppercase tracking-wide text-[#8C6500] bg-[#FBF1D6] border border-[#D8D2C4] px-1.5 py-0.5 rounded">
@@ -1341,7 +1368,7 @@ export default function VariationDetail() {
                             📧 Sent
                           </span>
                           <span className="text-[12px] text-[#111827] truncate">
-                            {(() => { const p = revisions.find(r => r.id === rev.variation_id); const n = p?.revision_number ?? 0; return n === 0 ? 'Original' : `Rev ${n}`; })()} → {rev.sent_to}
+                            Rev {rev.revision_number} → {rev.sent_to}
                             {rev.sent_cc ? ` (CC: ${rev.sent_cc})` : ''}
                           </span>
                         </div>
@@ -1517,10 +1544,7 @@ export default function VariationDetail() {
           <h3 className="text-[15px] font-medium text-[#111827] mb-3">Sent Versions</h3>
           <div className="space-y-2">
             {varRevisions.map((rev) => {
-              // Look up the parent variation's revision_number to get the correct label
-              const parentVariation = revisions.find(r => r.id === rev.variation_id);
-              const parentRevNum = parentVariation?.revision_number ?? 0;
-              const revLabel = parentRevNum === 0 ? 'Original' : `Rev ${parentRevNum}`;
+              const revLabel = `Rev ${rev.revision_number}`;
               return (
               <div key={rev.id} className="flex items-center justify-between px-3 py-2.5 bg-[#F5F2EA] rounded-md border border-[#D8D2C4]">
                 <div className="flex items-center gap-3 min-w-0">
@@ -1547,14 +1571,14 @@ export default function VariationDetail() {
                         estimated_value: rev.estimated_value ?? variation.estimated_value,
                         cost_items: rev.cost_items ?? variation.cost_items,
                         status: 'submitted',
-                        revision_number: parentRevNum, // use parent variation's revision number
+                        revision_number: rev.revision_number,
                         client_email: rev.client_email ?? variation.client_email,
                         response_due_date: rev.response_due_date ?? variation.response_due_date,
                       };
                       const { html, css } = getVariationHtmlForPdf(snapVar, project, photos, photoUrls, company?.name || '', sender, linkedNotice, revisions, companyInfo, documents, docUrls);
                       const blob = await htmlToPdfBlob(html, css, undefined, company?.plan === 'free');
                       const { filename } = getVariationEmailMeta(snapVar, project);
-                      const revFilename = filename.replace('.pdf', parentRevNum > 0 ? `-Rev${parentRevNum}.pdf` : '-Original.pdf');
+                      const revFilename = filename.replace('.pdf', rev.revision_number > 0 ? `-Rev${rev.revision_number}.pdf` : '-Original.pdf');
                       const url = URL.createObjectURL(blob);
                       const a = document.createElement('a');
                       a.href = url; a.download = revFilename;
@@ -1644,8 +1668,113 @@ export default function VariationDetail() {
           </div>
         </div>
       )}
-
-
+      {/* Mobile sticky action bar */}
+      {!editing && !isField && (
+        <div className="md:hidden fixed bottom-16 left-0 right-0 z-30 bg-[#FFFCF5] border-t border-[#D8D2C4] px-4 py-3 flex flex-col gap-2 shadow-[0_-2px_12px_rgba(17,24,39,0.08)]">
+          {isDraft && (
+            <>
+              <button
+                onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
+                disabled={advancingStatus}
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] rounded-xl disabled:opacity-40 transition-colors active:bg-[#C75A00]"
+              >
+                <Send size={15} />
+                {advancingStatus ? 'Saving…' : 'Submit to Client'}
+              </button>
+              <div className="grid grid-cols-2 gap-2">
+                <button onClick={startEditing} className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-xl hover:bg-[#F5F2EA] transition-colors">
+                  Edit
+                </button>
+                <button
+                  onClick={handleSendEmail}
+                  disabled={sendingEmail}
+                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50 transition-colors"
+                >
+                  <FileText size={14} /> {sendingEmail ? '…' : 'PDF / Send'}
+                </button>
+              </div>
+            </>
+          )}
+          {isSubmitted && (
+            <>
+              <button
+                onClick={() => handleAdvanceStatus('approved')}
+                disabled={advancingStatus}
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#2E7D32] rounded-xl disabled:opacity-40 transition-colors active:bg-[#2E7D32]"
+              >
+                <CheckCircle size={15} /> {advancingStatus ? '…' : 'Approved by Client'}
+              </button>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => { setShowDisputeDialog(true); setDisputeReason(''); }}
+                  disabled={advancingStatus}
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#B42318] bg-[#FBE6E4] border border-[#D8D2C4] rounded-xl"
+                >
+                  Rejected
+                </button>
+                <button
+                  onClick={() => { setClientEmailInput(variation.client_email || project?.client_email || ''); setCcEmailInput(variation.cc_emails || ''); setShowEmailInput(true); }}
+                  disabled={sendingEmail}
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+                >
+                  <Send size={14} /> {sendingEmail ? '…' : 'Resend'}
+                </button>
+                <button
+                  onClick={handleSendEmail}
+                  disabled={sendingEmail}
+                  className="flex items-center justify-center gap-1 px-2 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+                >
+                  <FileText size={14} /> {sendingEmail ? '…' : 'PDF'}
+                </button>
+              </div>
+            </>
+          )}
+          {isDisputed && (
+            <>
+              <button
+                onClick={startRevising}
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#E76F00] rounded-xl transition-colors active:bg-[#C75A00]"
+              >
+                <ArrowUpRight size={15} /> Revise
+              </button>
+              <button
+                onClick={handleSendEmail}
+                disabled={sendingEmail}
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+              >
+                <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
+              </button>
+            </>
+          )}
+          {variation.status === 'approved' && (
+            <>
+              <button
+                onClick={() => handleAdvanceStatus('paid')}
+                disabled={advancingStatus}
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#FFFCF5] bg-[#2E7D32] rounded-xl disabled:opacity-40 transition-colors active:bg-[#1F5223]"
+              >
+                <CheckCircle size={15} /> {advancingStatus ? '…' : 'Mark as Paid'}
+              </button>
+              <button
+                onClick={handleSendEmail}
+                disabled={sendingEmail}
+                className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 text-[13px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+              >
+                <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
+              </button>
+            </>
+          )}
+          {!isDraft && !isSubmitted && !isDisputed && variation.status !== 'approved' && (
+            <button
+              onClick={handleSendEmail}
+              disabled={sendingEmail}
+              className="w-full flex items-center justify-center gap-1.5 px-4 py-3 text-[14px] font-medium text-[#E76F00] bg-[#F5F2EA] border border-[#D8D2C4] rounded-xl disabled:opacity-50"
+            >
+              <FileText size={14} /> {sendingEmail ? 'Building…' : 'PDF / Send'}
+            </button>
+          )}
+        </div>
+      )}
     </AppShell>
   );
 }
