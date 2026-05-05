@@ -389,7 +389,7 @@ export default function VariationDetail() {
       const urls: Record<string, string> = {};
       for (const photo of ph) {
         const { data } = await supabase.storage.from('evidence').createSignedUrl(
-          `${proj.created_by}/photos/${photo.id}.jpg`, 3600
+          `${proj.created_by}/photos/${photo.id}.jpg`, 3600, { transform: { width: 1200, quality: 85 } }
         );
         if (data?.signedUrl) urls[photo.id] = data.signedUrl;
       }
