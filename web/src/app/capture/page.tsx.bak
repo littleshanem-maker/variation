@@ -725,7 +725,6 @@ function CapturePageContent() {
               <Link href="/dashboard" className="hover:underline">← Back to Dashboard</Link>
             </p>
           )}
-        </div>
       <MobileBottomNav />
     </div>
   );
