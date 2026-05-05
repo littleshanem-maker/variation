@@ -728,6 +728,7 @@ function CapturePageContent() {
         </div>
       <MobileBottomNav />
     </div>
+      </div>
   );
 }
 
