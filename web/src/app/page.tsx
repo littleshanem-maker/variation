@@ -65,8 +65,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-lg md:text-xl text-[#334155] max-w-2xl mx-auto leading-relaxed mb-10">
-            Capture scope changes in 60 seconds on site — photos, timestamps, cost breakdown, client signature.
-            Send professional variation requests directly from the app. Stop losing money at payment time.
+            Capture scope changes in 60 seconds on site — photos, timestamps, cost breakdown. Send professional variation requests directly from the app. Stop losing money at payment time.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
