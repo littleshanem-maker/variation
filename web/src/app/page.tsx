@@ -56,7 +56,7 @@ export default function LandingPage() {
 
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-[#FFFCF5] border border-[#D8D2C4] rounded-sm px-3 py-1.5 text-xs font-medium text-[#C75A00] uppercase tracking-widest mb-8">
-            Founder-led pilot
+            Built for Australian Subcontractors
           </div>
 
           <h1 className="text-5xl md:text-7xl font-medium tracking-tight leading-[1.05] mb-6 text-[#111827]">
@@ -81,7 +81,7 @@ export default function LandingPage() {
           </div>
 
           <p className="mt-6 text-sm text-[#334155] max-w-xl mx-auto leading-relaxed">
-            Built by a former Tier 1/Tier 2 project manager who has reviewed subcontractor variation claims from the other side of the desk.
+            Built by a former Tier 1 Project Manager.
           </p>
         </div>
       </section>
@@ -236,14 +236,14 @@ export default function LandingPage() {
           <p className="text-[#C75A00] text-xs font-medium tracking-[0.055em] uppercase mb-6">Why this exists</p>
           <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-8 text-[#111827]">Built from the other side of the desk</h2>
           <div className="space-y-5 text-[#17212B] text-[16px] leading-relaxed text-left">
-            <p>We spent 15 years as project managers on Tier 1 and Tier 2 infrastructure projects across Australia. Our job was processing variation claims from subcontractors — and deciding which ones got paid.</p>
+            <p>We spent 15 years as project manager on Tier 1 infrastructure projects across Australia. Our job was processing variation claims from subcontractors — and deciding which ones got paid.</p>
             <p>We saw the same thing every week. Skilled tradespeople doing legitimate extra work. Good claims rejected because the paperwork wasn't there. Not because the work wasn't done — because the evidence wasn't documented properly.</p>
             <p><strong className="text-[#111827]">"Everyone on site knew it was extra"</strong> doesn't hold up in a final account meeting. The head contractor's commercial team knows that. And by the time you're arguing about it, the leverage is gone.</p>
             <p>Variation Shield exists because we know exactly what gets approved and what gets thrown in the bin. Every feature is built around the evidence chain a head contractor can't ignore.</p>
           </div>
           <div className="mt-10 pt-8 border-t border-[#D8D2C4]">
             <div className="font-medium text-lg">Shane Little</div>
-            <div className="text-[#17212B] text-sm mt-1">Founder, Leveraged Systems · 15 years Tier 1 & 2 project management</div>
+            <div className="text-[#17212B] text-sm mt-1">Founder, Leveraged Systems · 15 years Tier 1 Project Management</div>
           </div>
         </div>
       </section>
@@ -251,7 +251,7 @@ export default function LandingPage() {
       {/* FOUNDER-LED ONBOARDING */}
       <section className="py-20 px-6 bg-[#FFFCF5] border-y border-[#D8D2C4]" id="pilot">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Founder-led pilot</p>
+          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Built for Australian Subcontractors</p>
           <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-5">Not just a login — we help you test it on real work</h2>
           <p className="text-[#334155] text-[16px] md:text-lg leading-relaxed mb-8">
             Variation Shield works best when it is tested on live jobs, not clicked through once and forgotten. Early customers get direct setup support so the team can capture real variations from site and see whether the workflow fits your business.
@@ -266,7 +266,7 @@ export default function LandingPage() {
       {/* PRICING — FOUNDER-LED PILOT */}
       <section className="py-24 px-6" id="pricing">
         <div className="max-w-lg mx-auto text-center">
-          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Founder-led pilot</p>
+          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Built for Australian Subcontractors</p>
           <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-4">Start with a 30-day live-job pilot</h2>
           <p className="text-[#334155] mb-12">
             Variation Shield is currently being rolled out through founder-led pilots with Australian subcontractors. The pilot is designed to test the system on real work &mdash; not a fake demo project.
