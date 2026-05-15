@@ -72,7 +72,7 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-              Book a 15-minute pilot call
+              Book a 10-minute pilot call
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
             <Link href="/calculator" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-8 py-4 rounded-md text-[16px] transition-colors">
@@ -257,7 +257,7 @@ export default function LandingPage() {
             Variation Shield works best when it is tested on live jobs, not clicked through once and forgotten. Early customers get direct setup support so the team can capture real variations from site and see whether the workflow fits your business.
           </p>
           <DemoButton className="inline-flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-            Book a 15-minute pilot call
+            Book a 10-minute pilot call
             <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </DemoButton>
         </div>
@@ -299,7 +299,7 @@ export default function LandingPage() {
             <p className="text-[#4B5563] text-sm mb-8">Standard pricing after the pilot: $499/month.</p>
 
             <DemoButton className="flex items-center justify-center gap-2 w-full bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-              Book a 15-minute pilot call
+              Book a 10-minute pilot call
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
           </div>
@@ -329,7 +329,7 @@ export default function LandingPage() {
           <p className="text-[#334155] text-lg mb-10">Book a short demo, set up a live-job pilot, and see whether the workflow fits your team.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-              Book a 15-minute pilot call
+              Book a 10-minute pilot call
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
             <Link href="/calculator" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-8 py-4 rounded-md text-[16px] transition-colors">
