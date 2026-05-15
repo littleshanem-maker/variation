@@ -31,15 +31,15 @@ export default function LandingPage() {
         </a>
         <div className="flex items-center gap-6">
           <div className="hidden md:flex items-center gap-6 text-sm text-[#334155]">
-            <a href="#features" className="hover:text-[#111827] transition-colors">Features</a>
+            <a href="#problem" className="hover:text-[#111827] transition-colors">Problem</a>
             <a href="#how-it-works" className="hover:text-[#111827] transition-colors">How it works</a>
-            <a href="#pricing" className="hover:text-[#111827] transition-colors">Pricing</a>
-            <Link href="/calculator" className="hover:text-[#111827] transition-colors">ROI Calculator</Link>
+            <Link href="/calculator" className="hover:text-[#111827] transition-colors">Calculator</Link>
+            <a href="#pilot" className="hover:text-[#111827] transition-colors">Book pilot</a>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm font-medium text-[#334155] hover:text-[#111827] border border-[#D8D2C4] hover:border-[#334155] px-4 py-2 rounded-lg transition-all hidden md:block">Log in</Link>
             <DemoButton className="bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] text-sm font-medium px-4 py-2 rounded-lg transition-colors hidden md:block">
-              Book a 15-minute demo
+              Book pilot
             </DemoButton>
             <MobileMenuButton />
           </div>
@@ -56,30 +56,32 @@ export default function LandingPage() {
 
         <div className="relative z-10 max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-[#FFFCF5] border border-[#D8D2C4] rounded-sm px-3 py-1.5 text-xs font-medium text-[#C75A00] uppercase tracking-widest mb-8">
-            Built for Australian Subcontractors
+            Founder-led pilot
           </div>
 
           <h1 className="text-5xl md:text-7xl font-medium tracking-tight leading-[1.05] mb-6 text-[#111827]">
             Every variation.<br />
-            <span className="text-[#E76F00]">Documented. Paid.</span>
+            <span className="text-[#E76F00]">Documented before the argument starts.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-[#334155] max-w-2xl mx-auto leading-relaxed mb-10">
-            Capture scope changes in 60 seconds on site — photos, timestamps, cost breakdown. Send professional variation requests directly from the app. Stop losing money at payment time.
+            Variation Shield helps Australian subcontractors capture scope changes on site, attach photos, create a clean variation notice, and track approval before the evidence disappears.
+            <br /><br />
+            We&rsquo;re currently onboarding selected subcontractors into a founder-led 30-day live-job pilot.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-              Book a 15-minute demo
+              Book a 15-minute pilot call
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
-            <Link href="/signup/free" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-8 py-4 rounded-md text-[16px] transition-colors">
-              Try free
+            <Link href="/calculator" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-8 py-4 rounded-md text-[16px] transition-colors">
+              Calculate your variation leakage
             </Link>
           </div>
 
-          <p className="mt-5 text-sm text-[#334155]">
-            Founder-led setup · 30-day live-job pilot · <span className="text-[#8C6500]">$299/mo early adopter rate</span>
+          <p className="mt-6 text-sm text-[#334155] max-w-xl mx-auto leading-relaxed">
+            Built by a former Tier 1/Tier 2 project manager who has reviewed subcontractor variation claims from the other side of the desk.
           </p>
         </div>
       </section>
@@ -96,7 +98,7 @@ export default function LandingPage() {
       </div>
 
       {/* THE PROBLEM */}
-      <section className="py-16 px-6">
+      <section className="py-16 px-6" id="problem">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Sound familiar?</p>
@@ -247,49 +249,45 @@ export default function LandingPage() {
       </section>
 
       {/* FOUNDER-LED ONBOARDING */}
-      <section className="py-20 px-6 bg-[#FFFCF5] border-y border-[#D8D2C4]">
+      <section className="py-20 px-6 bg-[#FFFCF5] border-y border-[#D8D2C4]" id="pilot">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Founder-led onboarding</p>
-          <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-5">Not just a login — we help you test it properly</h2>
+          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Founder-led pilot</p>
+          <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-5">Not just a login — we help you test it on real work</h2>
           <p className="text-[#334155] text-[16px] md:text-lg leading-relaxed mb-8">
-            Variation Shield works best when it is tested on live jobs, not clicked through once and forgotten. Early customers get direct setup support so the team can capture real variations from site and see whether the workflow fits.
+            Variation Shield works best when it is tested on live jobs, not clicked through once and forgotten. Early customers get direct setup support so the team can capture real variations from site and see whether the workflow fits your business.
           </p>
           <DemoButton className="inline-flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-            Book a 15-minute demo
+            Book a 15-minute pilot call
             <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </DemoButton>
         </div>
       </section>
 
-      {/* PRICING */}
+      {/* PRICING — FOUNDER-LED PILOT */}
       <section className="py-24 px-6" id="pricing">
         <div className="max-w-lg mx-auto text-center">
-          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Pricing</p>
+          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Founder-led pilot</p>
           <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-4">Start with a 30-day live-job pilot</h2>
-          <p className="text-[#334155] mb-12">Use Variation Shield on real work for 30 days. We’ll help you set it up, add your first project, and capture live variation notices before they get missed, delayed or disputed.</p>
+          <p className="text-[#334155] mb-12">
+            Variation Shield is currently being rolled out through founder-led pilots with Australian subcontractors. The pilot is designed to test the system on real work &mdash; not a fake demo project.
+          </p>
 
           <div className="bg-[#FFFCF5] border border-[#D8D2C4] rounded-md p-8 text-left relative overflow-hidden">
             <div className="inline-flex items-center gap-1.5 bg-[#8C6500]/10 border border-[#8C6500]/25 rounded-sm px-3 py-1 text-xs font-medium text-[#8C6500] uppercase tracking-wider mb-5">
-              Limited places available
+              Early access pilot
             </div>
-            <div className="flex items-baseline gap-3 mb-1">
-              <span className="text-5xl font-medium">$299</span>
-              <span className="text-[#334155] text-lg">+ GST / month</span>
-            </div>
-            <p className="text-[#111827] text-sm font-medium mb-1">$299/month early adopter rate, locked for 12 months</p>
-            <p className="text-[#334155] text-sm mb-1">Limited places available: $299/month. Standard price will be $499/month.</p>
-            <p className="text-[#4B5563] text-sm mb-8">If it helps, continue at the $299/month early adopter rate. Cancel anytime.</p>
-
-            <ul className="space-y-3 mb-8">
+            <p className="text-[#334155] text-sm mb-6 leading-relaxed">
+              We&rsquo;re currently onboarding a small number of subcontractors into a 30-day live-job pilot.
+            </p>
+            <ul className="space-y-3 mb-6">
               {[
-                'Founder-led setup',
-                'Unlimited variation notices',
-                'Unlimited projects',
-                'Team access',
-                'Client email approval links',
-                'PDF variation notices',
-                'Direct support during the pilot',
-                'Cancel anytime',
+                'Setup support',
+                'One or more live projects',
+                'Field and office users',
+                'Variation notices',
+                'Client approval links',
+                'PDF records',
+                'Direct founder support',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3 text-sm text-[#334155]">
                   <span className="text-[#1F5223] font-medium mt-0.5 flex-shrink-0">✓</span>
@@ -297,16 +295,17 @@ export default function LandingPage() {
                 </li>
               ))}
             </ul>
+            <p className="text-[#17212B] text-sm font-medium mb-1">If there is a fit, early customers can continue from $299 + GST/month, locked for 12 months.</p>
+            <p className="text-[#4B5563] text-sm mb-8">Standard pricing after the pilot: $499/month.</p>
 
             <DemoButton className="flex items-center justify-center gap-2 w-full bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-              Book a 15-minute demo
+              Book a 15-minute pilot call
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
-            <p className="text-center text-[#4B5563] text-xs mt-3">If Variation Shield does not help you capture more than $299 of variation value in the first 30 days, we’ll refund the pilot fee.</p>
           </div>
 
           <div className="mt-8 bg-[#FFFCF5] border border-[#D8D2C4] rounded-md p-6 text-center">
-            <h3 className="font-medium text-lg mb-2">Want to look around first?</h3>
+            <h3 className="font-medium text-lg mb-2">Prefer to look around first?</h3>
             <p className="text-[#334155] text-sm leading-relaxed mb-5">Create a limited free account with 1 project and 3 test variations. No credit card required.</p>
             <Link href="/signup/free" className="inline-flex items-center justify-center bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-6 py-3 rounded-md text-sm transition-colors">
               Try free
@@ -315,7 +314,7 @@ export default function LandingPage() {
 
           <div className="mt-6 flex items-center justify-center gap-2 text-sm text-[#4B5563]">
             <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            A serious tool for contractors who lose money when variations are not captured properly — now available as a founder-led 30-day pilot.
+            A serious tool for contractors who lose money when variations are not captured properly &mdash; now available as a founder-led 30-day pilot.
           </div>
         </div>
       </section>
@@ -330,11 +329,11 @@ export default function LandingPage() {
           <p className="text-[#334155] text-lg mb-10">Book a short demo, set up a live-job pilot, and see whether the workflow fits your team.</p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <DemoButton className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium px-8 py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-              Book a 15-minute demo
+              Book a 15-minute pilot call
               <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </DemoButton>
-            <Link href="/signup/free" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-8 py-4 rounded-md text-[16px] transition-colors">
-              Try free
+            <Link href="/calculator" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-8 py-4 rounded-md text-[16px] transition-colors">
+              Calculate your variation leakage
             </Link>
           </div>
         </div>
@@ -355,7 +354,7 @@ export default function LandingPage() {
           </div>
           <div className="flex items-center gap-6">
             <Link href="/login" className="hover:text-[#334155] transition-colors">Login</Link>
-            <DemoButton className="hover:text-[#334155] transition-colors">Book demo</DemoButton>
+            <DemoButton className="hover:text-[#334155] transition-colors">Book pilot</DemoButton>
             <a href="https://leveragedsystems.com.au" className="hover:text-[#334155] transition-colors">Leveraged Systems</a>
           </div>
           <div>© 2026 Leveraged Systems. All rights reserved.</div>
