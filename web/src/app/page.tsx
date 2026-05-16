@@ -34,7 +34,6 @@ export default function LandingPage() {
             <a href="#problem" className="hover:text-[#111827] transition-colors">Problem</a>
             <a href="#how-it-works" className="hover:text-[#111827] transition-colors">How it works</a>
             <Link href="/calculator" className="hover:text-[#111827] transition-colors">Calculator</Link>
-            <a href="#pilot" className="hover:text-[#111827] transition-colors">Book pilot</a>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm font-medium text-[#334155] hover:text-[#111827] border border-[#D8D2C4] hover:border-[#334155] px-4 py-2 rounded-lg transition-all hidden md:block">Log in</Link>
