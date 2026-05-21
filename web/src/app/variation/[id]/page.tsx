@@ -16,7 +16,8 @@ import { htmlToPdfBlob, shareOrDownloadPdf } from '@/lib/pdf';
 import { getVariationEmailMeta } from '@/lib/email';
 import { useRole } from '@/lib/role';
 import type { Variation, Project, PhotoEvidence, VoiceNote, StatusChange, Document, VariationNotice, VariationRequestRevision } from '@/lib/types';
-import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight, FileText } from 'lucide-react';
+import { Lock, AlertTriangle, RotateCcw, CheckCircle, XCircle, Send, ArrowUpRight, FileText, MoreHorizontal } from 'lucide-react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import EmailAutocomplete from '@/components/EmailAutocomplete';
 import { computeContentHash } from '@/lib/contentHash';
 import { compressPhotosForPdf } from '@/lib/imageCompression';
@@ -786,30 +787,56 @@ export default function VariationDetail() {
                     <CheckCircle size={14} /> {advancingStatus ? '…' : 'Mark as Paid'}
                   </button>
                 )}
-                {/* PDF */}
-                <button onClick={handleDownloadPdf} disabled={sendingEmail} className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors disabled:opacity-50 whitespace-nowrap">
-                  <FileText size={14} /> {sendingEmail && sendStage === 'idle' ? 'Building…' : 'PDF'}
-                </button>
-                {/* Edit — hidden when disputed */}
-                {!isField && !isDisputed && (
-                  <button
-                    onClick={() => awaitingClientResponse ? setShowClientWarning('edit') : startEditing()}
-                    className="px-3 py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors"
-                  >Edit</button>
-                )}
-
-                {/* Delete */}
-                {canDelete && (
-                  <button
-                    onClick={() => awaitingClientResponse ? setShowClientWarning('delete') : setShowDeleteConfirm(true)}
-                    className="px-3 py-2 text-[13px] font-medium text-[#B42318] bg-[#FBE6E4] border border-[#D8D2C4] rounded-lg hover:bg-[#FBE6E4] transition-colors whitespace-nowrap"
-                  >Delete</button>
-                )}
-                {/* Refresh */}
+                {/* PDF, Edit, Delete, Refresh — under dropdown menu */}
                 {!isField && (
-                  <button onClick={() => window.location.reload()} className="px-3 py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors whitespace-nowrap">
-                    Refresh
-                  </button>
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger asChild>
+                      <button className="flex items-center gap-1.5 px-3 py-2 text-[13px] font-medium text-[#334155] border border-[#D8D2C4] rounded-lg hover:bg-[#F5F2EA] transition-colors whitespace-nowrap">
+                        <MoreHorizontal size={14} />
+                      </button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Portal>
+                      <DropdownMenu.Content
+                        sideOffset={4}
+                        align="end"
+                        className="min-w-[140px] bg-[#FFFCF5] border border-[#D8D2C4] rounded-lg shadow-lg py-1 z-50"
+                      >
+                        <DropdownMenu.Item
+                          onClick={handleDownloadPdf}
+                          disabled={sendingEmail}
+                          className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#334155] hover:bg-[#F5F2EA] cursor-pointer disabled:opacity-50"
+                        >
+                          <FileText size={14} />
+                          {sendingEmail && sendStage === 'idle' ? 'Building…' : 'Download PDF'}
+                        </DropdownMenu.Item>
+                        {!isDisputed && (
+                          <DropdownMenu.Item
+                            onClick={() => awaitingClientResponse ? setShowClientWarning('edit') : startEditing()}
+                            className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#334155] hover:bg-[#F5F2EA] cursor-pointer"
+                          >
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5L13.5 4.5L5 13H3V11L11.5 2.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            Edit
+                          </DropdownMenu.Item>
+                        )}
+                        {canDelete && (
+                          <DropdownMenu.Item
+                            onClick={() => awaitingClientResponse ? setShowClientWarning('delete') : setShowDeleteConfirm(true)}
+                            className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#B42318] hover:bg-[#FBE6E4] cursor-pointer"
+                          >
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 4H14M5.5 4V2.5H10.5V4M6 7V12M10 7V12M3.5 4L4.5 13.5H11.5L12.5 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            Delete
+                          </DropdownMenu.Item>
+                        )}
+                        <DropdownMenu.Item
+                          onClick={() => window.location.reload()}
+                          className="flex items-center gap-2 px-3 py-2 text-[13px] text-[#334155] hover:bg-[#F5F2EA] cursor-pointer"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 8C2 4.686 4.686 2 8 2C10.21 2 12.117 3.215 13.197 5.003M14 8C14 11.314 11.314 14 8 14C5.79 14 3.883 12.785 2.803 10.997" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
+                          Refresh
+                        </DropdownMenu.Item>
+                      </DropdownMenu.Content>
+                    </DropdownMenu.Portal>
+                  </DropdownMenu.Root>
                 )}
               </div>
               {/* Inline To/CC email input */}
