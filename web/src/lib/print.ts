@@ -13,7 +13,7 @@ const GLOBAL_CSS = `
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 9pt;
+    font-size: 8pt;
     line-height: 1.4;
     color: #111827;
     background: #FFFCF5;
@@ -42,12 +42,12 @@ const GLOBAL_CSS = `
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    padding-bottom: 24px;
+    padding-bottom: 16px;
     border-bottom: 2px solid #111827;
-    margin-bottom: 32px;
+    margin-bottom: 20px;
   }
   .brand { font-size: 14pt; font-weight: 500; color: #111827; letter-spacing: -0.02em; }
-  .doc-title { font-size: 24pt; font-weight: 400; color: #111827; line-height: 1.1; margin-top: 8px; }
+  .doc-title { font-size: 20pt; font-weight: 400; color: #111827; line-height: 1.1; margin-top: 8px; }
   .doc-meta { text-align: right; font-size: 9pt; color: #334155; }
   .meta-row { margin-bottom: 4px; }
 
@@ -55,22 +55,22 @@ const GLOBAL_CSS = `
   .summary-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 40px;
+    gap: 12px;
+    margin-bottom: 24px;
   }
   .summary-card {
     border: 1px solid #D8D2C4;
-    padding: 16px;
+    padding: 10px;
     border-radius: 4px;
   }
   .summary-label { font-size: 8pt; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
-  .summary-value { font-size: 16pt; font-weight: 500; color: #111827; }
+  .summary-value { font-size: 13pt; font-weight: 500; color: #111827; }
 
   /* TABLES */
-  table { width: 100%; border-collapse: collapse; font-size: 9pt; }
+  table { width: 100%; border-collapse: collapse; font-size: 8pt; }
   th {
     text-align: left;
-    padding: 12px 8px;
+    padding: 6px 8px;
     border-bottom: 1px solid #111827;
     font-weight: 500;
     font-size: 8pt;
@@ -79,7 +79,7 @@ const GLOBAL_CSS = `
     color: #111827;
   }
   td {
-    padding: 12px 8px;
+    padding: 6px 8px;
     border-bottom: 1px solid #D8D2C4;
     vertical-align: top;
   }
@@ -93,8 +93,8 @@ const GLOBAL_CSS = `
   }
 
   /* VARIATION DETAIL SPECIFIC */
-  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 32px; }
-  .field-group { margin-bottom: 24px; }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 20px; }
+  .field-group { margin-bottom: 16px; }
   .field-label { font-size: 8pt; color: #334155; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
   .field-value { font-size: 10pt; color: #111827; font-weight: 500; }
   .field-value.large { font-size: 12pt; }
@@ -102,8 +102,8 @@ const GLOBAL_CSS = `
   .description-box {
     border-top: 1px solid #D8D2C4;
     border-bottom: 1px solid #D8D2C4;
-    padding: 24px 0;
-    margin: 32px 0;
+    padding: 12px 0;
+    margin: 16px 0;
   }
   .description-text { font-size: 10pt; line-height: 1.6; white-space: pre-wrap; }
 
@@ -121,7 +121,7 @@ const GLOBAL_CSS = `
   }
   .photo-img {
     width: 100%;
-    height: 240px;
+    height: 160px;
     object-fit: cover;
     display: block;
     margin-bottom: 8px;
@@ -130,8 +130,8 @@ const GLOBAL_CSS = `
 
   /* FOOTER */
   .footer {
-    margin-top: 32px;
-    padding-top: 12px;
+    margin-top: 20px;
+    padding-top: 8px;
     border-top: 1px solid #D8D2C4;
     font-size: 8pt;
     color: #4B5563;
@@ -473,7 +473,7 @@ function getNoticeLanguage(standard?: 'AS4000' | 'AS2124' | 'both'): string {
 
 function buildCompanyHeader(companyName: string, companyInfo?: CompanyPrintInfo): string {
   const logoImg = companyInfo?.logoUrl
-    ? `<img src="${companyInfo.logoUrl}" style="height:48px;width:auto;max-width:120px;object-fit:contain;border-radius:4px;" />`
+    ? `<img src="${companyInfo.logoUrl}" style="height:36px;width:auto;max-width:120px;object-fit:contain;border-radius:4px;" />`
     : VS_LOGO_SVG_32;
   const nameBlock = companyInfo?.logoUrl
     ? `<div class="brand" style="font-size:13pt;">${escapeHtml(companyName || 'Variation Shield')}</div>`
@@ -518,7 +518,7 @@ function buildNoticeHtml(
       </div>
     </div>
 
-    <div class="detail-grid" style="margin-bottom:24px;">
+    <div class="detail-grid">
       <div>
         <div class="field-group">
           <div class="field-label">Project</div>
@@ -886,7 +886,7 @@ function buildVariationHtml(
     ` : ''}
 
     ${(variation as any).cost_items?.length > 0 ? `
-    <div style="margin-bottom:32px;">
+    <div style="margin-bottom:16px;">
       <div style="font-size:9pt; font-weight:500; text-transform:uppercase; letter-spacing:0.08em; color:#334155; margin-bottom:10px;">Cost Breakdown</div>
       <table style="width:100%; border-collapse:collapse; font-size:9pt;">
         <thead>
