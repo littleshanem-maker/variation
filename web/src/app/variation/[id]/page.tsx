@@ -471,8 +471,9 @@ export default function VariationDetail() {
         ...(contentChanged ? { revision_number: newRevision } : {}),
       }).eq('id', variation.id);
 
-      // Snapshot this revision (always log the send, even if revision didn't change)
-      const { error: snapError } = await supabase.from('variation_request_revisions').insert({
+      // Snapshot this revision — only insert a new row if content actually changed
+      // (if unchanged, the last revision already captures this send)
+      const insertRevision = contentChanged ? {
         variation_id: variation.id,
         revision_number: newRevision,
         title: variation.title,
@@ -486,8 +487,12 @@ export default function VariationDetail() {
         sent_cc: ccEmail || null,
         sent_at: new Date().toISOString(),
         content_hash: currentHash,
-      });
-      if (snapError) throw new Error(`Revision save failed: ${snapError.message}`);
+      } : null;
+
+      if (insertRevision) {
+        const { error: snapError } = await supabase.from('variation_request_revisions').insert(insertRevision);
+        if (snapError) throw new Error(`Revision save failed: ${snapError.message}`);
+      }
 
       // Generate PDF — use patched variation with correct revision number and status
       const variationForPdf = { ...variation, revision_number: newRevision, status: 'submitted' };
