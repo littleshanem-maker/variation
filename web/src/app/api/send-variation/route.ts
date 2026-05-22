@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
         <tr>
           <td style="background:#17212B;padding:20px 32px;text-align:left;">
             <span style="color:#FFFCF5;font-size:16px;font-weight:500;letter-spacing:-0.3px;">
-              <span style="color:#334155;">⬡</span> Variation Shield
+              <span style="color:#334155;">⬡</span> ${companyName}
             </span>
           </td>
         </tr>
@@ -183,7 +183,7 @@ export async function POST(req: NextRequest) {
         <tr>
           <td style="background:#FFFCF5;border-top:1px solid #D8D2C4;padding:16px 32px;">
             <p style="margin:0;color:#4B5563;font-size:11px;line-height:1.5;">
-              Sent via <a href="https://variationshield.com.au" style="color:#334155;text-decoration:none;">Variation Shield</a> on behalf of ${companyName}.
+              Sent on behalf of ${companyName}.
               This variation was submitted on ${new Date().toLocaleDateString('en-AU', { day: '2-digit', month: '2-digit', year: 'numeric' })}.
             </p>
           </td>
