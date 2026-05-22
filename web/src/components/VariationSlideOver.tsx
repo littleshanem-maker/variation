@@ -254,7 +254,7 @@ export default function VariationSlideOver({ variationId, open, onClose, onStatu
                 {variation.reference_doc && (
                   <div className="col-span-2">
                     <div className={metaLabel}>Reference Document</div>
-                    <div className={metaValue}>{variation.reference_doc}</div>
+                    <div className={metaValue + ' break-words'}>{variation.reference_doc}</div>
                   </div>
                 )}
               </div>

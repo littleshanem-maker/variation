@@ -376,7 +376,7 @@ function NewRequestForm() {
 
             {/* Response due date */}
             <div>
-              <label className={labelClass}>Response Due Date <span className="text-[#B42318]">*</span></label>
+              <label className={labelClass + ' break-words'}>Response Due Date <span className="text-[#B42318]">*</span></label>
               <input type="date" required value={responseDueDate} onChange={e => setResponseDueDate(e.target.value)} className={inputClass} />
             </div>
           </div>

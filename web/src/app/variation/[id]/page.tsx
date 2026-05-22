@@ -1070,7 +1070,7 @@ export default function VariationDetail() {
                 {variation.reference_doc && (
                   <div>
                     <div className="text-[11px] font-medium uppercase tracking-widest text-[#4B5563]">Reference Document</div>
-                    <div className="text-[15px] text-[#111827] mt-1 truncate">{variation.reference_doc}</div>
+                    <div className="text-[15px] text-[#111827] mt-1 break-words">{variation.reference_doc}</div>
                   </div>
                 )}
                 {variation.client_email && (
