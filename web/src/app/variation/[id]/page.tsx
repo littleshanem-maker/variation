@@ -164,7 +164,7 @@ export default function VariationDetail() {
           client_email: editClientEmail.trim() || null,
           eot_days_claimed: editEotDays ? parseFloat(editEotDays) : null,
           time_implication_unit: editEotDays ? editTimeUnit : null,
-          claim_type: editClaimType || null,
+          claim_type: editClaimType || 'lump_sum',
           status: 'draft',
           captured_at: new Date().toISOString(),
           client_approval_response: variation.client_approval_response ?? null,
