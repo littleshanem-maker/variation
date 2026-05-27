@@ -269,11 +269,13 @@ export default function NoticeDetail() {
     const autoTitle = notice.event_description.slice(0, 80);
 
     const varId = crypto.randomUUID();
+    const variationNumber = `VAR-${String(nextSeq).padStart(3, '0')}`;
     const claimType = notice.time_flag
       ? (notice.time_implication_unit === 'hours' ? 'time_impact_only' : 'cost_and_time')
       : 'lump_sum';
     const { error } = await supabase.from('variations').insert({
       id: varId,
+      variation_number: variationNumber,
       project_id: notice.project_id,
       sequence_number: nextSeq,
       title: autoTitle,
