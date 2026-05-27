@@ -248,7 +248,7 @@ export function printRegister(projects: ProjectWithVariations[], companyName?: s
       <div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
           ${VS_LOGO_SVG_32}
-          <div class="brand">${escapeHtml(companyName || 'Variation Shield')}</div>
+          <div class="brand">${escapeHtml(companyName || '')}</div>
         </div>
         <div class="doc-title">Variation Register</div>
       </div>
@@ -282,7 +282,7 @@ export function printRegister(projects: ProjectWithVariations[], companyName?: s
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
         ${VS_LOGO_SVG_16}
-        <span>Variation Shield</span>
+        <span>${escapeHtml(companyName || '')}</span>
       </div>
       <div>Page <span class="page-number"></span></div>
     </div>
@@ -325,7 +325,7 @@ export function getFilteredRegisterHtml(
   const html = `
     <div class="doc-header">
       <div>
-        <div class="brand">${escapeHtml(companyName || 'Variation Shield')}</div>
+        <div class="brand">${escapeHtml(companyName || '')}</div>
         <div class="doc-title">Variation Register</div>
         <div style="font-size:10pt; color:#334155; margin-top:4px;">${escapeHtml(label)}</div>
       </div>
@@ -407,7 +407,7 @@ export function printProjectRegister(project: Project, variations: Variation[], 
       <div>
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
           ${VS_LOGO_SVG_32}
-          <div class="brand">${escapeHtml(companyName || 'Variation Shield')}</div>
+          <div class="brand">${escapeHtml(companyName || '')}</div>
         </div>
         <div class="doc-title">${escapeHtml(project.name)}</div>
         <div style="font-size:11pt; color:#334155; margin-top:4px;">${escapeHtml(project.client)}</div>
@@ -441,7 +441,7 @@ export function printProjectRegister(project: Project, variations: Variation[], 
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
         ${VS_LOGO_SVG_16}
-        <span>${escapeHtml(companyName || 'Variation Shield')}</span>
+        <span>${escapeHtml(companyName || '')}</span>
       </div>
       <div>${escapeHtml(project.name)}</div>
     </div>
@@ -476,8 +476,8 @@ function buildCompanyHeader(companyName: string, companyInfo?: CompanyPrintInfo)
     ? `<img src="${companyInfo.logoUrl}" style="height:36px;width:auto;max-width:120px;object-fit:contain;border-radius:4px;" />`
     : VS_LOGO_SVG_32;
   const nameBlock = companyInfo?.logoUrl
-    ? `<div class="brand" style="font-size:13pt;">${escapeHtml(companyName || 'Variation Shield')}</div>`
-    : `<div class="brand">${escapeHtml(companyName || 'Variation Shield')}</div>`;
+    ? `<div class="brand" style="font-size:13pt;">${escapeHtml(companyName || '')}</div>`
+    : `<div class="brand">${escapeHtml(companyName || '')}</div>`;
   const meta = [
     companyInfo?.abn ? `ABN ${escapeHtml(companyInfo.abn)}` : '',
     companyInfo?.address ? escapeHtml(companyInfo.address) : '',
@@ -614,7 +614,7 @@ function buildNoticeHtml(
       </div>
       <div style="text-align:right;">
         <div class="field-label">${escapeHtml(notice.notice_number)}</div>
-        <div class="field-value">${escapeHtml(companyName || 'Variation Shield')}</div>
+        <div class="field-value">${escapeHtml(companyName || '')}</div>
       </div>
     </div>
 
@@ -658,7 +658,7 @@ function buildNoticeHtml(
 
     ${buildAttachmentsSection(documents || [], docUrls || {})}
 
-    <div style="margin-top:16px; padding:12px 0; border-top:1px solid #D8D2C4; border-bottom:1px solid #D8D2C4; margin-bottom:16px;">
+    <div style="margin-top:16px; padding:12px 0; border-top:1px solid #D8D2C4; margin-bottom:16px;">
       <div style="font-size:8pt; color:#334155; margin-bottom:6px;">TO: ${escapeHtml(project.client)}</div>
       <div style="font-size:7.5pt; line-height:1.5; color:#334155; margin-bottom:6px;">
         ${getNoticeLanguage(companyInfo?.preferredStandard)}
@@ -671,7 +671,7 @@ function buildNoticeHtml(
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
         ${VS_LOGO_SVG_16}
-        <span>Variation Shield</span>
+        <span>${escapeHtml(companyName || '')}</span>
       </div>
       <div>${escapeHtml(notice.notice_number)}${(notice.revision_number ?? 0) > 0 ? ` Rev ${notice.revision_number}` : ''}</div>
     </div>
@@ -993,7 +993,7 @@ function buildVariationHtml(
 
     ${buildAttachmentsSection(documents || [], docUrls || {})}
 
-    <div style="margin-top:16px; padding:12px 0; border-top:1px solid #D8D2C4; border-bottom:1px solid #D8D2C4; margin-bottom:16px;">
+    <div style="margin-top:16px; padding:12px 0; border-top:1px solid #D8D2C4; margin-bottom:16px;">
       <div style="font-size:7.5pt; line-height:1.5; margin-bottom:6px; color:#334155;">
         ${getNoticeLanguage(companyInfo?.preferredStandard)}
       </div>
@@ -1005,7 +1005,7 @@ function buildVariationHtml(
     <div class="footer">
       <div style="display:flex;align-items:center;gap:6px;">
         ${VS_LOGO_SVG_16}
-        <span>Variation Shield</span>
+        <span>${escapeHtml(companyName || '')}</span>
       </div>
       <div>${escapeHtml(varNumber)}</div>
     </div>
