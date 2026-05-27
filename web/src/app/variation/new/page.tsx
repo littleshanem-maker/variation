@@ -127,7 +127,13 @@ function NewRequestForm() {
         .eq('project_id', projectId)
         .order('sequence_number', { ascending: false }).limit(1);
       const nextSeq = existing && existing.length > 0 ? existing[0].sequence_number + 1 : 1;
-      const variationNumber = `VAR-${String(nextSeq).padStart(3, '0')}`;
+
+      // Count existing variations in this project for project-relative variation_number
+      const { count } = await supabase
+        .from('variations').select('*', { count: 'exact', head: true })
+        .eq('project_id', projectId);
+      const nextVarNum = (count || 0) + 1;
+      const variationNumber = `VAR-${String(nextVarNum).padStart(3, '0')}`;
 
       let reqName: string | null = requestorName.trim() || null;
       const reqEmail: string | null = user.email || null;
