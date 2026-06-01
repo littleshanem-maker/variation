@@ -82,6 +82,15 @@ export default function LandingPage() {
           <p className="mt-6 text-sm text-[#334155] max-w-xl mx-auto leading-relaxed">
             Built by a former Tier 1 Project Manager.
           </p>
+          {/* Dashboard screenshot */}
+          <div className="mt-10 max-w-4xl mx-auto">
+            <img
+              src="/dashboard-preview.jpg"
+              alt="Variation Shield dashboard showing at-risk variations for Civil Contracting Pty Ltd"
+              className="w-full rounded-md border border-[#D8D2C4] shadow-[0_4px_16px_rgba(17,24,39,0.12)]"
+            />
+            <p className="text-center text-sm text-[#4B5563] mt-4">Real dashboard. Real at-risk variations — identified before the argument starts.</p>
+          </div>
         </div>
       </section>
 
@@ -244,15 +253,6 @@ export default function LandingPage() {
             <div className="font-medium text-lg">Shane Little</div>
             <div className="text-[#17212B] text-sm mt-1">Founder, Leveraged Systems · 15 years Tier 1 Project Management</div>
           </div>
-        </div>
-        {/* Dashboard screenshot */}
-        <div className="max-w-5xl mx-auto mt-12">
-          <img
-            src="/dashboard-preview.jpg"
-            alt="Variation Shield dashboard showing at-risk variations for Civil Contracting Pty Ltd"
-            className="w-full rounded-md border border-[#D8D2C4] shadow-[0_4px_16px_rgba(17,24,39,0.12)]"
-          />
-          <p className="text-center text-sm text-[#4B5563] mt-4">Real dashboard. Real at-risk variations — identified before the argument starts.</p>
         </div>
       </section>
 
