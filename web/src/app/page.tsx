@@ -271,62 +271,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* PRICING — FOUNDER-LED PILOT */}
-      <section className="py-24 px-6" id="pricing">
-        <div className="max-w-lg mx-auto text-center">
-          <p className="text-[#E76F00] text-xs font-medium tracking-[0.055em] uppercase mb-3">Built for Australian Subcontractors</p>
-          <h2 className="text-3xl md:text-4xl font-medium tracking-tight mb-4">Start with a 30-day live-job pilot</h2>
-          <p className="text-[#334155] mb-12">
-            Variation Shield is currently being rolled out through founder-led pilots with Australian subcontractors. The pilot is designed to test the system on real work &mdash; not a fake demo project.
-          </p>
-
-          <div className="bg-[#FFFCF5] border border-[#D8D2C4] rounded-md p-8 text-left relative overflow-hidden">
-            <div className="inline-flex items-center gap-1.5 bg-[#8C6500]/10 border border-[#8C6500]/25 rounded-sm px-3 py-1 text-xs font-medium text-[#8C6500] uppercase tracking-wider mb-5">
-              Early access pilot
-            </div>
-            <p className="text-[#334155] text-sm mb-6 leading-relaxed">
-              We&rsquo;re currently onboarding a small number of subcontractors into a 30-day live-job pilot.
-            </p>
-            <ul className="space-y-3 mb-6">
-              {[
-                'Setup support',
-                'One or more live projects',
-                'Field and office users',
-                'Variation notices',
-                'Client approval links',
-                'PDF records',
-                'Direct founder support',
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-3 text-sm text-[#334155]">
-                  <span className="text-[#1F5223] font-medium mt-0.5 flex-shrink-0">✓</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-            <p className="text-[#17212B] text-sm font-medium mb-1">If there is a fit, early customers can continue from $299 + GST/month, locked for 12 months.</p>
-            <p className="text-[#4B5563] text-sm mb-8">Standard pricing after the pilot: $499/month.</p>
-
-            <DemoButton className="flex items-center justify-center gap-2 w-full bg-[#E76F00] hover:bg-[#C75A00] text-[#FFFCF5] font-medium py-4 rounded-md text-[16px] transition-colors shadow-[0_2px_4px_rgba(17,24,39,0.12)]">
-              Book a 10-minute pilot call
-              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </DemoButton>
-          </div>
-
-          <div className="mt-8 bg-[#FFFCF5] border border-[#D8D2C4] rounded-md p-6 text-center">
-            <h3 className="font-medium text-lg mb-2">Prefer to look around first?</h3>
-            <p className="text-[#334155] text-sm leading-relaxed mb-5">Create a limited free account with 1 project and 3 test variations. No credit card required.</p>
-            <Link href="/signup/free" className="inline-flex items-center justify-center bg-[#FFFCF5] hover:bg-[#F5F2EA] border border-[#D8D2C4] text-[#111827] font-medium px-6 py-3 rounded-md text-sm transition-colors">
-              Try free
-            </Link>
-          </div>
-
-          <div className="mt-6 flex items-center justify-center gap-2 text-sm text-[#4B5563]">
-            <svg fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            A serious tool for contractors who lose money when variations are not captured properly &mdash; now available as a founder-led 30-day pilot.
-          </div>
-        </div>
-      </section>
-
       {/* FINAL CTA */}
       <section className="py-24 px-6 text-center relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">

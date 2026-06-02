@@ -280,12 +280,9 @@ export function printRegister(projects: ProjectWithVariations[], companyName?: s
     ${projectSections}
 
     <div class="footer">
-      <div style="display:flex;align-items:center;gap:6px;">
-        ${VS_LOGO_SVG_16}
-        <span>${escapeHtml(companyName || '')}</span>
-      </div>
       <div>Page <span class="page-number"></span></div>
     </div>
+  </div>
   `;
 
   openHtml(html, `Variation Register - ${now}`, '@page { size: A4 landscape; margin: 10mm 15mm; }');
@@ -439,11 +436,6 @@ export function printProjectRegister(project: Project, variations: Variation[], 
     </table>
 
     <div class="footer">
-      <div style="display:flex;align-items:center;gap:6px;">
-        ${VS_LOGO_SVG_16}
-        <span>${escapeHtml(companyName || '')}</span>
-      </div>
-      <div>${escapeHtml(project.name)}</div>
     </div>
   `;
 
@@ -669,11 +661,6 @@ function buildNoticeHtml(
     </div>
 
     <div class="footer">
-      <div style="display:flex;align-items:center;gap:6px;">
-        ${VS_LOGO_SVG_16}
-        <span>${escapeHtml(companyName || '')}</span>
-      </div>
-      <div>${escapeHtml(notice.notice_number)}${(notice.revision_number ?? 0) > 0 ? ` Rev ${notice.revision_number}` : ''}</div>
     </div>
   `;
 }
@@ -1003,11 +990,6 @@ function buildVariationHtml(
     </div>
 
     <div class="footer">
-      <div style="display:flex;align-items:center;gap:6px;">
-        ${VS_LOGO_SVG_16}
-        <span>${escapeHtml(companyName || '')}</span>
-      </div>
-      <div>${escapeHtml(varNumber)}</div>
     </div>
   `;
 }
