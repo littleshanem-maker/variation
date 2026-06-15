@@ -13,6 +13,9 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [preferredTime, setPreferredTime] = useState('');
+  const [currentVariationMethod, setCurrentVariationMethod] = useState('');
+  const [triggerEvent, setTriggerEvent] = useState('');
+  const [decisionMakers, setDecisionMakers] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
@@ -44,7 +47,7 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
       const res = await fetch('/api/request-demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, company, email, phone, preferredTime }),
+        body: JSON.stringify({ name, company, email, phone, preferredTime, currentVariationMethod, triggerEvent, decisionMakers }),
       });
       if (!res.ok) throw new Error('Failed');
       setSubmitted(true);
@@ -161,6 +164,42 @@ export default function DemoRequestModal({ isOpen, onClose }: DemoRequestModalPr
                     className="w-full bg-[#FFFCF5]/[0.05] border border-[#FFFCF5]/[0.1] rounded-lg px-3 py-2.5 text-sm text-[#FFFCF5] placeholder-#FFFCF5/20 focus:outline-none focus:border-[#E76F00] transition-colors"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[#FFFCF5]/50 mb-1.5">What are you currently using to capture and approve variations before the work starts? *</label>
+                <textarea
+                  required
+                  rows={3}
+                  value={currentVariationMethod}
+                  onChange={e => setCurrentVariationMethod(e.target.value)}
+                  placeholder="e.g. Email, phone calls, paper forms, Excel…"
+                  className="w-full bg-[#FFFCF5]/[0.05] border border-[#FFFCF5]/[0.1] rounded-lg px-3 py-2.5 text-sm text-[#FFFCF5] placeholder-#FFFCF5/20 focus:outline-none focus:border-[#E76F00] transition-colors resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[#FFFCF5]/50 mb-1.5">What happened recently that made you book this call? *</label>
+                <textarea
+                  required
+                  rows={3}
+                  value={triggerEvent}
+                  onChange={e => setTriggerEvent(e.target.value)}
+                  placeholder="e.g. A client disputed a variation last week, lost money on a job…"
+                  className="w-full bg-[#FFFCF5]/[0.05] border border-[#FFFCF5]/[0.1] rounded-lg px-3 py-2.5 text-sm text-[#FFFCF5] placeholder-#FFFCF5/20 focus:outline-none focus:border-[#E76F00] transition-colors resize-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-[#FFFCF5]/50 mb-1.5">If Variation Shield solved this, who would be involved in deciding whether to use it? *</label>
+                <input
+                  type="text"
+                  required
+                  value={decisionMakers}
+                  onChange={e => setDecisionMakers(e.target.value)}
+                  placeholder="e.g. Myself and the director, just me…"
+                  className="w-full bg-[#FFFCF5]/[0.05] border border-[#FFFCF5]/[0.1] rounded-lg px-3 py-2.5 text-sm text-[#FFFCF5] placeholder-#FFFCF5/20 focus:outline-none focus:border-[#E76F00] transition-colors"
+                />
               </div>
 
               {error && (

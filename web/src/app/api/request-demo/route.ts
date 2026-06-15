@@ -7,15 +7,18 @@ const NOTIFY_EMAIL = process.env.DEMO_NOTIFY_EMAIL || 'shane@leveragedsystems.co
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, company, email, phone, preferredTime } = await req.json() as {
+    const { name, company, email, phone, preferredTime, currentVariationMethod, triggerEvent, decisionMakers } = await req.json() as {
       name: string;
       company: string;
       email: string;
       phone?: string;
       preferredTime?: string;
+      currentVariationMethod: string;
+      triggerEvent: string;
+      decisionMakers: string;
     };
 
-    if (!name || !company || !email) {
+    if (!name || !company || !email || !currentVariationMethod || !triggerEvent || !decisionMakers) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -42,6 +45,9 @@ export async function POST(req: NextRequest) {
             <tr><td style="padding:8px 0;color:#4B5563;font-size:13px;width:120px;">Email</td><td style="padding:8px 0;font-size:14px;"><a href="mailto:${email}" style="color:#334155;">${email}</a></td></tr>
             ${phone ? `<tr><td style="padding:8px 0;color:#4B5563;font-size:13px;">Phone</td><td style="padding:8px 0;font-size:14px;">${phone}</td></tr>` : ''}
             ${preferredTime ? `<tr><td style="padding:8px 0;color:#4B5563;font-size:13px;">Preferred time</td><td style="padding:8px 0;font-size:14px;">${preferredTime}</td></tr>` : ''}
+            <tr><td style="padding:8px 0;color:#4B5563;font-size:13px;">Current variation method</td><td style="padding:8px 0;font-size:14px;">${currentVariationMethod}</td></tr>
+            <tr><td style="padding:8px 0;color:#4B5563;font-size:13px;">Trigger event</td><td style="padding:8px 0;font-size:14px;">${triggerEvent}</td></tr>
+            <tr><td style="padding:8px 0;color:#4B5563;font-size:13px;">Decision makers</td><td style="padding:8px 0;font-size:14px;">${decisionMakers}</td></tr>
             <tr><td style="padding:8px 0;color:#4B5563;font-size:13px;">Submitted</td><td style="padding:8px 0;font-size:14px;">${submittedAt} AEDT</td></tr>
           </table>
           <div style="margin-top:28px;padding-top:20px;border-top:1px solid rgba(255,252,245,0.08);">
@@ -61,6 +67,9 @@ export async function POST(req: NextRequest) {
           <h2 style="margin:0 0 16px;font-size:22px;font-weight:500;">Thanks, ${name.split(' ')[0]}.</h2>
           <p style="color:#4B5563;font-size:15px;line-height:1.6;margin:0 0 16px;">I'll be in touch within one business day to lock in a time that works for you.</p>
           <p style="color:#4B5563;font-size:15px;line-height:1.6;margin:0 0 24px;">The demo takes 15 minutes. I'll walk you through capturing a variation on-site, sending it to a client, and what it looks like when they receive it.</p>
+          <p style="color:#4B5563;font-size:13px;margin:0 0 6px;">Current variation method: ${currentVariationMethod}</p>
+          <p style="color:#4B5563;font-size:13px;margin:0 0 6px;">Trigger: ${triggerEvent}</p>
+          <p style="color:#4B5563;font-size:13px;margin:0 0 6px;">Decision makers: ${decisionMakers}</p>
           <p style="color:#4B5563;font-size:13px;margin:0;">— Shane<br>Founder, Variation Shield</p>
         </div>
       `,
