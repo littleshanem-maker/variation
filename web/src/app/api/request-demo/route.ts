@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
         <div style="font-family:'IBM Plex Sans',sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#111827;color:#F5F2EA;border-radius:12px;">
           <h2 style="margin:0 0 16px;font-size:22px;font-weight:500;">Thanks, ${name.split(' ')[0]}.</h2>
           <p style="color:#4B5563;font-size:15px;line-height:1.6;margin:0 0 16px;">I'll be in touch within one business day to lock in a time that works for you.</p>
-          <p style="color:#4B5563;font-size:15px;line-height:1.6;margin:0 0 24px;">The demo takes 15 minutes. I'll walk you through capturing a variation on-site, sending it to a client, and what it looks like when they receive it.</p>
+          <p style="color:#4B5563;font-size:15px;line-height:1.6;margin:0 0 24px;">The demo takes 10 minutes. I'll walk you through capturing a variation on-site, sending it to a client, and what it looks like when they receive it.</p>
           <p style="color:#4B5563;font-size:13px;margin:0 0 6px;">Current variation method: ${currentVariationMethod}</p>
           <p style="color:#4B5563;font-size:13px;margin:0 0 6px;">Trigger: ${triggerEvent}</p>
           <p style="color:#4B5563;font-size:13px;margin:0 0 6px;">Decision makers: ${decisionMakers}</p>

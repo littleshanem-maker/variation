@@ -15,7 +15,7 @@ export default function SchedulePage() {
           <Logo size={64} />
         </div>
         <p className="text-[#C75A00] text-xs font-medium tracking-widest uppercase mb-3">Variation Shield</p>
-        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-5">Book a 15-Minute Demo</h1>
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-5">Book a 10-Minute Demo</h1>
         <p className="text-[#111827]/65 text-lg leading-relaxed mb-8">
           Tell us where variations are getting missed, delayed or disputed. We’ll show you how to test Variation Shield on live work with founder-led setup.
         </p>
